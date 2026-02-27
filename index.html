@@ -1,259 +1,77 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Baraka POS</title>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
-body {
-  background: #0f172a;
-  color: white;
-}
-
-.hidden { display: none; }
-
-.container {
-  max-width: 500px;
-  margin: 80px auto;
-  padding: 25px;
-  background: #1e293b;
-  border-radius: 12px;
-}
-
-input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 6px;
-  border: none;
-  outline: none;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 12px;
-  background: #10b981;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  background: #059669;
-}
-
-.product {
-  background: #334155;
-  padding: 12px;
-  border-radius: 6px;
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.delete-btn {
-  background: #ef4444;
-  width: auto;
-  padding: 6px 12px;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-</style>
-</head>
-
-<body>
-
-<!-- LOGIN -->
-<div id="loginPage" class="container">
-  <h2>Kirish</h2>
-  <input type="email" id="loginEmail" placeholder="Email">
-  <input type="password" id="loginPassword" placeholder="Parol">
-  <button onclick="login()">Kirish</button>
-  <button onclick="showRegister()">Ro‘yxatdan o‘tish</button>
-</div>
-
-<!-- REGISTER -->
-<div id="registerPage" class="container hidden">
-  <h2>Do‘kon yaratish</h2>
-  <input type="text" id="shopName" placeholder="Do‘kon nomi">
-  <input type="email" id="registerEmail" placeholder="Email">
-  <input type="password" id="registerPassword" placeholder="Parol">
-  <button onclick="register()">Ro‘yxatdan o‘tish</button>
-  <button onclick="showLogin()">Orqaga</button>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard" class="container hidden">
-
-  <div class="header">
-    <h2 id="shopTitle"></h2>
-    <button onclick="logout()">Chiqish</button>
-  </div>
-
-  <h3>Mahsulot qo‘shish</h3>
-  <input type="text" id="productName" placeholder="Mahsulot nomi">
-  <input type="number" id="productPrice" placeholder="Narxi">
-  <button onclick="addProduct()">Qo‘shish</button>
-
-  <h3 style="margin-top:20px;">Mahsulotlar</h3>
-  <div id="productList"></div>
-
-</div>
-
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
 
+<style>
+body { background:#0f172a; color:white; font-family:Arial; text-align:center; margin-top:100px; }
+input { padding:10px; margin:5px; width:250px; }
+button { padding:10px; margin:5px; width:270px; background:#10b981; border:none; color:white; }
+</style>
+</head>
+
+<body>
+
+<h2>Baraka POS</h2>
+
+<div id="auth">
+  <input id="email" placeholder="Email"><br>
+  <input id="password" type="password" placeholder="Password"><br>
+  <button onclick="register()">Register</button>
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="dashboard" style="display:none;">
+  <h3 id="welcome"></h3>
+  <button onclick="logout()">Logout</button>
+</div>
+
 <script>
 
-const loginPage = document.getElementById("loginPage");
-const registerPage = document.getElementById("registerPage");
-const dashboard = document.getElementById("dashboard");
+function register() {
+  const email = emailInput();
+  const password = passwordInput();
 
-let currentUser = null;
-let unsubscribeProducts = null;
-
-function showRegister() {
-  loginPage.classList.add("hidden");
-  registerPage.classList.remove("hidden");
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => alert("Registered"))
+    .catch(e => alert(e.message));
 }
 
-function showLogin() {
-  registerPage.classList.add("hidden");
-  loginPage.classList.remove("hidden");
-}
+function login() {
+  const email = emailInput();
+  const password = passwordInput();
 
-function showDashboard(shopName) {
-  loginPage.classList.add("hidden");
-  registerPage.classList.add("hidden");
-  dashboard.classList.remove("hidden");
-  document.getElementById("shopTitle").innerText =
-    "Xush kelibsiz, " + shopName;
-}
-
-async function register() {
-  const email = registerEmail.value;
-  const password = registerPassword.value;
-  const shopName = document.getElementById("shopName").value;
-
-  const userCredential =
-    await auth.createUserWithEmailAndPassword(email, password);
-
-  await db.collection("shops").doc(userCredential.user.uid).set({
-    shopName: shopName,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-}
-
-async function login() {
-  const email = loginEmail.value;
-  const password = loginPassword.value;
-
-  await auth.signInWithEmailAndPassword(email, password);
+  auth.signInWithEmailAndPassword(email, password)
+    .catch(e => alert(e.message));
 }
 
 function logout() {
-  if (unsubscribeProducts) unsubscribeProducts();
   auth.signOut();
 }
 
-function listenProducts(uid) {
-  const productList = document.getElementById("productList");
-
-  unsubscribeProducts = db
-    .collection("shops")
-    .doc(uid)
-    .collection("products")
-    .orderBy("createdAt", "desc")
-    .onSnapshot(snapshot => {
-
-      productList.innerHTML = "";
-
-      snapshot.forEach(doc => {
-        const data = doc.data();
-
-        const div = document.createElement("div");
-        div.className = "product";
-
-        div.innerHTML = `
-          <div>
-            <strong>${data.name}</strong><br>
-            ${data.price} so'm
-          </div>
-          <button class="delete-btn"
-            onclick="deleteProduct('${doc.id}')">
-            O‘chirish
-          </button>
-        `;
-
-        productList.appendChild(div);
-      });
-
-    });
+function emailInput() {
+  return document.getElementById("email").value;
 }
 
-async function addProduct() {
-  const name = productName.value;
-  const price = productPrice.value;
-
-  if (!name || !price) return;
-
-  await db.collection("shops")
-    .doc(currentUser.uid)
-    .collection("products")
-    .add({
-      name: name,
-      price: Number(price),
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-  productName.value = "";
-  productPrice.value = "";
+function passwordInput() {
+  return document.getElementById("password").value;
 }
 
-async function deleteProduct(productId) {
-  await db.collection("shops")
-    .doc(currentUser.uid)
-    .collection("products")
-    .doc(productId)
-    .delete();
-}
-
-auth.onAuthStateChanged(async user => {
+auth.onAuthStateChanged(user => {
   if (user) {
-    currentUser = user;
-
-    const doc = await db
-      .collection("shops")
-      .doc(user.uid)
-      .get();
-
-    const shopName = doc.data().shopName;
-
-    showDashboard(shopName);
-    listenProducts(user.uid);
-
+    document.getElementById("auth").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("welcome").innerText =
+      "Logged in as: " + user.email;
   } else {
-    dashboard.classList.add("hidden");
-    showLogin();
+    document.getElementById("auth").style.display = "block";
+    document.getElementById("dashboard").style.display = "none";
   }
 });
 
