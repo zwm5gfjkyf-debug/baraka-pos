@@ -17,12 +17,17 @@
    ROOT THEME SYSTEM
 ========================= */
 
+/* ===============================
+   ROOT SYSTEM
+================================ */
+
 :root {
-  --bg: #0f172a;
-  --card: #1e293b;
-  --sidebar: #111827;
+  --bg: #0b1220;
+  --card: #111827;
+  --sidebar: #0f172a;
+  --border: rgba(255,255,255,0.05);
   --primary: #10b981;
-  --primary-dark: #059669;
+  --primary-soft: rgba(16,185,129,0.15);
   --text: #ffffff;
   --text-soft: #94a3b8;
   --danger: #ef4444;
@@ -32,8 +37,9 @@
   --bg: #f1f5f9;
   --card: #ffffff;
   --sidebar: #e2e8f0;
+  --border: rgba(0,0,0,0.05);
   --primary: #10b981;
-  --primary-dark: #059669;
+  --primary-soft: rgba(16,185,129,0.1);
   --text: #0f172a;
   --text-soft: #475569;
   --danger: #ef4444;
@@ -52,59 +58,59 @@ body {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  transition: 0.3s;
 }
 
-/* =========================
+/* ===============================
    SIDEBAR
-========================= */
+================================ */
 
 .sidebar {
-  width: 240px;
+  width: 250px;
   background: var(--sidebar);
-  padding: 25px;
+  border-right: 1px solid var(--border);
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .logo {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  margin-bottom: 30px;
+  letter-spacing: 1px;
+  margin-bottom: 40px;
 }
 
 .nav-btn {
-  background: transparent;
+  background: none;
   border: none;
   color: var(--text-soft);
-  padding: 12px 0;
+  padding: 12px 15px;
+  border-radius: 8px;
   text-align: left;
-  font-size: 15px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.25s;
+  margin-bottom: 8px;
 }
 
 .nav-btn:hover {
+  background: var(--primary-soft);
   color: var(--primary);
 }
 
 .nav-btn.active {
+  background: var(--primary-soft);
   color: var(--primary);
   font-weight: 600;
 }
 
-.bottom-actions {
-  margin-top: auto;
-}
-
-/* =========================
-   MAIN CONTENT
-========================= */
+/* ===============================
+   MAIN AREA
+================================ */
 
 .main {
   flex: 1;
-  padding: 30px;
+  padding: 40px 60px;
   overflow-y: auto;
 }
 
@@ -112,67 +118,81 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+}
+
+.header h2 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+#userEmail {
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+/* ===============================
+   STAT CARDS
+================================ */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+  gap: 25px;
 }
 
 .card {
   background: var(--card);
-  padding: 20px;
-  border-radius: 14px;
-  margin-bottom: 20px;
-  transition: 0.3s;
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-3px);
-}
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
-  gap: 20px;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
 .stat-title {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-soft);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .stat-value {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 26px;
+  font-weight: 700;
 }
 
-/* =========================
-   BUTTONS & INPUTS
-========================= */
+/* ===============================
+   PRODUCTS
+================================ */
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  margin-bottom: 12px;
+}
 
 .button {
   background: var(--primary);
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 12px 18px;
+  border-radius: 10px;
   color: white;
+  font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
 }
 
 .button:hover {
-  background: var(--primary-dark);
+  opacity: 0.9;
 }
-
-.input {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-/* =========================
-   PRODUCT LIST
-========================= */
 
 .product-item {
   display: flex;
@@ -184,24 +204,27 @@ body {
   background: var(--danger);
   border: none;
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   color: white;
   cursor: pointer;
 }
 
-/* =========================
-   AUTH PAGE
-========================= */
+/* ===============================
+   AUTH
+================================ */
 
 .auth-container {
-  width: 360px;
+  width: 380px;
   margin: auto;
   background: var(--card);
-  padding: 30px;
-  border-radius: 14px;
+  padding: 40px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
 }
 
-.hidden { display: none; }
+.hidden {
+  display: none;
+}
 
 @media (max-width: 900px) {
   .sidebar {
