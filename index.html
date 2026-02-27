@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Baraka POS</title>
 
-<!-- Firebase CDN -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -13,223 +12,175 @@
 
 <style>
 
-/* =========================
-   ROOT THEME SYSTEM
-========================= */
-
-/* ===============================
-   ROOT SYSTEM
-================================ */
+/* ========================= THEME ========================= */
 
 :root {
-  --bg: #0b1220;
-  --card: #111827;
-  --sidebar: #0f172a;
-  --border: rgba(255,255,255,0.05);
-  --primary: #10b981;
-  --primary-soft: rgba(16,185,129,0.15);
-  --text: #ffffff;
-  --text-soft: #94a3b8;
-  --danger: #ef4444;
+  --bg:#0b1220;
+  --sidebar:#0f172a;
+  --card:#111827;
+  --border:rgba(255,255,255,0.06);
+  --primary:#10b981;
+  --text:#ffffff;
+  --text-soft:#94a3b8;
+  --danger:#ef4444;
 }
 
 .light {
-  --bg: #f1f5f9;
-  --card: #ffffff;
-  --sidebar: #e2e8f0;
-  --border: rgba(0,0,0,0.05);
-  --primary: #10b981;
-  --primary-soft: rgba(16,185,129,0.1);
-  --text: #0f172a;
-  --text-soft: #475569;
-  --danger: #ef4444;
+  --bg:#f3f4f6;
+  --sidebar:#e5e7eb;
+  --card:#ffffff;
+  --border:rgba(0,0,0,0.06);
+  --primary:#10b981;
+  --text:#111827;
+  --text-soft:#6b7280;
+  --danger:#ef4444;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+body{
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  height:100vh;
+  overflow:hidden;
 }
 
-/* ===============================
-   SIDEBAR
-================================ */
+/* ========================= SIDEBAR ========================= */
 
-.sidebar {
-  width: 250px;
-  background: var(--sidebar);
-  border-right: 1px solid var(--border);
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.sidebar{
+  width:250px;
+  background:var(--sidebar);
+  border-right:1px solid var(--border);
+  padding:30px 20px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 
-.logo {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 40px;
+.logo{
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:40px;
 }
 
-.nav-btn {
-  background: none;
-  border: none;
-  color: var(--text-soft);
-  padding: 12px 15px;
-  border-radius: 8px;
-  text-align: left;
-  cursor: pointer;
-  transition: 0.25s;
-  margin-bottom: 8px;
+.nav-btn{
+  background:none;
+  border:none;
+  color:var(--text-soft);
+  padding:12px 15px;
+  border-radius:8px;
+  text-align:left;
+  cursor:pointer;
+  transition:.2s;
+  margin-bottom:8px;
 }
 
-.nav-btn:hover {
-  background: var(--primary-soft);
-  color: var(--primary);
+.nav-btn:hover{
+  background:rgba(16,185,129,.1);
+  color:var(--primary);
 }
 
-.nav-btn.active {
-  background: var(--primary-soft);
-  color: var(--primary);
-  font-weight: 600;
+.nav-btn.active{
+  background:rgba(16,185,129,.15);
+  color:var(--primary);
+  font-weight:600;
 }
 
-/* ===============================
-   MAIN AREA
-================================ */
+/* ========================= MAIN ========================= */
 
-.main {
-  flex: 1;
-  padding: 40px 60px;
-  overflow-y: auto;
+.main{
+  flex:1;
+  padding:40px 60px;
+  overflow-y:auto;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:40px;
 }
 
-.header h2 {
-  font-size: 28px;
-  font-weight: 600;
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  margin-bottom:20px;
+  transition:.25s;
 }
 
-#userEmail {
-  font-size: 14px;
-  color: var(--text-soft);
+.card:hover{
+  transform:translateY(-4px);
 }
 
-/* ===============================
-   STAT CARDS
-================================ */
-
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
-  gap: 25px;
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px;
 }
 
-.card {
-  background: var(--card);
-  padding: 25px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  transition: 0.3s ease;
+.input{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text);
+  margin-bottom:10px;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+.button{
+  background:var(--primary);
+  border:none;
+  padding:10px 16px;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+  transition:.2s;
 }
 
-.stat-title {
-  font-size: 14px;
-  color: var(--text-soft);
-  margin-bottom: 10px;
+.button:hover{
+  opacity:.9;
 }
 
-.stat-value {
-  font-size: 26px;
-  font-weight: 700;
+.hidden{
+  display:none;
 }
 
-/* ===============================
-   PRODUCTS
-================================ */
-
-.input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  margin-bottom: 12px;
+/* POS Layout */
+.pos-layout{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:25px;
 }
 
-.button {
-  background: var(--primary);
-  border: none;
-  padding: 12px 18px;
-  border-radius: 10px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
+.pos-products{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:15px;
 }
 
-.button:hover {
-  opacity: 0.9;
+.pos-item{
+  cursor:pointer;
+  text-align:center;
 }
 
-.product-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+/* ========================= AUTH ========================= */
 
-.product-item button {
-  background: var(--danger);
-  border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-}
-
-/* ===============================
-   AUTH
-================================ */
-
-.auth-container {
-  width: 380px;
-  margin: auto;
-  background: var(--card);
-  padding: 40px;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-}
-
-.hidden {
-  display: none;
-}
-
-@media (max-width: 900px) {
-  .sidebar {
-    display: none;
-  }
+.auth-container{
+  width:360px;
+  margin:auto;
+  background:var(--card);
+  padding:40px;
+  border-radius:16px;
+  border:1px solid var(--border);
 }
 
 </style>
@@ -237,7 +188,7 @@ body {
 
 <body>
 
-<!-- AUTH PAGE -->
+<!-- AUTH -->
 <div id="authPage" class="auth-container">
   <h2 style="margin-bottom:20px;">Baraka POS</h2>
   <input id="email" class="input" placeholder="Email">
@@ -254,10 +205,9 @@ body {
       <div class="logo">Baraka</div>
       <button class="nav-btn active" onclick="showView('dashboard')">Dashboard</button>
       <button class="nav-btn" onclick="showView('products')">Mahsulotlar</button>
-       <button class="nav-btn" onclick="showView('pos')">Sotish</button>
+      <button class="nav-btn" onclick="showView('pos')">Sotish</button>
     </div>
-
-    <div class="bottom-actions">
+    <div>
       <button class="nav-btn" onclick="toggleTheme()">Dark/Light</button>
       <button class="nav-btn" onclick="logout()">Chiqish</button>
     </div>
@@ -265,78 +215,54 @@ body {
 
   <div class="main">
 
-    <!-- HEADER -->
     <div class="header">
-      <h2 id="shopTitle"></h2>
-      <div id="userEmail" style="font-size:13px;color:var(--text-soft);"></div>
+      <h2 id="shopTitle">Xush kelibsiz</h2>
+      <div id="userEmail"></div>
     </div>
 
-    <!-- DASHBOARD VIEW -->
+    <!-- DASHBOARD -->
     <div id="dashboardView">
-
       <div class="stat-grid">
-        <div class="card">
-          <div class="stat-title">Bugungi savdo</div>
-          <div class="stat-value">0 so‘m</div>
-        </div>
-
-        <div class="card">
-          <div class="stat-title">Haftalik savdo</div>
-          <div class="stat-value">0 so‘m</div>
-        </div>
-
-        <div class="card">
-          <div class="stat-title">Oylik savdo</div>
-          <div class="stat-value">0 so‘m</div>
-        </div>
+        <div class="card"><h3>Bugungi savdo</h3><h2 id="todayStat">0</h2></div>
+        <div class="card"><h3>Haftalik savdo</h3><h2 id="weekStat">0</h2></div>
+        <div class="card"><h3>Oylik savdo</h3><h2 id="monthStat">0</h2></div>
       </div>
-
     </div>
 
-    <!-- PRODUCTS VIEW -->
+    <!-- PRODUCTS -->
     <div id="productsView" class="hidden">
-<!-- POS VIEW -->
-<div id="posView" class="hidden">
-
-  <div style="display:grid;grid-template-columns:2fr 1fr;gap:30px;">
-
-    <!-- LEFT SIDE (PRODUCTS) -->
-    <div>
-
-      <div class="card">
-        <h3>Mahsulot qidirish</h3>
-        <input id="posSearch" class="input" placeholder="Qidirish..." oninput="renderPOSProducts()">
-      </div>
-
-      <div id="posProductList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px;"></div>
-
-    </div>
-
-    <!-- RIGHT SIDE (CART) -->
-    <div>
-
-      <div class="card">
-        <h3>Savatcha</h3>
-        <div id="cartList"></div>
-        <hr style="margin:15px 0;border-color:rgba(255,255,255,0.05)">
-        <h3>Jami: <span id="cartTotal">0</span> so'm</h3>
-        <button class="button" style="margin-top:15px;width:100%;" onclick="completeSale()">Sotuvni yakunlash</button>
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
       <div class="card">
         <h3>Mahsulot qo‘shish</h3>
         <input id="productName" class="input" placeholder="Nomi">
         <input id="productPrice" class="input" type="number" placeholder="Narxi">
+        <input id="productStock" class="input" type="number" placeholder="Stock">
         <button class="button" onclick="addProduct()">Qo‘shish</button>
       </div>
-
       <div id="productList"></div>
+    </div>
 
+    <!-- POS -->
+    <div id="posView" class="hidden">
+      <div class="pos-layout">
+
+        <div>
+          <div class="card">
+            <input id="posSearch" class="input" placeholder="Qidirish..." oninput="renderPOSProducts()">
+          </div>
+          <div id="posProductList" class="pos-products"></div>
+        </div>
+
+        <div>
+          <div class="card">
+            <h3>Savatcha</h3>
+            <div id="cartList"></div>
+            <hr style="margin:15px 0;border-color:var(--border)">
+            <h3>Jami: <span id="cartTotal">0</span></h3>
+            <button class="button" style="width:100%;" onclick="completeSale()">Sotuvni yakunlash</button>
+          </div>
+        </div>
+
+      </div>
     </div>
 
   </div>
@@ -344,321 +270,174 @@ body {
 
 <script>
 
-/* =========================
-   SPA VIEW SWITCH
-========================= */
+/* ========================= VIEW ========================= */
 
-function showView(view) {
-  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+function showView(view){
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
   event.target.classList.add("active");
 
-  document.getElementById("dashboardView").classList.add("hidden");
-  document.getElementById("productsView").classList.add("hidden");
+  ["dashboardView","productsView","posView"].forEach(v=>{
+    document.getElementById(v).classList.add("hidden");
+  });
 
-  document.getElementById(view + "View").classList.remove("hidden");
+  document.getElementById(view+"View").classList.remove("hidden");
+
+  if(view==="pos") loadPOSProducts();
 }
 
-/* =========================
-   THEME TOGGLE
-========================= */
+/* ========================= AUTH ========================= */
 
-function toggleTheme() {
-  document.body.classList.toggle("light");
+let currentUser=null;
+
+function register(){
+  auth.createUserWithEmailAndPassword(email.value,password.value);
 }
 
-/* =========================
-   AUTH SYSTEM
-========================= */
-
-let currentUser = null;
-
-function register() {
-  auth.createUserWithEmailAndPassword(
-    document.getElementById("email").value,
-    document.getElementById("password").value
-  );
+function login(){
+  auth.signInWithEmailAndPassword(email.value,password.value);
 }
 
-function login() {
-  auth.signInWithEmailAndPassword(
-    document.getElementById("email").value,
-    document.getElementById("password").value
-  );
-}
-
-function logout() {
+function logout(){
   auth.signOut();
 }
 
-auth.onAuthStateChanged(user => {
-  if (user) {
-    currentUser = user;
-    document.getElementById("authPage").classList.add("hidden");
-    document.getElementById("app").classList.remove("hidden");
-    document.getElementById("userEmail").innerText = user.email;
-    document.getElementById("shopTitle").innerText = "Xush kelibsiz";
+auth.onAuthStateChanged(user=>{
+  if(user){
+    currentUser=user;
+    authPage.classList.add("hidden");
+    app.classList.remove("hidden");
+    userEmail.innerText=user.email;
     listenProducts();
-  } else {
-    document.getElementById("authPage").classList.remove("hidden");
-    document.getElementById("app").classList.add("hidden");
+  }else{
+    authPage.classList.remove("hidden");
+    app.classList.add("hidden");
   }
 });
 
-/* =========================
-   PRODUCTS SYSTEM
-========================= */
+/* ========================= PRODUCTS ========================= */
 
-function addProduct() {
-  const name = productName.value;
-  const price = Number(productPrice.value);
-
-  db.collection("shops")
-    .doc(currentUser.uid)
-    .collection("products")
-    .add({
-      name,
-      price,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-  productName.value = "";
-  productPrice.value = "";
+function addProduct(){
+  db.collection("shops").doc(currentUser.uid).collection("products").add({
+    name:productName.value,
+    price:Number(productPrice.value),
+    stock:Number(productStock.value)||0,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  productName.value="";
+  productPrice.value="";
+  productStock.value="";
 }
 
-function listenProducts() {
-  db.collection("shops")
-    .doc(currentUser.uid)
-    .collection("products")
-    .orderBy("createdAt","desc")
-    .onSnapshot(snapshot => {
-
-      const list = document.getElementById("productList");
-      list.innerHTML = "";
-
-      snapshot.forEach(doc => {
-        const p = doc.data();
-
-        list.innerHTML += `
-          <div class="card product-item">
-            <div>
-              <strong>${p.name}</strong><br>
-              ${p.price} so‘m
-            </div>
-            <button onclick="deleteProduct('${doc.id}')">O‘chirish</button>
-          </div>
-        `;
-      });
-
-    });
-}
-
-function deleteProduct(id) {
-  db.collection("shops")
-    .doc(currentUser.uid)
-    .collection("products")
-    .doc(id)
-    .delete();
-}
-/* ================================
-   POS SYSTEM
-================================ */
-
-let posProducts = [];
-let cart = [];
-
-/* Load products for POS */
-function loadPOSProducts() {
-  db.collection("shops")
-    .doc(currentUser.uid)
-    .collection("products")
-    .onSnapshot(snapshot => {
-
-      posProducts = [];
-
-      snapshot.forEach(doc => {
-        posProducts.push({
-          id: doc.id,
-          ...doc.data()
-        });
-      });
-
-      renderPOSProducts();
-    });
-}
-
-/* Render POS product grid */
-function renderPOSProducts() {
-
-  const search = document.getElementById("posSearch").value.toLowerCase();
-  const container = document.getElementById("posProductList");
-  container.innerHTML = "";
-
-  posProducts
-    .filter(p => p.name.toLowerCase().includes(search))
-    .forEach(p => {
-
-      container.innerHTML += `
-        <div class="card" style="cursor:pointer;" onclick="addToCart('${p.id}')">
+function listenProducts(){
+  db.collection("shops").doc(currentUser.uid)
+  .collection("products")
+  .onSnapshot(snapshot=>{
+    productList.innerHTML="";
+    snapshot.forEach(doc=>{
+      const p=doc.data();
+      productList.innerHTML+=`
+        <div class="card">
           <strong>${p.name}</strong><br>
           ${p.price} so'm<br>
-          <small>Ombor: ${p.stock || 0}</small>
-        </div>
-      `;
+          Stock: ${p.stock||0}
+        </div>`;
+    });
+  });
+}
+
+/* ========================= POS ========================= */
+
+let posProducts=[];
+let cart=[];
+
+function loadPOSProducts(){
+  db.collection("shops").doc(currentUser.uid)
+  .collection("products")
+  .onSnapshot(snapshot=>{
+    posProducts=[];
+    snapshot.forEach(doc=>{
+      posProducts.push({id:doc.id,...doc.data()});
+    });
+    renderPOSProducts();
+  });
+}
+
+function renderPOSProducts(){
+  const search=(posSearch.value||"").toLowerCase();
+  posProductList.innerHTML="";
+  posProducts
+    .filter(p=>p.name.toLowerCase().includes(search))
+    .forEach(p=>{
+      posProductList.innerHTML+=`
+        <div class="card pos-item" onclick="addToCart('${p.id}')">
+          <strong>${p.name}</strong><br>
+          ${p.price} so'm<br>
+          <small>Stock:${p.stock||0}</small>
+        </div>`;
     });
 }
 
-/* Add to cart */
-function addToCart(productId) {
-
-  const product = posProducts.find(p => p.id === productId);
-  if (!product) return;
-
-  if ((product.stock || 0) <= 0) {
-    alert("Mahsulot omborda yo'q!");
-    return;
-  }
-
-  const existing = cart.find(i => i.id === productId);
-
-  if (existing) {
-    if (existing.quantity >= product.stock) {
-      alert("Yetarli stock yo'q!");
-      return;
-    }
+function addToCart(id){
+  const product=posProducts.find(p=>p.id===id);
+  if(!product||product.stock<=0){alert("Stock yo'q");return;}
+  const existing=cart.find(i=>i.id===id);
+  if(existing){
+    if(existing.quantity>=product.stock){alert("Yetarli stock yo'q");return;}
     existing.quantity++;
-  } else {
-    cart.push({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      quantity: 1,
-      stock: product.stock
-    });
+  }else{
+    cart.push({...product,quantity:1});
   }
-
   renderCart();
 }
 
-/* Render cart */
-function renderCart() {
-
-  const container = document.getElementById("cartList");
-  container.innerHTML = "";
-
-  let total = 0;
-
-  cart.forEach(item => {
-
-    total += item.price * item.quantity;
-
-    container.innerHTML += `
-      <div style="margin-bottom:10px;">
-        <strong>${item.name}</strong><br>
-        ${item.price} × 
-        <button onclick="changeQty('${item.id}', -1)">-</button>
-        ${item.quantity}
-        <button onclick="changeQty('${item.id}', 1)">+</button>
-        = ${item.price * item.quantity}
+function renderCart(){
+  cartList.innerHTML="";
+  let total=0;
+  cart.forEach(item=>{
+    total+=item.price*item.quantity;
+    cartList.innerHTML+=`
+      <div>
+        ${item.name} x ${item.quantity}
         <button onclick="removeFromCart('${item.id}')">❌</button>
-      </div>
-    `;
+      </div>`;
   });
-
-  document.getElementById("cartTotal").innerText = total;
+  cartTotal.innerText=total+" so'm";
 }
 
-/* Change quantity */
-function changeQty(id, amount) {
-
-  const item = cart.find(i => i.id === id);
-  if (!item) return;
-
-  if (amount === 1 && item.quantity >= item.stock) {
-    alert("Stock yetarli emas!");
-    return;
-  }
-
-  item.quantity += amount;
-
-  if (item.quantity <= 0) {
-    cart = cart.filter(i => i.id !== id);
-  }
-
+function removeFromCart(id){
+  cart=cart.filter(i=>i.id!==id);
   renderCart();
 }
 
-/* Remove item */
-function removeFromCart(id) {
-  cart = cart.filter(i => i.id !== id);
-  renderCart();
-}
+async function completeSale(){
+  if(cart.length===0){alert("Savatcha bo'sh");return;}
+  const total=cart.reduce((s,i)=>s+i.price*i.quantity,0);
+  const batch=db.batch();
+  const saleRef=db.collection("shops").doc(currentUser.uid)
+    .collection("sales").doc();
 
-/* Complete Sale */
-async function completeSale() {
-
-  if (cart.length === 0) {
-    alert("Savatcha bo'sh!");
-    return;
-  }
-
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-  const saleRef = db.collection("shops")
-    .doc(currentUser.uid)
-    .collection("sales")
-    .doc();
-
-  const batch = db.batch();
-
-  // Create sale record
-  batch.set(saleRef, {
-    items: cart.map(i => ({
-      productId: i.id,
-      name: i.name,
-      price: i.price,
-      quantity: i.quantity
-    })),
-    total: total,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  batch.set(saleRef,{
+    items:cart,
+    total,
+    createdAt:firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  // Update stock
-  cart.forEach(item => {
-    const productRef = db.collection("shops")
-      .doc(currentUser.uid)
-      .collection("products")
-      .doc(item.id);
-
-    batch.update(productRef, {
-      stock: item.stock - item.quantity
-    });
+  cart.forEach(item=>{
+    const ref=db.collection("shops").doc(currentUser.uid)
+      .collection("products").doc(item.id);
+    batch.update(ref,{stock:item.stock-item.quantity});
   });
 
   await batch.commit();
-
-  cart = [];
+  cart=[];
   renderCart();
-  alert("Sotuv muvaffaqiyatli!");
-
+  alert("Sotuv yakunlandi");
 }
 
-/* Load POS when view opens */
-function showView(view) {
-
-  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-  event.target.classList.add("active");
-
-  document.getElementById("dashboardView").classList.add("hidden");
-  document.getElementById("productsView").classList.add("hidden");
-  document.getElementById("posView").classList.add("hidden");
-
-  document.getElementById(view + "View").classList.remove("hidden");
-
-  if (view === "pos") {
-    loadPOSProducts();
-  }
+function toggleTheme(){
+  document.body.classList.toggle("light");
 }
+
 </script>
-
 </body>
 </html>
