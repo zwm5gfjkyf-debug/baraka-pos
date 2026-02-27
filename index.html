@@ -20,14 +20,14 @@
       margin: 100px auto;
       padding: 20px;
       background: #1e293b;
-      border-radius: 10px;
+      border-radius: 12px;
     }
 
     input {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
-      border-radius: 5px;
+      border-radius: 6px;
       border: none;
     }
 
@@ -37,13 +37,16 @@
       margin-top: 10px;
       background: #10b981;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       color: white;
       cursor: pointer;
     }
+
+    button:hover {
+      opacity: 0.9;
+    }
   </style>
 </head>
-
 <body>
 
   <!-- LOGIN -->
@@ -71,39 +74,31 @@
     <button onclick="logout()">Chiqish</button>
   </div>
 
-  <!-- Firebase Compat (v8 style) -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // ===============================
-    // 🔥 FIREBASE CONFIG
-    // ===============================
+    // ✅ YOUR NEW CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzs6n66fLSWBhobX-GOnROx-QvR8eH9gU",
+      authDomain: "baraka-pos-2.firebaseapp.com",
+      projectId: "baraka-pos-2",
+      storageBucket: "baraka-pos-2.firebasestorage.app",
+      messagingSenderId: "3915833554",
+      appId: "1:3915833554:web:36144e4699aaf4249e0d0b",
+      measurementId: "G-0MQEE5DWLK"
+    };
 
- const firebaseConfig = {
-  apiKey: "AIzaSyAu20DO1INj1el7n9dZmUx6NwwOZAKhT-A",
-  authDomain: "baraka-pos-d0964.firebaseapp.com",
-  projectId: "baraka-pos-d0964",
-  storageBucket: "baraka-pos-d0964.firebasestorage.app",
-  messagingSenderId: "12043762678",
-  appId: "1:12043762678:web:859a6e1fca0296d9fe25d7",
-  measurementId: "G-V7GR4DJK2M"
-};
     firebase.initializeApp(firebaseConfig);
 
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-
-    // ===============================
-    // PAGE REFERENCES
-    // ===============================
-
     const loginPage = document.getElementById("loginPage");
     const registerPage = document.getElementById("registerPage");
     const homePage = document.getElementById("homePage");
-
 
     function showLogin() {
       loginPage.classList.remove("hidden");
@@ -120,28 +115,17 @@
     function showHome(shopName) {
       document.getElementById("welcomeText").innerText =
         "Xush kelibsiz, " + shopName;
-
       homePage.classList.remove("hidden");
       loginPage.classList.add("hidden");
       registerPage.classList.add("hidden");
     }
 
-
-    // ===============================
-    // REGISTER
-    // ===============================
-
     async function register() {
-      const email = document.getElementById("registerEmail").value;
-      const password = document.getElementById("registerPassword").value;
-      const shopName = document.getElementById("shopName").value;
-
-      if (!email || !password || !shopName) {
-        alert("Barcha maydonlarni to‘ldiring!");
-        return;
-      }
-
       try {
+        const email = document.getElementById("registerEmail").value;
+        const password = document.getElementById("registerPassword").value;
+        const shopName = document.getElementById("shopName").value;
+
         const userCredential =
           await auth.createUserWithEmailAndPassword(email, password);
 
@@ -150,46 +134,29 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        alert("Ro‘yxatdan o‘tish muvaffaqiyatli!");
-
+        alert("Muvaffaqiyatli ro‘yxatdan o‘tildi!");
       } catch (error) {
         alert(error.message);
       }
     }
 
-
-    // ===============================
-    // LOGIN
-    // ===============================
-
     async function login() {
-      const email = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
-
       try {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
         await auth.signInWithEmailAndPassword(email, password);
       } catch (error) {
         alert(error.message);
       }
     }
 
-
-    // ===============================
-    // LOGOUT
-    // ===============================
-
     function logout() {
       auth.signOut();
     }
 
-
-    // ===============================
-    // AUTH STATE LISTENER
-    // ===============================
-
     auth.onAuthStateChanged(async user => {
       if (user) {
-
         const doc = await db.collection("shops").doc(user.uid).get();
 
         if (doc.exists) {
@@ -198,7 +165,6 @@
         } else {
           showLogin();
         }
-
       } else {
         showLogin();
       }
