@@ -1,19 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Baraka POS</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+    .hidden { display: none; }
+    .container {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      background: #1e293b;
+      border-radius: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #10b981;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>Baraka POS Loading...</h1>
+  <!-- KIRISH -->
+  <div id="loginPage" class="container hidden">
+    <h2>Kirish</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Parol">
+    <button onclick="login()">Kirish</button>
+    <button onclick="showRegister()">Ro‘yxatdan o‘tish</button>
+  </div>
+
+  <!-- RO‘YXATDAN O‘TISH -->
+  <div id="registerPage" class="container hidden">
+    <h2>Do‘kon yaratish</h2>
+    <input type="text" id="shopName" placeholder="Do‘kon nomi">
+    <input type="email" id="registerEmail" placeholder="Email">
+    <input type="password" id="registerPassword" placeholder="Parol">
+    <button onclick="register()">Ro‘yxatdan o‘tish</button>
+    <button onclick="showLogin()">Orqaga</button>
+  </div>
+
+  <!-- ASOSIY SAHIFA -->
+  <div id="homePage" class="container hidden">
+    <h2 id="welcomeText"></h2>
+    <button onclick="logout()">Chiqish</button>
+  </div>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js"></script>
+
+  <script>
+    const loginPage = document.getElementById("loginPage");
+    const registerPage = document.getElementById("registerPage");
+    const homePage = document.getElementById("homePage");
+
+    function showLogin() {
+      loginPage.classList.remove("hidden");
+      registerPage.classList.add("hidden");
+      homePage.classList.add("hidden");
+    }
+
+    function showRegister() {
+      registerPage.classList.remove("hidden");
+      loginPage.classList.add("hidden");
+      homePage.classList.add("hidden");
+    }
+
+    function showHome(user, shopName) {
+      document.getElementById("welcomeText").innerText =
+        "Xush kelibsiz, " + shopName;
+      homePage.classList.remove("hidden");
+      loginPage.classList.add("hidden");
+      registerPage.classList.add("hidden");
+    }
+
+    async function register() {
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+      const shopName = document.getElementById("shopName").value;
+
+      const userCredential =
+        await auth.createUserWithEmailAndPassword(email, password);
+
+      await db.collection("shops").doc(userCredential.user.uid).set({
+        shopName: shopName,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    async function login() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      await auth.signInWithEmailAndPassword(email, password);
+    }
+
+    function logout() {
+      auth.signOut();
+    }
+
+    auth.onAuthStateChanged(async user => {
+      if (user) {
+        const doc = await db.collection("shops").doc(user.uid).get();
+        const shopName = doc.data().shopName;
+        showHome(user, shopName);
+      } else {
+        showLogin();
+      }
+    });
+  </script>
 
 </body>
 </html>
