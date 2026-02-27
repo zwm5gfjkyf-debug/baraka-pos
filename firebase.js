@@ -1,7 +1,3 @@
-// ================================
-// 🔥 Firebase Config (baraka-pos-2)
-// ================================
-
 const firebaseConfig = {
   apiKey: "AIzaSyBzs6n66fLSWBhobX-GOnROx-QvR8eH9gU",
   authDomain: "baraka-pos-2.firebaseapp.com",
@@ -12,12 +8,7 @@ const firebaseConfig = {
   measurementId: "G-0MQEE5DWLK"
 };
 
-// ================================
-// 🚀 Initialize Firebase (COMPAT)
-// ================================
-
 firebase.initializeApp(firebaseConfig);
 
-// Services
 const auth = firebase.auth();
 const db = firebase.firestore();
