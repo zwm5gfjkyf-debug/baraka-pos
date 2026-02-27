@@ -1,176 +1,263 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Baraka POS</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baraka POS</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
 
-    .hidden { display: none; }
+body {
+  background: #0f172a;
+  color: white;
+}
 
-    .container {
-      max-width: 400px;
-      margin: 100px auto;
-      padding: 20px;
-      background: #1e293b;
-      border-radius: 12px;
-    }
+.hidden { display: none; }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: none;
-    }
+.container {
+  max-width: 500px;
+  margin: 80px auto;
+  padding: 25px;
+  background: #1e293b;
+  border-radius: 12px;
+}
 
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      background: #10b981;
-      border: none;
-      border-radius: 6px;
-      color: white;
-      cursor: pointer;
-    }
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
 
-    button:hover {
-      opacity: 0.9;
-    }
-  </style>
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: #10b981;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #059669;
+}
+
+.product {
+  background: #334155;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-btn {
+  background: #ef4444;
+  width: auto;
+  padding: 6px 12px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+</style>
 </head>
+
 <body>
 
-  <!-- LOGIN -->
-  <div id="loginPage" class="container hidden">
-    <h2>Kirish</h2>
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Parol">
-    <button onclick="login()">Kirish</button>
-    <button onclick="showRegister()">Ro‘yxatdan o‘tish</button>
-  </div>
+<!-- LOGIN -->
+<div id="loginPage" class="container">
+  <h2>Kirish</h2>
+  <input type="email" id="loginEmail" placeholder="Email">
+  <input type="password" id="loginPassword" placeholder="Parol">
+  <button onclick="login()">Kirish</button>
+  <button onclick="showRegister()">Ro‘yxatdan o‘tish</button>
+</div>
 
-  <!-- REGISTER -->
-  <div id="registerPage" class="container hidden">
-    <h2>Do‘kon yaratish</h2>
-    <input type="text" id="shopName" placeholder="Do‘kon nomi">
-    <input type="email" id="registerEmail" placeholder="Email">
-    <input type="password" id="registerPassword" placeholder="Parol">
-    <button onclick="register()">Ro‘yxatdan o‘tish</button>
-    <button onclick="showLogin()">Orqaga</button>
-  </div>
+<!-- REGISTER -->
+<div id="registerPage" class="container hidden">
+  <h2>Do‘kon yaratish</h2>
+  <input type="text" id="shopName" placeholder="Do‘kon nomi">
+  <input type="email" id="registerEmail" placeholder="Email">
+  <input type="password" id="registerPassword" placeholder="Parol">
+  <button onclick="register()">Ro‘yxatdan o‘tish</button>
+  <button onclick="showLogin()">Orqaga</button>
+</div>
 
-  <!-- HOME -->
-  <div id="homePage" class="container hidden">
-    <h2 id="welcomeText"></h2>
+<!-- DASHBOARD -->
+<div id="dashboard" class="container hidden">
+
+  <div class="header">
+    <h2 id="shopTitle"></h2>
     <button onclick="logout()">Chiqish</button>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <h3>Mahsulot qo‘shish</h3>
+  <input type="text" id="productName" placeholder="Mahsulot nomi">
+  <input type="number" id="productPrice" placeholder="Narxi">
+  <button onclick="addProduct()">Qo‘shish</button>
 
-  <script>
-    // ✅ YOUR NEW CONFIG
-    const firebaseConfig = {
-      apiKey: "AIzaSyBzs6n66fLSWBhobX-GOnROx-QvR8eH9gU",
-      authDomain: "baraka-pos-2.firebaseapp.com",
-      projectId: "baraka-pos-2",
-      storageBucket: "baraka-pos-2.firebasestorage.app",
-      messagingSenderId: "3915833554",
-      appId: "1:3915833554:web:36144e4699aaf4249e0d0b",
-      measurementId: "G-0MQEE5DWLK"
-    };
+  <h3 style="margin-top:20px;">Mahsulotlar</h3>
+  <div id="productList"></div>
 
-    firebase.initializeApp(firebaseConfig);
+</div>
 
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase.js"></script>
 
-    const loginPage = document.getElementById("loginPage");
-    const registerPage = document.getElementById("registerPage");
-    const homePage = document.getElementById("homePage");
+<script>
 
-    function showLogin() {
-      loginPage.classList.remove("hidden");
-      registerPage.classList.add("hidden");
-      homePage.classList.add("hidden");
-    }
+const loginPage = document.getElementById("loginPage");
+const registerPage = document.getElementById("registerPage");
+const dashboard = document.getElementById("dashboard");
 
-    function showRegister() {
-      registerPage.classList.remove("hidden");
-      loginPage.classList.add("hidden");
-      homePage.classList.add("hidden");
-    }
+let currentUser = null;
+let unsubscribeProducts = null;
 
-    function showHome(shopName) {
-      document.getElementById("welcomeText").innerText =
-        "Xush kelibsiz, " + shopName;
-      homePage.classList.remove("hidden");
-      loginPage.classList.add("hidden");
-      registerPage.classList.add("hidden");
-    }
+function showRegister() {
+  loginPage.classList.add("hidden");
+  registerPage.classList.remove("hidden");
+}
 
-    async function register() {
-      try {
-        const email = document.getElementById("registerEmail").value;
-        const password = document.getElementById("registerPassword").value;
-        const shopName = document.getElementById("shopName").value;
+function showLogin() {
+  registerPage.classList.add("hidden");
+  loginPage.classList.remove("hidden");
+}
 
-        const userCredential =
-          await auth.createUserWithEmailAndPassword(email, password);
+function showDashboard(shopName) {
+  loginPage.classList.add("hidden");
+  registerPage.classList.add("hidden");
+  dashboard.classList.remove("hidden");
+  document.getElementById("shopTitle").innerText =
+    "Xush kelibsiz, " + shopName;
+}
 
-        await db.collection("shops").doc(userCredential.user.uid).set({
-          shopName: shopName,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+async function register() {
+  const email = registerEmail.value;
+  const password = registerPassword.value;
+  const shopName = document.getElementById("shopName").value;
 
-        alert("Muvaffaqiyatli ro‘yxatdan o‘tildi!");
-      } catch (error) {
-        alert(error.message);
-      }
-    }
+  const userCredential =
+    await auth.createUserWithEmailAndPassword(email, password);
 
-    async function login() {
-      try {
-        const email = document.getElementById("loginEmail").value;
-        const password = document.getElementById("loginPassword").value;
+  await db.collection("shops").doc(userCredential.user.uid).set({
+    shopName: shopName,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
 
-        await auth.signInWithEmailAndPassword(email, password);
-      } catch (error) {
-        alert(error.message);
-      }
-    }
+async function login() {
+  const email = loginEmail.value;
+  const password = loginPassword.value;
 
-    function logout() {
-      auth.signOut();
-    }
+  await auth.signInWithEmailAndPassword(email, password);
+}
 
-    auth.onAuthStateChanged(async user => {
-      if (user) {
-        const doc = await db.collection("shops").doc(user.uid).get();
+function logout() {
+  if (unsubscribeProducts) unsubscribeProducts();
+  auth.signOut();
+}
 
-        if (doc.exists) {
-          const shopName = doc.data().shopName;
-          showHome(shopName);
-        } else {
-          showLogin();
-        }
-      } else {
-        showLogin();
-      }
+function listenProducts(uid) {
+  const productList = document.getElementById("productList");
+
+  unsubscribeProducts = db
+    .collection("shops")
+    .doc(uid)
+    .collection("products")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+
+      productList.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+
+        const div = document.createElement("div");
+        div.className = "product";
+
+        div.innerHTML = `
+          <div>
+            <strong>${data.name}</strong><br>
+            ${data.price} so'm
+          </div>
+          <button class="delete-btn"
+            onclick="deleteProduct('${doc.id}')">
+            O‘chirish
+          </button>
+        `;
+
+        productList.appendChild(div);
+      });
+
+    });
+}
+
+async function addProduct() {
+  const name = productName.value;
+  const price = productPrice.value;
+
+  if (!name || !price) return;
+
+  await db.collection("shops")
+    .doc(currentUser.uid)
+    .collection("products")
+    .add({
+      name: name,
+      price: Number(price),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-  </script>
+  productName.value = "";
+  productPrice.value = "";
+}
+
+async function deleteProduct(productId) {
+  await db.collection("shops")
+    .doc(currentUser.uid)
+    .collection("products")
+    .doc(productId)
+    .delete();
+}
+
+auth.onAuthStateChanged(async user => {
+  if (user) {
+    currentUser = user;
+
+    const doc = await db
+      .collection("shops")
+      .doc(user.uid)
+      .get();
+
+    const shopName = doc.data().shopName;
+
+    showDashboard(shopName);
+    listenProducts(user.uid);
+
+  } else {
+    dashboard.classList.add("hidden");
+    showLogin();
+  }
+});
+
+</script>
 
 </body>
 </html>
