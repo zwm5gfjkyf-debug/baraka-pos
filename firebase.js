@@ -3,7 +3,7 @@
 // ===============================
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAu20D0I1Niel7n9dZmUx6Nw0ZAKhT-A",
+  apiKey: "AIzaSyAu20DO1INj1el7n9dZmUx6NwwOZAKhT-A",
   authDomain: "baraka-pos-d0964.firebaseapp.com",
   projectId: "baraka-pos-d0964",
   storageBucket: "baraka-pos-d0964.firebasestorage.app",
