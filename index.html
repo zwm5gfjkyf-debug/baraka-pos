@@ -1,79 +1,408 @@
 <!DOCTYPE html>
-<html>
+<html lang="uz">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Baraka POS</title>
 
+<!-- Firebase CDN -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="firebase.js"></script>
 
 <style>
-body { background:#0f172a; color:white; font-family:Arial; text-align:center; margin-top:100px; }
-input { padding:10px; margin:5px; width:250px; }
-button { padding:10px; margin:5px; width:270px; background:#10b981; border:none; color:white; }
+
+/* =========================
+   ROOT THEME SYSTEM
+========================= */
+
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --sidebar: #111827;
+  --primary: #10b981;
+  --primary-dark: #059669;
+  --text: #ffffff;
+  --text-soft: #94a3b8;
+  --danger: #ef4444;
+}
+
+.light {
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --sidebar: #e2e8f0;
+  --primary: #10b981;
+  --primary-dark: #059669;
+  --text: #0f172a;
+  --text-soft: #475569;
+  --danger: #ef4444;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+  width: 240px;
+  background: var(--sidebar);
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-soft);
+  padding: 12px 0;
+  text-align: left;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.nav-btn:hover {
+  color: var(--primary);
+}
+
+.nav-btn.active {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.bottom-actions {
+  margin-top: auto;
+}
+
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: var(--card);
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap: 20px;
+}
+
+.stat-title {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* =========================
+   BUTTONS & INPUTS
+========================= */
+
+.button {
+  background: var(--primary);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.button:hover {
+  background: var(--primary-dark);
+}
+
+.input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* =========================
+   PRODUCT LIST
+========================= */
+
+.product-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-item button {
+  background: var(--danger);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+/* =========================
+   AUTH PAGE
+========================= */
+
+.auth-container {
+  width: 360px;
+  margin: auto;
+  background: var(--card);
+  padding: 30px;
+  border-radius: 14px;
+}
+
+.hidden { display: none; }
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+}
+
 </style>
 </head>
 
 <body>
 
-<h2>Baraka POS</h2>
-
-<div id="auth">
-  <input id="email" placeholder="Email"><br>
-  <input id="password" type="password" placeholder="Password"><br>
-  <button onclick="register()">Register</button>
-  <button onclick="login()">Login</button>
+<!-- AUTH PAGE -->
+<div id="authPage" class="auth-container">
+  <h2 style="margin-bottom:20px;">Baraka POS</h2>
+  <input id="email" class="input" placeholder="Email">
+  <input id="password" class="input" type="password" placeholder="Parol">
+  <button class="button" onclick="register()">Ro‘yxatdan o‘tish</button>
+  <button class="button" onclick="login()" style="margin-top:10px;">Kirish</button>
 </div>
 
-<div id="dashboard" style="display:none;">
-  <h3 id="welcome"></h3>
-  <button onclick="logout()">Logout</button>
+<!-- APP -->
+<div id="app" class="hidden" style="display:flex;width:100%;">
+
+  <div class="sidebar">
+    <div>
+      <div class="logo">Baraka</div>
+      <button class="nav-btn active" onclick="showView('dashboard')">Dashboard</button>
+      <button class="nav-btn" onclick="showView('products')">Mahsulotlar</button>
+    </div>
+
+    <div class="bottom-actions">
+      <button class="nav-btn" onclick="toggleTheme()">Dark/Light</button>
+      <button class="nav-btn" onclick="logout()">Chiqish</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- HEADER -->
+    <div class="header">
+      <h2 id="shopTitle"></h2>
+      <div id="userEmail" style="font-size:13px;color:var(--text-soft);"></div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView">
+
+      <div class="stat-grid">
+        <div class="card">
+          <div class="stat-title">Bugungi savdo</div>
+          <div class="stat-value">0 so‘m</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-title">Haftalik savdo</div>
+          <div class="stat-value">0 so‘m</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-title">Oylik savdo</div>
+          <div class="stat-value">0 so‘m</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PRODUCTS VIEW -->
+    <div id="productsView" class="hidden">
+
+      <div class="card">
+        <h3>Mahsulot qo‘shish</h3>
+        <input id="productName" class="input" placeholder="Nomi">
+        <input id="productPrice" class="input" type="number" placeholder="Narxi">
+        <button class="button" onclick="addProduct()">Qo‘shish</button>
+      </div>
+
+      <div id="productList"></div>
+
+    </div>
+
+  </div>
 </div>
 
 <script>
 
-function register() {
-  const email = emailInput();
-  const password = passwordInput();
+/* =========================
+   SPA VIEW SWITCH
+========================= */
 
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(() => alert("Registered"))
-    .catch(e => alert(e.message));
+function showView(view) {
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  event.target.classList.add("active");
+
+  document.getElementById("dashboardView").classList.add("hidden");
+  document.getElementById("productsView").classList.add("hidden");
+
+  document.getElementById(view + "View").classList.remove("hidden");
+}
+
+/* =========================
+   THEME TOGGLE
+========================= */
+
+function toggleTheme() {
+  document.body.classList.toggle("light");
+}
+
+/* =========================
+   AUTH SYSTEM
+========================= */
+
+let currentUser = null;
+
+function register() {
+  auth.createUserWithEmailAndPassword(
+    document.getElementById("email").value,
+    document.getElementById("password").value
+  );
 }
 
 function login() {
-  const email = emailInput();
-  const password = passwordInput();
-
-  auth.signInWithEmailAndPassword(email, password)
-    .catch(e => alert(e.message));
+  auth.signInWithEmailAndPassword(
+    document.getElementById("email").value,
+    document.getElementById("password").value
+  );
 }
 
 function logout() {
   auth.signOut();
 }
 
-function emailInput() {
-  return document.getElementById("email").value;
-}
-
-function passwordInput() {
-  return document.getElementById("password").value;
-}
-
 auth.onAuthStateChanged(user => {
   if (user) {
-    document.getElementById("auth").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-    document.getElementById("welcome").innerText =
-      "Logged in as: " + user.email;
+    currentUser = user;
+    document.getElementById("authPage").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    document.getElementById("userEmail").innerText = user.email;
+    document.getElementById("shopTitle").innerText = "Xush kelibsiz";
+    listenProducts();
   } else {
-    document.getElementById("auth").style.display = "block";
-    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("authPage").classList.remove("hidden");
+    document.getElementById("app").classList.add("hidden");
   }
 });
+
+/* =========================
+   PRODUCTS SYSTEM
+========================= */
+
+function addProduct() {
+  const name = productName.value;
+  const price = Number(productPrice.value);
+
+  db.collection("shops")
+    .doc(currentUser.uid)
+    .collection("products")
+    .add({
+      name,
+      price,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  productName.value = "";
+  productPrice.value = "";
+}
+
+function listenProducts() {
+  db.collection("shops")
+    .doc(currentUser.uid)
+    .collection("products")
+    .orderBy("createdAt","desc")
+    .onSnapshot(snapshot => {
+
+      const list = document.getElementById("productList");
+      list.innerHTML = "";
+
+      snapshot.forEach(doc => {
+        const p = doc.data();
+
+        list.innerHTML += `
+          <div class="card product-item">
+            <div>
+              <strong>${p.name}</strong><br>
+              ${p.price} so‘m
+            </div>
+            <button onclick="deleteProduct('${doc.id}')">O‘chirish</button>
+          </div>
+        `;
+      });
+
+    });
+}
+
+function deleteProduct(id) {
+  db.collection("shops")
+    .doc(currentUser.uid)
+    .collection("products")
+    .doc(id)
+    .delete();
+}
 
 </script>
 
