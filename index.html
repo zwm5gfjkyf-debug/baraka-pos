@@ -295,7 +295,39 @@ body {
 
     <!-- PRODUCTS VIEW -->
     <div id="productsView" class="hidden">
+<!-- POS VIEW -->
+<div id="posView" class="hidden">
 
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:30px;">
+
+    <!-- LEFT SIDE (PRODUCTS) -->
+    <div>
+
+      <div class="card">
+        <h3>Mahsulot qidirish</h3>
+        <input id="posSearch" class="input" placeholder="Qidirish..." oninput="renderPOSProducts()">
+      </div>
+
+      <div id="posProductList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:15px;"></div>
+
+    </div>
+
+    <!-- RIGHT SIDE (CART) -->
+    <div>
+
+      <div class="card">
+        <h3>Savatcha</h3>
+        <div id="cartList"></div>
+        <hr style="margin:15px 0;border-color:rgba(255,255,255,0.05)">
+        <h3>Jami: <span id="cartTotal">0</span> so'm</h3>
+        <button class="button" style="margin-top:15px;width:100%;" onclick="completeSale()">Sotuvni yakunlash</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
       <div class="card">
         <h3>Mahsulot qo‘shish</h3>
         <input id="productName" class="input" placeholder="Nomi">
@@ -427,7 +459,205 @@ function deleteProduct(id) {
     .doc(id)
     .delete();
 }
+/* ================================
+   POS SYSTEM
+================================ */
 
+let posProducts = [];
+let cart = [];
+
+/* Load products for POS */
+function loadPOSProducts() {
+  db.collection("shops")
+    .doc(currentUser.uid)
+    .collection("products")
+    .onSnapshot(snapshot => {
+
+      posProducts = [];
+
+      snapshot.forEach(doc => {
+        posProducts.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+
+      renderPOSProducts();
+    });
+}
+
+/* Render POS product grid */
+function renderPOSProducts() {
+
+  const search = document.getElementById("posSearch").value.toLowerCase();
+  const container = document.getElementById("posProductList");
+  container.innerHTML = "";
+
+  posProducts
+    .filter(p => p.name.toLowerCase().includes(search))
+    .forEach(p => {
+
+      container.innerHTML += `
+        <div class="card" style="cursor:pointer;" onclick="addToCart('${p.id}')">
+          <strong>${p.name}</strong><br>
+          ${p.price} so'm<br>
+          <small>Ombor: ${p.stock || 0}</small>
+        </div>
+      `;
+    });
+}
+
+/* Add to cart */
+function addToCart(productId) {
+
+  const product = posProducts.find(p => p.id === productId);
+  if (!product) return;
+
+  if ((product.stock || 0) <= 0) {
+    alert("Mahsulot omborda yo'q!");
+    return;
+  }
+
+  const existing = cart.find(i => i.id === productId);
+
+  if (existing) {
+    if (existing.quantity >= product.stock) {
+      alert("Yetarli stock yo'q!");
+      return;
+    }
+    existing.quantity++;
+  } else {
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      stock: product.stock
+    });
+  }
+
+  renderCart();
+}
+
+/* Render cart */
+function renderCart() {
+
+  const container = document.getElementById("cartList");
+  container.innerHTML = "";
+
+  let total = 0;
+
+  cart.forEach(item => {
+
+    total += item.price * item.quantity;
+
+    container.innerHTML += `
+      <div style="margin-bottom:10px;">
+        <strong>${item.name}</strong><br>
+        ${item.price} × 
+        <button onclick="changeQty('${item.id}', -1)">-</button>
+        ${item.quantity}
+        <button onclick="changeQty('${item.id}', 1)">+</button>
+        = ${item.price * item.quantity}
+        <button onclick="removeFromCart('${item.id}')">❌</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("cartTotal").innerText = total;
+}
+
+/* Change quantity */
+function changeQty(id, amount) {
+
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+
+  if (amount === 1 && item.quantity >= item.stock) {
+    alert("Stock yetarli emas!");
+    return;
+  }
+
+  item.quantity += amount;
+
+  if (item.quantity <= 0) {
+    cart = cart.filter(i => i.id !== id);
+  }
+
+  renderCart();
+}
+
+/* Remove item */
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  renderCart();
+}
+
+/* Complete Sale */
+async function completeSale() {
+
+  if (cart.length === 0) {
+    alert("Savatcha bo'sh!");
+    return;
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const saleRef = db.collection("shops")
+    .doc(currentUser.uid)
+    .collection("sales")
+    .doc();
+
+  const batch = db.batch();
+
+  // Create sale record
+  batch.set(saleRef, {
+    items: cart.map(i => ({
+      productId: i.id,
+      name: i.name,
+      price: i.price,
+      quantity: i.quantity
+    })),
+    total: total,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  // Update stock
+  cart.forEach(item => {
+    const productRef = db.collection("shops")
+      .doc(currentUser.uid)
+      .collection("products")
+      .doc(item.id);
+
+    batch.update(productRef, {
+      stock: item.stock - item.quantity
+    });
+  });
+
+  await batch.commit();
+
+  cart = [];
+  renderCart();
+  alert("Sotuv muvaffaqiyatli!");
+
+}
+
+/* Load POS when view opens */
+function showView(view) {
+
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  event.target.classList.add("active");
+
+  document.getElementById("dashboardView").classList.add("hidden");
+  document.getElementById("productsView").classList.add("hidden");
+  document.getElementById("posView").classList.add("hidden");
+
+  document.getElementById(view + "View").classList.remove("hidden");
+
+  if (view === "pos") {
+    loadPOSProducts();
+  }
+}
 </script>
 
 </body>
