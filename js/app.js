@@ -741,32 +741,7 @@ async function completeDebtSale(){
     btn.innerText = "Nasiya berish";
   }
 }
-  /* STOCK DEDUCTION */
-  debtCart.forEach(item=>{
-    const productRef = db.collection("shops")
-      .doc(shopId)
-      .collection("products")
-      .doc(item.id);
-
-    batch.update(productRef,{
-      stock: firebase.firestore.FieldValue.increment(
-        -item.quantity
-      )
-    });
-  });
-
-  await batch.commit();
-
-  debtCart = [];
-  renderDebtCart();
-
-if(btn){
-  btn.disabled = false;
-  btn.innerText = "Nasiya berish";
-}
-
-showSuccess("Nasiya muvaffaqiyatli saqlandi");
-}
+ 
 
 /* LOAD DEBT CUSTOMERS */
 function loadDebtCustomers(){
