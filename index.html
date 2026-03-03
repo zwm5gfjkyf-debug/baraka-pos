@@ -127,30 +127,33 @@
     </div>
 
     <!-- ================= NASIYA ================= -->
-    <div id="debtPage" class="page hidden">
+  <div id="debtPage" class="page hidden">
 
-      <h2>Nasiya savdo</h2>
+  <h2>Nasiya savdo</h2>
 
-      <!-- New Debt Sale -->
-      <div class="card">
-        <input id="debtCustomerName" placeholder="Mijoz ismi">
-        <input id="debtSearch"
-          <div id="debtCartList"></div>
-               placeholder="Mahsulot qidirish..."
-               oninput="searchDebtProducts(this.value)">
-        <div id="debtSearchResults"></div>
+  <div class="card">
+    <input id="debtCustomerName" placeholder="Mijoz ismi">
 
-        <button id="completeDebtBtn"
-                onclick="completeDebtSale()">
-          Nasiya berish
-        </button>
-      </div> <!-- ✅ THIS WAS MISSING -->
+    <input id="debtSearch"
+           placeholder="Mahsulot qidirish..."
+           oninput="searchDebtProducts(this.value)">
 
-      <!-- Debt List -->
-      <div class="card">
-        <h3>Mijozlar qarzdorligi</h3>
-        <div id="debtCustomersList"></div>
-      </div>
+    <div id="debtSearchResults"></div>
+
+    <div id="debtCartList"></div>
+
+    <button id="completeDebtBtn"
+            onclick="completeDebtSale()">
+      Nasiya berish
+    </button>
+  </div>
+
+  <div class="card">
+    <h3>Mijozlar qarzdorligi</h3>
+    <div id="debtCustomersList"></div>
+  </div>
+
+</div>
 
     </div>
 
