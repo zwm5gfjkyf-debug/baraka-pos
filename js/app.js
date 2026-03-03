@@ -596,71 +596,112 @@ function changeDebtQtyManual(id,value){
 /* COMPLETE DEBT SALE (MERGE SAME CUSTOMER) */
 async function completeDebtSale(){
 
+  const btn = document.getElementById("completeDebtBtn");
+
+  if(btn){
+    btn.disabled = true;
+    btn.innerText = "Yuklanmoqda...";
+  }
+
   const customerName =
     document.getElementById("debtCustomerName")
     ?.value.trim();
 
   if(!customerName || debtCart.length===0){
+
+    if(btn){
+      btn.disabled = false;
+      btn.innerText = "Nasiya berish";
+    }
+
     alert("Mijoz yoki mahsulot yo'q");
     return;
   }
 
-  const shopId = auth.currentUser.uid;
+  try{
 
-  const total = debtCart.reduce(
-    (s,i)=>s+i.price*i.quantity,0
-  );
+    const shopId = auth.currentUser.uid;
 
-  const debtsRef = db.collection("shops")
-    .doc(shopId)
-    .collection("debts");
+    const total = debtCart.reduce(
+      (s,i)=>s+i.price*i.quantity,0
+    );
 
-  const existingSnap = await debtsRef
-    .where("customer","==",customerName)
-    .where("status","in",["unpaid","partial"])
-    .get();
+    const debtsRef = db.collection("shops")
+      .doc(shopId)
+      .collection("debts");
 
-  const batch = db.batch();
+    const existingSnap = await debtsRef
+      .where("customer","==",customerName)
+      .where("status","in",["unpaid","partial"])
+      .get();
 
-  if(existingSnap.empty){
-const btn = document.getElementById("completeDebtBtn");
+    const batch = db.batch();
 
-if(btn){
-  btn.disabled = true;
-  btn.innerText = "Yuklanmoqda...";
-}
-    const newDebtRef = debtsRef.doc();
+    if(existingSnap.empty){
 
-    batch.set(newDebtRef,{
-      customer: customerName,
-      items: debtCart,
-      total,
-      remaining: total,
-      status: "unpaid",
-      createdAt:
-        firebase.firestore.FieldValue.serverTimestamp()
+      const newDebtRef = debtsRef.doc();
+
+      batch.set(newDebtRef,{
+        customer: customerName,
+        items: debtCart,
+        total,
+        remaining: total,
+        status: "unpaid",
+        createdAt:
+          firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+    } else {
+
+      const docSnap = existingSnap.docs[0];
+      const debtData = docSnap.data();
+
+      const updatedItems =
+        [...debtData.items, ...debtCart];
+
+      const newTotal = debtData.total + total;
+      const newRemaining =
+        debtData.remaining + total;
+
+      batch.update(docSnap.ref,{
+        items: updatedItems,
+        total: newTotal,
+        remaining: newRemaining,
+        status: "unpaid"
+      });
+    }
+
+    /* STOCK DEDUCTION */
+    debtCart.forEach(item=>{
+      const productRef = db.collection("shops")
+        .doc(shopId)
+        .collection("products")
+        .doc(item.id);
+
+      batch.update(productRef,{
+        stock: firebase.firestore.FieldValue.increment(
+          -item.quantity
+        )
+      });
     });
 
-  } else {
+    await batch.commit();
 
-    const docSnap = existingSnap.docs[0];
-    const debtData = docSnap.data();
+    debtCart = [];
+    renderDebtCart();
 
-    const updatedItems =
-      [...debtData.items, ...debtCart];
+    showSuccess("Nasiya muvaffaqiyatli saqlandi");
 
-    const newTotal = debtData.total + total;
-    const newRemaining =
-      debtData.remaining + total;
-
-    batch.update(docSnap.ref,{
-      items: updatedItems,
-      total: newTotal,
-      remaining: newRemaining,
-      status: "unpaid"
-    });
+  } catch(error){
+    console.error(error);
+    alert("Xatolik yuz berdi");
   }
 
+  if(btn){
+    btn.disabled = false;
+    btn.innerText = "Nasiya berish";
+  }
+}
   /* STOCK DEDUCTION */
   debtCart.forEach(item=>{
     const productRef = db.collection("shops")
