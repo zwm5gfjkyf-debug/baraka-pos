@@ -396,7 +396,11 @@ async function completeSale(){
 
   if(isProcessing) return;
   isProcessing = true;
-
+const btn = document.getElementById("completeSaleBtn");
+if(btn){
+  btn.disabled = true;
+  btn.innerText = "Yuklanmoqda...";
+}
   if(cart.length === 0){
     alert("Savatcha bo'sh");
     isProcessing = false;
@@ -442,10 +446,15 @@ async function completeSale(){
   cart = [];
   renderCart();
 
-  alert("Sotuv muvaffaqiyatli");
-
-  isProcessing = false;
+const btn = document.getElementById("completeSaleBtn");
+if(btn){
+  btn.disabled = false;
+  btn.innerText = "Sotuvni yakunlash";
 }
+
+showSuccess("Muvaffaqiyatli sotildi");
+
+isProcessing = false;
 /* =====================================================
    NASIYA SYSTEM (MERGE SAME CUSTOMER + EDITABLE)
 ===================================================== */
@@ -834,4 +843,19 @@ async function deleteStock(id){
     .collection("products")
     .doc(id)
     .delete();
+}
+function showSuccess(message){
+
+  const overlay = document.getElementById("successOverlay");
+  const text = document.getElementById("successText");
+
+  if(!overlay || !text) return;
+
+  text.innerText = message;
+
+  overlay.classList.remove("hidden");
+
+  setTimeout(()=>{
+    overlay.classList.add("hidden");
+  },1800);
 }
