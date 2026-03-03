@@ -203,21 +203,50 @@ function addToCart(id){
 }
 
 function renderCart(){
-  cartList.innerHTML="";
-  let total=0;
 
-  cart.forEach(item=>{
-    total += item.price*item.quantity;
+  const container = document.getElementById("cartList");
+  container.innerHTML = "";
 
-    cartList.innerHTML+=`
+  let total = 0;
+
+  cart.forEach(item => {
+
+    const itemTotal = item.price * item.quantity;
+    total += itemTotal;
+
+    container.innerHTML += `
       <div class="cart-item">
         <strong>${item.name}</strong><br>
-        ${formatMoney(item.price)} × ${item.quantity}
-        <div>${formatMoney(item.price*item.quantity)} so'm</div>
-      </div>`;
+
+        Narx:
+        <input type="number"
+          value="${item.price}"
+          onchange="changePrice('${item.id}', this.value)">
+
+        <div class="quantity-controls">
+          <button class="qty-btn"
+            onclick="changeQty('${item.id}', -1)">-</button>
+
+          <input type="number"
+            value="${item.quantity}"
+            style="width:60px"
+            onchange="changeQtyManual('${item.id}', this.value)">
+
+          <button class="qty-btn"
+            onclick="changeQty('${item.id}', 1)">+</button>
+        </div>
+
+        <div>Jami: ${formatMoney(itemTotal)} so'm</div>
+
+        <button style="background:red"
+          onclick="removeFromCart('${item.id}')">
+          O'chirish
+        </button>
+      </div>
+    `;
   });
 
-  saleTotal.innerText=formatMoney(total);
+  document.getElementById("saleTotal").innerText = formatMoney(total);
 }
 
 async function completeSale(){
@@ -325,7 +354,24 @@ function renderDebtCart(){
   });
 
 }
+function changePrice(id,newPrice){
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+  item.price = Number(newPrice);
+  renderCart();
+}
 
+function changeQtyManual(id,value){
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+  item.quantity = Number(value);
+  renderCart();
+}
+
+function removeFromCart(id){
+  cart = cart.filter(i=>i.id!==id);
+  renderCart();
+}
 /* Complete Debt Sale */
 async function completeDebtSale(){
 
