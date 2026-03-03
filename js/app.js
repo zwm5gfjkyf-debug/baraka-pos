@@ -610,6 +610,7 @@ function changeDebtQtyManual(id,value){
 }
 
 /* COMPLETE DEBT SALE (MERGE SAME CUSTOMER) */
+/* COMPLETE DEBT SALE (MERGE SAME CUSTOMER) */
 async function completeDebtSale(){
 
   const button = document.getElementById("completeDebtBtn");
@@ -710,39 +711,6 @@ async function completeDebtSale(){
     button.innerText = "Nasiya berish";
   }
 }
-    /* STOCK DEDUCTION */
-    debtCart.forEach(item=>{
-      const productRef = db.collection("shops")
-        .doc(shopId)
-        .collection("products")
-        .doc(item.id);
-
-      batch.update(productRef,{
-        stock: firebase.firestore.FieldValue.increment(
-          -item.quantity
-        )
-      });
-    });
-
-    await batch.commit();
-
-    debtCart = [];
-    renderDebtCart();
-
-    showSuccess("Nasiya muvaffaqiyatli saqlandi");
-
-  } catch(error){
-    console.error(error);
-    alert("Xatolik yuz berdi");
-  }
-
-  if(btn){
-    btn.disabled = false;
-    btn.innerText = "Nasiya berish";
-  }
-}
- 
-
 /* LOAD DEBT CUSTOMERS */
 function loadDebtCustomers(){
 
