@@ -113,6 +113,7 @@ function navigate(pageId){
   if(pageId==="salePage") loadSaleProducts();
   if(pageId==="debtPage") loadDebtCustomers();
   if(pageId==="analyticsPage") loadAnalytics();
+  if(pageId==="stockPage") loadCurrentStock();
 }
 
 /* =========================
