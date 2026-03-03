@@ -643,3 +643,85 @@ function renderMonthlyChart(cashData, debtData){
     }
   );
 }
+/* =========================
+   STOCK SYSTEM (FULL)
+========================= */
+
+function loadCurrentStock(){
+
+  const shopId = auth.currentUser.uid;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("products")
+    .onSnapshot(snapshot=>{
+
+      const container = document.getElementById("currentStockList");
+      if(!container) return;
+
+      container.innerHTML="";
+
+      snapshot.forEach(doc=>{
+        const p = doc.data();
+
+        container.innerHTML += `
+          <div class="card">
+            <strong>${p.name}</strong><br>
+            Ombor: ${p.stock || 0}<br>
+            Kelgan narx: ${formatMoney(p.costPrice)}<br>
+            Sotish narx: ${formatMoney(p.sellingPrice)}
+          </div>
+        `;
+      });
+
+    });
+}
+
+
+async function addStock(){
+
+  const name = document.getElementById("stockName").value.trim();
+  const qty = Number(document.getElementById("stockQty").value);
+  const cost = Number(document.getElementById("stockCost").value);
+  const selling = Number(document.getElementById("stockSellingPrice").value);
+
+  if(!name || qty<=0 || cost<=0 || selling<=0){
+    alert("Barcha maydonlarni to'ldiring");
+    return;
+  }
+
+  const shopId = auth.currentUser.uid;
+  const productsRef = db.collection("shops")
+    .doc(shopId)
+    .collection("products");
+
+  const snapshot = await productsRef.where("name","==",name).get();
+
+  if(snapshot.empty){
+
+    await productsRef.add({
+      name,
+      stock: qty,
+      costPrice: cost,
+      sellingPrice: selling,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  } else {
+
+    const docSnap = snapshot.docs[0];
+
+    await productsRef.doc(docSnap.id).update({
+      stock: firebase.firestore.FieldValue.increment(qty),
+      costPrice: cost,
+      sellingPrice: selling
+    });
+  }
+
+  stockName.value="";
+  stockQty.value="";
+  stockCost.value="";
+  stockSellingPrice.value="";
+
+  loadCurrentStock();
+}
