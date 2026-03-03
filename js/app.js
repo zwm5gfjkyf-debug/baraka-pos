@@ -460,3 +460,33 @@ await statsRef.set({
   button.disabled = false;
   button.innerText = "Sotuvni yakunlash";
 }
+/* =========================
+   LOAD DASHBOARD STATS
+========================= */
+
+function loadDashboard(){
+
+  const shopId = auth.currentUser.uid;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("stats")
+    .doc("summary")
+    .onSnapshot(doc => {
+
+      if(!doc.exists) return;
+
+      const data = doc.data();
+
+      document.getElementById("todaySales").innerText =
+        data.todayRevenue || 0;
+
+      document.getElementById("weekSales").innerText =
+        data.weekRevenue || 0;
+
+      document.getElementById("monthSales").innerText =
+        data.monthRevenue || 0;
+
+    });
+
+}
