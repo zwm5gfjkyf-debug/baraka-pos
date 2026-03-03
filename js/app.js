@@ -54,3 +54,68 @@ function navigate(pageId) {
 
   document.getElementById(pageId).classList.remove("hidden");
 }
+async function addStock(){
+
+  const name = document.getElementById("stockName").value.trim();
+  const qty = Number(document.getElementById("stockQty").value);
+  const cost = Number(document.getElementById("stockCost").value);
+
+  if(!name || qty <= 0){
+    alert("Ma'lumot to'g'ri emas");
+    return;
+  }
+
+  const shopId = auth.currentUser.uid;
+
+  const productsRef = db.collection("shops")
+    .doc(shopId)
+    .collection("products");
+
+  const snapshot = await productsRef
+    .where("name","==",name)
+    .get();
+
+  let productId;
+
+  if(snapshot.empty){
+
+    // Auto create product
+    const newProduct = await productsRef.add({
+      name: name,
+      sellingPrice: cost * 1.3, // default markup 30%
+      stock: qty,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    productId = newProduct.id;
+
+  } else {
+
+    const doc = snapshot.docs[0];
+    productId = doc.id;
+
+    const currentStock = doc.data().stock || 0;
+
+    await productsRef.doc(productId).update({
+      stock: currentStock + qty
+    });
+  }
+
+  // Save stock log
+  await db.collection("shops")
+    .doc(shopId)
+    .collection("stockLogs")
+    .add({
+      productId,
+      name,
+      quantityAdded: qty,
+      costPrice: cost,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  document.getElementById("stockName").value = "";
+  document.getElementById("stockQty").value = "";
+  document.getElementById("stockCost").value = "";
+
+  loadCurrentStock();
+}
