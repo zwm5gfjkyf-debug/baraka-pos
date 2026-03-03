@@ -161,6 +161,7 @@ function loadDashboard(){
     .onSnapshot(snapshot=>{
 
       let todayRevenue=0, weekRevenue=0, monthRevenue=0;
+      let todayCount=0, weekCount=0, monthCount=0;
 
       const startToday = getStartOfToday();
       const startWeek = getStartOfWeek();
@@ -172,21 +173,36 @@ function loadDashboard(){
 
         const date = s.createdAt.toDate();
 
-        if(date >= startToday) todayRevenue += s.total || 0;
-        if(date >= startWeek)  weekRevenue  += s.total || 0;
-        if(date >= startMonth) monthRevenue += s.total || 0;
+        const itemsCount = s.items
+          ? s.items.reduce((sum,i)=>sum+i.quantity,0)
+          : 0;
+
+        if(date >= startToday){
+          todayRevenue += s.total || 0;
+          todayCount += itemsCount;
+        }
+
+        if(date >= startWeek){
+          weekRevenue += s.total || 0;
+          weekCount += itemsCount;
+        }
+
+        if(date >= startMonth){
+          monthRevenue += s.total || 0;
+          monthCount += itemsCount;
+        }
       });
 
-      const todayEl  = document.getElementById("todaySales");
-      const weekEl   = document.getElementById("weekSales");
-      const monthEl  = document.getElementById("monthSales");
+      document.getElementById("todaySales").innerText = formatMoney(todayRevenue);
+      document.getElementById("weekSales").innerText = formatMoney(weekRevenue);
+      document.getElementById("monthSales").innerText = formatMoney(monthRevenue);
 
-      if(todayEl) todayEl.innerText = formatMoney(todayRevenue);
-      if(weekEl)  weekEl.innerText  = formatMoney(weekRevenue);
-      if(monthEl) monthEl.innerText = formatMoney(monthRevenue);
+      document.getElementById("todayCount").innerText = todayCount;
+      document.getElementById("weekCount").innerText = weekCount;
+      document.getElementById("monthCount").innerText = monthCount;
+
     });
 }
-
 /* =====================================================
    SALE ENGINE (FULL STABLE VERSION)
 ===================================================== */
