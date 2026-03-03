@@ -31,27 +31,39 @@ function getStartOfMonth(){
   return d;
 }
 
+function safeGetUserId(){
+  return auth.currentUser ? auth.currentUser.uid : null;
+}
+
 /* =====================================================
    AUTH STATE
 ===================================================== */
 
 auth.onAuthStateChanged(user => {
 
-  document.getElementById("loadingScreen").classList.add("hidden");
+  const loading = document.getElementById("loadingScreen");
+  if(loading) loading.classList.add("hidden");
 
   if(user){
 
-    document.getElementById("authScreen").classList.add("hidden");
-    document.getElementById("appScreen").classList.remove("hidden");
+    const authScreen = document.getElementById("authScreen");
+    const appScreen  = document.getElementById("appScreen");
 
-    document.getElementById("shopTitle").innerText = user.email;
+    if(authScreen) authScreen.classList.add("hidden");
+    if(appScreen) appScreen.classList.remove("hidden");
+
+    const shopTitle = document.getElementById("shopTitle");
+    if(shopTitle) shopTitle.innerText = user.email;
 
     loadDashboard();
 
   } else {
 
-    document.getElementById("appScreen").classList.add("hidden");
-    document.getElementById("authScreen").classList.remove("hidden");
+    const appScreen  = document.getElementById("appScreen");
+    const authScreen = document.getElementById("authScreen");
+
+    if(appScreen) appScreen.classList.add("hidden");
+    if(authScreen) authScreen.classList.remove("hidden");
   }
 });
 
@@ -61,9 +73,9 @@ auth.onAuthStateChanged(user => {
 
 async function register(){
 
-  const shopNameVal = document.getElementById("shopName").value.trim();
-  const emailVal = document.getElementById("email").value.trim();
-  const passVal = document.getElementById("password").value;
+  const shopNameVal = document.getElementById("shopName")?.value.trim();
+  const emailVal = document.getElementById("email")?.value.trim();
+  const passVal = document.getElementById("password")?.value;
 
   if(!shopNameVal || !emailVal || !passVal){
     alert("Barcha maydonlarni to'ldiring");
@@ -81,10 +93,12 @@ async function register(){
 }
 
 async function login(){
-  await auth.signInWithEmailAndPassword(
-    document.getElementById("email").value.trim(),
-    document.getElementById("password").value
-  );
+  const email = document.getElementById("email")?.value.trim();
+  const pass  = document.getElementById("password")?.value;
+
+  if(!email || !pass) return;
+
+  await auth.signInWithEmailAndPassword(email, pass);
 }
 
 function logout(){
@@ -97,16 +111,18 @@ function toggleProfileMenu(){
 }
 
 /* =====================================================
-   NAVIGATION (NO EVENT BUG)
+   NAVIGATION (STABLE + SAFE)
 ===================================================== */
 
 function navigate(pageId){
 
-  document.querySelectorAll(".page")
-    .forEach(p => p.classList.add("hidden"));
+  const pages = document.querySelectorAll(".page");
+  pages.forEach(p => p.classList.add("hidden"));
 
   const page = document.getElementById(pageId);
-  if(page) page.classList.remove("hidden");
+  if(!page) return;
+
+  page.classList.remove("hidden");
 
   document.querySelectorAll(".bottom-nav button")
     .forEach(btn => btn.classList.remove("active"));
@@ -127,20 +143,24 @@ function navigate(pageId){
 }
 
 /* =====================================================
-   DASHBOARD (REAL REVENUE + ITEM COUNT)
+   DASHBOARD (REAL REVENUE + SAFE LISTENER)
 ===================================================== */
+
+let dashboardUnsubscribe = null;
 
 function loadDashboard(){
 
-  const shopId = auth.currentUser.uid;
+  const shopId = safeGetUserId();
+  if(!shopId) return;
 
-  db.collection("shops")
+  if(dashboardUnsubscribe) dashboardUnsubscribe();
+
+  dashboardUnsubscribe = db.collection("shops")
     .doc(shopId)
     .collection("sales")
     .onSnapshot(snapshot=>{
 
       let todayRevenue=0, weekRevenue=0, monthRevenue=0;
-      let todayCount=0, weekCount=0, monthCount=0;
 
       const startToday = getStartOfToday();
       const startWeek = getStartOfWeek();
@@ -152,62 +172,38 @@ function loadDashboard(){
 
         const date = s.createdAt.toDate();
 
-        const itemsCount = s.items
-          ? s.items.reduce((sum,i)=>sum+i.quantity,0)
-          : 0;
-
-        if(date >= startToday){
-          todayRevenue += s.total || 0;
-          todayCount += itemsCount;
-        }
-
-        if(date >= startWeek){
-          weekRevenue += s.total || 0;
-          weekCount += itemsCount;
-        }
-
-        if(date >= startMonth){
-          monthRevenue += s.total || 0;
-          monthCount += itemsCount;
-        }
+        if(date >= startToday) todayRevenue += s.total || 0;
+        if(date >= startWeek)  weekRevenue  += s.total || 0;
+        if(date >= startMonth) monthRevenue += s.total || 0;
       });
 
-      if(document.getElementById("todaySales"))
-        document.getElementById("todaySales").innerText = formatMoney(todayRevenue);
+      const todayEl  = document.getElementById("todaySales");
+      const weekEl   = document.getElementById("weekSales");
+      const monthEl  = document.getElementById("monthSales");
 
-      if(document.getElementById("weekSales"))
-        document.getElementById("weekSales").innerText = formatMoney(weekRevenue);
-
-      if(document.getElementById("monthSales"))
-        document.getElementById("monthSales").innerText = formatMoney(monthRevenue);
-
-      if(document.getElementById("todayCount"))
-        document.getElementById("todayCount").innerText = todayCount;
-
-      if(document.getElementById("weekCount"))
-        document.getElementById("weekCount").innerText = weekCount;
-
-      if(document.getElementById("monthCount"))
-        document.getElementById("monthCount").innerText = monthCount;
-
+      if(todayEl) todayEl.innerText = formatMoney(todayRevenue);
+      if(weekEl)  weekEl.innerText  = formatMoney(weekRevenue);
+      if(monthEl) monthEl.innerText = formatMoney(monthRevenue);
     });
 }
+
 /* =====================================================
-   SALE ENGINE (FULL FIXED + MULTI ITEM + EDITABLE)
+   SALE ENGINE (FULL STABLE VERSION)
 ===================================================== */
 
 let saleProducts = [];
 let cart = [];
-let isProcessing = false;
+let saleUnsubscribe = null;
 
-/* --------------------------
-   LOAD PRODUCTS (LIVE)
----------------------------*/
+/* LOAD PRODUCTS */
 function loadSaleProducts(){
 
-  const shopId = auth.currentUser.uid;
+  const shopId = safeGetUserId();
+  if(!shopId) return;
 
-  db.collection("shops")
+  if(saleUnsubscribe) saleUnsubscribe();
+
+  saleUnsubscribe = db.collection("shops")
     .doc(shopId)
     .collection("products")
     .onSnapshot(snapshot=>{
@@ -223,34 +219,27 @@ function loadSaleProducts(){
     });
 }
 
-/* --------------------------
-   SEARCH PRODUCTS
----------------------------*/
+/* SEARCH */
 function searchProducts(keyword){
 
   const resultsDiv = document.getElementById("searchResults");
-  resultsDiv.innerHTML = "";
+  if(!resultsDiv) return;
 
+  resultsDiv.innerHTML = "";
   if(!keyword) return;
 
   saleProducts
-    .filter(p =>
-      p.name.toLowerCase().includes(keyword.toLowerCase())
-    )
+    .filter(p => p.name?.toLowerCase().includes(keyword.toLowerCase()))
     .forEach(p=>{
-
       resultsDiv.innerHTML += `
-        <div class="card"
-             onclick="addToCart('${p.id}')">
+        <div class="card" onclick="addToCart('${p.id}')">
           ${p.name} — ${formatMoney(p.sellingPrice)}
         </div>
       `;
     });
 }
 
-/* --------------------------
-   ADD TO CART
----------------------------*/
+/* ADD TO CART */
 function addToCart(id){
 
   const product = saleProducts.find(p=>p.id===id);
@@ -271,16 +260,24 @@ function addToCart(id){
 
   renderCart();
 
-  document.getElementById("saleSearch").value = "";
-  document.getElementById("searchResults").innerHTML = "";
+  const input = document.getElementById("saleSearch");
+  if(input) input.value = "";
+
+  const results = document.getElementById("searchResults");
+  if(results) results.innerHTML = "";
 }
 
-/* --------------------------
-   RENDER CART
----------------------------*/
+function focusSaleSearch(){
+  const input = document.getElementById("saleSearch");
+  if(input) input.focus();
+}
+
+/* RENDER CART */
 function renderCart(){
 
   const container = document.getElementById("cartList");
+  if(!container) return;
+
   container.innerHTML = "";
 
   let total = 0;
@@ -293,135 +290,53 @@ function renderCart(){
     container.innerHTML += `
       <div class="cart-item">
         <strong>${item.name}</strong><br>
-
         Narx:
         <input type="number"
           value="${item.price}"
           onchange="changePrice('${item.id}', this.value)">
-
-        <div class="quantity-controls">
-          <button class="qty-btn"
-            onclick="changeQty('${item.id}', -1)">-</button>
-
-          <input type="number"
-            value="${item.quantity}"
-            style="width:60px"
-            onchange="changeQtyManual('${item.id}', this.value)">
-
-          <button class="qty-btn"
-            onclick="changeQty('${item.id}', 1)">+</button>
+        <div>
+          <button onclick="changeQty('${item.id}', -1)">-</button>
+          ${item.quantity}
+          <button onclick="changeQty('${item.id}', 1)">+</button>
         </div>
-
         <div>Jami: ${formatMoney(itemTotal)} so'm</div>
-
-        <button style="background:var(--danger)"
-          onclick="removeFromCart('${item.id}')">
+        <button onclick="removeFromCart('${item.id}')">
           O'chirish
         </button>
       </div>
     `;
   });
 
-  document.getElementById("saleTotal").innerText =
-    formatMoney(total);
+  const totalEl = document.getElementById("saleTotal");
+  if(totalEl) totalEl.innerText = formatMoney(total);
 }
+/* =====================================================
+   COMPLETE SALE (DOUBLE CLICK SAFE + CLEAN)
+===================================================== */
 
-/* --------------------------
-   CHANGE PRICE
----------------------------*/
-function changePrice(id,newPrice){
-
-  const item = cart.find(i=>i.id===id);
-  if(!item) return;
-
-  item.price = Number(newPrice);
-  renderCart();
-}
-
-/* --------------------------
-   CHANGE QTY (+ -)
----------------------------*/
-function changeQty(id,amount){
-
-  const item = cart.find(i=>i.id===id);
-  if(!item) return;
-
-  item.quantity += amount;
-
-  if(item.quantity <= 0){
-    cart = cart.filter(i=>i.id!==id);
-  }
-
-  renderCart();
-}
-
-/* --------------------------
-   MANUAL QTY
----------------------------*/
-function changeQtyManual(id,value){
-
-  const item = cart.find(i=>i.id===id);
-  if(!item) return;
-
-  const newQty = Number(value);
-
-  if(newQty <= 0){
-    cart = cart.filter(i=>i.id!==id);
-  } else {
-    item.quantity = newQty;
-  }
-
-  renderCart();
-}
-
-/* --------------------------
-   REMOVE ITEM
----------------------------*/
-function removeFromCart(id){
-  cart = cart.filter(i=>i.id!==id);
-  renderCart();
-}
-
-/* --------------------------
-   ADD ANOTHER ITEM BUTTON
----------------------------*/
-function addAnotherItem(){
-  document.getElementById("saleSearch").focus();
-}
-
-/* --------------------------
-   COMPLETE SALE (WITH STOCK DEDUCTION)
----------------------------*/
-/* --------------------------
-   COMPLETE SALE (WITH STOCK DEDUCTION)
----------------------------*/
 async function completeSale(){
 
   const button = document.getElementById("completeSaleBtn");
-
   if(button){
     button.disabled = true;
     button.innerText = "Yuklanmoqda...";
   }
 
   if(cart.length === 0){
-
     if(button){
       button.disabled = false;
       button.innerText = "Sotuvni yakunlash";
     }
-
     alert("Savatcha bo'sh");
     return;
   }
 
   try{
 
-    const shopId = auth.currentUser.uid;
+    const shopId = safeGetUserId();
+    if(!shopId) throw new Error("No user");
 
-    const total = cart.reduce(
-      (s,i)=>s+i.price*i.quantity,0
-    );
+    const total = cart.reduce((s,i)=>s+i.price*i.quantity,0);
 
     const batch = db.batch();
 
@@ -434,8 +349,7 @@ async function completeSale(){
       items: cart,
       total,
       type: "cash",
-      createdAt:
-        firebase.firestore.FieldValue.serverTimestamp()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     cart.forEach(item=>{
@@ -445,10 +359,7 @@ async function completeSale(){
         .doc(item.id);
 
       batch.update(productRef,{
-        stock:
-          firebase.firestore.FieldValue.increment(
-            -item.quantity
-          )
+        stock: firebase.firestore.FieldValue.increment(-item.quantity)
       });
     });
 
@@ -459,7 +370,7 @@ async function completeSale(){
 
     showSuccess("Muvaffaqiyatli sotildi");
 
-  } catch(error){
+  }catch(error){
     console.error(error);
     alert("Xatolik yuz berdi");
   }
@@ -470,34 +381,27 @@ async function completeSale(){
   }
 }
 
- 
 /* =====================================================
-   NASIYA SYSTEM (MERGE SAME CUSTOMER + EDITABLE)
+   NASIYA SYSTEM (FULL STABLE + AUTO DELETE)
 ===================================================== */
 
 let debtCart = [];
+let debtUnsubscribe = null;
 
-/* SEARCH PRODUCTS FOR DEBT */
+/* SEARCH PRODUCTS */
 function searchDebtProducts(keyword){
 
-  const resultsDiv =
-    document.getElementById("debtSearchResults");
-
+  const resultsDiv = document.getElementById("debtSearchResults");
   if(!resultsDiv) return;
 
   resultsDiv.innerHTML = "";
-
   if(!keyword) return;
 
   saleProducts
-    .filter(p =>
-      p.name.toLowerCase().includes(keyword.toLowerCase())
-    )
+    .filter(p=>p.name?.toLowerCase().includes(keyword.toLowerCase()))
     .forEach(p=>{
-
       resultsDiv.innerHTML += `
-        <div class="card"
-             onclick="addDebtToCart('${p.id}')">
+        <div class="card" onclick="addDebtToCart('${p.id}')">
           ${p.name} — ${formatMoney(p.sellingPrice)}
         </div>
       `;
@@ -514,7 +418,7 @@ function addDebtToCart(id){
 
   if(existing){
     existing.quantity += 1;
-  } else {
+  }else{
     debtCart.push({
       id: product.id,
       name: product.name,
@@ -526,22 +430,16 @@ function addDebtToCart(id){
   renderDebtCart();
 }
 
-/* RENDER DEBT CART (EDITABLE PRICE + QTY) */
+/* RENDER DEBT CART */
 function renderDebtCart(){
 
-  const container =
-    document.getElementById("debtCartList");
-
+  const container = document.getElementById("debtCartList");
   if(!container) return;
 
   container.innerHTML = "";
 
-  let total = 0;
-
   debtCart.forEach(item=>{
-
     const itemTotal = item.price * item.quantity;
-    total += itemTotal;
 
     container.innerHTML += `
       <div class="cart-item">
@@ -552,24 +450,16 @@ function renderDebtCart(){
           value="${item.price}"
           onchange="changeDebtPrice('${item.id}', this.value)">
 
-        <div class="quantity-controls">
-          <button class="qty-btn"
-            onclick="changeDebtQty('${item.id}', -1)">-</button>
-
-          <input type="number"
-            value="${item.quantity}"
-            style="width:60px"
-            onchange="changeDebtQtyManual('${item.id}', this.value)">
-
-          <button class="qty-btn"
-            onclick="changeDebtQty('${item.id}', 1)">+</button>
+        <div>
+          <button onclick="changeDebtQty('${item.id}', -1)">-</button>
+          ${item.quantity}
+          <button onclick="changeDebtQty('${item.id}', 1)">+</button>
         </div>
 
         <div>Jami: ${formatMoney(itemTotal)} so'm</div>
       </div>
     `;
   });
-
 }
 
 /* EDIT PRICE */
@@ -594,27 +484,10 @@ function changeDebtQty(id,amount){
   renderDebtCart();
 }
 
-function changeDebtQtyManual(id,value){
-  const item = debtCart.find(i=>i.id===id);
-  if(!item) return;
-
-  const newQty = Number(value);
-
-  if(newQty <= 0){
-    debtCart = debtCart.filter(i=>i.id!==id);
-  } else {
-    item.quantity = newQty;
-  }
-
-  renderDebtCart();
-}
-
-/* COMPLETE DEBT SALE (MERGE SAME CUSTOMER) */
-/* COMPLETE DEBT SALE (MERGE SAME CUSTOMER) */
+/* COMPLETE DEBT SALE */
 async function completeDebtSale(){
 
   const button = document.getElementById("completeDebtBtn");
-
   if(button){
     button.disabled = true;
     button.innerText = "Yuklanmoqda...";
@@ -624,23 +497,20 @@ async function completeDebtSale(){
     document.getElementById("debtCustomerName")?.value.trim();
 
   if(!customerName || debtCart.length === 0){
-
     if(button){
       button.disabled = false;
       button.innerText = "Nasiya berish";
     }
-
     alert("Mijoz yoki mahsulot yo'q");
     return;
   }
 
   try{
 
-    const shopId = auth.currentUser.uid;
+    const shopId = safeGetUserId();
+    if(!shopId) throw new Error("No user");
 
-    const total = debtCart.reduce(
-      (s,i)=>s+i.price*i.quantity,0
-    );
+    const total = debtCart.reduce((s,i)=>s+i.price*i.quantity,0);
 
     const debtsRef = db.collection("shops")
       .doc(shopId)
@@ -663,11 +533,10 @@ async function completeDebtSale(){
         total,
         remaining: total,
         status: "unpaid",
-        createdAt:
-          firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-    } else {
+    }else{
 
       const docSnap = existingSnap.docs[0];
       const debtData = docSnap.data();
@@ -680,7 +549,7 @@ async function completeDebtSale(){
       });
     }
 
-    // STOCK DEDUCTION
+    /* STOCK DEDUCTION */
     debtCart.forEach(item=>{
       const productRef = db.collection("shops")
         .doc(shopId)
@@ -688,9 +557,7 @@ async function completeDebtSale(){
         .doc(item.id);
 
       batch.update(productRef,{
-        stock: firebase.firestore.FieldValue.increment(
-          -item.quantity
-        )
+        stock: firebase.firestore.FieldValue.increment(-item.quantity)
       });
     });
 
@@ -701,7 +568,7 @@ async function completeDebtSale(){
 
     showSuccess("Nasiya muvaffaqiyatli saqlandi");
 
-  } catch(error){
+  }catch(error){
     console.error(error);
     alert("Xatolik yuz berdi");
   }
@@ -711,26 +578,33 @@ async function completeDebtSale(){
     button.innerText = "Nasiya berish";
   }
 }
+
 /* LOAD DEBT CUSTOMERS */
 function loadDebtCustomers(){
 
-  const shopId = auth.currentUser.uid;
+  const shopId = safeGetUserId();
+  if(!shopId) return;
 
-  db.collection("shops")
+  if(debtUnsubscribe) debtUnsubscribe();
+
+  debtUnsubscribe = db.collection("shops")
     .doc(shopId)
     .collection("debts")
     .onSnapshot(snapshot=>{
 
-      const container =
-        document.getElementById("debtCustomersList");
-
+      const container = document.getElementById("debtCustomersList");
       if(!container) return;
 
       container.innerHTML = "";
 
       snapshot.forEach(doc=>{
-
         const d = doc.data();
+
+        /* AUTO DELETE WHEN FULLY PAID */
+        if(d.remaining <= 0){
+          doc.ref.delete();
+          return;
+        }
 
         container.innerHTML += `
           <div class="card">
@@ -741,8 +615,7 @@ function loadDebtCustomers(){
             <input type="number"
               placeholder="To'lov"
               id="pay_${doc.id}">
-            <button
-              onclick="payDebt('${doc.id}')">
+            <button onclick="payDebt('${doc.id}')">
               To'lash
             </button>
           </div>
@@ -754,14 +627,13 @@ function loadDebtCustomers(){
 /* PAY DEBT */
 async function payDebt(debtId){
 
-  const shopId = auth.currentUser.uid;
+  const shopId = safeGetUserId();
+  if(!shopId) return;
 
-  const input =
-    document.getElementById("pay_"+debtId);
+  const input = document.getElementById("pay_"+debtId);
+  const amount = Number(input?.value);
 
-  const amount = Number(input.value);
-
-  if(amount<=0) return;
+  if(!amount || amount<=0) return;
 
   const debtRef = db.collection("shops")
     .doc(shopId)
@@ -770,19 +642,18 @@ async function payDebt(debtId){
 
   const docSnap = await debtRef.get();
   const debt = docSnap.data();
+  if(!debt) return;
 
   if(amount > debt.remaining){
     alert("Qoldiqdan ko'p to'lash mumkin emas");
     return;
   }
 
-  const newRemaining =
-    debt.remaining - amount;
+  const newRemaining = debt.remaining - amount;
 
   await debtRef.update({
     remaining: newRemaining,
-    status:
-      newRemaining===0 ? "paid" : "partial"
+    status: newRemaining===0 ? "paid" : "partial"
   });
 
   await db.collection("shops")
@@ -791,35 +662,69 @@ async function payDebt(debtId){
     .add({
       type:"debt_payment",
       total: amount,
-      createdAt:
-        firebase.firestore.FieldValue.serverTimestamp()
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-  alert("To'lov qabul qilindi");
+  showSuccess("To'lov qabul qilindi");
 }
-
 /* =====================================================
-   STOCK SYSTEM (EDITABLE + DELETE)
+   STOCK SYSTEM (FULL SAFE + ADD FUNCTION)
 ===================================================== */
 
-function loadCurrentStock(){
+let stockUnsubscribe = null;
 
-  const shopId = auth.currentUser.uid;
+function addStock(){
+
+  const shopId = safeGetUserId();
+  if(!shopId) return;
+
+  const name = document.getElementById("stockName")?.value.trim();
+  const qty  = Number(document.getElementById("stockQty")?.value);
+  const cost = Number(document.getElementById("stockCost")?.value);
+  const sell = Number(document.getElementById("stockSellingPrice")?.value);
+
+  if(!name || !qty || !sell){
+    alert("Ma'lumotlarni to'ldiring");
+    return;
+  }
 
   db.collection("shops")
     .doc(shopId)
     .collection("products")
+    .add({
+      name: name,
+      stock: qty,
+      costPrice: cost || 0,
+      sellingPrice: sell,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  document.getElementById("stockName").value = "";
+  document.getElementById("stockQty").value = "";
+  document.getElementById("stockCost").value = "";
+  document.getElementById("stockSellingPrice").value = "";
+
+  showSuccess("Mahsulot qo'shildi");
+}
+
+function loadCurrentStock(){
+
+  const shopId = safeGetUserId();
+  if(!shopId) return;
+
+  if(stockUnsubscribe) stockUnsubscribe();
+
+  stockUnsubscribe = db.collection("shops")
+    .doc(shopId)
+    .collection("products")
     .onSnapshot(snapshot=>{
 
-      const container =
-        document.getElementById("currentStockList");
-
+      const container = document.getElementById("currentStockList");
       if(!container) return;
 
       container.innerHTML="";
 
       snapshot.forEach(doc=>{
-
         const p = doc.data();
 
         container.innerHTML += `
@@ -855,28 +760,141 @@ function loadCurrentStock(){
 
 async function editStock(id,field,value){
 
-  const shopId = auth.currentUser.uid;
+  const shopId = safeGetUserId();
+  if(!shopId) return;
 
   await db.collection("shops")
     .doc(shopId)
     .collection("products")
     .doc(id)
     .update({
-      [field]:
-        field==="name" ? value : Number(value)
+      [field]: field==="name" ? value : Number(value)
     });
 }
 
 async function deleteStock(id){
 
-  const shopId = auth.currentUser.uid;
+  const shopId = safeGetUserId();
+  if(!shopId) return;
 
   await db.collection("shops")
     .doc(shopId)
     .collection("products")
     .doc(id)
     .delete();
+
+  showSuccess("Mahsulot o'chirildi");
 }
+
+/* =====================================================
+   ANALYTICS SYSTEM (FULL CHART VERSION)
+===================================================== */
+
+let weeklyChart = null;
+let monthlyChart = null;
+
+function loadAnalytics(){
+
+  const shopId = safeGetUserId();
+  if(!shopId) return;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("sales")
+    .get()
+    .then(snapshot=>{
+
+      const weeklyData = [0,0,0,0,0,0,0];
+      const monthlyData = new Array(31).fill(0);
+
+      const startWeek = getStartOfWeek();
+      const startMonth = getStartOfMonth();
+
+      snapshot.forEach(doc=>{
+        const s = doc.data();
+        if(!s.createdAt) return;
+
+        const date = s.createdAt.toDate();
+
+        if(date >= startWeek){
+          const dayIndex = (date.getDay()+6)%7;
+          weeklyData[dayIndex] += s.total || 0;
+        }
+
+        if(date >= startMonth){
+          const day = date.getDate()-1;
+          monthlyData[day] += s.total || 0;
+        }
+      });
+
+      renderWeeklyChart(weeklyData);
+      renderMonthlyChart(monthlyData);
+    });
+}
+
+function renderWeeklyChart(data){
+
+  const ctx = document.getElementById("weeklyChart");
+  if(!ctx) return;
+
+  if(weeklyChart){
+    weeklyChart.destroy();
+  }
+
+  weeklyChart = new Chart(ctx,{
+    type:"bar",
+    data:{
+      labels:["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"],
+      datasets:[{
+        label:"Haftalik tushum",
+        data:data,
+        backgroundColor:"rgba(16,185,129,0.7)"
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false}
+      }
+    }
+  });
+}
+
+function renderMonthlyChart(data){
+
+  const ctx = document.getElementById("monthlyChart");
+  if(!ctx) return;
+
+  if(monthlyChart){
+    monthlyChart.destroy();
+  }
+
+  monthlyChart = new Chart(ctx,{
+    type:"line",
+    data:{
+      labels:data.map((_,i)=>i+1),
+      datasets:[{
+        label:"Oylik tushum",
+        data:data,
+        borderColor:"#3b82f6",
+        backgroundColor:"rgba(59,130,246,0.2)",
+        fill:true,
+        tension:0.3
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false}
+      }
+    }
+  });
+}
+
+/* =====================================================
+   SUCCESS OVERLAY SYSTEM
+===================================================== */
+
 function showSuccess(message){
 
   const overlay = document.getElementById("successOverlay");
@@ -885,46 +903,9 @@ function showSuccess(message){
   if(!overlay || !text) return;
 
   text.innerText = message;
-
   overlay.classList.remove("hidden");
 
   setTimeout(()=>{
     overlay.classList.add("hidden");
-  },1800);
-}
-/* =====================================================
-   ANALYTICS SYSTEM
-===================================================== */
-
-function loadAnalytics(){
-
-  const shopId = auth.currentUser?.uid;
-  if(!shopId) return;
-
-  const container = document.getElementById("analyticsContent");
-  if(!container) return;
-
-  db.collection("shops")
-    .doc(shopId)
-    .collection("sales")
-    .get()
-    .then(snapshot=>{
-
-      let totalRevenue = 0;
-      let totalSales = 0;
-
-      snapshot.forEach(doc=>{
-        const data = doc.data();
-        totalRevenue += data.total || 0;
-        totalSales++;
-      });
-
-      container.innerHTML = `
-        <div class="card">
-          <h3>Umumiy Sotuvlar</h3>
-          <p>Jami savdo soni: ${totalSales}</p>
-          <p>Umumiy daromad: ${formatMoney(totalRevenue)} so'm</p>
-        </div>
-      `;
-    });
+  },1500);
 }
