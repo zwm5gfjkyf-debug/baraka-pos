@@ -293,7 +293,7 @@ function renderCart(){
 /* --------------------------
    CHANGE PRICE
 ---------------------------*/
-function changePrice(id,newPrice){
+window.changePrice = function(id,newPrice){
 
   const item = cart.find(i=>i.id===id);
   if(!item) return;
@@ -305,7 +305,7 @@ function changePrice(id,newPrice){
 /* --------------------------
    CHANGE QTY (+ -)
 ---------------------------*/
-function changeQty(id,amount){
+window.changeQty = function(id,amount){
 
   const item = cart.find(i=>i.id===id);
   if(!item) return;
@@ -322,7 +322,7 @@ function changeQty(id,amount){
 /* --------------------------
    MANUAL QTY
 ---------------------------*/
-function changeQtyManual(id,value){
+window.changeQtyManual = function(id,value){
 
   const item = cart.find(i=>i.id===id);
   if(!item) return;
