@@ -161,13 +161,16 @@ function loadCurrentStock(){
 
         const p = doc.data();
 
-        container.innerHTML += `
-          <div class="card">
-            <strong>${p.name}</strong><br>
-            Stock: ${p.stock || 0}<br>
-           Selling: ${p.sellingPrice || 0}
-          </div>
-        `;
+      container.innerHTML += `
+  <div class="card">
+    <strong>${p.name}</strong><br>
+    Stock: ${p.stock || 0}<br>
+    Selling:
+    <input type="number"
+      value="${p.sellingPrice || 0}"
+      onchange="updatePrice('${doc.id}', this.value)">
+  </div>
+`;
       });
 
     });
