@@ -7,7 +7,7 @@
 
 <link rel="stylesheet" href="css/style.css">
 
-<!-- Chart.js for Analytics -->
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Firebase -->
@@ -105,9 +105,11 @@
 
       <div class="card">
         <h3>Jami: <span id="saleTotal">0</span> so'm</h3>
+
         <button onclick="focusSaleSearch()">
-  + Yana tovar qo'shish
-</button>
+          + Yana tovar qo'shish
+        </button>
+
         <button id="completeSaleBtn" onclick="completeSale()">
           Sotuvni yakunlash
         </button>
@@ -127,10 +129,12 @@
                placeholder="Mahsulot qidirish..."
                oninput="searchDebtProducts(this.value)">
         <div id="debtSearchResults"></div>
-     <button id="completeDebtBtn"
-        onclick="completeDebtSale()">
-  Nasiya berish
-</button>
+
+        <button id="completeDebtBtn"
+                onclick="completeDebtSale()">
+          Nasiya berish
+        </button>
+      </div> <!-- ✅ THIS WAS MISSING -->
 
       <!-- Debt List -->
       <div class="card">
@@ -139,39 +143,41 @@
       </div>
 
     </div>
- 
+
     <!-- ================= ZAXIRA ================= -->
     <div id="stockPage" class="page hidden">
 
       <h2>Zaxira</h2>
 
-     <div class="card">
-  <input id="stockName" placeholder="Mahsulot nomi">
-  <input id="stockQty" type="number" placeholder="Kelgan miqdor">
-  <input id="stockCost" type="number" placeholder="Kelgan narx (cost)">
-  <input id="stockSellingPrice" type="number" placeholder="Sotish narxi">
-  <button onclick="addStock()">Qo'shish</button>
-</div>
+      <div class="card">
+        <input id="stockName" placeholder="Mahsulot nomi">
+        <input id="stockQty" type="number" placeholder="Kelgan miqdor">
+        <input id="stockCost" type="number" placeholder="Kelgan narx (cost)">
+        <input id="stockSellingPrice" type="number" placeholder="Sotish narxi">
+        <button onclick="addStock()">Qo'shish</button>
+      </div>
+
       <div id="currentStockList"></div>
 
     </div>
 
     <!-- ================= TAHLIL ================= -->
-  <div id="analyticsPage" class="page hidden">
+    <div id="analyticsPage" class="page hidden">
 
-  <h2>Tahlil</h2>
+      <h2>Tahlil</h2>
 
-  <div id="analyticsContent"></div>
+      <div id="analyticsContent"></div>
 
-  <div class="chart-container">
-    <canvas id="weeklyChart"></canvas>
-  </div>
+      <div class="chart-container">
+        <canvas id="weeklyChart"></canvas>
+      </div>
 
-  <div class="chart-container">
-    <canvas id="monthlyChart"></canvas>
-  </div>
+      <div class="chart-container">
+        <canvas id="monthlyChart"></canvas>
+      </div>
 
-</div>
+    </div>
+
   </main>
 
   <!-- ================= NAV ================= -->
@@ -184,6 +190,7 @@
   </nav>
 
 </div>
+
 <!-- SUCCESS OVERLAY -->
 <div id="successOverlay" class="hidden"
      style="
