@@ -394,67 +394,78 @@ function addAnotherItem(){
 ---------------------------*/
 async function completeSale(){
 
-  if(isProcessing) return;
-  isProcessing = true;
-const btn = document.getElementById("completeSaleBtn");
-if(btn){
-  btn.disabled = true;
-  btn.innerText = "Yuklanmoqda...";
-}
+  const button = document.getElementById("completeSaleBtn");
+
+  if(button){
+    button.disabled = true;
+    button.innerText = "Yuklanmoqda...";
+  }
+
   if(cart.length === 0){
+
+    if(button){
+      button.disabled = false;
+      button.innerText = "Sotuvni yakunlash";
+    }
+
     alert("Savatcha bo'sh");
-    isProcessing = false;
     return;
   }
 
-  const shopId = auth.currentUser.uid;
+  try{
 
-  const total = cart.reduce(
-    (sum,i)=>sum+i.price*i.quantity,0
-  );
+    const shopId = auth.currentUser.uid;
 
-  const batch = db.batch();
+    const total = cart.reduce(
+      (s,i)=>s+i.price*i.quantity,0
+    );
 
-  const saleRef = db.collection("shops")
-    .doc(shopId)
-    .collection("sales")
-    .doc();
+    const batch = db.batch();
 
-  batch.set(saleRef,{
-    items: cart,
-    total,
-    type: "cash",
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  /* STOCK DEDUCTION */
-  cart.forEach(item=>{
-    const productRef = db.collection("shops")
+    const saleRef = db.collection("shops")
       .doc(shopId)
-      .collection("products")
-      .doc(item.id);
+      .collection("sales")
+      .doc();
 
-    batch.update(productRef,{
-      stock: firebase.firestore.FieldValue.increment(
-        -item.quantity
-      )
+    batch.set(saleRef,{
+      items: cart,
+      total,
+      type: "cash",
+      createdAt:
+        firebase.firestore.FieldValue.serverTimestamp()
     });
-  });
 
-  await batch.commit();
+    cart.forEach(item=>{
+      const productRef = db.collection("shops")
+        .doc(shopId)
+        .collection("products")
+        .doc(item.id);
 
-  cart = [];
-  renderCart();
+      batch.update(productRef,{
+        stock:
+          firebase.firestore.FieldValue.increment(
+            -item.quantity
+          )
+      });
+    });
 
-const btn = document.getElementById("completeSaleBtn");
-if(btn){
-  btn.disabled = false;
-  btn.innerText = "Sotuvni yakunlash";
+    await batch.commit();
+
+    cart = [];
+    renderCart();
+
+    showSuccess("Muvaffaqiyatli sotildi");
+
+  } catch(error){
+    console.error(error);
+    alert("Xatolik yuz berdi");
+  }
+
+  if(button){
+    button.disabled = false;
+    button.innerText = "Sotuvni yakunlash";
+  }
 }
-
-showSuccess("Muvaffaqiyatli sotildi");
-
-isProcessing = false;
 /* =====================================================
    NASIYA SYSTEM (MERGE SAME CUSTOMER + EDITABLE)
 ===================================================== */
@@ -596,11 +607,12 @@ function changeDebtQtyManual(id,value){
 /* COMPLETE DEBT SALE (MERGE SAME CUSTOMER) */
 async function completeDebtSale(){
 
-  const btn = document.getElementById("completeDebtBtn");
+  const button =
+    document.getElementById("completeDebtBtn");
 
-  if(btn){
-    btn.disabled = true;
-    btn.innerText = "Yuklanmoqda...";
+  if(button){
+    button.disabled = true;
+    button.innerText = "Yuklanmoqda...";
   }
 
   const customerName =
@@ -609,14 +621,92 @@ async function completeDebtSale(){
 
   if(!customerName || debtCart.length===0){
 
-    if(btn){
-      btn.disabled = false;
-      btn.innerText = "Nasiya berish";
+    if(button){
+      button.disabled = false;
+      button.innerText = "Nasiya berish";
     }
 
     alert("Mijoz yoki mahsulot yo'q");
     return;
   }
+
+  try{
+
+    const shopId = auth.currentUser.uid;
+
+    const total = debtCart.reduce(
+      (s,i)=>s+i.price*i.quantity,0
+    );
+
+    const debtsRef = db.collection("shops")
+      .doc(shopId)
+      .collection("debts");
+
+    const existingSnap = await debtsRef
+      .where("customer","==",customerName)
+      .where("status","in",["unpaid","partial"])
+      .get();
+
+    const batch = db.batch();
+
+    if(existingSnap.empty){
+
+      const newDebtRef = debtsRef.doc();
+
+      batch.set(newDebtRef,{
+        customer: customerName,
+        items: debtCart,
+        total,
+        remaining: total,
+        status: "unpaid",
+        createdAt:
+          firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+    } else {
+
+      const docSnap = existingSnap.docs[0];
+      const debtData = docSnap.data();
+
+      batch.update(docSnap.ref,{
+        items: [...debtData.items, ...debtCart],
+        total: debtData.total + total,
+        remaining: debtData.remaining + total,
+        status: "unpaid"
+      });
+    }
+
+    debtCart.forEach(item=>{
+      const productRef = db.collection("shops")
+        .doc(shopId)
+        .collection("products")
+        .doc(item.id);
+
+      batch.update(productRef,{
+        stock:
+          firebase.firestore.FieldValue.increment(
+            -item.quantity
+          )
+      });
+    });
+
+    await batch.commit();
+
+    debtCart = [];
+    renderDebtCart();
+
+    showSuccess("Nasiya muvaffaqiyatli saqlandi");
+
+  } catch(error){
+    console.error(error);
+    alert("Xatolik yuz berdi");
+  }
+
+  if(button){
+    button.disabled = false;
+    button.innerText = "Nasiya berish";
+  }
+}
 
   try{
 
