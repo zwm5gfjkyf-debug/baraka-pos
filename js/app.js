@@ -7,14 +7,26 @@ auth.onAuthStateChanged(async user => {
   loadingScreen.classList.add("hidden");
 
   if(user){
+
+    // Hide auth screen
+    authScreen.classList.add("hidden");
+
+    // Show app
     appScreen.classList.remove("hidden");
+
     document.getElementById("shopTitle").innerText = user.email;
+
   } else {
+
+    // Hide app
+    appScreen.classList.add("hidden");
+
+    // Show auth
     authScreen.classList.remove("hidden");
+
   }
 
 });
-
 async function register(){
 
   const shopName = document.getElementById("shopName").value;
