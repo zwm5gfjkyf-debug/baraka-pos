@@ -1,13 +1,5 @@
 /* =========================
-   SCREEN REFERENCES
-========================= */
-
-const loadingScreen = document.getElementById("loadingScreen");
-const authScreen = document.getElementById("authScreen");
-const appScreen = document.getElementById("appScreen");
-
-/* =========================
-   FORMAT MONEY
+   GLOBAL HELPERS
 ========================= */
 
 function formatMoney(num){
@@ -16,46 +8,64 @@ function formatMoney(num){
     .replace(/,/g, " ");
 }
 
+function getStartOfToday(){
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function getStartOfWeek(){
+  const d = new Date();
+  const day = d.getDay() || 7;
+  if(day !== 1){
+    d.setHours(-24 * (day - 1));
+  }
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function getStartOfMonth(){
+  const d = new Date();
+  d.setDate(1);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
 /* =========================
    AUTH STATE
 ========================= */
 
 auth.onAuthStateChanged(user => {
 
-  loadingScreen.classList.add("hidden");
+  document.getElementById("loadingScreen").classList.add("hidden");
 
-  if (user) {
-
-    authScreen.classList.add("hidden");
-    appScreen.classList.remove("hidden");
-
+  if(user){
+    document.getElementById("authScreen").classList.add("hidden");
+    document.getElementById("appScreen").classList.remove("hidden");
     document.getElementById("shopTitle").innerText = user.email;
 
-    loadDashboard(); // IMPORTANT
-
+    loadDashboard();
   } else {
-    appScreen.classList.add("hidden");
-    authScreen.classList.remove("hidden");
+    document.getElementById("appScreen").classList.add("hidden");
+    document.getElementById("authScreen").classList.remove("hidden");
   }
-
 });
 
 /* =========================
-   REGISTER
+   REGISTER / LOGIN
 ========================= */
 
-async function register() {
+async function register(){
+  const shopName = shopName.value.trim();
+  const emailVal = email.value.trim();
+  const passVal = password.value;
 
-  const shopName = document.getElementById("shopName").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if(!shopName || !email || !password){
+  if(!shopName || !emailVal || !passVal){
     alert("Barcha maydonlarni to'ldiring");
     return;
   }
 
-  const cred = await auth.createUserWithEmailAndPassword(email, password);
+  const cred = await auth.createUserWithEmailAndPassword(emailVal, passVal);
 
   await db.collection("shops")
     .doc(cred.user.uid)
@@ -63,36 +73,21 @@ async function register() {
       shopName,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-
 }
 
-/* =========================
-   LOGIN
-========================= */
-
-async function login() {
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  await auth.signInWithEmailAndPassword(email, password);
-
+async function login(){
+  await auth.signInWithEmailAndPassword(
+    email.value.trim(),
+    password.value
+  );
 }
-
-/* =========================
-   LOGOUT
-========================= */
 
 function logout(){
   auth.signOut();
 }
 
-/* =========================
-   PROFILE MENU
-========================= */
-
 function toggleProfileMenu(){
-  document.getElementById("profileMenu").classList.toggle("hidden");
+  profileMenu.classList.toggle("hidden");
 }
 
 /* =========================
@@ -101,356 +96,274 @@ function toggleProfileMenu(){
 
 function navigate(pageId){
 
-  document.querySelectorAll(".page").forEach(p=>{
-    p.classList.add("hidden");
-  });
+  document.querySelectorAll(".page")
+    .forEach(p=>p.classList.add("hidden"));
 
-  document.getElementById(pageId).classList.remove("hidden");
+  document.getElementById(pageId)
+    .classList.remove("hidden");
 
-  // bottom nav active state
   document.querySelectorAll(".bottom-nav button")
-    .forEach(btn => btn.classList.remove("active"));
+    .forEach(btn=>btn.classList.remove("active"));
 
   event.target.classList.add("active");
 
-  if(pageId === "dashboardPage"){
-    loadDashboard();
-  }
-
-  if(pageId === "stockPage"){
-    loadCurrentStock();
-  }
-
-  if(pageId === "salePage"){
-    loadSaleProducts();
-  }
-
+  if(pageId==="dashboardPage") loadDashboard();
+  if(pageId==="salePage") loadSaleProducts();
+  if(pageId==="debtPage") loadDebtCustomers();
+  if(pageId==="analyticsPage") loadAnalytics();
 }
 
 /* =========================
-   DASHBOARD
+   DASHBOARD (REAL CALC)
 ========================= */
 
 function loadDashboard(){
 
   const shopId = auth.currentUser.uid;
-
-  db.collection("shops")
+  const salesRef = db.collection("shops")
     .doc(shopId)
-    .collection("stats")
-    .doc("summary")
-    .onSnapshot(doc => {
+    .collection("sales");
 
-      if(!doc.exists) return;
+  salesRef.onSnapshot(snapshot=>{
 
-      const data = doc.data();
+    let today=0, week=0, month=0;
 
-      document.getElementById("todaySales").innerText =
-        formatMoney(data.todayRevenue);
+    const startToday = getStartOfToday();
+    const startWeek = getStartOfWeek();
+    const startMonth = getStartOfMonth();
 
-      document.getElementById("weekSales").innerText =
-        formatMoney(data.weekRevenue);
+    snapshot.forEach(doc=>{
+      const s = doc.data();
+      if(!s.createdAt) return;
 
-      document.getElementById("monthSales").innerText =
-        formatMoney(data.monthRevenue);
+      const date = s.createdAt.toDate();
 
+      if(s.type==="cash"){
+        if(date >= startToday) today += s.total;
+        if(date >= startWeek) week += s.total;
+        if(date >= startMonth) month += s.total;
+      }
     });
 
-}
-
-/* =========================
-   ADD STOCK
-========================= */
-
-async function addStock(){
-
-  const name = document.getElementById("stockName").value.trim();
-  const qty = Number(document.getElementById("stockQty").value);
-  const cost = Number(document.getElementById("stockCost").value);
-
-  if(!name || qty <= 0){
-    alert("Ma'lumot noto'g'ri");
-    return;
-  }
-
-  const shopId = auth.currentUser.uid;
-  const productsRef = db.collection("shops")
-    .doc(shopId)
-    .collection("products");
-
-  const snapshot = await productsRef.where("name","==",name).get();
-
-  let productId;
-
-  if(snapshot.empty){
-
-    const newProduct = await productsRef.add({
-      name,
-      sellingPrice: 0,
-      stock: qty,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    productId = newProduct.id;
-
-  } else {
-
-    const docSnap = snapshot.docs[0];
-    productId = docSnap.id;
-
-    await productsRef.doc(productId).update({
-      stock: firebase.firestore.FieldValue.increment(qty)
-    });
-
-  }
-
-  await db.collection("shops")
-    .doc(shopId)
-    .collection("stockLogs")
-    .add({
-      productId,
-      name,
-      quantityAdded: qty,
-      costPrice: cost,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-  document.getElementById("stockName").value = "";
-  document.getElementById("stockQty").value = "";
-  document.getElementById("stockCost").value = "";
-
-  loadCurrentStock();
-}
-
-/* =========================
-   LOAD STOCK
-========================= */
-
-function loadCurrentStock(){
-
-  const shopId = auth.currentUser.uid;
-
-  db.collection("shops")
-    .doc(shopId)
-    .collection("products")
-    .onSnapshot(snapshot => {
-
-      const container = document.getElementById("currentStockList");
-      container.innerHTML = "";
-
-      snapshot.forEach(doc => {
-
-        const p = doc.data();
-
-        container.innerHTML += `
-          <div class="card">
-            <strong>${p.name}</strong><br>
-            Ombor: ${p.stock || 0}<br>
-            Sotish narxi:
-            <input type="number"
-              value="${p.sellingPrice || 0}"
-              onchange="updatePrice('${doc.id}', this.value)">
-          </div>
-        `;
-      });
-
-    });
-
-}
-
-async function updatePrice(productId, newPrice){
-
-  const shopId = auth.currentUser.uid;
-
-  await db.collection("shops")
-    .doc(shopId)
-    .collection("products")
-    .doc(productId)
-    .update({
-      sellingPrice: Number(newPrice)
-    });
-
+    todaySales.innerText = formatMoney(today);
+    weekSales.innerText = formatMoney(week);
+    monthSales.innerText = formatMoney(month);
+  });
 }
 
 /* =========================
    SALE ENGINE
 ========================= */
 
-let saleProducts = [];
-let cart = [];
-let isProcessingSale = false;
+let saleProducts=[];
+let cart=[];
+let isProcessing=false;
 
 function loadSaleProducts(){
-
   const shopId = auth.currentUser.uid;
 
   db.collection("shops")
     .doc(shopId)
     .collection("products")
-    .onSnapshot(snapshot => {
-
-      saleProducts = [];
-
-      snapshot.forEach(doc => {
-        saleProducts.push({
-          id: doc.id,
-          ...doc.data()
-        });
+    .onSnapshot(snapshot=>{
+      saleProducts=[];
+      snapshot.forEach(doc=>{
+        saleProducts.push({id:doc.id,...doc.data()});
       });
-
     });
 }
 
 function searchProducts(keyword){
-
-  const resultsDiv = document.getElementById("searchResults");
-  resultsDiv.innerHTML = "";
-
+  searchResults.innerHTML="";
   if(!keyword) return;
 
   saleProducts
-    .filter(p => p.name.toLowerCase().includes(keyword.toLowerCase()))
-    .forEach(p => {
-
-      resultsDiv.innerHTML += `
+    .filter(p=>p.name.toLowerCase().includes(keyword.toLowerCase()))
+    .forEach(p=>{
+      searchResults.innerHTML+=`
         <div class="card" onclick="addToCart('${p.id}')">
           ${p.name} — ${formatMoney(p.sellingPrice)}
-        </div>
-      `;
+        </div>`;
     });
 }
 
-function addToCart(productId){
+function addToCart(id){
+  const product = saleProducts.find(p=>p.id===id);
+  const existing = cart.find(i=>i.id===id);
 
-  const product = saleProducts.find(p => p.id === productId);
-  if(!product) return;
-
-  const existing = cart.find(item => item.id === productId);
-
-  if(existing){
-    existing.quantity++;
-  } else {
-    cart.push({
-      id: product.id,
-      name: product.name,
-      price: product.sellingPrice || 0,
-      quantity: 1
-    });
-  }
+  if(existing) existing.quantity++;
+  else cart.push({
+    id,
+    name:product.name,
+    price:product.sellingPrice||0,
+    quantity:1
+  });
 
   renderCart();
 }
 
 function renderCart(){
+  cartList.innerHTML="";
+  let total=0;
 
-  const container = document.getElementById("cartList");
-  container.innerHTML = "";
+  cart.forEach(item=>{
+    total += item.price*item.quantity;
 
-  let total = 0;
-
-  cart.forEach(item => {
-
-    total += item.price * item.quantity;
-
-    container.innerHTML += `
+    cartList.innerHTML+=`
       <div class="cart-item">
         <strong>${item.name}</strong><br>
         ${formatMoney(item.price)} × ${item.quantity}
-        <div class="quantity-controls">
-          <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
-          <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
-        </div>
-        <div>${formatMoney(item.price * item.quantity)} so'm</div>
-      </div>
-    `;
+        <div>${formatMoney(item.price*item.quantity)} so'm</div>
+      </div>`;
   });
 
-  document.getElementById("saleTotal").innerText = formatMoney(total);
-}
-
-function changeQty(id, amount){
-
-  const item = cart.find(i => i.id === id);
-  if(!item) return;
-
-  item.quantity += amount;
-
-  if(item.quantity <= 0){
-    cart = cart.filter(i => i.id !== id);
-  }
-
-  renderCart();
+  saleTotal.innerText=formatMoney(total);
 }
 
 async function completeSale(){
 
-  if(isProcessingSale) return;
-  isProcessingSale = true;
+  if(isProcessing) return;
+  isProcessing=true;
 
-  const button = document.getElementById("completeSaleBtn");
-  button.disabled = true;
-  button.innerText = "Yuklanmoqda...";
-
-  try {
-
-    if(cart.length === 0){
-      alert("Savatcha bo'sh");
-      return;
-    }
-
-    const shopId = auth.currentUser.uid;
-    const total = cart.reduce((s,i)=>s+i.price*i.quantity,0);
-
-    const saleRef = db.collection("shops")
-      .doc(shopId)
-      .collection("sales")
-      .doc();
-
-    const batch = db.batch();
-
-    batch.set(saleRef,{
-      items: cart,
-      total,
-      type:"cash",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    cart.forEach(item=>{
-      const productRef = db.collection("shops")
-        .doc(shopId)
-        .collection("products")
-        .doc(item.id);
-
-      batch.update(productRef,{
-        stock: firebase.firestore.FieldValue.increment(-item.quantity)
-      });
-    });
-
-    await batch.commit();
-
-    const statsRef = db.collection("shops")
-      .doc(shopId)
-      .collection("stats")
-      .doc("summary");
-
-    await statsRef.set({
-      todayRevenue: firebase.firestore.FieldValue.increment(total),
-      weekRevenue: firebase.firestore.FieldValue.increment(total),
-      monthRevenue: firebase.firestore.FieldValue.increment(total),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    },{ merge:true });
-
-    cart = [];
-    renderCart();
-
-    alert("Sotuv muvaffaqiyatli!");
-
-  } catch(error){
-    console.error(error);
-    alert("Xatolik yuz berdi");
+  if(cart.length===0){
+    alert("Savatcha bo'sh");
+    isProcessing=false;
+    return;
   }
 
-  isProcessingSale = false;
-  button.disabled = false;
-  button.innerText = "Sotuvni yakunlash";
+  const shopId=auth.currentUser.uid;
+  const total=cart.reduce((s,i)=>s+i.price*i.quantity,0);
+
+  await db.collection("shops")
+    .doc(shopId)
+    .collection("sales")
+    .add({
+      items:cart,
+      total,
+      type:"cash",
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  cart=[];
+  renderCart();
+  alert("Sotuv muvaffaqiyatli");
+  isProcessing=false;
+}
+
+/* =========================
+   NASIYA SYSTEM
+========================= */
+
+async function completeDebtSale(){
+
+  const name = debtCustomerName.value.trim();
+  if(!name || debtCart.length===0){
+    alert("Mijoz yoki savat bo'sh");
+    return;
+  }
+
+  const shopId=auth.currentUser.uid;
+  const total = debtCart.reduce((s,i)=>s+i.price*i.quantity,0);
+
+  await db.collection("shops")
+    .doc(shopId)
+    .collection("debts")
+    .add({
+      customer:name,
+      items:debtCart,
+      total,
+      remaining:total,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  alert("Nasiya saqlandi");
+}
+
+function loadDebtCustomers(){
+
+  const shopId=auth.currentUser.uid;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("debts")
+    .onSnapshot(snapshot=>{
+
+      debtCustomersList.innerHTML="";
+
+      snapshot.forEach(doc=>{
+        const d=doc.data();
+
+        debtCustomersList.innerHTML+=`
+          <div class="card">
+            <strong>${d.customer}</strong><br>
+            Qolgan: ${formatMoney(d.remaining)} so'm
+          </div>`;
+      });
+    });
+}
+
+/* =========================
+   ANALYTICS (CHART.JS)
+========================= */
+
+let weeklyChartInstance;
+let monthlyChartInstance;
+
+function loadAnalytics(){
+
+  const shopId = auth.currentUser.uid;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("sales")
+    .get()
+    .then(snapshot=>{
+
+      const weeklyData=[0,0,0,0,0,0,0];
+      const monthlyData=new Array(31).fill(0);
+
+      snapshot.forEach(doc=>{
+        const s=doc.data();
+        if(!s.createdAt) return;
+
+        const date=s.createdAt.toDate();
+        const day=date.getDay();
+        const monthDay=date.getDate();
+
+        weeklyData[day]+=s.total;
+        monthlyData[monthDay-1]+=s.total;
+      });
+
+      if(weeklyChartInstance) weeklyChartInstance.destroy();
+      if(monthlyChartInstance) monthlyChartInstance.destroy();
+
+      weeklyChartInstance=new Chart(
+        document.getElementById("weeklyChart"),
+        {
+          type:"bar",
+          data:{
+            labels:["Yak","Dush","Sesh","Chor","Pay","Jum","Shan"],
+            datasets:[{
+              label:"Haftalik",
+              data:weeklyData
+            }]
+          }
+        }
+      );
+
+      monthlyChartInstance=new Chart(
+        document.getElementById("monthlyChart"),
+        {
+          type:"line",
+          data:{
+            labels:monthlyData.map((_,i)=>i+1),
+            datasets:[{
+              label:"Oylik",
+              data:monthlyData
+            }]
+          }
+        }
+      );
+
+    });
 }
