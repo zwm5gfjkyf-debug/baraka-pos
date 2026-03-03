@@ -90,7 +90,9 @@ function navigate(pageId){
   });
 
   document.getElementById(pageId).classList.remove("hidden");
-
+if(pageId === "homePage"){
+  loadDashboard();
+}
   if(pageId === "stockPage"){
     loadCurrentStock();
   }
