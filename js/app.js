@@ -612,8 +612,7 @@ function changeDebtQtyManual(id,value){
 /* COMPLETE DEBT SALE (MERGE SAME CUSTOMER) */
 async function completeDebtSale(){
 
-  const button =
-    document.getElementById("completeDebtBtn");
+  const button = document.getElementById("completeDebtBtn");
 
   if(button){
     button.disabled = true;
@@ -621,10 +620,9 @@ async function completeDebtSale(){
   }
 
   const customerName =
-    document.getElementById("debtCustomerName")
-    ?.value.trim();
+    document.getElementById("debtCustomerName")?.value.trim();
 
-  if(!customerName || debtCart.length===0){
+  if(!customerName || debtCart.length === 0){
 
     if(button){
       button.disabled = false;
@@ -681,6 +679,7 @@ async function completeDebtSale(){
       });
     }
 
+    // STOCK DEDUCTION
     debtCart.forEach(item=>{
       const productRef = db.collection("shops")
         .doc(shopId)
@@ -688,10 +687,9 @@ async function completeDebtSale(){
         .doc(item.id);
 
       batch.update(productRef,{
-        stock:
-          firebase.firestore.FieldValue.increment(
-            -item.quantity
-          )
+        stock: firebase.firestore.FieldValue.increment(
+          -item.quantity
+        )
       });
     });
 
@@ -712,9 +710,6 @@ async function completeDebtSale(){
     button.innerText = "Nasiya berish";
   }
 }
-
- 
-
     /* STOCK DEDUCTION */
     debtCart.forEach(item=>{
       const productRef = db.collection("shops")
