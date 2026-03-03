@@ -290,7 +290,53 @@ function focusSaleSearch(){
 
 /* RENDER CART */
 function renderCart(){
+/* --------------------------
+   CHANGE PRICE
+---------------------------*/
+function changePrice(id,newPrice){
 
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+
+  item.price = Number(newPrice);
+  renderCart();
+}
+
+/* --------------------------
+   CHANGE QTY (+ -)
+---------------------------*/
+function changeQty(id,amount){
+
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+
+  item.quantity += amount;
+
+  if(item.quantity <= 0){
+    cart = cart.filter(i=>i.id!==id);
+  }
+
+  renderCart();
+}
+
+/* --------------------------
+   MANUAL QTY
+---------------------------*/
+function changeQtyManual(id,value){
+
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+
+  const newQty = Number(value);
+
+  if(newQty <= 0){
+    cart = cart.filter(i=>i.id!==id);
+  } else {
+    item.quantity = newQty;
+  }
+
+  renderCart();
+}
   const container = document.getElementById("cartList");
   if(!container) return;
 
@@ -306,17 +352,29 @@ function renderCart(){
     container.innerHTML += `
       <div class="cart-item">
         <strong>${item.name}</strong><br>
+
         Narx:
         <input type="number"
           value="${item.price}"
           onchange="changePrice('${item.id}', this.value)">
-        <div>
-          <button onclick="changeQty('${item.id}', -1)">-</button>
-          ${item.quantity}
-          <button onclick="changeQty('${item.id}', 1)">+</button>
+
+        <div class="quantity-controls">
+          <button class="qty-btn"
+            onclick="changeQty('${item.id}', -1)">-</button>
+
+          <input type="number"
+            value="${item.quantity}"
+            style="width:60px"
+            onchange="changeQtyManual('${item.id}', this.value)">
+
+          <button class="qty-btn"
+            onclick="changeQty('${item.id}', 1)">+</button>
         </div>
+
         <div>Jami: ${formatMoney(itemTotal)} so'm</div>
-        <button onclick="removeFromCart('${item.id}')">
+
+        <button style="background:var(--danger)"
+          onclick="removeFromCart('${item.id}')">
           O'chirish
         </button>
       </div>
