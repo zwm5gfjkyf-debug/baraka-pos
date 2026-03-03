@@ -6,6 +6,15 @@ const loadingScreen = document.getElementById("loadingScreen");
 const authScreen = document.getElementById("authScreen");
 const appScreen = document.getElementById("appScreen");
 
+/* =========================
+   FORMAT MONEY
+========================= */
+
+function formatMoney(num){
+  return Number(num || 0)
+    .toLocaleString("ru-RU")
+    .replace(/,/g, " ");
+}
 
 /* =========================
    AUTH STATE
@@ -16,10 +25,13 @@ auth.onAuthStateChanged(user => {
   loadingScreen.classList.add("hidden");
 
   if (user) {
+
     authScreen.classList.add("hidden");
     appScreen.classList.remove("hidden");
 
     document.getElementById("shopTitle").innerText = user.email;
+
+    loadDashboard(); // IMPORTANT
 
   } else {
     appScreen.classList.add("hidden");
@@ -27,7 +39,6 @@ auth.onAuthStateChanged(user => {
   }
 
 });
-
 
 /* =========================
    REGISTER
@@ -40,7 +51,7 @@ async function register() {
   const password = document.getElementById("password").value;
 
   if(!shopName || !email || !password){
-    alert("Fill all fields");
+    alert("Barcha maydonlarni to'ldiring");
     return;
   }
 
@@ -55,7 +66,6 @@ async function register() {
 
 }
 
-
 /* =========================
    LOGIN
 ========================= */
@@ -69,7 +79,6 @@ async function login() {
 
 }
 
-
 /* =========================
    LOGOUT
 ========================= */
@@ -78,6 +87,13 @@ function logout(){
   auth.signOut();
 }
 
+/* =========================
+   PROFILE MENU
+========================= */
+
+function toggleProfileMenu(){
+  document.getElementById("profileMenu").classList.toggle("hidden");
+}
 
 /* =========================
    NAVIGATION
@@ -90,9 +106,17 @@ function navigate(pageId){
   });
 
   document.getElementById(pageId).classList.remove("hidden");
-if(pageId === "homePage"){
-  loadDashboard();
-}
+
+  // bottom nav active state
+  document.querySelectorAll(".bottom-nav button")
+    .forEach(btn => btn.classList.remove("active"));
+
+  event.target.classList.add("active");
+
+  if(pageId === "dashboardPage"){
+    loadDashboard();
+  }
+
   if(pageId === "stockPage"){
     loadCurrentStock();
   }
@@ -103,6 +127,36 @@ if(pageId === "homePage"){
 
 }
 
+/* =========================
+   DASHBOARD
+========================= */
+
+function loadDashboard(){
+
+  const shopId = auth.currentUser.uid;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("stats")
+    .doc("summary")
+    .onSnapshot(doc => {
+
+      if(!doc.exists) return;
+
+      const data = doc.data();
+
+      document.getElementById("todaySales").innerText =
+        formatMoney(data.todayRevenue);
+
+      document.getElementById("weekSales").innerText =
+        formatMoney(data.weekRevenue);
+
+      document.getElementById("monthSales").innerText =
+        formatMoney(data.monthRevenue);
+
+    });
+
+}
 
 /* =========================
    ADD STOCK
@@ -115,28 +169,24 @@ async function addStock(){
   const cost = Number(document.getElementById("stockCost").value);
 
   if(!name || qty <= 0){
-    alert("Ma'lumot to'g'ri emas");
+    alert("Ma'lumot noto'g'ri");
     return;
   }
 
   const shopId = auth.currentUser.uid;
-
   const productsRef = db.collection("shops")
     .doc(shopId)
     .collection("products");
 
-  const snapshot = await productsRef
-    .where("name","==",name)
-    .get();
+  const snapshot = await productsRef.where("name","==",name).get();
 
   let productId;
 
   if(snapshot.empty){
 
-    // CREATE NEW PRODUCT
     const newProduct = await productsRef.add({
-      name: name,
-      sellingPrice: 0,   // default
+      name,
+      sellingPrice: 0,
       stock: qty,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -145,19 +195,15 @@ async function addStock(){
 
   } else {
 
-    // UPDATE EXISTING PRODUCT
     const docSnap = snapshot.docs[0];
     productId = docSnap.id;
 
-    const currentStock = docSnap.data().stock || 0;
-
     await productsRef.doc(productId).update({
-      stock: currentStock + qty
+      stock: firebase.firestore.FieldValue.increment(qty)
     });
 
   }
 
-  // SAVE STOCK LOG
   await db.collection("shops")
     .doc(shopId)
     .collection("stockLogs")
@@ -169,7 +215,6 @@ async function addStock(){
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-  // CLEAR INPUTS
   document.getElementById("stockName").value = "";
   document.getElementById("stockQty").value = "";
   document.getElementById("stockCost").value = "";
@@ -177,9 +222,8 @@ async function addStock(){
   loadCurrentStock();
 }
 
-
 /* =========================
-   LOAD CURRENT STOCK
+   LOAD STOCK
 ========================= */
 
 function loadCurrentStock(){
@@ -201,8 +245,8 @@ function loadCurrentStock(){
         container.innerHTML += `
           <div class="card">
             <strong>${p.name}</strong><br>
-            Stock: ${p.stock || 0}<br>
-            Selling:
+            Ombor: ${p.stock || 0}<br>
+            Sotish narxi:
             <input type="number"
               value="${p.sellingPrice || 0}"
               onchange="updatePrice('${doc.id}', this.value)">
@@ -213,11 +257,6 @@ function loadCurrentStock(){
     });
 
 }
-
-
-/* =========================
-   UPDATE SELLING PRICE
-========================= */
 
 async function updatePrice(productId, newPrice){
 
@@ -232,15 +271,15 @@ async function updatePrice(productId, newPrice){
     });
 
 }
+
 /* =========================
    SALE ENGINE
 ========================= */
 
 let saleProducts = [];
 let cart = [];
+let isProcessingSale = false;
 
-
-/* Load products for search */
 function loadSaleProducts(){
 
   const shopId = auth.currentUser.uid;
@@ -260,11 +299,8 @@ function loadSaleProducts(){
       });
 
     });
-
 }
 
-
-/* Search Autocomplete */
 function searchProducts(keyword){
 
   const resultsDiv = document.getElementById("searchResults");
@@ -272,23 +308,18 @@ function searchProducts(keyword){
 
   if(!keyword) return;
 
-  const filtered = saleProducts.filter(p =>
-    p.name.toLowerCase().includes(keyword.toLowerCase())
-  );
+  saleProducts
+    .filter(p => p.name.toLowerCase().includes(keyword.toLowerCase()))
+    .forEach(p => {
 
-  filtered.forEach(p => {
-
-    resultsDiv.innerHTML += `
-      <div class="card" onclick="addToCart('${p.id}')">
-        ${p.name} — ${p.sellingPrice || 0}
-      </div>
-    `;
-  });
-
+      resultsDiv.innerHTML += `
+        <div class="card" onclick="addToCart('${p.id}')">
+          ${p.name} — ${formatMoney(p.sellingPrice)}
+        </div>
+      `;
+    });
 }
 
-
-/* Add to Cart */
 function addToCart(productId){
 
   const product = saleProducts.find(p => p.id === productId);
@@ -308,11 +339,8 @@ function addToCart(productId){
   }
 
   renderCart();
-
 }
 
-
-/* Render Cart */
 function renderCart(){
 
   const container = document.getElementById("cartList");
@@ -325,27 +353,21 @@ function renderCart(){
     total += item.price * item.quantity;
 
     container.innerHTML += `
-      <div class="card">
+      <div class="cart-item">
         <strong>${item.name}</strong><br>
-        <input type="number"
-          value="${item.price}"
-          onchange="changePrice('${item.id}', this.value)">
-        <br>
-        <button onclick="changeQty('${item.id}', -1)">-</button>
-        ${item.quantity}
-        <button onclick="changeQty('${item.id}', 1)">+</button>
-        <br>
-        ${item.price} × ${item.quantity} = ${item.price * item.quantity}
+        ${formatMoney(item.price)} × ${item.quantity}
+        <div class="quantity-controls">
+          <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+          <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+        </div>
+        <div>${formatMoney(item.price * item.quantity)} so'm</div>
       </div>
     `;
   });
 
-  document.getElementById("saleTotal").innerText = total;
-
+  document.getElementById("saleTotal").innerText = formatMoney(total);
 }
 
-
-/* Change Quantity */
 function changeQty(id, amount){
 
   const item = cart.find(i => i.id === id);
@@ -358,31 +380,14 @@ function changeQty(id, amount){
   }
 
   renderCart();
-
 }
-
-
-/* Change Price (only for this sale) */
-function changePrice(id, newPrice){
-
-  const item = cart.find(i => i.id === id);
-  if(!item) return;
-
-  item.price = Number(newPrice);
-  renderCart();
-
-}
-
-
-/* Complete Sale */
-let isProcessingSale = false;
 
 async function completeSale(){
 
-  if(isProcessingSale) return; // prevent double click
+  if(isProcessingSale) return;
   isProcessingSale = true;
 
-  const button = document.querySelector("#salePage button");
+  const button = document.getElementById("completeSaleBtn");
   button.disabled = true;
   button.innerText = "Yuklanmoqda...";
 
@@ -394,9 +399,7 @@ async function completeSale(){
     }
 
     const shopId = auth.currentUser.uid;
-
-    const total = cart.reduce((sum, item) =>
-      sum + item.price * item.quantity, 0);
+    const total = cart.reduce((s,i)=>s+i.price*i.quantity,0);
 
     const saleRef = db.collection("shops")
       .doc(shopId)
@@ -405,81 +408,49 @@ async function completeSale(){
 
     const batch = db.batch();
 
-    batch.set(saleRef, {
+    batch.set(saleRef,{
       items: cart,
       total,
-      type: "cash",
+      type:"cash",
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    for(const item of cart){
-
+    cart.forEach(item=>{
       const productRef = db.collection("shops")
         .doc(shopId)
         .collection("products")
         .doc(item.id);
 
-      batch.update(productRef, {
+      batch.update(productRef,{
         stock: firebase.firestore.FieldValue.increment(-item.quantity)
       });
-
-    }
+    });
 
     await batch.commit();
-// ===== UPDATE SMART STATS =====
 
-const statsRef = db.collection("shops")
-  .doc(shopId)
-  .collection("stats")
-  .doc("summary");
+    const statsRef = db.collection("shops")
+      .doc(shopId)
+      .collection("stats")
+      .doc("summary");
 
-await statsRef.set({
-  todayRevenue: firebase.firestore.FieldValue.increment(total),
-  weekRevenue: firebase.firestore.FieldValue.increment(total),
-  monthRevenue: firebase.firestore.FieldValue.increment(total),
-  updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-}, { merge: true });
+    await statsRef.set({
+      todayRevenue: firebase.firestore.FieldValue.increment(total),
+      weekRevenue: firebase.firestore.FieldValue.increment(total),
+      monthRevenue: firebase.firestore.FieldValue.increment(total),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    },{ merge:true });
+
     cart = [];
     renderCart();
 
     alert("Sotuv muvaffaqiyatli!");
 
   } catch(error){
-    console.error("SALE ERROR:", error);
-    alert("Xatolik yuz berdi.");
+    console.error(error);
+    alert("Xatolik yuz berdi");
   }
 
   isProcessingSale = false;
   button.disabled = false;
   button.innerText = "Sotuvni yakunlash";
-}
-/* =========================
-   LOAD DASHBOARD STATS
-========================= */
-
-function loadDashboard(){
-
-  const shopId = auth.currentUser.uid;
-
-  db.collection("shops")
-    .doc(shopId)
-    .collection("stats")
-    .doc("summary")
-    .onSnapshot(doc => {
-
-      if(!doc.exists) return;
-
-      const data = doc.data();
-
-      document.getElementById("todaySales").innerText =
-        data.todayRevenue || 0;
-
-      document.getElementById("weekSales").innerText =
-        data.weekRevenue || 0;
-
-      document.getElementById("monthSales").innerText =
-        data.monthRevenue || 0;
-
-    });
-
 }
