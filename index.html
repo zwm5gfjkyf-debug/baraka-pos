@@ -54,9 +54,23 @@
       <div class="card">Month Sales: 0</div>
     </div>
 
-    <div id="salePage" class="page hidden">
-      <h2>Sotuv</h2>
-    </div>
+   <div id="salePage" class="page hidden">
+
+  <h2>Sotuv (Naqd)</h2>
+
+  <div class="card">
+    <input id="saleSearch" placeholder="Mahsulot qidirish..." oninput="searchProducts(this.value)">
+    <div id="searchResults"></div>
+  </div>
+
+  <div id="cartList"></div>
+
+  <div class="card">
+    <h3>Jami: <span id="saleTotal">0</span></h3>
+    <button onclick="completeSale()">Sotuvni yakunlash</button>
+  </div>
+
+</div>
 
     <div id="debtPage" class="page hidden">
       <h2>Nasiya</h2>
