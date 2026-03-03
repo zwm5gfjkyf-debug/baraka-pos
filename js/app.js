@@ -226,3 +226,191 @@ async function updatePrice(productId, newPrice){
     });
 
 }
+/* =========================
+   SALE ENGINE
+========================= */
+
+let saleProducts = [];
+let cart = [];
+
+
+/* Load products for search */
+function loadSaleProducts(){
+
+  const shopId = auth.currentUser.uid;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("products")
+    .onSnapshot(snapshot => {
+
+      saleProducts = [];
+
+      snapshot.forEach(doc => {
+        saleProducts.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+
+    });
+
+}
+
+
+/* Search Autocomplete */
+function searchProducts(keyword){
+
+  const resultsDiv = document.getElementById("searchResults");
+  resultsDiv.innerHTML = "";
+
+  if(!keyword) return;
+
+  const filtered = saleProducts.filter(p =>
+    p.name.toLowerCase().includes(keyword.toLowerCase())
+  );
+
+  filtered.forEach(p => {
+
+    resultsDiv.innerHTML += `
+      <div class="card" onclick="addToCart('${p.id}')">
+        ${p.name} — ${p.sellingPrice || 0}
+      </div>
+    `;
+  });
+
+}
+
+
+/* Add to Cart */
+function addToCart(productId){
+
+  const product = saleProducts.find(p => p.id === productId);
+  if(!product) return;
+
+  const existing = cart.find(item => item.id === productId);
+
+  if(existing){
+    existing.quantity++;
+  } else {
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.sellingPrice || 0,
+      quantity: 1
+    });
+  }
+
+  renderCart();
+
+}
+
+
+/* Render Cart */
+function renderCart(){
+
+  const container = document.getElementById("cartList");
+  container.innerHTML = "";
+
+  let total = 0;
+
+  cart.forEach(item => {
+
+    total += item.price * item.quantity;
+
+    container.innerHTML += `
+      <div class="card">
+        <strong>${item.name}</strong><br>
+        <input type="number"
+          value="${item.price}"
+          onchange="changePrice('${item.id}', this.value)">
+        <br>
+        <button onclick="changeQty('${item.id}', -1)">-</button>
+        ${item.quantity}
+        <button onclick="changeQty('${item.id}', 1)">+</button>
+        <br>
+        ${item.price} × ${item.quantity} = ${item.price * item.quantity}
+      </div>
+    `;
+  });
+
+  document.getElementById("saleTotal").innerText = total;
+
+}
+
+
+/* Change Quantity */
+function changeQty(id, amount){
+
+  const item = cart.find(i => i.id === id);
+  if(!item) return;
+
+  item.quantity += amount;
+
+  if(item.quantity <= 0){
+    cart = cart.filter(i => i.id !== id);
+  }
+
+  renderCart();
+
+}
+
+
+/* Change Price (only for this sale) */
+function changePrice(id, newPrice){
+
+  const item = cart.find(i => i.id === id);
+  if(!item) return;
+
+  item.price = Number(newPrice);
+  renderCart();
+
+}
+
+
+/* Complete Sale */
+async function completeSale(){
+
+  if(cart.length === 0){
+    alert("Savatcha bo'sh");
+    return;
+  }
+
+  const shopId = auth.currentUser.uid;
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const saleRef = db.collection("shops")
+    .doc(shopId)
+    .collection("sales")
+    .doc();
+
+  const batch = db.batch();
+
+  batch.set(saleRef, {
+    items: cart,
+    total,
+    type: "cash",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  cart.forEach(item => {
+
+    const productRef = db.collection("shops")
+      .doc(shopId)
+      .collection("products")
+      .doc(item.id);
+
+    batch.update(productRef, {
+      stock: firebase.firestore.FieldValue.increment(-item.quantity)
+    });
+
+  });
+
+  await batch.commit();
+
+  cart = [];
+  renderCart();
+  alert("Sotuv muvaffaqiyatli!");
+
+}
