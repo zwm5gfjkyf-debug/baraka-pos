@@ -373,48 +373,69 @@ function changePrice(id, newPrice){
 
 
 /* Complete Sale */
+let isProcessingSale = false;
+
 async function completeSale(){
 
-  if(cart.length === 0){
-    alert("Savatcha bo'sh");
-    return;
-  }
+  if(isProcessingSale) return; // prevent double click
+  isProcessingSale = true;
 
-  const shopId = auth.currentUser.uid;
+  const button = document.querySelector("#salePage button");
+  button.disabled = true;
+  button.innerText = "Yuklanmoqda...";
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  try {
 
-  const saleRef = db.collection("shops")
-    .doc(shopId)
-    .collection("sales")
-    .doc();
+    if(cart.length === 0){
+      alert("Savatcha bo'sh");
+      return;
+    }
 
-  const batch = db.batch();
+    const shopId = auth.currentUser.uid;
 
-  batch.set(saleRef, {
-    items: cart,
-    total,
-    type: "cash",
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
+    const total = cart.reduce((sum, item) =>
+      sum + item.price * item.quantity, 0);
 
-  cart.forEach(item => {
-
-    const productRef = db.collection("shops")
+    const saleRef = db.collection("shops")
       .doc(shopId)
-      .collection("products")
-      .doc(item.id);
+      .collection("sales")
+      .doc();
 
-    batch.update(productRef, {
-      stock: firebase.firestore.FieldValue.increment(-item.quantity)
+    const batch = db.batch();
+
+    batch.set(saleRef, {
+      items: cart,
+      total,
+      type: "cash",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-  });
+    for(const item of cart){
 
-  await batch.commit();
+      const productRef = db.collection("shops")
+        .doc(shopId)
+        .collection("products")
+        .doc(item.id);
 
-  cart = [];
-  renderCart();
-  alert("Sotuv muvaffaqiyatli!");
+      batch.update(productRef, {
+        stock: firebase.firestore.FieldValue.increment(-item.quantity)
+      });
 
+    }
+
+    await batch.commit();
+
+    cart = [];
+    renderCart();
+
+    alert("Sotuv muvaffaqiyatli!");
+
+  } catch(error){
+    console.error("SALE ERROR:", error);
+    alert("Xatolik yuz berdi.");
+  }
+
+  isProcessingSale = false;
+  button.disabled = false;
+  button.innerText = "Sotuvni yakunlash";
 }
