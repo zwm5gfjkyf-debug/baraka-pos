@@ -62,9 +62,20 @@
       <h2>Nasiya</h2>
     </div>
 
-    <div id="stockPage" class="page hidden">
-      <h2>Zaxira</h2>
-    </div>
+   <div id="stockPage" class="page hidden">
+
+  <h2>Zaxira (Stock)</h2>
+
+  <div class="card">
+    <input id="stockName" placeholder="Mahsulot nomi">
+    <input id="stockQty" type="number" placeholder="Kelgan miqdor">
+    <input id="stockCost" type="number" placeholder="Kelgan narx (cost price)">
+    <button onclick="addStock()">Qo'shish</button>
+  </div>
+
+  <div id="currentStockList"></div>
+
+</div>
 
     <div id="analyticsPage" class="page hidden">
       <h2>Tahlil</h2>
