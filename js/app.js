@@ -412,60 +412,7 @@ async function completeSale(){
     return;
   }
 
-  try{
-
-    const shopId = auth.currentUser.uid;
-
-    const total = cart.reduce(
-      (s,i)=>s+i.price*i.quantity,0
-    );
-
-    const batch = db.batch();
-
-    const saleRef = db.collection("shops")
-      .doc(shopId)
-      .collection("sales")
-      .doc();
-
-    batch.set(saleRef,{
-      items: cart,
-      total,
-      type: "cash",
-      createdAt:
-        firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    cart.forEach(item=>{
-      const productRef = db.collection("shops")
-        .doc(shopId)
-        .collection("products")
-        .doc(item.id);
-
-      batch.update(productRef,{
-        stock:
-          firebase.firestore.FieldValue.increment(
-            -item.quantity
-          )
-      });
-    });
-
-    await batch.commit();
-
-    cart = [];
-    renderCart();
-
-    showSuccess("Muvaffaqiyatli sotildi");
-
-  } catch(error){
-    console.error(error);
-    alert("Xatolik yuz berdi");
-  }
-
-  if(button){
-    button.disabled = false;
-    button.innerText = "Sotuvni yakunlash";
-  }
-}
+ 
 /* =====================================================
    NASIYA SYSTEM (MERGE SAME CUSTOMER + EDITABLE)
 ===================================================== */
