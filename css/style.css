@@ -4,7 +4,18 @@
   --primary:#10b981;
   --text:#ffffff;
 }
-
+#loadingScreen,
+#authScreen,
+#appScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.hidden {
+  display: none !important;
+}
 body {
   margin:0;
   background:var(--bg);
