@@ -89,7 +89,9 @@ function logout(){
 function toggleProfileMenu(){
   profileMenu.classList.toggle("hidden");
 }
-
+function focusSaleSearch(){
+  document.getElementById("saleSearch").focus();
+}
 /* =========================
    NAVIGATION
 ========================= */
