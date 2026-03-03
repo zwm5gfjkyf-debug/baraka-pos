@@ -892,3 +892,39 @@ function showSuccess(message){
     overlay.classList.add("hidden");
   },1800);
 }
+/* =====================================================
+   ANALYTICS SYSTEM
+===================================================== */
+
+function loadAnalytics(){
+
+  const shopId = auth.currentUser?.uid;
+  if(!shopId) return;
+
+  const container = document.getElementById("analyticsContent");
+  if(!container) return;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("sales")
+    .get()
+    .then(snapshot=>{
+
+      let totalRevenue = 0;
+      let totalSales = 0;
+
+      snapshot.forEach(doc=>{
+        const data = doc.data();
+        totalRevenue += data.total || 0;
+        totalSales++;
+      });
+
+      container.innerHTML = `
+        <div class="card">
+          <h3>Umumiy Sotuvlar</h3>
+          <p>Jami savdo soni: ${totalSales}</p>
+          <p>Umumiy daromad: ${formatMoney(totalRevenue)} so'm</p>
+        </div>
+      `;
+    });
+}
