@@ -43,7 +43,6 @@ auth.onAuthStateChanged(user => {
     document.getElementById("authScreen").classList.add("hidden");
     document.getElementById("appScreen").classList.remove("hidden");
     document.getElementById("shopTitle").innerText = user.email;
-
     loadDashboard();
   } else {
     document.getElementById("appScreen").classList.add("hidden");
@@ -51,47 +50,6 @@ auth.onAuthStateChanged(user => {
   }
 });
 
-/* =========================
-   REGISTER / LOGIN
-========================= */
-
-async function register(){
-  const shopName = shopName.value.trim();
-  const emailVal = email.value.trim();
-  const passVal = password.value;
-
-  if(!shopName || !emailVal || !passVal){
-    alert("Barcha maydonlarni to'ldiring");
-    return;
-  }
-
-  const cred = await auth.createUserWithEmailAndPassword(emailVal, passVal);
-
-  await db.collection("shops")
-    .doc(cred.user.uid)
-    .set({
-      shopName,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-}
-
-async function login(){
-  await auth.signInWithEmailAndPassword(
-    email.value.trim(),
-    password.value
-  );
-}
-
-function logout(){
-  auth.signOut();
-}
-
-function toggleProfileMenu(){
-  profileMenu.classList.toggle("hidden");
-}
-function focusSaleSearch(){
-  document.getElementById("saleSearch").focus();
-}
 /* =========================
    NAVIGATION
 ========================= */
@@ -107,7 +65,9 @@ function navigate(pageId){
   document.querySelectorAll(".bottom-nav button")
     .forEach(btn=>btn.classList.remove("active"));
 
-  event.target.classList.add("active");
+  if(event && event.target){
+    event.target.classList.add("active");
+  }
 
   if(pageId==="dashboardPage") loadDashboard();
   if(pageId==="salePage") loadSaleProducts();
@@ -117,45 +77,45 @@ function navigate(pageId){
 }
 
 /* =========================
-   DASHBOARD (REAL CALC)
+   DASHBOARD
 ========================= */
 
 function loadDashboard(){
 
   const shopId = auth.currentUser.uid;
-  const salesRef = db.collection("shops")
+
+  db.collection("shops")
     .doc(shopId)
-    .collection("sales");
+    .collection("sales")
+    .onSnapshot(snapshot=>{
 
-  salesRef.onSnapshot(snapshot=>{
+      let today=0, week=0, month=0;
 
-    let today=0, week=0, month=0;
+      const startToday = getStartOfToday();
+      const startWeek = getStartOfWeek();
+      const startMonth = getStartOfMonth();
 
-    const startToday = getStartOfToday();
-    const startWeek = getStartOfWeek();
-    const startMonth = getStartOfMonth();
+      snapshot.forEach(doc=>{
+        const s = doc.data();
+        if(!s.createdAt) return;
 
-    snapshot.forEach(doc=>{
-      const s = doc.data();
-      if(!s.createdAt) return;
+        const date = s.createdAt.toDate();
 
-      const date = s.createdAt.toDate();
+        if(s.type==="cash" || s.type==="debt_payment"){
+          if(date >= startToday) today += s.total;
+          if(date >= startWeek) week += s.total;
+          if(date >= startMonth) month += s.total;
+        }
+      });
 
-      if(s.type==="cash"){
-        if(date >= startToday) today += s.total;
-        if(date >= startWeek) week += s.total;
-        if(date >= startMonth) month += s.total;
-      }
+      todaySales.innerText = formatMoney(today);
+      weekSales.innerText = formatMoney(week);
+      monthSales.innerText = formatMoney(month);
     });
-
-    todaySales.innerText = formatMoney(today);
-    weekSales.innerText = formatMoney(week);
-    monthSales.innerText = formatMoney(month);
-  });
 }
 
 /* =========================
-   SALE ENGINE
+   SALE ENGINE (NAQD)
 ========================= */
 
 let saleProducts=[];
@@ -202,6 +162,38 @@ function addToCart(id){
     quantity:1
   });
 
+  renderCart();
+}
+
+function changeQty(id, amount){
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+
+  item.quantity += amount;
+
+  if(item.quantity <= 0){
+    cart = cart.filter(i=>i.id!==id);
+  }
+
+  renderCart();
+}
+
+function changeQtyManual(id,value){
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+  item.quantity = Number(value);
+  renderCart();
+}
+
+function changePrice(id,newPrice){
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+  item.price = Number(newPrice);
+  renderCart();
+}
+
+function removeFromCart(id){
+  cart = cart.filter(i=>i.id!==id);
   renderCart();
 }
 
@@ -252,6 +244,14 @@ function renderCart(){
   document.getElementById("saleTotal").innerText = formatMoney(total);
 }
 
+function focusSaleSearch(){
+  const input = document.getElementById("saleSearch");
+  if(input){
+    input.focus();
+    input.scrollIntoView({behavior:"smooth"});
+  }
+}
+
 async function completeSale(){
 
   if(isProcessing) return;
@@ -266,15 +266,32 @@ async function completeSale(){
   const shopId=auth.currentUser.uid;
   const total=cart.reduce((s,i)=>s+i.price*i.quantity,0);
 
-  await db.collection("shops")
+  const batch = db.batch();
+
+  const saleRef = db.collection("shops")
     .doc(shopId)
     .collection("sales")
-    .add({
-      items:cart,
-      total,
-      type:"cash",
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    .doc();
+
+  batch.set(saleRef,{
+    items:cart,
+    total,
+    type:"cash",
+    createdAt:firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  cart.forEach(item=>{
+    const productRef = db.collection("shops")
+      .doc(shopId)
+      .collection("products")
+      .doc(item.id);
+
+    batch.update(productRef,{
+      stock: firebase.firestore.FieldValue.increment(-item.quantity)
     });
+  });
+
+  await batch.commit();
 
   cart=[];
   renderCart();
@@ -283,446 +300,200 @@ async function completeSale(){
 }
 
 /* =========================
-   NASIYA SYSTEM
+   NASIYA SYSTEM (FIXED)
 ========================= */
 
-/* =========================
-   NASIYA SYSTEM (FULL)
-========================= */
+let debtCart=[];
 
-let debtProducts = [];
-let debtCart = [];
-
-/* Load products for Nasiya search */
-function searchDebtProducts(keyword){
-
-  const resultsDiv = document.getElementById("debtSearchResults");
-  resultsDiv.innerHTML = "";
-
-  if(!keyword) return;
-
-  debtProducts = saleProducts; // reuse loaded products
-
-  debtProducts
-    .filter(p=>p.name.toLowerCase().includes(keyword.toLowerCase()))
-    .forEach(p=>{
-      resultsDiv.innerHTML += `
-        <div class="card" onclick="addDebtToCart('${p.id}')">
-          ${p.name} — ${formatMoney(p.sellingPrice)}
-        </div>
-      `;
-    });
-}
-
-/* Add to Debt Cart */
-function addDebtToCart(id){
-
-  const product = saleProducts.find(p=>p.id===id);
-  if(!product) return;
-
-  const existing = debtCart.find(i=>i.id===id);
-
-  if(existing){
-    existing.quantity++;
-  } else {
-    debtCart.push({
-      id,
-      name: product.name,
-      price: product.sellingPrice || 0,
-      quantity: 1
-    });
-  }
-
-  renderDebtCart();
-}
-
-/* Render Debt Cart */
 function renderDebtCart(){
 
   const container = document.getElementById("debtCartList");
-  container.innerHTML = "";
+  if(!container) return;
 
-  let total = 0;
+  container.innerHTML="";
+  let total=0;
 
   debtCart.forEach(item=>{
-    total += item.price * item.quantity;
+    const itemTotal=item.price*item.quantity;
+    total+=itemTotal;
 
-    container.innerHTML += `
+    container.innerHTML+=`
       <div class="cart-item">
         <strong>${item.name}</strong><br>
-        ${formatMoney(item.price)} × ${item.quantity}
-        <div>${formatMoney(item.price * item.quantity)} so'm</div>
-      </div>
-    `;
+
+        Narx:
+        <input type="number"
+          value="${item.price}"
+          onchange="changeDebtPrice('${item.id}',this.value)">
+
+        <div class="quantity-controls">
+          <button onclick="changeDebtQty('${item.id}',-1)">-</button>
+          <input type="number"
+            value="${item.quantity}"
+            onchange="changeDebtQtyManual('${item.id}',this.value)">
+          <button onclick="changeDebtQty('${item.id}',1)">+</button>
+        </div>
+
+        ${formatMoney(itemTotal)} so'm
+      </div>`;
   });
-
 }
-function changePrice(id,newPrice){
-  const item = cart.find(i=>i.id===id);
+
+function changeDebtPrice(id,value){
+  const item=debtCart.find(i=>i.id===id);
   if(!item) return;
-  item.price = Number(newPrice);
-  renderCart();
+  item.price=Number(value);
+  renderDebtCart();
 }
 
-function changeQtyManual(id,value){
-  const item = cart.find(i=>i.id===id);
+function changeDebtQty(id,amount){
+  const item=debtCart.find(i=>i.id===id);
   if(!item) return;
-  item.quantity = Number(value);
-  renderCart();
+  item.quantity+=amount;
+  if(item.quantity<=0){
+    debtCart=debtCart.filter(i=>i.id!==id);
+  }
+  renderDebtCart();
 }
 
-function removeFromCart(id){
-  cart = cart.filter(i=>i.id!==id);
-  renderCart();
+function changeDebtQtyManual(id,value){
+  const item=debtCart.find(i=>i.id===id);
+  if(!item) return;
+  item.quantity=Number(value);
+  renderDebtCart();
 }
-/* Complete Debt Sale */
+
 async function completeDebtSale(){
 
-  const customerName = document.getElementById("debtCustomerName").value.trim();
+  const customerName =
+    document.getElementById("debtCustomerName").value.trim();
 
   if(!customerName || debtCart.length===0){
     alert("Mijoz yoki mahsulot yo'q");
     return;
   }
 
-  const shopId = auth.currentUser.uid;
-  const total = debtCart.reduce((s,i)=>s+i.price*i.quantity,0);
+  const shopId=auth.currentUser.uid;
+  const total=debtCart.reduce((s,i)=>s+i.price*i.quantity,0);
 
-  await db.collection("shops")
+  const debtsRef=db.collection("shops")
     .doc(shopId)
-    .collection("debts")
-    .add({
-      customer: customerName,
-      items: debtCart,
+    .collection("debts");
+
+  const existingSnap=await debtsRef
+    .where("customer","==",customerName)
+    .where("status","!=","paid")
+    .get();
+
+  if(existingSnap.empty){
+
+    await debtsRef.add({
+      customer:customerName,
+      items:debtCart,
       total,
-      remaining: total,
-      status: "unpaid",
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      remaining:total,
+      status:"unpaid",
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
     });
 
-  debtCart = [];
-  document.getElementById("debtCustomerName").value = "";
-  renderDebtCart();
+  } else {
 
+    const docSnap=existingSnap.docs[0];
+    const old=docSnap.data();
+
+    await debtsRef.doc(docSnap.id).update({
+      items:[...old.items,...debtCart],
+      total:old.total+total,
+      remaining:old.remaining+total
+    });
+  }
+
+  debtCart=[];
+  renderDebtCart();
   alert("Nasiya saqlandi");
 }
 
-/* Load Debt Customers */
-function loadDebtCustomers(){
-
-  const shopId = auth.currentUser.uid;
-
-  db.collection("shops")
-    .doc(shopId)
-    .collection("debts")
-    .onSnapshot(snapshot=>{
-
-      const container = document.getElementById("debtCustomersList");
-      container.innerHTML = "";
-
-      snapshot.forEach(doc=>{
-        const d = doc.data();
-
-        container.innerHTML += `
-          <div class="card">
-            <strong>${d.customer}</strong><br>
-            Jami: ${formatMoney(d.total)}<br>
-            Qolgan: ${formatMoney(d.remaining)}<br>
-
-            <input type="number"
-              placeholder="To'lov miqdori"
-              id="pay_${doc.id}">
-            <button onclick="payDebt('${doc.id}')">
-              To'lov qo'shish
-            </button>
-          </div>
-        `;
-      });
-
-    });
-}
-
-/* Pay Debt */
-async function payDebt(debtId){
-
-  const shopId = auth.currentUser.uid;
-  const input = document.getElementById("pay_"+debtId);
-  const amount = Number(input.value);
-
-  if(amount <= 0){
-    alert("To'g'ri summa kiriting");
-    return;
-  }
-
-  const debtRef = db.collection("shops")
-    .doc(shopId)
-    .collection("debts")
-    .doc(debtId);
-
-  const docSnap = await debtRef.get();
-  const debt = docSnap.data();
-
-  if(!debt) return;
-
-  if(amount > debt.remaining){
-    alert("Qoldiqdan ko'p to'lov mumkin emas");
-    return;
-  }
-
-  const newRemaining = debt.remaining - amount;
-
-  await debtRef.update({
-    remaining: newRemaining,
-    status: newRemaining === 0 ? "paid" : "partial"
-  });
-
-  /* ADD PAYMENT TO TODAY REVENUE */
-  await db.collection("shops")
-    .doc(shopId)
-    .collection("sales")
-    .add({
-      type: "debt_payment",
-      total: amount,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-  alert("To'lov qabul qilindi");
-}
 /* =========================
-   ANALYTICS PRO VERSION
-========================= */
-
-let weeklyChartInstance = null;
-let monthlyChartInstance = null;
-
-function loadAnalytics(){
-
-  const shopId = auth.currentUser.uid;
-  const salesRef = db.collection("shops")
-    .doc(shopId)
-    .collection("sales");
-
-  salesRef.get().then(snapshot => {
-
-    const startWeek = getStartOfWeek();
-    const startMonth = getStartOfMonth();
-
-    const weeklyCash = [0,0,0,0,0,0,0];
-    const weeklyDebt = [0,0,0,0,0,0,0];
-
-    const monthlyCash = new Array(31).fill(0);
-    const monthlyDebt = new Array(31).fill(0);
-
-    snapshot.forEach(doc => {
-
-      const s = doc.data();
-      if(!s.createdAt) return;
-
-      const date = s.createdAt.toDate();
-
-      const dayIndex = (date.getDay() + 6) % 7; // Monday start
-      const monthDay = date.getDate() - 1;
-
-      if(date >= startWeek){
-
-        if(s.type === "cash"){
-          weeklyCash[dayIndex] += s.total;
-        }
-
-        if(s.type === "debt_payment"){
-          weeklyDebt[dayIndex] += s.total;
-        }
-      }
-
-      if(date >= startMonth){
-
-        if(s.type === "cash"){
-          monthlyCash[monthDay] += s.total;
-        }
-
-        if(s.type === "debt_payment"){
-          monthlyDebt[monthDay] += s.total;
-        }
-      }
-
-    });
-
-    renderWeeklyChart(weeklyCash, weeklyDebt);
-    renderMonthlyChart(monthlyCash, monthlyDebt);
-
-  });
-}
-
-/* =========================
-   WEEKLY CHART
-========================= */
-
-function renderWeeklyChart(cashData, debtData){
-
-  if(weeklyChartInstance) weeklyChartInstance.destroy();
-
-  weeklyChartInstance = new Chart(
-    document.getElementById("weeklyChart"),
-    {
-      type: "bar",
-      data: {
-        labels: ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"],
-        datasets: [
-          {
-            label: "Naqd",
-            data: cashData,
-            backgroundColor: "rgba(16,185,129,0.7)"
-          },
-          {
-            label: "Nasiya to'lov",
-            data: debtData,
-            backgroundColor: "rgba(59,130,246,0.7)"
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: { color: "#f1f5f9" }
-          }
-        },
-        scales: {
-          x: { ticks: { color: "#94a3b8" } },
-          y: { ticks: { color: "#94a3b8" } }
-        }
-      }
-    }
-  );
-}
-
-/* =========================
-   MONTHLY CHART
-========================= */
-
-function renderMonthlyChart(cashData, debtData){
-
-  if(monthlyChartInstance) monthlyChartInstance.destroy();
-
-  monthlyChartInstance = new Chart(
-    document.getElementById("monthlyChart"),
-    {
-      type: "line",
-      data: {
-        labels: cashData.map((_,i)=>i+1),
-        datasets: [
-          {
-            label: "Naqd",
-            data: cashData,
-            borderColor: "#10b981",
-            backgroundColor: "rgba(16,185,129,0.2)",
-            tension: 0.3,
-            fill: true
-          },
-          {
-            label: "Nasiya to'lov",
-            data: debtData,
-            borderColor: "#3b82f6",
-            backgroundColor: "rgba(59,130,246,0.2)",
-            tension: 0.3,
-            fill: true
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            labels: { color: "#f1f5f9" }
-          }
-        },
-        scales: {
-          x: { ticks: { color: "#94a3b8" } },
-          y: { ticks: { color: "#94a3b8" } }
-        }
-      }
-    }
-  );
-}
-/* =========================
-   STOCK SYSTEM (FULL)
+   STOCK SYSTEM (EDITABLE)
 ========================= */
 
 function loadCurrentStock(){
 
-  const shopId = auth.currentUser.uid;
+  const shopId=auth.currentUser.uid;
 
   db.collection("shops")
     .doc(shopId)
     .collection("products")
     .onSnapshot(snapshot=>{
 
-      const container = document.getElementById("currentStockList");
+      const container=document.getElementById("currentStockList");
       if(!container) return;
-
       container.innerHTML="";
 
       snapshot.forEach(doc=>{
-        const p = doc.data();
+        const p=doc.data();
 
-        container.innerHTML += `
+        container.innerHTML+=`
           <div class="card">
             <strong>${p.name}</strong><br>
-            Ombor: ${p.stock || 0}<br>
-            Kelgan narx: ${formatMoney(p.costPrice)}<br>
-            Sotish narx: ${formatMoney(p.sellingPrice)}
-          </div>
-        `;
+
+            Ombor:
+            <input type="number"
+              value="${p.stock}"
+              onchange="updateStock('${doc.id}',this.value)"><br>
+
+            Kelgan narx:
+            <input type="number"
+              value="${p.costPrice}"
+              onchange="updateCost('${doc.id}',this.value)"><br>
+
+            Sotish narx:
+            <input type="number"
+              value="${p.sellingPrice}"
+              onchange="updateSelling('${doc.id}',this.value)"><br>
+
+            <button style="background:red"
+              onclick="deleteProduct('${doc.id}')">
+              O'chirish
+            </button>
+          </div>`;
       });
 
     });
 }
 
-
-async function addStock(){
-
-  const name = document.getElementById("stockName").value.trim();
-  const qty = Number(document.getElementById("stockQty").value);
-  const cost = Number(document.getElementById("stockCost").value);
-  const selling = Number(document.getElementById("stockSellingPrice").value);
-
-  if(!name || qty<=0 || cost<=0 || selling<=0){
-    alert("Barcha maydonlarni to'ldiring");
-    return;
-  }
-
-  const shopId = auth.currentUser.uid;
-  const productsRef = db.collection("shops")
+async function updateStock(id,value){
+  const shopId=auth.currentUser.uid;
+  await db.collection("shops")
     .doc(shopId)
-    .collection("products");
+    .collection("products")
+    .doc(id)
+    .update({stock:Number(value)});
+}
 
-  const snapshot = await productsRef.where("name","==",name).get();
+async function updateCost(id,value){
+  const shopId=auth.currentUser.uid;
+  await db.collection("shops")
+    .doc(shopId)
+    .collection("products")
+    .doc(id)
+    .update({costPrice:Number(value)});
+}
 
-  if(snapshot.empty){
+async function updateSelling(id,value){
+  const shopId=auth.currentUser.uid;
+  await db.collection("shops")
+    .doc(shopId)
+    .collection("products")
+    .doc(id)
+    .update({sellingPrice:Number(value)});
+}
 
-    await productsRef.add({
-      name,
-      stock: qty,
-      costPrice: cost,
-      sellingPrice: selling,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-  } else {
-
-    const docSnap = snapshot.docs[0];
-
-    await productsRef.doc(docSnap.id).update({
-      stock: firebase.firestore.FieldValue.increment(qty),
-      costPrice: cost,
-      sellingPrice: selling
-    });
-  }
-
-  stockName.value="";
-  stockQty.value="";
-  stockCost.value="";
-  stockSellingPrice.value="";
-
-  loadCurrentStock();
+async function deleteProduct(id){
+  const shopId=auth.currentUser.uid;
+  await db.collection("shops")
+    .doc(shopId)
+    .collection("products")
+    .doc(id)
+    .delete();
 }
