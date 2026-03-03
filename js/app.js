@@ -1,51 +1,87 @@
+/* =========================
+   SCREEN REFERENCES
+========================= */
+
 const loadingScreen = document.getElementById("loadingScreen");
 const authScreen = document.getElementById("authScreen");
 const appScreen = document.getElementById("appScreen");
 
+
+/* =========================
+   AUTH STATE
+========================= */
+
 auth.onAuthStateChanged(user => {
 
-  // Always hide loading first
   loadingScreen.classList.add("hidden");
 
   if (user) {
-
     authScreen.classList.add("hidden");
     appScreen.classList.remove("hidden");
 
     document.getElementById("shopTitle").innerText = user.email;
 
   } else {
-
     appScreen.classList.add("hidden");
     authScreen.classList.remove("hidden");
-
   }
 
 });
 
+
+/* =========================
+   REGISTER
+========================= */
+
 async function register() {
-  const shopName = document.getElementById("shopName").value;
-  const email = document.getElementById("email").value;
+
+  const shopName = document.getElementById("shopName").value.trim();
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
+
+  if(!shopName || !email || !password){
+    alert("Fill all fields");
+    return;
+  }
 
   const cred = await auth.createUserWithEmailAndPassword(email, password);
 
-  await db.collection("shops").doc(cred.user.uid).set({
-    shopName,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
+  await db.collection("shops")
+    .doc(cred.user.uid)
+    .set({
+      shopName,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
 }
 
+
+/* =========================
+   LOGIN
+========================= */
+
 async function login() {
-  const email = document.getElementById("email").value;
+
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
   await auth.signInWithEmailAndPassword(email, password);
+
 }
 
-function logout() {
+
+/* =========================
+   LOGOUT
+========================= */
+
+function logout(){
   auth.signOut();
 }
+
+
+/* =========================
+   NAVIGATION
+========================= */
 
 function navigate(pageId){
 
@@ -58,7 +94,14 @@ function navigate(pageId){
   if(pageId === "stockPage"){
     loadCurrentStock();
   }
+
 }
+
+
+/* =========================
+   ADD STOCK
+========================= */
+
 async function addStock(){
 
   const name = document.getElementById("stockName").value.trim();
@@ -84,31 +127,10 @@ async function addStock(){
 
   if(snapshot.empty){
 
-    // Auto create product
+    // CREATE NEW PRODUCT
     const newProduct = await productsRef.add({
       name: name,
-    if(snapshot.empty){
-
-  const newProduct = await productsRef.add({
-    name: name,
-    sellingPrice: 0, // default 0 until you set it
-    stock: qty,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  productId = newProduct.id;
-
-} else {
-
-  const doc = snapshot.docs[0];
-  productId = doc.id;
-
-  const currentStock = doc.data().stock || 0;
-
-  await productsRef.doc(productId).update({
-    stock: currentStock + qty
-  });
-}
+      sellingPrice: 0,   // default
       stock: qty,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -117,17 +139,19 @@ async function addStock(){
 
   } else {
 
-    const doc = snapshot.docs[0];
-    productId = doc.id;
+    // UPDATE EXISTING PRODUCT
+    const docSnap = snapshot.docs[0];
+    productId = docSnap.id;
 
-    const currentStock = doc.data().stock || 0;
+    const currentStock = docSnap.data().stock || 0;
 
     await productsRef.doc(productId).update({
       stock: currentStock + qty
     });
+
   }
 
-  // Save stock log
+  // SAVE STOCK LOG
   await db.collection("shops")
     .doc(shopId)
     .collection("stockLogs")
@@ -139,12 +163,19 @@ async function addStock(){
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
+  // CLEAR INPUTS
   document.getElementById("stockName").value = "";
   document.getElementById("stockQty").value = "";
   document.getElementById("stockCost").value = "";
 
   loadCurrentStock();
 }
+
+
+/* =========================
+   LOAD CURRENT STOCK
+========================= */
+
 function loadCurrentStock(){
 
   const shopId = auth.currentUser.uid;
@@ -161,20 +192,28 @@ function loadCurrentStock(){
 
         const p = doc.data();
 
-      container.innerHTML += `
-  <div class="card">
-    <strong>${p.name}</strong><br>
-    Stock: ${p.stock || 0}<br>
-    Selling:
-    <input type="number"
-      value="${p.sellingPrice || 0}"
-      onchange="updatePrice('${doc.id}', this.value)">
-  </div>
-`;
+        container.innerHTML += `
+          <div class="card">
+            <strong>${p.name}</strong><br>
+            Stock: ${p.stock || 0}<br>
+            Selling:
+            <input type="number"
+              value="${p.sellingPrice || 0}"
+              onchange="updatePrice('${doc.id}', this.value)">
+          </div>
+        `;
       });
 
     });
-  async function updatePrice(productId, newPrice){
+
+}
+
+
+/* =========================
+   UPDATE SELLING PRICE
+========================= */
+
+async function updatePrice(productId, newPrice){
 
   const shopId = auth.currentUser.uid;
 
@@ -185,5 +224,5 @@ function loadCurrentStock(){
     .update({
       sellingPrice: Number(newPrice)
     });
-}
+
 }
