@@ -87,7 +87,28 @@ async function addStock(){
     // Auto create product
     const newProduct = await productsRef.add({
       name: name,
-      sellingPrice: cost * 1.3, // default markup 30%
+    if(snapshot.empty){
+
+  const newProduct = await productsRef.add({
+    name: name,
+    sellingPrice: 0, // default 0 until you set it
+    stock: qty,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  productId = newProduct.id;
+
+} else {
+
+  const doc = snapshot.docs[0];
+  productId = doc.id;
+
+  const currentStock = doc.data().stock || 0;
+
+  await productsRef.doc(productId).update({
+    stock: currentStock + qty
+  });
+}
       stock: qty,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
