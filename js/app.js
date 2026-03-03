@@ -95,6 +95,10 @@ function navigate(pageId){
     loadCurrentStock();
   }
 
+  if(pageId === "salePage"){
+    loadSaleProducts();
+  }
+
 }
 
 
