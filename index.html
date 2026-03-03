@@ -18,72 +18,76 @@
 
 <body>
 
-<!-- =========================
-     LOADING SCREEN
-========================= -->
+<!-- ================= LOADING ================= -->
 <div id="loadingScreen" class="center-screen">
-  <h2>Loading...</h2>
+  <h2>Yuklanmoqda...</h2>
 </div>
 
-
-<!-- =========================
-     AUTH SCREEN
-========================= -->
+<!-- ================= AUTH ================= -->
 <div id="authScreen" class="center-screen hidden">
   <div class="card auth-card">
     <h2>Baraka POS</h2>
-    <input id="shopName" placeholder="Shop Name (register only)">
+    <input id="shopName" placeholder="Do'kon nomi (ro'yxatdan o'tishda)">
     <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <button onclick="register()">Register</button>
-    <button onclick="login()">Login</button>
+    <input id="password" type="password" placeholder="Parol">
+    <button onclick="register()">Ro'yxatdan o'tish</button>
+    <button onclick="login()">Kirish</button>
   </div>
 </div>
 
-
-<!-- =========================
-     MAIN APP
-========================= -->
+<!-- ================= MAIN APP ================= -->
 <div id="appScreen" class="hidden">
 
-  <!-- Header -->
+  <!-- HEADER -->
   <header class="app-header">
-    <h3 id="shopTitle">Baraka</h3>
-    <button onclick="logout()">Logout</button>
+    <div>
+      <div style="font-size:13px;color:var(--text-soft)">Do'kon</div>
+      <div id="shopTitle" style="font-weight:600"></div>
+    </div>
+
+    <!-- Profile Dropdown -->
+    <div style="position:relative">
+      <button onclick="toggleProfileMenu()" style="background:none;font-size:18px">☰</button>
+
+      <div id="profileMenu" class="card hidden"
+           style="position:absolute; right:0; top:45px; width:150px;">
+        <button onclick="logout()" style="background:var(--danger); width:100%">
+          Chiqish
+        </button>
+      </div>
+    </div>
   </header>
 
+  <!-- MAIN CONTENT -->
+  <main>
 
-  <!-- Main Pages -->
-  <main id="mainContent">
-
-    <!-- =========================
-         DASHBOARD PAGE
-    ========================= -->
+    <!-- DASHBOARD -->
     <div id="dashboardPage" class="page">
 
-      <h2>Dashboard</h2>
-
-      <div class="card">
-        Today Revenue:
-        <strong><span id="todaySales">0</span></strong>
+      <div class="dashboard-card">
+        <div class="dashboard-title">Bugungi tushum</div>
+        <div class="dashboard-amount">
+          <span id="todaySales">0</span> so'm
+        </div>
       </div>
 
-      <div class="card">
-        Week Revenue:
-        <strong><span id="weekSales">0</span></strong>
+      <div class="dashboard-card">
+        <div class="dashboard-title">Haftalik tushum</div>
+        <div class="dashboard-amount">
+          <span id="weekSales">0</span> so'm
+        </div>
       </div>
 
-      <div class="card">
-        Month Revenue:
-        <strong><span id="monthSales">0</span></strong>
+      <div class="dashboard-card">
+        <div class="dashboard-title">Oylik tushum</div>
+        <div class="dashboard-amount">
+          <span id="monthSales">0</span> so'm
+        </div>
       </div>
 
     </div>
 
-
-    <!-- =========================
-         SALE PAGE
-    ========================= -->
+    <!-- SOTUV -->
     <div id="salePage" class="page hidden">
 
       <h2>Sotuv (Naqd)</h2>
@@ -98,38 +102,31 @@
       <div id="cartList"></div>
 
       <div class="card">
-        <h3>Jami: <span id="saleTotal">0</span></h3>
-        <button id="completeSaleBtn"
-                onclick="completeSale()">
+        <h3>Jami: <span id="saleTotal">0</span> so'm</h3>
+        <button id="completeSaleBtn" onclick="completeSale()">
           Sotuvni yakunlash
         </button>
       </div>
 
     </div>
 
-
-    <!-- =========================
-         NASIYA PAGE
-    ========================= -->
+    <!-- NASIYA -->
     <div id="debtPage" class="page hidden">
-      <h2>Nasiya</h2>
+      <h2>Nasiya savdo</h2>
       <div class="card">
-        Debt system coming next...
+        Nasiya tizimi keyingi bosqichda qo'shiladi.
       </div>
     </div>
 
-
-    <!-- =========================
-         STOCK PAGE
-    ========================= -->
+    <!-- ZAXIRA -->
     <div id="stockPage" class="page hidden">
 
-      <h2>Zaxira (Stock)</h2>
+      <h2>Zaxira</h2>
 
       <div class="card">
         <input id="stockName" placeholder="Mahsulot nomi">
         <input id="stockQty" type="number" placeholder="Kelgan miqdor">
-        <input id="stockCost" type="number" placeholder="Kelgan narx (cost price)">
+        <input id="stockCost" type="number" placeholder="Kelgan narx">
         <button onclick="addStock()">Qo'shish</button>
       </div>
 
@@ -137,25 +134,19 @@
 
     </div>
 
-
-    <!-- =========================
-         ANALYTICS PAGE
-    ========================= -->
+    <!-- TAHLIL -->
     <div id="analyticsPage" class="page hidden">
       <h2>Tahlil</h2>
       <div class="card">
-        Analytics system coming next...
+        Tahlil tizimi keyingi bosqichda qo'shiladi.
       </div>
     </div>
 
   </main>
 
-
-  <!-- =========================
-       BOTTOM NAVIGATION
-  ========================= -->
+  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <button onclick="navigate('dashboardPage')">Home</button>
+    <button onclick="navigate('dashboardPage')" class="active">Asosiy</button>
     <button onclick="navigate('salePage')">Sotuv</button>
     <button onclick="navigate('debtPage')">Nasiya</button>
     <button onclick="navigate('stockPage')">Zaxira</button>
