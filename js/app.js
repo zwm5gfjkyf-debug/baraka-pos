@@ -174,4 +174,16 @@ function loadCurrentStock(){
       });
 
     });
+  async function updatePrice(productId, newPrice){
+
+  const shopId = auth.currentUser.uid;
+
+  await db.collection("shops")
+    .doc(shopId)
+    .collection("products")
+    .doc(productId)
+    .update({
+      sellingPrice: Number(newPrice)
+    });
+}
 }
