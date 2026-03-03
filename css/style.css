@@ -1,1 +1,75 @@
+:root {
+  --bg:#0b1220;
+  --card:#111827;
+  --primary:#10b981;
+  --text:#ffffff;
+}
 
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,Segoe UI;
+}
+
+.hidden {
+  display:none;
+}
+
+.center-screen {
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.card {
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+  margin-bottom:15px;
+}
+
+.auth-card {
+  width:320px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+input {
+  padding:10px;
+  border-radius:8px;
+  border:none;
+}
+
+button {
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  background:var(--primary);
+  color:white;
+  cursor:pointer;
+}
+
+.app-header {
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
+  background:var(--card);
+}
+
+main {
+  padding:15px;
+  padding-bottom:80px;
+}
+
+.bottom-nav {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  background:var(--card);
+  padding:10px 0;
+}
