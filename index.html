@@ -18,12 +18,17 @@
 
 <body>
 
-<!-- Loading Screen -->
+<!-- =========================
+     LOADING SCREEN
+========================= -->
 <div id="loadingScreen" class="center-screen">
   <h2>Loading...</h2>
 </div>
 
-<!-- Auth Screen -->
+
+<!-- =========================
+     AUTH SCREEN
+========================= -->
 <div id="authScreen" class="center-screen hidden">
   <div class="card auth-card">
     <h2>Baraka POS</h2>
@@ -32,72 +37,123 @@
     <input id="password" type="password" placeholder="Password">
     <button onclick="register()">Register</button>
     <button onclick="login()">Login</button>
-  </div> 
+  </div>
 </div>
 
-<!-- App Screen -->
+
+<!-- =========================
+     MAIN APP
+========================= -->
 <div id="appScreen" class="hidden">
 
-  <!-- Top Header -->
+  <!-- Header -->
   <header class="app-header">
     <h3 id="shopTitle">Baraka</h3>
     <button onclick="logout()">Logout</button>
   </header>
 
-  <!-- Main Content -->
+
+  <!-- Main Pages -->
   <main id="mainContent">
 
+    <!-- =========================
+         DASHBOARD PAGE
+    ========================= -->
     <div id="dashboardPage" class="page">
+
       <h2>Dashboard</h2>
-      <div class="card">Today Sales: 0</div>
-      <div class="card">Week Sales: 0</div>
-      <div class="card">Month Sales: 0</div>
+
+      <div class="card">
+        Today Revenue:
+        <strong><span id="todaySales">0</span></strong>
+      </div>
+
+      <div class="card">
+        Week Revenue:
+        <strong><span id="weekSales">0</span></strong>
+      </div>
+
+      <div class="card">
+        Month Revenue:
+        <strong><span id="monthSales">0</span></strong>
+      </div>
+
     </div>
 
-   <div id="salePage" class="page hidden">
 
-  <h2>Sotuv (Naqd)</h2>
+    <!-- =========================
+         SALE PAGE
+    ========================= -->
+    <div id="salePage" class="page hidden">
 
-  <div class="card">
-    <input id="saleSearch" placeholder="Mahsulot qidirish..." oninput="searchProducts(this.value)">
-    <div id="searchResults"></div>
-  </div>
+      <h2>Sotuv (Naqd)</h2>
 
-  <div id="cartList"></div>
+      <div class="card">
+        <input id="saleSearch"
+               placeholder="Mahsulot qidirish..."
+               oninput="searchProducts(this.value)">
+        <div id="searchResults"></div>
+      </div>
 
-  <div class="card">
-    <h3>Jami: <span id="saleTotal">0</span></h3>
-    <button onclick="completeSale()">Sotuvni yakunlash</button>
-  </div>
+      <div id="cartList"></div>
 
-</div>
+      <div class="card">
+        <h3>Jami: <span id="saleTotal">0</span></h3>
+        <button id="completeSaleBtn"
+                onclick="completeSale()">
+          Sotuvni yakunlash
+        </button>
+      </div>
 
+    </div>
+
+
+    <!-- =========================
+         NASIYA PAGE
+    ========================= -->
     <div id="debtPage" class="page hidden">
       <h2>Nasiya</h2>
+      <div class="card">
+        Debt system coming next...
+      </div>
     </div>
 
-   <div id="stockPage" class="page hidden">
 
-  <h2>Zaxira (Stock)</h2>
+    <!-- =========================
+         STOCK PAGE
+    ========================= -->
+    <div id="stockPage" class="page hidden">
 
-  <div class="card">
-    <input id="stockName" placeholder="Mahsulot nomi">
-    <input id="stockQty" type="number" placeholder="Kelgan miqdor">
-    <input id="stockCost" type="number" placeholder="Kelgan narx (cost price)">
-    <button onclick="addStock()">Qo'shish</button>
-  </div>
+      <h2>Zaxira (Stock)</h2>
 
-  <div id="currentStockList"></div>
+      <div class="card">
+        <input id="stockName" placeholder="Mahsulot nomi">
+        <input id="stockQty" type="number" placeholder="Kelgan miqdor">
+        <input id="stockCost" type="number" placeholder="Kelgan narx (cost price)">
+        <button onclick="addStock()">Qo'shish</button>
+      </div>
 
-</div>
+      <div id="currentStockList"></div>
 
+    </div>
+
+
+    <!-- =========================
+         ANALYTICS PAGE
+    ========================= -->
     <div id="analyticsPage" class="page hidden">
       <h2>Tahlil</h2>
+      <div class="card">
+        Analytics system coming next...
+      </div>
     </div>
 
   </main>
 
-  <!-- Bottom Navigation -->
+
+  <!-- =========================
+       BOTTOM NAVIGATION
+  ========================= -->
   <nav class="bottom-nav">
     <button onclick="navigate('dashboardPage')">Home</button>
     <button onclick="navigate('salePage')">Sotuv</button>
