@@ -623,7 +623,12 @@ async function completeDebtSale(){
   const batch = db.batch();
 
   if(existingSnap.empty){
+const btn = document.getElementById("completeDebtBtn");
 
+if(btn){
+  btn.disabled = true;
+  btn.innerText = "Yuklanmoqda...";
+}
     const newDebtRef = debtsRef.doc();
 
     batch.set(newDebtRef,{
@@ -675,7 +680,12 @@ async function completeDebtSale(){
   debtCart = [];
   renderDebtCart();
 
-  alert("Nasiya saqlandi");
+if(btn){
+  btn.disabled = false;
+  btn.innerText = "Nasiya berish";
+}
+
+showSuccess("Nasiya muvaffaqiyatli saqlandi");
 }
 
 /* LOAD DEBT CUSTOMERS */
