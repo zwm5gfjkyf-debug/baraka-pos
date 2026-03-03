@@ -392,6 +392,9 @@ function addAnotherItem(){
 /* --------------------------
    COMPLETE SALE (WITH STOCK DEDUCTION)
 ---------------------------*/
+/* --------------------------
+   COMPLETE SALE (WITH STOCK DEDUCTION)
+---------------------------*/
 async function completeSale(){
 
   const button = document.getElementById("completeSaleBtn");
@@ -411,6 +414,61 @@ async function completeSale(){
     alert("Savatcha bo'sh");
     return;
   }
+
+  try{
+
+    const shopId = auth.currentUser.uid;
+
+    const total = cart.reduce(
+      (s,i)=>s+i.price*i.quantity,0
+    );
+
+    const batch = db.batch();
+
+    const saleRef = db.collection("shops")
+      .doc(shopId)
+      .collection("sales")
+      .doc();
+
+    batch.set(saleRef,{
+      items: cart,
+      total,
+      type: "cash",
+      createdAt:
+        firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    cart.forEach(item=>{
+      const productRef = db.collection("shops")
+        .doc(shopId)
+        .collection("products")
+        .doc(item.id);
+
+      batch.update(productRef,{
+        stock:
+          firebase.firestore.FieldValue.increment(
+            -item.quantity
+          )
+      });
+    });
+
+    await batch.commit();
+
+    cart = [];
+    renderCart();
+
+    showSuccess("Muvaffaqiyatli sotildi");
+
+  } catch(error){
+    console.error(error);
+    alert("Xatolik yuz berdi");
+  }
+
+  if(button){
+    button.disabled = false;
+    button.innerText = "Sotuvni yakunlash";
+  }
+}
 
  
 /* =====================================================
@@ -655,58 +713,7 @@ async function completeDebtSale(){
   }
 }
 
-  try{
-
-    const shopId = auth.currentUser.uid;
-
-    const total = debtCart.reduce(
-      (s,i)=>s+i.price*i.quantity,0
-    );
-
-    const debtsRef = db.collection("shops")
-      .doc(shopId)
-      .collection("debts");
-
-    const existingSnap = await debtsRef
-      .where("customer","==",customerName)
-      .where("status","in",["unpaid","partial"])
-      .get();
-
-    const batch = db.batch();
-
-    if(existingSnap.empty){
-
-      const newDebtRef = debtsRef.doc();
-
-      batch.set(newDebtRef,{
-        customer: customerName,
-        items: debtCart,
-        total,
-        remaining: total,
-        status: "unpaid",
-        createdAt:
-          firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-    } else {
-
-      const docSnap = existingSnap.docs[0];
-      const debtData = docSnap.data();
-
-      const updatedItems =
-        [...debtData.items, ...debtCart];
-
-      const newTotal = debtData.total + total;
-      const newRemaining =
-        debtData.remaining + total;
-
-      batch.update(docSnap.ref,{
-        items: updatedItems,
-        total: newTotal,
-        remaining: newRemaining,
-        status: "unpaid"
-      });
-    }
+ 
 
     /* STOCK DEDUCTION */
     debtCart.forEach(item=>{
