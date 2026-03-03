@@ -424,7 +424,28 @@ async function completeSale(){
     }
 
     await batch.commit();
+// ===== UPDATE SMART STATS =====
 
+const statsRef = db.collection("shops")
+  .doc(shopId)
+  .collection("stats")
+  .doc("summary");
+
+await statsRef.set({
+  todayRevenue: firebase.firestore.FieldValue.increment(total),
+  todayQuantity: firebase.firestore.FieldValue.increment(
+    cart.reduce((sum,i)=>sum+i.quantity,0)
+  ),
+  weekRevenue: firebase.firestore.FieldValue.increment(total),
+  weekQuantity: firebase.firestore.FieldValue.increment(
+    cart.reduce((sum,i)=>sum+i.quantity,0)
+  ),
+  monthRevenue: firebase.firestore.FieldValue.increment(total),
+  monthQuantity: firebase.firestore.FieldValue.increment(
+    cart.reduce((sum,i)=>sum+i.quantity,0)
+  ),
+  updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+},{ merge:true });
     cart = [];
     renderCart();
 
