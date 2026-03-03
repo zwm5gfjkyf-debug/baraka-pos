@@ -440,67 +440,158 @@ async function payDebt(debtId){
   alert("To'lov qabul qilindi");
 }
 /* =========================
-   ANALYTICS (CHART.JS)
+   ANALYTICS PRO VERSION
 ========================= */
 
-let weeklyChartInstance;
-let monthlyChartInstance;
+let weeklyChartInstance = null;
+let monthlyChartInstance = null;
 
 function loadAnalytics(){
 
   const shopId = auth.currentUser.uid;
-
-  db.collection("shops")
+  const salesRef = db.collection("shops")
     .doc(shopId)
-    .collection("sales")
-    .get()
-    .then(snapshot=>{
+    .collection("sales");
 
-      const weeklyData=[0,0,0,0,0,0,0];
-      const monthlyData=new Array(31).fill(0);
+  salesRef.get().then(snapshot => {
 
-      snapshot.forEach(doc=>{
-        const s=doc.data();
-        if(!s.createdAt) return;
+    const startWeek = getStartOfWeek();
+    const startMonth = getStartOfMonth();
 
-        const date=s.createdAt.toDate();
-        const day=date.getDay();
-        const monthDay=date.getDate();
+    const weeklyCash = [0,0,0,0,0,0,0];
+    const weeklyDebt = [0,0,0,0,0,0,0];
 
-        weeklyData[day]+=s.total;
-        monthlyData[monthDay-1]+=s.total;
-      });
+    const monthlyCash = new Array(31).fill(0);
+    const monthlyDebt = new Array(31).fill(0);
 
-      if(weeklyChartInstance) weeklyChartInstance.destroy();
-      if(monthlyChartInstance) monthlyChartInstance.destroy();
+    snapshot.forEach(doc => {
 
-      weeklyChartInstance=new Chart(
-        document.getElementById("weeklyChart"),
-        {
-          type:"bar",
-          data:{
-            labels:["Yak","Dush","Sesh","Chor","Pay","Jum","Shan"],
-            datasets:[{
-              label:"Haftalik",
-              data:weeklyData
-            }]
-          }
+      const s = doc.data();
+      if(!s.createdAt) return;
+
+      const date = s.createdAt.toDate();
+
+      const dayIndex = (date.getDay() + 6) % 7; // Monday start
+      const monthDay = date.getDate() - 1;
+
+      if(date >= startWeek){
+
+        if(s.type === "cash"){
+          weeklyCash[dayIndex] += s.total;
         }
-      );
 
-      monthlyChartInstance=new Chart(
-        document.getElementById("monthlyChart"),
-        {
-          type:"line",
-          data:{
-            labels:monthlyData.map((_,i)=>i+1),
-            datasets:[{
-              label:"Oylik",
-              data:monthlyData
-            }]
-          }
+        if(s.type === "debt_payment"){
+          weeklyDebt[dayIndex] += s.total;
         }
-      );
+      }
+
+      if(date >= startMonth){
+
+        if(s.type === "cash"){
+          monthlyCash[monthDay] += s.total;
+        }
+
+        if(s.type === "debt_payment"){
+          monthlyDebt[monthDay] += s.total;
+        }
+      }
 
     });
+
+    renderWeeklyChart(weeklyCash, weeklyDebt);
+    renderMonthlyChart(monthlyCash, monthlyDebt);
+
+  });
+}
+
+/* =========================
+   WEEKLY CHART
+========================= */
+
+function renderWeeklyChart(cashData, debtData){
+
+  if(weeklyChartInstance) weeklyChartInstance.destroy();
+
+  weeklyChartInstance = new Chart(
+    document.getElementById("weeklyChart"),
+    {
+      type: "bar",
+      data: {
+        labels: ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"],
+        datasets: [
+          {
+            label: "Naqd",
+            data: cashData,
+            backgroundColor: "rgba(16,185,129,0.7)"
+          },
+          {
+            label: "Nasiya to'lov",
+            data: debtData,
+            backgroundColor: "rgba(59,130,246,0.7)"
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: { color: "#f1f5f9" }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#94a3b8" } },
+          y: { ticks: { color: "#94a3b8" } }
+        }
+      }
+    }
+  );
+}
+
+/* =========================
+   MONTHLY CHART
+========================= */
+
+function renderMonthlyChart(cashData, debtData){
+
+  if(monthlyChartInstance) monthlyChartInstance.destroy();
+
+  monthlyChartInstance = new Chart(
+    document.getElementById("monthlyChart"),
+    {
+      type: "line",
+      data: {
+        labels: cashData.map((_,i)=>i+1),
+        datasets: [
+          {
+            label: "Naqd",
+            data: cashData,
+            borderColor: "#10b981",
+            backgroundColor: "rgba(16,185,129,0.2)",
+            tension: 0.3,
+            fill: true
+          },
+          {
+            label: "Nasiya to'lov",
+            data: debtData,
+            borderColor: "#3b82f6",
+            backgroundColor: "rgba(59,130,246,0.2)",
+            tension: 0.3,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: { color: "#f1f5f9" }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#94a3b8" } },
+          y: { ticks: { color: "#94a3b8" } }
+        }
+      }
+    }
+  );
 }
