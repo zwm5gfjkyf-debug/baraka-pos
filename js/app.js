@@ -119,3 +119,30 @@ async function addStock(){
 
   loadCurrentStock();
 }
+function loadCurrentStock(){
+
+  const shopId = auth.currentUser.uid;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("products")
+    .onSnapshot(snapshot => {
+
+      const container = document.getElementById("currentStockList");
+      container.innerHTML = "";
+
+      snapshot.forEach(doc => {
+
+        const p = doc.data();
+
+        container.innerHTML += `
+          <div class="card">
+            <strong>${p.name}</strong><br>
+            Stock: ${p.stock || 0}<br>
+            Selling: ${p.sellingPrice}
+          </div>
+        `;
+      });
+
+    });
+}
