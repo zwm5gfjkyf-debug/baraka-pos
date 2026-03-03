@@ -144,7 +144,7 @@ function loadCurrentStock(){
           <div class="card">
             <strong>${p.name}</strong><br>
             Stock: ${p.stock || 0}<br>
-            Selling: ${p.sellingPrice}
+           Selling: ${p.sellingPrice || 0}
           </div>
         `;
       });
