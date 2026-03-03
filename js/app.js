@@ -47,12 +47,17 @@ function logout() {
   auth.signOut();
 }
 
-function navigate(pageId) {
-  document.querySelectorAll(".page").forEach(p => {
+function navigate(pageId){
+
+  document.querySelectorAll(".page").forEach(p=>{
     p.classList.add("hidden");
   });
 
   document.getElementById(pageId).classList.remove("hidden");
+
+  if(pageId === "stockPage"){
+    loadCurrentStock();
+  }
 }
 async function addStock(){
 
