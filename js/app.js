@@ -254,54 +254,191 @@ async function completeSale(){
    NASIYA SYSTEM
 ========================= */
 
+/* =========================
+   NASIYA SYSTEM (FULL)
+========================= */
+
+let debtProducts = [];
+let debtCart = [];
+
+/* Load products for Nasiya search */
+function searchDebtProducts(keyword){
+
+  const resultsDiv = document.getElementById("debtSearchResults");
+  resultsDiv.innerHTML = "";
+
+  if(!keyword) return;
+
+  debtProducts = saleProducts; // reuse loaded products
+
+  debtProducts
+    .filter(p=>p.name.toLowerCase().includes(keyword.toLowerCase()))
+    .forEach(p=>{
+      resultsDiv.innerHTML += `
+        <div class="card" onclick="addDebtToCart('${p.id}')">
+          ${p.name} — ${formatMoney(p.sellingPrice)}
+        </div>
+      `;
+    });
+}
+
+/* Add to Debt Cart */
+function addDebtToCart(id){
+
+  const product = saleProducts.find(p=>p.id===id);
+  if(!product) return;
+
+  const existing = debtCart.find(i=>i.id===id);
+
+  if(existing){
+    existing.quantity++;
+  } else {
+    debtCart.push({
+      id,
+      name: product.name,
+      price: product.sellingPrice || 0,
+      quantity: 1
+    });
+  }
+
+  renderDebtCart();
+}
+
+/* Render Debt Cart */
+function renderDebtCart(){
+
+  const container = document.getElementById("debtCartList");
+  container.innerHTML = "";
+
+  let total = 0;
+
+  debtCart.forEach(item=>{
+    total += item.price * item.quantity;
+
+    container.innerHTML += `
+      <div class="cart-item">
+        <strong>${item.name}</strong><br>
+        ${formatMoney(item.price)} × ${item.quantity}
+        <div>${formatMoney(item.price * item.quantity)} so'm</div>
+      </div>
+    `;
+  });
+
+}
+
+/* Complete Debt Sale */
 async function completeDebtSale(){
 
-  const name = debtCustomerName.value.trim();
-  if(!name || debtCart.length===0){
-    alert("Mijoz yoki savat bo'sh");
+  const customerName = document.getElementById("debtCustomerName").value.trim();
+
+  if(!customerName || debtCart.length===0){
+    alert("Mijoz yoki mahsulot yo'q");
     return;
   }
 
-  const shopId=auth.currentUser.uid;
+  const shopId = auth.currentUser.uid;
   const total = debtCart.reduce((s,i)=>s+i.price*i.quantity,0);
 
   await db.collection("shops")
     .doc(shopId)
     .collection("debts")
     .add({
-      customer:name,
-      items:debtCart,
+      customer: customerName,
+      items: debtCart,
       total,
-      remaining:total,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      remaining: total,
+      status: "unpaid",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+
+  debtCart = [];
+  document.getElementById("debtCustomerName").value = "";
+  renderDebtCart();
 
   alert("Nasiya saqlandi");
 }
 
+/* Load Debt Customers */
 function loadDebtCustomers(){
 
-  const shopId=auth.currentUser.uid;
+  const shopId = auth.currentUser.uid;
 
   db.collection("shops")
     .doc(shopId)
     .collection("debts")
     .onSnapshot(snapshot=>{
 
-      debtCustomersList.innerHTML="";
+      const container = document.getElementById("debtCustomersList");
+      container.innerHTML = "";
 
       snapshot.forEach(doc=>{
-        const d=doc.data();
+        const d = doc.data();
 
-        debtCustomersList.innerHTML+=`
+        container.innerHTML += `
           <div class="card">
             <strong>${d.customer}</strong><br>
-            Qolgan: ${formatMoney(d.remaining)} so'm
-          </div>`;
+            Jami: ${formatMoney(d.total)}<br>
+            Qolgan: ${formatMoney(d.remaining)}<br>
+
+            <input type="number"
+              placeholder="To'lov miqdori"
+              id="pay_${doc.id}">
+            <button onclick="payDebt('${doc.id}')">
+              To'lov qo'shish
+            </button>
+          </div>
+        `;
       });
+
     });
 }
 
+/* Pay Debt */
+async function payDebt(debtId){
+
+  const shopId = auth.currentUser.uid;
+  const input = document.getElementById("pay_"+debtId);
+  const amount = Number(input.value);
+
+  if(amount <= 0){
+    alert("To'g'ri summa kiriting");
+    return;
+  }
+
+  const debtRef = db.collection("shops")
+    .doc(shopId)
+    .collection("debts")
+    .doc(debtId);
+
+  const docSnap = await debtRef.get();
+  const debt = docSnap.data();
+
+  if(!debt) return;
+
+  if(amount > debt.remaining){
+    alert("Qoldiqdan ko'p to'lov mumkin emas");
+    return;
+  }
+
+  const newRemaining = debt.remaining - amount;
+
+  await debtRef.update({
+    remaining: newRemaining,
+    status: newRemaining === 0 ? "paid" : "partial"
+  });
+
+  /* ADD PAYMENT TO TODAY REVENUE */
+  await db.collection("shops")
+    .doc(shopId)
+    .collection("sales")
+    .add({
+      type: "debt_payment",
+      total: amount,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  alert("To'lov qabul qilindi");
+}
 /* =========================
    ANALYTICS (CHART.JS)
 ========================= */
