@@ -7,6 +7,9 @@
 
 <link rel="stylesheet" href="css/style.css">
 
+<!-- Chart.js for Analytics -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <!-- Firebase -->
 <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -45,12 +48,11 @@
       <div id="shopTitle" style="font-weight:600"></div>
     </div>
 
-    <!-- Profile Dropdown -->
     <div style="position:relative">
       <button onclick="toggleProfileMenu()" style="background:none;font-size:18px">☰</button>
 
       <div id="profileMenu" class="card hidden"
-           style="position:absolute; right:0; top:45px; width:150px;">
+           style="position:absolute; right:0; top:45px; width:160px;">
         <button onclick="logout()" style="background:var(--danger); width:100%">
           Chiqish
         </button>
@@ -61,7 +63,7 @@
   <!-- MAIN CONTENT -->
   <main>
 
-    <!-- DASHBOARD -->
+    <!-- ================= DASHBOARD ================= -->
     <div id="dashboardPage" class="page">
 
       <div class="dashboard-card">
@@ -87,7 +89,7 @@
 
     </div>
 
-    <!-- SOTUV -->
+    <!-- ================= SOTUV ================= -->
     <div id="salePage" class="page hidden">
 
       <h2>Sotuv (Naqd)</h2>
@@ -110,15 +112,31 @@
 
     </div>
 
-    <!-- NASIYA -->
+    <!-- ================= NASIYA ================= -->
     <div id="debtPage" class="page hidden">
+
       <h2>Nasiya savdo</h2>
+
+      <!-- New Debt Sale -->
       <div class="card">
-        Nasiya tizimi keyingi bosqichda qo'shiladi.
+        <input id="debtCustomerName" placeholder="Mijoz ismi">
+        <input id="debtSearch"
+               placeholder="Mahsulot qidirish..."
+               oninput="searchDebtProducts(this.value)">
+        <div id="debtSearchResults"></div>
+        <div id="debtCartList"></div>
+        <button onclick="completeDebtSale()">Nasiya berish</button>
       </div>
+
+      <!-- Debt List -->
+      <div class="card">
+        <h3>Mijozlar qarzdorligi</h3>
+        <div id="debtCustomersList"></div>
+      </div>
+
     </div>
 
-    <!-- ZAXIRA -->
+    <!-- ================= ZAXIRA ================= -->
     <div id="stockPage" class="page hidden">
 
       <h2>Zaxira</h2>
@@ -134,17 +152,24 @@
 
     </div>
 
-    <!-- TAHLIL -->
+    <!-- ================= TAHLIL ================= -->
     <div id="analyticsPage" class="page hidden">
+
       <h2>Tahlil</h2>
-      <div class="card">
-        Tahlil tizimi keyingi bosqichda qo'shiladi.
+
+      <div class="chart-container">
+        <canvas id="weeklyChart"></canvas>
       </div>
+
+      <div class="chart-container">
+        <canvas id="monthlyChart"></canvas>
+      </div>
+
     </div>
 
   </main>
 
-  <!-- BOTTOM NAV -->
+  <!-- ================= NAV ================= -->
   <nav class="bottom-nav">
     <button onclick="navigate('dashboardPage')" class="active">Asosiy</button>
     <button onclick="navigate('salePage')">Sotuv</button>
