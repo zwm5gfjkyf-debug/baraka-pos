@@ -1066,3 +1066,136 @@ function animateNumber(element,value){
   frame();
 
 }
+/* =====================================================
+   MISSING CORE FUNCTIONS FIX
+===================================================== */
+
+/* PROFILE MENU */
+
+function toggleProfileMenu(){
+  const menu = document.getElementById("profileMenu");
+  if(menu) menu.classList.toggle("hidden");
+}
+
+
+/* DASHBOARD */
+
+function loadDashboard(){
+
+  const shopId = safeGetUserId();
+  if(!shopId) return;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("sales")
+    .get()
+    .then(snapshot => {
+
+      let total = 0;
+
+      snapshot.forEach(doc=>{
+        const s = doc.data();
+        total += s.total || 0;
+      });
+
+      const el = document.getElementById("todaySales");
+      if(el) el.innerText = formatMoney(total);
+
+    });
+
+}
+
+
+/* STOCK ADD */
+
+function addStock(){
+
+  const shopId = safeGetUserId();
+  if(!shopId) return;
+
+  const name = document.getElementById("stockName")?.value;
+  const qty = Number(document.getElementById("stockQty")?.value);
+  const cost = Number(document.getElementById("stockCost")?.value);
+  const sell = Number(document.getElementById("stockSellingPrice")?.value);
+
+  if(!name) return;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("products")
+    .add({
+      name:name,
+      stock:qty || 0,
+      costPrice:cost || 0,
+      sellingPrice:sell || 0,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+  notify("Mahsulot qo'shildi");
+
+}
+
+
+/* LOAD STOCK */
+
+function loadCurrentStock(){
+
+  const shopId = safeGetUserId();
+  if(!shopId) return;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("products")
+    .onSnapshot(snapshot=>{
+
+      const container = document.getElementById("currentStockList");
+      if(!container) return;
+
+      container.innerHTML = "";
+
+      snapshot.forEach(doc=>{
+        const p = doc.data();
+
+        container.innerHTML += `
+          <div class="card">
+            ${p.name} — ${p.stock}
+          </div>
+        `;
+      });
+
+    });
+
+}
+
+
+/* LOAD DEBT CUSTOMERS */
+
+function loadDebtCustomers(){
+
+  const shopId = safeGetUserId();
+  if(!shopId) return;
+
+  db.collection("shops")
+    .doc(shopId)
+    .collection("debts")
+    .onSnapshot(snapshot=>{
+
+      const container = document.getElementById("debtCustomersList");
+      if(!container) return;
+
+      container.innerHTML = "";
+
+      snapshot.forEach(doc=>{
+        const d = doc.data();
+
+        container.innerHTML += `
+          <div class="card">
+            <strong>${d.customer}</strong><br>
+            Qolgan: ${formatMoney(d.remaining)}
+          </div>
+        `;
+      });
+
+    });
+
+}
