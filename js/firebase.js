@@ -1,3 +1,5 @@
+// ================= FIREBASE CONFIG =================
+
 const firebaseConfig = {
   apiKey: "AIzaSyBzs6n66fLSWBhobX-GOnROx-QvR8eH9gU",
   authDomain: "baraka-pos-2.firebaseapp.com",
@@ -8,7 +10,39 @@ const firebaseConfig = {
   measurementId: "G-0MQEE5DWLK"
 };
 
-firebase.initializeApp(firebaseConfig);
+
+// ================= INITIALIZE FIREBASE =================
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+
+// ================= SERVICES =================
 
 const auth = firebase.auth();
 const db = firebase.firestore();
+
+
+// ================= OFFLINE CACHE =================
+// makes POS faster and usable with weak internet
+
+db.enablePersistence()
+.catch((err)=>{
+
+  if(err.code === 'failed-precondition'){
+    console.warn("Firestore persistence disabled (multiple tabs open)");
+  }
+
+  if(err.code === 'unimplemented'){
+    console.warn("Browser does not support persistence");
+  }
+
+});
+
+
+// ================= GLOBAL EXPORT (for safety) =================
+
+window.auth = auth;
+window.db = db;
+window.firebase = firebase;
