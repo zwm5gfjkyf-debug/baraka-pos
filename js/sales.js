@@ -194,12 +194,18 @@ function increaseQty(id){
 
     const item = cart.find(i => i.id === id)
 
+    const product = productCache.find(p => p.id === id)
+
+    if(item.qty + 1 > product.stock){
+        alert("Zaxirada yetarli mahsulot yo'q")
+        return
+    }
+
     item.qty++
 
     renderCart()
 
 }
-
 function decreaseQty(id){
 
     const item = cart.find(i => i.id === id)
