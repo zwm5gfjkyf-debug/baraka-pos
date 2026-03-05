@@ -295,6 +295,11 @@ async function updateStockAfterSale(items){
 
             const stock = doc.data().stock || 0
 
+            if(stock < item.qty){
+                alert("Zaxirada yetarli mahsulot yo'q")
+                throw new Error("Stock not enough")
+            }
+
             t.update(ref,{
                 stock: stock - item.qty
             })
