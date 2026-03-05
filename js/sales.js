@@ -212,6 +212,9 @@ async function completeSale(){
 
     if(cart.length === 0) return
 
+    const btn = document.getElementById("completeSaleBtn")
+    btn.disabled = true
+
     let total = 0
     cart.forEach(i => total += i.price * i.qty)
 
@@ -254,6 +257,7 @@ async function completeSale(){
 
     generateReceipt(sale)
 
+    btn.disabled = false
 }
 async function updateStockAfterSale(items){
 
