@@ -61,7 +61,7 @@ async function loadProducts(){
 function searchProducts(text){
 
     const resultsBox = document.getElementById("searchResults")
-
+    results.innerHTML = ""
     resultsBox.innerHTML = ""
 
     if(!text) return
