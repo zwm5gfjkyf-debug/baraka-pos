@@ -46,35 +46,34 @@ async function loadAnalytics(){
 
         if(sale.items){
 
-            sale.items.forEach(item => {
+           sale.items.forEach(item => {
 
-                const profit = (item.price - (item.cost || 0)) * item.qty;
+    const profit =
+        ((item.price || 0) - (item.cost || 0)) * (item.qty || 0);
 
-                totalProfit += profit;
+    totalProfit += profit;
 
-                if(!productStats[item.name]){
-                    productStats[item.name] = 0;
-                }
+    if(!productStats[item.name]){
+        productStats[item.name] = 0;
+    }
 
-                productStats[item.name] += item.qty;
+    productStats[item.name] += item.qty;
 
-            });
-
+});
         }
 
         if(date >= startWeek){
 
             const day = (date.getDay()+6)%7;
 
-            weeklyData[day] += sale.total;
-
+           weeklyData[day] += sale.total || 0;
         }
 
         if(date >= startMonth){
 
             const d = date.getDate() - 1;
 
-            monthlyData[d] += sale.total;
+           monthlyData[d] += sale.total || 0;
 
         }
 
