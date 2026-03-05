@@ -8,6 +8,13 @@ function formatMoney(num) {
     .toLocaleString("ru-RU")
     .replace(/,/g, " ");
 }
+function formatMoney(num){
+
+    return Number(num)
+        .toLocaleString("ru-RU")
+        .replace(/,/g," ")
+
+}
 
 function safeGetUserId() {
   return auth.currentUser ? auth.currentUser.uid : null;
