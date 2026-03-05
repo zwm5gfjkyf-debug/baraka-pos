@@ -143,26 +143,32 @@ function renderCart(){
 
         div.className = "cart-item"
 
-        div.innerHTML = `
+       div.innerHTML = `
 
-        <b>${item.name}</b>
+<b>${item.name}</b>
 
-        <div class="quantity-controls">
+<div class="quantity-controls">
 
-        <button class="qty-btn"
-        onclick="decreaseQty('${item.id}')">-</button>
+<button class="qty-btn"
+onclick="decreaseQty('${item.id}')">-</button>
 
-        <span>${item.qty}</span>
+<span>${item.qty}</span>
 
-        <button class="qty-btn"
-        onclick="increaseQty('${item.id}')">+</button>
+<button class="qty-btn"
+onclick="increaseQty('${item.id}')">+</button>
 
-        </div>
+</div>
 
-        <strong>${itemTotal} so'm</strong>
+<input
+type="number"
+value="${item.price}"
+class="price-input"
+onchange="changePrice('${item.id}', this.value)"
+>
 
-        `
+<strong>${itemTotal} so'm</strong>
 
+`
         list.appendChild(div)
 
     })
@@ -282,5 +288,14 @@ async function updateStockAfterSale(items){
         })
 
     }
+
+}
+function changePrice(id,newPrice){
+
+    const item = cart.find(i => i.id === id)
+
+    item.price = Number(newPrice)
+
+    renderCart()
 
 }
