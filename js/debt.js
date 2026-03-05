@@ -244,7 +244,7 @@ async function completeDebtSale(){
 
     // UPDATE STOCK
 
-   for(const item of debtCart){
+ for(const item of debtCart){
 
     const ref = db
         .collection("shops")
@@ -264,11 +264,19 @@ async function completeDebtSale(){
 
     });
 
-    // UPDATE LOCAL CACHE
     const p = productCache.find(p => p.id === item.id)
     if(p){
         p.stock -= item.qty
     }
+
+}
+
+// CLEAR CART
+debtCart = []
+
+renderDebtCart()
+
+showSuccess("Nasiya saqlandi")
 
 }
 
