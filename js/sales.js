@@ -61,16 +61,17 @@ async function loadProducts(){
 function searchProducts(text){
 
     const resultsBox = document.getElementById("searchResults")
-    results.innerHTML = ""
+
+    // clear previous results
     resultsBox.innerHTML = ""
 
     if(!text) return
 
     const query = text.toLowerCase()
 
-    const results = productCache.filter(p =>
-        p.name.toLowerCase().includes(query)
-    ).slice(0,20)
+    const results = productCache
+        .filter(p => p.name.toLowerCase().includes(query))
+        .slice(0,20)
 
     results.forEach(product => {
 
