@@ -26,7 +26,7 @@
   <h2>Baraka POS yuklanmoqda...</h2>
 </div>
 
-<!-- AUTH -->
+<!-- AUTH SCREEN -->
 
 <div id="authScreen" class="hidden">
 
@@ -44,22 +44,22 @@
 
 </div>
 
-<!-- APP -->
+<!-- MAIN APP -->
 
 <div id="appScreen" class="hidden">
 
 <header>
 
-  <div>
-    Do'kon:
-    <span id="shopTitle"></span>
-  </div>
+<div>
+Do'kon:
+<span id="shopTitle"></span>
+</div>
 
-  <button onclick="toggleProfileMenu()">☰</button>
+<button onclick="toggleProfileMenu()">☰</button>
 
-  <div id="profileMenu" class="hidden">
-    <button onclick="logout()">Chiqish</button>
-  </div>
+<div id="profileMenu" class="hidden">
+<button onclick="logout()">Chiqish</button>
+</div>
 
 </header>
 
@@ -82,7 +82,10 @@ Bugungi tushum:
 
 <h2>Naqd sotuv</h2>
 
-<input id="saleSearch" placeholder="Mahsulot qidirish">
+<input
+id="saleSearch"
+placeholder="Mahsulot qidirish..."
+>
 
 <div id="searchResults"></div>
 
@@ -97,15 +100,21 @@ Sotuvni yakunlash
 
 </div>
 
-<!-- DEBT -->
+<!-- NASIYA -->
 
 <div id="debtPage" class="page hidden">
 
-<h2>Nasiya</h2>
+<h2>Nasiya savdo</h2>
 
-<input id="debtCustomerName" placeholder="Mijoz ismi">
+<input
+id="debtCustomerName"
+placeholder="Mijoz ismi"
+>
 
-<input id="debtSearch" placeholder="Mahsulot qidirish">
+<input
+id="debtSearch"
+placeholder="Mahsulot qidirish..."
+>
 
 <div id="debtSearchResults"></div>
 
@@ -153,33 +162,49 @@ Nasiya berish
 
 </main>
 
+<!-- NAVIGATION -->
+
 <nav>
 
-<button onclick="navigate('dashboardPage')">Asosiy</button>
+<button onclick="navigate('dashboardPage')">
+Asosiy
+</button>
 
-<button onclick="navigate('salePage')">Sotuv</button>
+<button onclick="navigate('salePage')">
+Sotuv
+</button>
 
-<button onclick="navigate('debtPage')">Nasiya</button>
+<button onclick="navigate('debtPage')">
+Nasiya
+</button>
 
-<button onclick="navigate('stockPage')">Zaxira</button>
+<button onclick="navigate('stockPage')">
+Zaxira
+</button>
 
-<button onclick="navigate('analyticsPage')">Tahlil</button>
+<button onclick="navigate('analyticsPage')">
+Tahlil
+</button>
 
 </nav>
 
 </div>
 
+<!-- SUCCESS OVERLAY -->
+
 <div id="successOverlay" class="hidden">
 
 <div>
 
-<span id="successText">Muvaffaqiyatli</span>
+<span id="successText">
+Muvaffaqiyatli
+</span>
 
 </div>
 
 </div>
 
-<!-- JS FILES -->
+<!-- JS FILES ORDER -->
 
 <script src="js/firebase.js"></script>
 
