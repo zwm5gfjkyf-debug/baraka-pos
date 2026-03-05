@@ -256,3 +256,59 @@ function renderTopProducts(stats){
         .appendChild(container);
 
 }
+// ===============================
+// LOAD DASHBOARD
+// ===============================
+
+async function loadDashboard(){
+
+    if(!currentShopId) return
+
+    const salesRef = db
+        .collection("shops")
+        .doc(currentShopId)
+        .collection("sales")
+
+    const snapshot = await salesRef.get()
+
+    let today = 0
+    let week = 0
+    let month = 0
+
+    const now = new Date()
+
+    const startDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const startWeek = new Date(now)
+    startWeek.setDate(now.getDate() - now.getDay())
+
+    const startMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+    snapshot.forEach(doc => {
+
+        const sale = doc.data()
+
+        if(!sale.createdAt) return
+
+        const date = sale.createdAt.toDate
+            ? sale.createdAt.toDate()
+            : new Date(sale.createdAt)
+
+        if(date >= startDay){
+            today += sale.total || 0
+        }
+
+        if(date >= startWeek){
+            week += sale.total || 0
+        }
+
+        if(date >= startMonth){
+            month += sale.total || 0
+        }
+
+    })
+
+    document.getElementById("todayRevenue").innerText = formatMoney(today)
+    document.getElementById("weekRevenue").innerText = formatMoney(week)
+    document.getElementById("monthRevenue").innerText = formatMoney(month)
+
+}
