@@ -213,29 +213,51 @@ async function completeSale(){
     if(cart.length === 0) return
 
     let total = 0
-
     cart.forEach(i => total += i.price * i.qty)
 
     const sale = {
-
         items: cart,
         total: total,
         createdAt: new Date()
+    }
+
+    try{
+
+        const salesRef = db
+            .collection("shops")
+            .doc(currentShopId)
+            .collection("sales")
+
+        await salesRef.add(sale)
+
+        await updateStockAfterSale(cart)
+
+    }
+    catch(e){
+
+        // SAVE SALE OFFLINE
+        let offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
+
+        offline.push(sale)
+
+        localStorage.setItem("offlineSales", JSON.stringify(offline))
+
+        console.warn("Sale saved offline")
 
     }
 
-    const salesRef = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("sales")
+    cart = []
 
-    await salesRef.add(sale)
+    renderCart()
 
+    showSuccess("Sotuv yakunlandi")
 
+    generateReceipt(sale)
 
-    // UPDATE STOCK
+}
+async function updateStockAfterSale(items){
 
-    for(const item of cart){
+    for(const item of items){
 
         const ref = db
             .collection("shops")
@@ -256,13 +278,5 @@ async function completeSale(){
         })
 
     }
-
-
-
-    cart = []
-
-    renderCart()
-
-    showSuccess("Sotuv yakunlandi")
 
 }
