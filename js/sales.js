@@ -167,8 +167,7 @@ function renderCart(){
 
     })
 
-    document.getElementById("saleTotal").innerText = total
-
+   document.getElementById("saleTotal").innerText = total + " so'm"
 }
 
 
