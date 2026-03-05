@@ -132,5 +132,21 @@ async function loadDashboard(){
 
 
 function syncOfflineSales(){
-    // will be implemented later
+
+    const offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
+
+    if(offline.length === 0) return
+
+    offline.forEach(async sale => {
+
+        await db
+            .collection("shops")
+            .doc(currentShopId)
+            .collection("sales")
+            .add(sale)
+
+    })
+
+    localStorage.removeItem("offlineSales")
+
 }
