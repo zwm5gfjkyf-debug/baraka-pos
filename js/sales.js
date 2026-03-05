@@ -1,234 +1,268 @@
-// ===============================
-// BARAKA POS SALES ENGINE
-// ===============================
+// =======================================
+// BARAKA POS – ULTRA FAST SALES ENGINE
+// =======================================
 
-let products = [];
-let cart = [];
+// product cache (in memory)
+let productCache = []
+let productIndex = {}
 
-// ===============================
-// LOAD PRODUCTS
-// ===============================
+let cart = []
 
-async function loadProducts() {
+// =======================================
+// LOAD PRODUCTS INTO MEMORY
+// =======================================
 
-    if (!currentShopId) return;
+async function loadProducts(){
+
+    if(!currentShopId) return
 
     const snapshot = await db
         .collection("shops")
         .doc(currentShopId)
         .collection("products")
-        .get();
+        .get()
 
-    products = [];
+    productCache = []
+    productIndex = {}
 
     snapshot.forEach(doc => {
 
-        const data = doc.data();
+        const data = doc.data()
 
-        products.push({
+        const product = {
             id: doc.id,
-            name: data.name,
-            price: data.price,
-            cost: data.cost,
-            stock: data.stock
-        });
+            name: data.name || "",
+            price: data.price || 0,
+            cost: data.cost || 0,
+            stock: data.stock || 0
+        }
 
-    });
+        productCache.push(product)
+
+        // create search index
+        const key = product.name.toLowerCase()
+
+        if(!productIndex[key]){
+            productIndex[key] = []
+        }
+
+        productIndex[key].push(product)
+
+    })
 
 }
 
-// ===============================
-// SEARCH PRODUCTS
-// ===============================
 
-function searchProducts(text) {
 
-    const results = document.getElementById("searchResults");
+// =======================================
+// ULTRA FAST SEARCH
+// =======================================
 
-    results.innerHTML = "";
+function searchProducts(text){
 
-    if (!text) return;
+    const resultsBox = document.getElementById("searchResults")
 
-    const query = text.toLowerCase();
+    resultsBox.innerHTML = ""
 
-    const filtered = products.filter(p =>
+    if(!text) return
+
+    const query = text.toLowerCase()
+
+    const results = productCache.filter(p =>
         p.name.toLowerCase().includes(query)
-    );
+    ).slice(0,20)
 
-    filtered.slice(0,10).forEach(product => {
+    results.forEach(product => {
 
-        const div = document.createElement("div");
+        const div = document.createElement("div")
 
-        div.className = "search-item";
+        div.className = "search-item"
 
         div.innerHTML = `
-            <b>${product.name}</b>
-            <span>${product.price} so'm</span>
-        `;
+        <span>${product.name}</span>
+        <strong>${product.price} so'm</strong>
+        `
 
-        div.onclick = () => addToCart(product);
+        div.onclick = () => addToCart(product)
 
-        results.appendChild(div);
+        resultsBox.appendChild(div)
 
-    });
+    })
 
 }
 
-// ===============================
-// ADD PRODUCT TO CART
-// ===============================
 
-function addToCart(product) {
 
-    const existing = cart.find(i => i.id === product.id);
+// =======================================
+// CART SYSTEM
+// =======================================
 
-    if (existing) {
+function addToCart(product){
 
-        existing.qty++;
+    const existing = cart.find(i => i.id === product.id)
 
-    } else {
+    if(existing){
+
+        existing.qty++
+
+    }else{
 
         cart.push({
             ...product,
-            qty: 1
-        });
+            qty:1
+        })
 
     }
 
-    renderCart();
+    renderCart()
 
 }
 
-// ===============================
-// CART UI
-// ===============================
 
-function renderCart() {
 
-    const list = document.getElementById("cartList");
+// =======================================
+// RENDER CART
+// =======================================
 
-    list.innerHTML = "";
+function renderCart(){
 
-    let total = 0;
+    const list = document.getElementById("cartList")
+
+    list.innerHTML = ""
+
+    let total = 0
 
     cart.forEach(item => {
 
-        const itemTotal = item.price * item.qty;
+        const itemTotal = item.price * item.qty
 
-        total += itemTotal;
+        total += itemTotal
 
-        const div = document.createElement("div");
+        const div = document.createElement("div")
 
-        div.className = "cart-item";
+        div.className = "cart-item"
 
         div.innerHTML = `
 
         <b>${item.name}</b>
 
-        <div>
+        <div class="quantity-controls">
 
-            <button onclick="decreaseQty('${item.id}')">-</button>
+        <button class="qty-btn"
+        onclick="decreaseQty('${item.id}')">-</button>
 
-            ${item.qty}
+        <span>${item.qty}</span>
 
-            <button onclick="increaseQty('${item.id}')">+</button>
+        <button class="qty-btn"
+        onclick="increaseQty('${item.id}')">+</button>
 
         </div>
 
-        <span>${itemTotal} so'm</span>
+        <strong>${itemTotal} so'm</strong>
 
-        `;
+        `
 
-        list.appendChild(div);
+        list.appendChild(div)
 
-    });
+    })
 
-    document.getElementById("saleTotal").innerText = total;
-
-}
-
-// ===============================
-// QTY CONTROLS
-// ===============================
-
-function increaseQty(id) {
-
-    const item = cart.find(i => i.id === id);
-
-    item.qty++;
-
-    renderCart();
+    document.getElementById("saleTotal").innerText = total
 
 }
 
-function decreaseQty(id) {
 
-    const item = cart.find(i => i.id === id);
 
-    item.qty--;
+// =======================================
+// QUANTITY CONTROL
+// =======================================
 
-    if (item.qty <= 0) {
+function increaseQty(id){
 
-        cart = cart.filter(i => i.id !== id);
+    const item = cart.find(i => i.id === id)
+
+    item.qty++
+
+    renderCart()
+
+}
+
+function decreaseQty(id){
+
+    const item = cart.find(i => i.id === id)
+
+    item.qty--
+
+    if(item.qty <= 0){
+
+        cart = cart.filter(i => i.id !== id)
 
     }
 
-    renderCart();
+    renderCart()
 
 }
 
-// ===============================
+
+
+// =======================================
 // COMPLETE SALE
-// ===============================
+// =======================================
 
-async function completeSale() {
+async function completeSale(){
 
-    if (cart.length === 0) return;
+    if(cart.length === 0) return
 
-    let total = 0;
+    let total = 0
 
-    cart.forEach(i => total += i.price * i.qty);
+    cart.forEach(i => total += i.price * i.qty)
 
     const sale = {
 
         items: cart,
         total: total,
-        created: Date.now()
+        createdAt: new Date()
 
-    };
+    }
 
-    await db
+    const salesRef = db
         .collection("shops")
         .doc(currentShopId)
         .collection("sales")
-        .add(sale);
 
-    for (const item of cart) {
+    await salesRef.add(sale)
+
+
+
+    // UPDATE STOCK
+
+    for(const item of cart){
 
         const ref = db
             .collection("shops")
             .doc(currentShopId)
             .collection("products")
-            .doc(item.id);
+            .doc(item.id)
 
         await db.runTransaction(async t => {
 
-            const doc = await t.get(ref);
+            const doc = await t.get(ref)
 
-            const stock = doc.data().stock || 0;
+            const stock = doc.data().stock || 0
 
-            t.update(ref, {
+            t.update(ref,{
                 stock: stock - item.qty
-            });
+            })
 
-        });
+        })
 
     }
 
-    cart = [];
 
-    renderCart();
 
-    showSuccess("Sotuv yakunlandi");
+    cart = []
+
+    renderCart()
+
+    showSuccess("Sotuv yakunlandi")
 
 }
