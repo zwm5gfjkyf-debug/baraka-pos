@@ -362,8 +362,12 @@ async function payDebt(id){
 
     const data = doc.data();
 
-    const newRemaining = data.remaining - amount;
+ const newRemaining = data.remaining - amount;
 
+if(amount > data.remaining){
+    alert("To'lov qarzdan katta bo'lishi mumkin emas")
+    return
+}
     if(newRemaining <= 0){
 
         await ref.delete();
