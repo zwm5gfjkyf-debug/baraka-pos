@@ -1,42 +1,133 @@
-// ===============================
-// BARAKA POS MAIN APP
-// ===============================
+// =============================
+// BARAKA POS MAIN ENGINE
+// =============================
 
-let currentUser = null;
-let currentShopId = null;
+let currentShopId = null
 
-// ===============================
+
+
+// =============================
 // AUTH STATE
-// ===============================
+// =============================
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(user => {
 
-    const loading = document.getElementById("loadingScreen");
-    const authScreen = document.getElementById("authScreen");
-    const appScreen = document.getElementById("appScreen");
+    const loading = document.getElementById("loadingScreen")
 
-    loading.style.display = "none";
+    if(loading) loading.classList.add("hidden")
 
-    if (!user) {
+    if(user){
 
-        authScreen.classList.remove("hidden");
-        appScreen.classList.add("hidden");
+        currentShopId = user.uid
 
-        return;
+        document
+            .getElementById("authScreen")
+            .classList.add("hidden")
+
+        document
+            .getElementById("appScreen")
+            .classList.remove("hidden")
+
+        document
+            .getElementById("shopTitle")
+            .innerText = user.email
+
+        loadProducts()
+
+        loadDashboard()
+
+        syncOfflineSales()
+
+    }
+    else{
+
+        document
+            .getElementById("appScreen")
+            .classList.add("hidden")
+
+        document
+            .getElementById("authScreen")
+            .classList.remove("hidden")
+
     }
 
-    currentUser = user;
+})
+// =============================
+// DASHBOARD
+// =============================
 
-    currentShopId = user.uid;
+async function loadDashboard(){
 
-    authScreen.classList.add("hidden");
-    appScreen.classList.remove("hidden");
+    const salesRef = db
+        .collection("shops")
+        .doc(currentShopId)
+        .collection("sales")
 
-    document.getElementById("shopTitle").innerText = user.email;
+    const snapshot = await salesRef.get()
 
-    // load products for POS
-    if (typeof loadProducts === "function") {
-        loadProducts();
-    }
+    let today = 0
+    let week = 0
+    let month = 0
 
-});
+    const now = new Date()
+
+    const todayStart = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+    )
+
+    const weekStart = new Date(now)
+    weekStart.setDate(now.getDate() - now.getDay())
+
+    const monthStart = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        1
+    )
+
+
+
+    snapshot.forEach(doc => {
+
+        const sale = doc.data()
+
+        const date = new Date(
+            sale.createdAt.seconds * 1000
+        )
+
+        if(date >= todayStart){
+
+            today += sale.total
+
+        }
+
+        if(date >= weekStart){
+
+            week += sale.total
+
+        }
+
+        if(date >= monthStart){
+
+            month += sale.total
+
+        }
+
+    })
+
+
+
+    document
+        .getElementById("todaySales")
+        .innerText = formatMoney(today)
+
+    document
+        .getElementById("weekSales")
+        .innerText = formatMoney(week)
+
+    document
+        .getElementById("monthSales")
+        .innerText = formatMoney(month)
+
+}
