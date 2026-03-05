@@ -131,21 +131,28 @@ async function loadDashboard(){
         .innerText = formatMoney(month)
 
 
-function syncOfflineSales(){
+// ===============================
+// SYNC OFFLINE SALES
+// ===============================
+
+async function syncOfflineSales(){
+
+    if(!currentShopId) return
 
     const offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
 
     if(offline.length === 0) return
 
-    offline.forEach(async sale => {
+    const salesRef = db
+        .collection("shops")
+        .doc(currentShopId)
+        .collection("sales")
 
-        await db
-            .collection("shops")
-            .doc(currentShopId)
-            .collection("sales")
-            .add(sale)
+    for(const sale of offline){
 
-    })
+        await salesRef.add(sale)
+
+    }
 
     localStorage.removeItem("offlineSales")
 
