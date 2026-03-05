@@ -19,7 +19,7 @@ function searchDebtProducts(text){
 
     const query = text.toLowerCase();
 
-    const filtered = products.filter(p =>
+  const filtered = productCache.filter(p =>
         p.name.toLowerCase().includes(query)
     );
 
@@ -245,22 +245,25 @@ async function completeDebtSale(){
 
 function loadDebtCustomers(){
 
+    if(!currentShopId) return
+
     db.collection("shops")
     .doc(currentShopId)
     .collection("debts")
     .onSnapshot(snapshot => {
 
-        const container = document.getElementById("debtCustomersList");
-list.innerHTML = ""
-        container.innerHTML = "";
+        const container = document.getElementById("debtCustomersList")
+
+        // CLEAR OLD UI
+        container.innerHTML = ""
 
         snapshot.forEach(doc => {
 
-            const d = doc.data();
+            const d = doc.data()
 
-            const div = document.createElement("div");
+            const div = document.createElement("div")
 
-            div.className = "debt-item";
+            div.className = "debt-item"
 
             div.innerHTML = `
 
@@ -280,13 +283,13 @@ list.innerHTML = ""
             To'lash
             </button>
 
-            `;
+            `
 
-            container.appendChild(div);
+            container.appendChild(div)
 
-        });
+        })
 
-    });
+    })
 
 }
 
