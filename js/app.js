@@ -129,7 +129,7 @@ async function loadDashboard(){
     document
         .getElementById("monthSales")
         .innerText = formatMoney(month)
-
+}   // ← 
 
 // ===============================
 // SYNC OFFLINE SALES
