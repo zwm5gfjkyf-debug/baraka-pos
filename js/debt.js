@@ -46,25 +46,43 @@ function searchDebtProducts(text){
 // ADD PRODUCT TO DEBT CART
 // ===============================
 
+let lastClick = 0
+
 function addDebtToCart(product){
 
-    const existing = debtCart.find(i => i.id === product.id);
+    const now = Date.now()
+
+    if(now - lastClick < 300) return
+
+    lastClick = now
+
+    // STOCK CHECK
+    if(product.stock <= 0){
+        alert("Zaxirada qolmadi")
+        return
+    }
+
+    const existing = debtCart.find(i => i.id === product.id)
 
     if(existing){
 
-        existing.qty++;
+        if(existing.qty + 1 > product.stock){
+            alert("Zaxirada yetarli mahsulot yo'q")
+            return
+        }
 
-    } else {
+        existing.qty++
+
+    }else{
 
         debtCart.push({
             ...product,
-            qty: 1
-        });
+            qty:1
+        })
 
     }
 
-    renderDebtCart();
-
+    renderDebtCart()
 }
 
 
@@ -90,17 +108,24 @@ function renderDebtCart(){
 
         <b>${item.name}</b>
 
-        <div>
+     <div>
 
-        <button onclick="decreaseDebtQty('${item.id}')">-</button>
+<button onclick="decreaseDebtQty('${item.id}')">-</button>
 
-        ${item.qty}
+${item.qty}
 
-        <button onclick="increaseDebtQty('${item.id}')">+</button>
+<button onclick="increaseDebtQty('${item.id}')">+</button>
 
-        </div>
+</div>
 
-        <span>${total} so'm</span>
+<input
+type="number"
+value="${item.price}"
+class="price-input"
+onchange="changeDebtPrice('${item.id}',this.value)"
+>
+
+<strong>${total} so'm</strong>
 
         `;
 
@@ -117,14 +142,25 @@ function renderDebtCart(){
 
 function increaseDebtQty(id){
 
-    const item = debtCart.find(i => i.id === id);
+    const item = debtCart.find(i => i.id === id)
 
-    item.qty++;
+    const product = productCache.find(p => p.id === id)
 
-    renderDebtCart();
+    if(!product){
+        alert("Mahsulot topilmadi")
+        return
+    }
+
+    if(item.qty + 1 > product.stock){
+        alert("Zaxirada yetarli mahsulot yo'q")
+        return
+    }
+
+    item.qty++
+
+    renderDebtCart()
 
 }
-
 function decreaseDebtQty(id){
 
     const item = debtCart.find(i => i.id === id);
@@ -208,33 +244,31 @@ async function completeDebtSale(){
 
     // UPDATE STOCK
 
-    for(const item of debtCart){
+   for(const item of debtCart){
 
-        const ref = db
-            .collection("shops")
-            .doc(currentShopId)
-            .collection("products")
-            .doc(item.id);
+    const ref = db
+        .collection("shops")
+        .doc(currentShopId)
+        .collection("products")
+        .doc(item.id);
 
-        await db.runTransaction(async t => {
+    await db.runTransaction(async t => {
 
-            const doc = await t.get(ref);
+        const doc = await t.get(ref);
 
-            const stock = doc.data().stock || 0;
+        const stock = doc.data().stock || 0;
 
-            t.update(ref,{
-                stock: stock - item.qty
-            });
-
+        t.update(ref,{
+            stock: stock - item.qty
         });
 
+    });
+
+    // UPDATE LOCAL CACHE
+    const p = productCache.find(p => p.id === item.id)
+    if(p){
+        p.stock -= item.qty
     }
-
-    debtCart = [];
-
-    renderDebtCart();
-
-    showSuccess("Nasiya saqlandi");
 
 }
 
@@ -300,12 +334,24 @@ function loadDebtCustomers(){
 
 async function payDebt(id){
 
-    const input = document.getElementById("pay_"+id);
+    const input = document.getElementById("pay_"+id)
 
-    const amount = Number(input.value);
+    const amount = Number(input.value)
 
-    if(!amount) return;
+    if(!amount) return
 
+    // ADD PAYMENT TO SALES
+    const salesRef = db
+        .collection("shops")
+        .doc(currentShopId)
+        .collection("sales")
+
+    await salesRef.add({
+        items: [],
+        total: amount,
+        createdAt: new Date(),
+        type: "debt_payment"
+    })
     const ref = db
         .collection("shops")
         .doc(currentShopId)
@@ -332,5 +378,14 @@ async function payDebt(id){
         });
 
     }
+
+}
+function changeDebtPrice(id,newPrice){
+
+    const item = debtCart.find(i => i.id === id)
+
+    item.price = Number(newPrice)
+
+    renderDebtCart()
 
 }
