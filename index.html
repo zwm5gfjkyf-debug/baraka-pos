@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="uz">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Baraka POS</title>
 
@@ -11,7 +12,10 @@
 
 <link rel="stylesheet" href="css/style.css">
 
-<!-- Firebase -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -22,65 +26,148 @@
 
 <!-- LOADING -->
 
-<div id="loadingScreen">
-  <h2>Baraka POS yuklanmoqda...</h2>
-</div>
+<div id="loadingScreen" class="center-screen">
 
-<!-- AUTH SCREEN -->
+<div class="loading-card">
 
-<div id="authScreen" class="hidden">
+<div class="loader"></div>
 
-  <h1>Baraka POS</h1>
-
-  <input id="shopName" placeholder="Do'kon nomi">
-
-  <input id="email" placeholder="Email">
-
-  <input id="password" type="password" placeholder="Parol">
-
-  <button onclick="register()">Ro'yxatdan o'tish</button>
-
-  <button onclick="login()">Kirish</button>
+<h2>Baraka POS yuklanmoqda...</h2>
 
 </div>
 
-<!-- MAIN APP -->
+</div>
+
+
+<!-- AUTH -->
+
+<div id="authScreen" class="center-screen hidden">
+
+<div class="auth-container">
+
+<div class="auth-card glass">
+
+<h1>Baraka POS</h1>
+
+<p class="auth-sub">Biznesingiz uchun zamonaviy POS</p>
+
+<input id="shopName" placeholder="Do'kon nomi">
+
+<input id="email" placeholder="Email">
+
+<input id="password" type="password" placeholder="Parol">
+
+<button class="btn-primary" onclick="register()">
+Ro'yxatdan o'tish
+</button>
+
+<button class="btn-secondary" onclick="login()">
+Kirish
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- APP -->
 
 <div id="appScreen" class="hidden">
 
-<header>
+
+<!-- HEADER -->
+
+<header class="app-header glass">
 
 <div>
-Do'kon:
-<span id="shopTitle"></span>
+
+<div class="shop-label">
+Do'kon
 </div>
 
-<button onclick="toggleProfileMenu()">☰</button>
+<div id="shopTitle" class="shop-title"></div>
 
-<div id="profileMenu" class="hidden">
-<button onclick="logout()">Chiqish</button>
+</div>
+
+<button class="menu-btn" onclick="toggleProfileMenu()">☰</button>
+
+<div id="profileMenu" class="profile-menu glass hidden">
+
+<button onclick="logout()" class="danger-btn">
+Chiqish
+</button>
+
 </div>
 
 </header>
 
-<main>
+
+
+<!-- MAIN -->
+
+<main class="main-content">
+
 
 <!-- DASHBOARD -->
 
 <div id="dashboardPage" class="page">
 
-<h2>Asosiy</h2>
+<div class="dashboard-grid">
 
-Bugungi tushum:
-<span id="todaySales">0</span>
+<div class="dashboard-card glass">
+
+<div class="card-title">
+Bugungi tushum
+</div>
+
+<div id="todaySales" class="dashboard-amount">
+0
+</div>
 
 </div>
+
+
+<div class="dashboard-card glass">
+
+<div class="card-title">
+Haftalik tushum
+</div>
+
+<div id="weekSales" class="dashboard-amount">
+0
+</div>
+
+</div>
+
+
+<div class="dashboard-card glass">
+
+<div class="card-title">
+Oylik tushum
+</div>
+
+<div id="monthSales" class="dashboard-amount">
+0
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
 
 <!-- SALE -->
 
 <div id="salePage" class="page hidden">
 
-<h2>Naqd sotuv</h2>
+<h2 class="page-title">Naqd sotuv</h2>
+
+<div class="glass dashboard-card">
 
 <input
 id="saleSearch"
@@ -90,22 +177,33 @@ oninput="searchProducts(this.value)"
 
 <div id="searchResults"></div>
 
+</div>
+
 <div id="cartList"></div>
 
-Jami:
-<span id="saleTotal">0</span>
+<div class="glass dashboard-card">
 
-<button id="completeSaleBtn">
+<h3>
+Jami: <span id="saleTotal">0</span> so'm
+</h3>
+
+<button class="btn-primary" onclick="completeSale()">
 Sotuvni yakunlash
 </button>
 
 </div>
 
+</div>
+
+
+
 <!-- NASIYA -->
 
 <div id="debtPage" class="page hidden">
 
-<h2>Nasiya savdo</h2>
+<h2 class="page-title">Nasiya savdo</h2>
+
+<div class="glass dashboard-card">
 
 <input
 id="debtCustomerName"
@@ -117,57 +215,89 @@ id="debtSearch"
 placeholder="Mahsulot qidirish..."
 oninput="searchDebtProducts(this.value)"
 >
+
 <div id="debtSearchResults"></div>
 
 <div id="debtCartList"></div>
 
-<button id="completeDebtBtn">
+<button class="btn-primary" onclick="completeDebtSale()">
 Nasiya berish
 </button>
+
+</div>
+
+<div class="glass dashboard-card">
+
+<h3>Mijozlar qarzdorligi</h3>
 
 <div id="debtCustomersList"></div>
 
 </div>
 
-<!-- STOCK -->
+</div>
+
+
+
+<!-- INVENTORY -->
 
 <div id="stockPage" class="page hidden">
 
-<h2>Zaxira</h2>
+<h2 class="page-title">Zaxira</h2>
+
+<div class="glass dashboard-card">
 
 <input id="stockName" placeholder="Mahsulot nomi">
 
-<input id="stockQty" type="number" placeholder="Miqdor">
+<input id="stockQty" placeholder="Miqdor">
 
-<input id="stockCost" type="number" placeholder="Kelgan narx">
+<input id="stockCost" placeholder="Kelgan narx">
 
-<input id="stockSellingPrice" type="number" placeholder="Sotish narxi">
+<input id="stockSellingPrice" placeholder="Sotish narxi">
 
-<button onclick="addStock()">Qo'shish</button>
+<button class="btn-primary" onclick="addStock()">
+Qo'shish
+</button>
+
+</div>
 
 <div id="currentStockList"></div>
 
 </div>
 
+
+
 <!-- ANALYTICS -->
 
 <div id="analyticsPage" class="page hidden">
 
-<h2>Tahlil</h2>
+<h2 class="page-title">Tahlil</h2>
+
+<div id="analyticsContent"></div>
+
+<div class="chart-container glass">
 
 <canvas id="weeklyChart"></canvas>
+
+</div>
+
+<div class="chart-container glass">
 
 <canvas id="monthlyChart"></canvas>
 
 </div>
 
+</div>
+
+
 </main>
+
+
 
 <!-- NAVIGATION -->
 
-<nav>
+<nav class="bottom-nav glass">
 
-<button onclick="navigate('dashboardPage')">
+<button onclick="navigate('dashboardPage')" class="active">
 Asosiy
 </button>
 
@@ -189,13 +319,16 @@ Tahlil
 
 </nav>
 
+
 </div>
 
-<!-- SUCCESS OVERLAY -->
 
-<div id="successOverlay" class="hidden">
 
-<div>
+<!-- SUCCESS -->
+
+<div id="successOverlay" class="success-overlay hidden">
+
+<div class="success-card">
 
 <span id="successText">
 Muvaffaqiyatli
@@ -205,26 +338,17 @@ Muvaffaqiyatli
 
 </div>
 
-<!-- JS FILES ORDER -->
+
 
 <script src="js/firebase.js"></script>
-
 <script src="js/utils.js"></script>
-
 <script src="js/auth.js"></script>
-
 <script src="js/navigation.js"></script>
-
 <script src="js/sales.js"></script>
-
 <script src="js/debt.js"></script>
-
 <script src="js/stock.js"></script>
-
 <script src="js/analytics.js"></script>
-
 <script src="js/ui.js"></script>
-
 <script src="js/app.js"></script>
 
 </body>
