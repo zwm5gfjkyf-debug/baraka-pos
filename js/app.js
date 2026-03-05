@@ -130,7 +130,7 @@ async function loadDashboard(){
         .getElementById("monthSales")
         .innerText = formatMoney(month)
 
-}
+
 function syncOfflineSales(){
     // will be implemented later
 }
