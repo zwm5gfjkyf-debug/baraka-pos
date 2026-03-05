@@ -100,9 +100,19 @@ function searchProducts(text){
 
 function addToCart(product){
 
+    if(product.stock <= 0){
+        alert("Zaxirada qolmadi")
+        return
+    }
+
     const existing = cart.find(i => i.id === product.id)
 
     if(existing){
+
+        if(existing.qty + 1 > product.stock){
+            alert("Zaxirada yetarli mahsulot yo'q")
+            return
+        }
 
         existing.qty++
 
@@ -118,8 +128,6 @@ function addToCart(product){
     renderCart()
 
 }
-
-
 
 // =======================================
 // RENDER CART
