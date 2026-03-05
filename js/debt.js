@@ -251,7 +251,7 @@ function loadDebtCustomers(){
     .onSnapshot(snapshot => {
 
         const container = document.getElementById("debtCustomersList");
-
+list.innerHTML = ""
         container.innerHTML = "";
 
         snapshot.forEach(doc => {
