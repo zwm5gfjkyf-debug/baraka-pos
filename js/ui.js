@@ -26,3 +26,31 @@ function showSuccess(message){
     overlay.classList.add("hidden");
   },1500);
 }
+let confirmCallback = null
+
+function showConfirm(text, callback){
+
+const modal = document.getElementById("confirmModal")
+const textBox = document.getElementById("confirmText")
+const okBtn = document.getElementById("confirmOkBtn")
+
+textBox.innerText = text
+
+confirmCallback = callback
+
+okBtn.onclick = ()=>{
+if(confirmCallback) confirmCallback()
+closeConfirm()
+}
+
+modal.classList.remove("hidden")
+
+}
+
+function closeConfirm(){
+
+document
+.getElementById("confirmModal")
+.classList.add("hidden")
+
+}
