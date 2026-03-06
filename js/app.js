@@ -59,17 +59,26 @@ if(emailBox){
 // =============================
 
 async function loadDashboard(){
-if(!currentShopId) return
+
+    if(!currentShopId) return
+
     const salesRef = db
         .collection("shops")
         .doc(currentShopId)
         .collection("sales")
 
-    const snapshot = await salesRef.get()
+    const debtsRef = db
+        .collection("shops")
+        .doc(currentShopId)
+        .collection("debts")
 
-    let today = 0
-    let week = 0
-    let month = 0
+    const salesSnapshot = await salesRef.get()
+    const debtsSnapshot = await debtsRef.get()
+
+    let todayRevenue = 0
+    let todayItems = 0
+    let todayProfit = 0
+    let todayDebt = 0
 
     const now = new Date()
 
@@ -79,59 +88,65 @@ if(!currentShopId) return
         now.getDate()
     )
 
-    const weekStart = new Date(now)
-    weekStart.setDate(now.getDate() - now.getDay())
-
-    const monthStart = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        1
-    )
-
-
-
-    snapshot.forEach(doc => {
+    // SALES
+    salesSnapshot.forEach(doc => {
 
         const sale = doc.data()
 
-        const date = new Date(
-            sale.createdAt.seconds * 1000
-        )
+        const date = new Date(sale.createdAt.seconds * 1000)
 
         if(date >= todayStart){
 
-            today += sale.total
+            todayRevenue += sale.total
 
-        }
+            if(sale.items){
 
-        if(date >= weekStart){
+                sale.items.forEach(item => {
 
-            week += sale.total
+                    const qty = item.qty || 0
+                    const price = item.price || 0
+                    const cost = item.cost || 0
 
-        }
+                    todayItems += qty
 
-        if(date >= monthStart){
+                    todayProfit += (price - cost) * qty
 
-            month += sale.total
+                })
+
+            }
 
         }
 
     })
 
 
+    // NASIYA
+    debtsSnapshot.forEach(doc => {
 
-    document
-        .getElementById("todaySales")
-        .innerText = formatMoney(today)
+        const debt = doc.data()
 
-    document
-        .getElementById("weekSales")
-        .innerText = formatMoney(week)
+        const date = new Date(debt.created)
 
-    document
-        .getElementById("monthSales")
-        .innerText = formatMoney(month)
-}   // ← 
+        if(date >= todayStart){
+
+            todayDebt += debt.total
+
+        }
+
+    })
+
+
+    const revenueBox = document.getElementById("todayRevenue")
+    const itemsBox = document.getElementById("todayItems")
+    const profitBox = document.getElementById("todayProfit")
+    const debtBox = document.getElementById("todayDebt")
+
+    if(revenueBox) revenueBox.innerText = formatMoney(todayRevenue)
+    if(itemsBox) itemsBox.innerText = todayItems
+    if(profitBox) profitBox.innerText = formatMoney(todayProfit)
+    if(debtBox) debtBox.innerText = formatMoney(todayDebt)
+
+}
 
 // ===============================
 // SYNC OFFLINE SALES
