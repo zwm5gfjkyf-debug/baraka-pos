@@ -88,6 +88,12 @@ async function loadDashboard(){
         now.getDate()
     )
 
+    const chartLabels = []
+    const chartValues = []
+
+    let runningTotal = 0
+
+
     // SALES
     salesSnapshot.forEach(doc => {
 
@@ -99,6 +105,16 @@ async function loadDashboard(){
 
             todayRevenue += sale.total
 
+            // chart data
+            runningTotal += sale.total
+
+            const time =
+                date.getHours() + ":" +
+                String(date.getMinutes()).padStart(2,"0")
+
+            chartLabels.push(time)
+            chartValues.push(runningTotal)
+
             if(sale.items){
 
                 sale.items.forEach(item => {
@@ -108,7 +124,6 @@ async function loadDashboard(){
                     const cost = item.cost || 0
 
                     todayItems += qty
-
                     todayProfit += (price - cost) * qty
 
                 })
@@ -120,33 +135,41 @@ async function loadDashboard(){
     })
 
 
-    // NASIYA
+    // DEBTS
     debtsSnapshot.forEach(doc => {
 
         const debt = doc.data()
 
-        const date = new Date(debt.created)
+        if(debt.created){
 
-        if(date >= todayStart){
+            const date = new Date(debt.created)
 
-            todayDebt += debt.total
+            if(date >= todayStart){
+
+                todayDebt += debt.total || 0
+
+            }
 
         }
 
     })
 
 
-    const revenueBox = document.getElementById("todayRevenue")
-    const itemsBox = document.getElementById("todayItems")
-    const profitBox = document.getElementById("todayProfit")
-    const debtBox = document.getElementById("todayDebt")
+    // UPDATE DASHBOARD UI
+    document.getElementById("todayRevenue").innerText = formatMoney(todayRevenue)
+    document.getElementById("todayItems").innerText = todayItems
+    document.getElementById("todayProfit").innerText = formatMoney(todayProfit)
+    document.getElementById("todayDebt").innerText = formatMoney(todayDebt)
 
-    if(revenueBox) revenueBox.innerText = formatMoney(todayRevenue)
-    if(itemsBox) itemsBox.innerText = todayItems
-    if(profitBox) profitBox.innerText = formatMoney(todayProfit)
-    if(debtBox) debtBox.innerText = formatMoney(todayDebt)
+
+    // RENDER CHART (ONLY ONCE)
+    renderTodaySalesChart({
+        labels: chartLabels,
+        values: chartValues
+    })
 
 }
+ 
 
 // ===============================
 // SYNC OFFLINE SALES
