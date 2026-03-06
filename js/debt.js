@@ -417,7 +417,7 @@ async function payDebt(id, btn){
 
         debtPaymentProcessing = false
 
-        const btn = event.target
+    
         btn.innerText = "To'lash"
         btn.disabled = false
 
