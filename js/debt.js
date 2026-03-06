@@ -48,7 +48,7 @@ function searchDebtProducts(text){
 // ADD PRODUCT TO DEBT CART
 // ===============================
 
-let lastClick = 0
+
 
 function addDebtToCart(product){
 
