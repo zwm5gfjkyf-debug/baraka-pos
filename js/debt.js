@@ -4,6 +4,7 @@
 // ===============================
 
 let debtCart = [];
+let debtProcessing = false;
 
 // ===============================
 // SEARCH PRODUCTS FOR DEBT
@@ -186,6 +187,8 @@ async function completeDebtSale(){
 
     if(debtProcessing) return
     debtProcessing = true
+
+    try{
     const customer = document
         .getElementById("debtCustomerName")
         .value
@@ -284,7 +287,10 @@ async function completeDebtSale(){
 
     showSuccess("Nasiya saqlandi")
 
+ }
+finally{
     debtProcessing = false
+}
 }
 
 
