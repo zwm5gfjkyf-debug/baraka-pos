@@ -28,9 +28,11 @@ auth.onAuthStateChanged(user => {
             .getElementById("appScreen")
             .classList.remove("hidden")
 
-        document
-            .getElementById("shopTitle")
-            .innerText = user.email
+     const emailBox = document.getElementById("profileEmail")
+
+if(emailBox){
+    emailBox.innerText = user.email
+}
 
         loadProducts()
 
@@ -156,4 +158,26 @@ async function syncOfflineSales(){
 
     localStorage.removeItem("offlineSales")
 
+}
+async function deleteAllShopData(){
+
+    if(!confirm("Hamma ma'lumotlar o'chiriladi. Ishonchingiz komilmi?")){
+        return
+    }
+
+    const shopRef = db.collection("shops").doc(currentShopId)
+
+    const collections = ["sales","debts","products"]
+
+    for(const col of collections){
+
+        const snapshot = await shopRef.collection(col).get()
+
+        for(const doc of snapshot.docs){
+            await doc.ref.delete()
+        }
+
+    }
+
+    alert("Barcha ma'lumotlar o'chirildi")
 }
