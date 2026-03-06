@@ -4,8 +4,11 @@
 ========================================= */
 
 function toggleProfileMenu(){
-  const menu = document.getElementById("profileMenu");
-  if(menu) menu.classList.toggle("hidden");
+
+    const menu = document.getElementById("profileMenu")
+
+    menu.classList.toggle("hidden")
+
 }
 
 function showSuccess(message){
