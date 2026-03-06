@@ -314,3 +314,52 @@ async function loadDashboard(){
     document.getElementById("monthRevenue").innerText = formatMoney(month)
 
 }
+let todayChart = null
+
+function renderTodaySalesChart(data){
+
+    const ctx = document.getElementById("todaySalesChart")
+
+    if(!ctx) return
+
+    if(todayChart) todayChart.destroy()
+
+    todayChart = new Chart(ctx,{
+
+        type:"line",
+
+        data:{
+            labels:data.labels,
+            datasets:[{
+
+                data:data.values,
+
+                borderColor:"#10b981",
+                backgroundColor:"rgba(16,185,129,0.15)",
+
+                tension:0.4,
+                fill:true,
+                borderWidth:3,
+                pointRadius:3
+
+            }]
+        },
+
+        options:{
+            responsive:true,
+            plugins:{
+                legend:{display:false}
+            },
+            scales:{
+                x:{
+                    grid:{display:false}
+                },
+                y:{
+                    grid:{color:"rgba(255,255,255,0.05)"}
+                }
+            }
+        }
+
+    })
+
+}
