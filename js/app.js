@@ -161,9 +161,10 @@ async function syncOfflineSales(){
 }
 async function deleteAllShopData(){
 
-    if(!confirm("Hamma ma'lumotlar o'chiriladi. Ishonchingiz komilmi?")){
-        return
-    }
+    if(!currentShopId) return
+    const confirmDelete = confirm("Hamma ma'lumotlar o'chiriladi. Ishonchingiz komilmi?")
+
+    if(!confirmDelete) return
 
     const shopRef = db.collection("shops").doc(currentShopId)
 
@@ -180,4 +181,5 @@ async function deleteAllShopData(){
     }
 
     alert("Barcha ma'lumotlar o'chirildi")
+
 }
