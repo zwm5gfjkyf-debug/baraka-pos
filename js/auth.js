@@ -14,7 +14,11 @@ auth.onAuthStateChanged(user => {
 
     document.getElementById("appScreen").classList.remove("hidden");
 
-    document.getElementById("shopTitle").innerText = user.email;
+  const shopTitle = document.getElementById("shopTitle")
+
+if(shopTitle){
+    shopTitle.innerText = "BARAKA"
+}
 
     loadDashboard();
 
