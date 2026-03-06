@@ -25,7 +25,7 @@ function navigate(pageId){
 
   if(pageId === "dashboardPage") loadDashboard();
 
-  if(pageId === "salePage") loadSaleProducts();
+  if(pageId === "salePage") loadProducts();
 
   if(pageId === "debtPage") loadDebtCustomers();
 
