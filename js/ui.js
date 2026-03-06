@@ -1,4 +1,3 @@
-
 /* =========================================
    UI FUNCTIONS
 ========================================= */
@@ -7,50 +6,63 @@ function toggleProfileMenu(){
 
     const menu = document.getElementById("profileMenu")
 
-    menu.classList.toggle("hidden")
+    if(menu){
+        menu.classList.toggle("hidden")
+    }
 
 }
 
 function showSuccess(message){
 
-  const overlay = document.getElementById("successOverlay");
-  const text = document.getElementById("successText");
+  const overlay = document.getElementById("successOverlay")
+  const text = document.getElementById("successText")
 
-  if(!overlay || !text) return;
+  if(!overlay || !text) return
 
-  text.innerText = message;
+  text.innerText = message
 
-  overlay.classList.remove("hidden");
+  overlay.classList.remove("hidden")
 
   setTimeout(()=>{
-    overlay.classList.add("hidden");
-  },1500);
+    overlay.classList.add("hidden")
+  },1500)
+
 }
+
+
+/* =========================================
+   CONFIRM MODAL
+========================================= */
+
 let confirmCallback = null
 
 function showConfirm(text, callback){
 
-const modal = document.getElementById("confirmModal")
-const textBox = document.getElementById("confirmText")
-const okBtn = document.getElementById("confirmOkBtn")
+  const modal = document.getElementById("confirmModal")
+  const textBox = document.getElementById("confirmText")
+  const okBtn = document.getElementById("confirmOkBtn")
 
-textBox.innerText = text
+  if(!modal || !textBox || !okBtn) return
 
-confirmCallback = callback
+  textBox.innerText = text
 
-okBtn.onclick = ()=>{
-if(confirmCallback) confirmCallback()
-closeConfirm()
-}
+  confirmCallback = callback
 
-modal.classList.remove("hidden")
+  okBtn.onclick = ()=>{
+      if(confirmCallback) confirmCallback()
+      closeConfirm()
+  }
+
+  modal.classList.remove("hidden")
 
 }
 
 function closeConfirm(){
 
-document
-.getElementById("confirmModal")
-.classList.add("hidden")
+  const modal = document.getElementById("confirmModal")
+
+  if(modal){
+    modal.classList.add("hidden")
+  }
 
 }
