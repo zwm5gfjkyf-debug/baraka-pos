@@ -225,6 +225,10 @@ function renderMonthlyChart(data){
 
 function renderTopProducts(stats){
 
+    const containerRoot = document.getElementById("analyticsContent");
+
+    if(!containerRoot) return; // prevents crash
+
     const sorted = Object.entries(stats)
         .sort((a,b)=>b[1]-a[1])
         .slice(0,5);
@@ -251,9 +255,7 @@ function renderTopProducts(stats){
 
     container.innerHTML = html;
 
-    document
-        .getElementById("analyticsContent")
-        .appendChild(container);
+    containerRoot.appendChild(container);
 
 }
 // ===============================
