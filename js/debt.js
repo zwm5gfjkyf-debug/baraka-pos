@@ -339,9 +339,9 @@ function loadDebtCustomers(){
             placeholder="To'lov"
             >
 
-            <button onclick="payDebt('${doc.id}')">
-            To'lash
-            </button>
+          <button onclick="payDebt('${doc.id}', this)">
+To'lash
+</button>
 
             `
 
@@ -358,12 +358,11 @@ function loadDebtCustomers(){
 // PAY DEBT
 // ===============================
 
-async function payDebt(id){
-
+async function payDebt(id, btn){
     if(debtPaymentProcessing) return
     debtPaymentProcessing = true
 
-    const btn = event.target
+   
     btn.innerText = "To'lanmoqda..."
     btn.disabled = true
 
