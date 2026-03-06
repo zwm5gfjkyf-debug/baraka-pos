@@ -3,9 +3,10 @@
 // BARAKA POS DEBT SYSTEM
 // ===============================
 
-let debtCart = [];
-let debtProcessing = false;
-
+let debtCart = []
+let debtProcessing = false
+let debtPaymentProcessing = false
+let lastClick = 0
 // ===============================
 // SEARCH PRODUCTS FOR DEBT
 // ===============================
@@ -188,6 +189,9 @@ async function completeDebtSale(){
     if(debtProcessing) return
     debtProcessing = true
 
+    const btn = document.getElementById("debtCompleteBtn")
+    btn.innerText = "Berilyapti..."
+    btn.disabled = true
     try{
     const customer = document
         .getElementById("debtCustomerName")
@@ -286,7 +290,8 @@ async function completeDebtSale(){
     renderDebtCart()
 
     showSuccess("Nasiya saqlandi")
-
+btn.innerText = "Nasiya berish"
+btn.disabled = false
  }
 finally{
     debtProcessing = false
@@ -355,52 +360,67 @@ function loadDebtCustomers(){
 
 async function payDebt(id){
 
-    const input = document.getElementById("pay_"+id)
+    if(debtPaymentProcessing) return
+    debtPaymentProcessing = true
 
-    const amount = Number(input.value)
+    const btn = event.target
+    btn.innerText = "To'lanmoqda..."
+    btn.disabled = true
 
-    if(!amount) return
+    try{
 
-    // ADD PAYMENT TO SALES
-    const salesRef = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("sales")
+        const input = document.getElementById("pay_"+id)
 
-    await salesRef.add({
-        items: [],
-        total: amount,
-        createdAt: new Date(),
-        type: "debt_payment"
-    })
-    const ref = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("debts")
-        .doc(id);
+        const amount = Number(input.value)
 
-    const doc = await ref.get();
+        if(!amount) return
 
-    const data = doc.data();
+        // ADD PAYMENT TO SALES
+        const salesRef = db
+            .collection("shops")
+            .doc(currentShopId)
+            .collection("sales")
 
- const newRemaining = data.remaining - amount;
+        await salesRef.add({
+            items: [],
+            total: amount,
+            createdAt: new Date(),
+            type: "debt_payment"
+        })
 
-if(amount > data.remaining){
-    alert("To'lov qarzdan katta bo'lishi mumkin emas")
-    return
-}
-    if(newRemaining <= 0){
+        const ref = db
+            .collection("shops")
+            .doc(currentShopId)
+            .collection("debts")
+            .doc(id)
 
-        await ref.delete();
+        const doc = await ref.get()
+        const data = doc.data()
 
-    }else{
+        if(amount > data.remaining){
+            alert("To'lov qarzdan katta bo'lishi mumkin emas")
+            return
+        }
 
-        await ref.update({
+        const newRemaining = data.remaining - amount
 
-            remaining: newRemaining,
-            status: "partial"
+        if(newRemaining <= 0){
+            await ref.delete()
+        }else{
+            await ref.update({
+                remaining: newRemaining,
+                status: "partial"
+            })
+        }
 
-        });
+    }
+    finally{
+
+        debtPaymentProcessing = false
+
+        const btn = event.target
+        btn.innerText = "To'lash"
+        btn.disabled = false
 
     }
 
