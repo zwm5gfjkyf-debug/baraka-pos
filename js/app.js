@@ -57,7 +57,7 @@ auth.onAuthStateChanged(user => {
 // =============================
 
 async function loadDashboard(){
-
+if(!currentShopId) return
     const salesRef = db
         .collection("shops")
         .doc(currentShopId)
