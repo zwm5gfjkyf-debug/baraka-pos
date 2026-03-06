@@ -97,8 +97,8 @@ async function loadAnalytics(){
 
 function renderAnalyticsCards(revenue,profit,sales){
 
-    const container = document.getElementById("analyticsContent");
-
+   const container = document.getElementById("analyticsContent")
+if(!container) return
     container.innerHTML = `
 
     <div class="dashboard-card glass">
