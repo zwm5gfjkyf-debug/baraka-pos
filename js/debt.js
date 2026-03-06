@@ -184,6 +184,8 @@ function decreaseDebtQty(id){
 
 async function completeDebtSale(){
 
+    if(debtProcessing) return
+    debtProcessing = true
     const customer = document
         .getElementById("debtCustomerName")
         .value
@@ -252,17 +254,22 @@ async function completeDebtSale(){
         .collection("products")
         .doc(item.id);
 
-    await db.runTransaction(async t => {
+   await db.runTransaction(async t => {
 
-        const doc = await t.get(ref);
+    const doc = await t.get(ref);
 
-        const stock = doc.data().stock || 0;
+    const stock = doc.data().stock || 0;
 
-        t.update(ref,{
-            stock: stock - item.qty
-        });
+    if(stock < item.qty){
+        alert("Zaxirada yetarli mahsulot yo'q")
+        throw new Error("Not enough stock")
+    }
 
+    t.update(ref,{
+        stock: stock - item.qty
     });
+
+});
 
     const p = productCache.find(p => p.id === item.id)
     if(p){
@@ -272,12 +279,12 @@ async function completeDebtSale(){
 }
 
 // CLEAR CART
-debtCart = []
+  debtCart = []
+    renderDebtCart()
 
-renderDebtCart()
+    showSuccess("Nasiya saqlandi")
 
-showSuccess("Nasiya saqlandi")
-
+    debtProcessing = false
 }
 
 
