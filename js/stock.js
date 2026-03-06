@@ -135,8 +135,16 @@ async function editProduct(id, field, value){
 
 async function deleteProduct(id){
 
-    if(!confirm("Mahsulotni o'chirishni xohlaysizmi?")) return;
+  showConfirm("Mahsulotni o'chirishni xohlaysizmi?", async ()=>{
 
+await db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.doc(id)
+.delete()
+
+})
     await db
         .collection("shops")
         .doc(currentShopId)
