@@ -21,7 +21,27 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 </head>
+<div id="confirmModal" class="confirm-modal hidden">
 
+  <div class="confirm-box glass">
+
+    <div id="confirmText" class="confirm-text"></div>
+
+    <div class="confirm-buttons">
+
+      <button onclick="closeConfirm()" class="btn-secondary">
+        Bekor qilish
+      </button>
+
+      <button id="confirmOkBtn" class="danger-btn">
+        OK
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 <body>
 
 <!-- LOADING -->
