@@ -302,11 +302,15 @@ console.log("Current shop:", currentShopId)
 
 const container = document.getElementById("debtAnalyticsList")
 
+container.innerHTML = "Yuklanmoqda..."
+
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
 .collection("debts")
 .get()
+
+container.innerHTML = ""
 
 console.log("Debts count:", snapshot.size)
 
