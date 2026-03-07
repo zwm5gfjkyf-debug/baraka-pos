@@ -141,6 +141,157 @@ font:{size:10}
 })
 
 }
+async function loadMonthlyAnalytics(){
+
+if(!currentShopId) return
+
+const salesRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+
+const snapshot = await salesRef.get()
+
+let monthRevenue = 0
+let monthItems = 0
+let monthProfit = 0
+
+const months = ["Yan","Fev","Mar","Apr","May","Iyun","Iyul","Avg","Sen","Okt","Noy","Dek"]
+
+const chartTotals = new Array(12).fill(0)
+
+snapshot.forEach(doc=>{
+
+const sale = doc.data()
+
+let date
+
+if(sale.createdAt?.seconds){
+date = new Date(sale.createdAt.seconds*1000)
+}else{
+date = new Date(sale.createdAt)
+}
+
+const month = date.getMonth()
+
+chartTotals[month] += sale.total || 0
+
+const now = new Date()
+
+if(
+date.getMonth() === now.getMonth() &&
+date.getFullYear() === now.getFullYear()
+){
+
+monthRevenue += sale.total || 0
+
+if(sale.items){
+
+sale.items.forEach(item=>{
+
+const qty = item.qty || 0
+const price = item.price || 0
+const cost = item.cost || 0
+
+monthItems += qty
+monthProfit += (price-cost)*qty
+
+})
+
+}
+
+}
+if(sale.items){
+
+sale.items.forEach(item=>{
+
+const qty = item.qty || 0
+const price = item.price || 0
+const cost = item.cost || 0
+
+monthItems += qty
+monthProfit += (price-cost)*qty
+
+})
+
+}
+
+})
+
+document.getElementById("monthRevenue").innerText = formatMoney(monthRevenue)
+document.getElementById("monthItems").innerText = monthItems
+document.getElementById("monthProfit").innerText = formatMoney(monthProfit)
+
+renderMonthlyChart(months, chartTotals)
+
+}
+let monthlyChart = null
+
+function renderMonthlyChart(labels, values){
+
+const ctx = document.getElementById("monthlySalesChart")
+
+if(!ctx) return
+
+if(monthlyChart){
+monthlyChart.destroy()
+}
+
+monthlyChart = new Chart(ctx,{
+
+type:"bar",
+
+data:{
+labels:labels,
+
+datasets:[{
+
+data:values,
+
+backgroundColor:"rgba(34,197,94,0.7)",
+
+borderRadius:8,
+
+barThickness:26
+
+}]
+
+},
+
+options:{
+responsive:true,
+maintainAspectRatio:false,
+
+plugins:{
+legend:{display:false}
+},
+
+scales:{
+
+x:{
+grid:{display:false},
+ticks:{
+color:"#9aa4b2",
+font:{size:11}
+}
+},
+
+y:{
+beginAtZero:true,
+grid:{color:"rgba(255,255,255,0.05)"},
+ticks:{
+color:"#9aa4b2",
+font:{size:10}
+}
+}
+
+}
+
+}
+
+})
+
+}
 // ===============================
 // LOAD ANALYTICS
 // ===============================
