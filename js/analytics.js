@@ -201,21 +201,6 @@ monthProfit += (price-cost)*qty
 }
 
 }
-if(sale.items){
-
-sale.items.forEach(item=>{
-
-const qty = item.qty || 0
-const price = item.price || 0
-const cost = item.cost || 0
-
-monthItems += qty
-monthProfit += (price-cost)*qty
-
-})
-
-}
-
 })
 
 document.getElementById("monthRevenue").innerText = formatMoney(monthRevenue)
@@ -300,8 +285,7 @@ async function loadDebtAnalytics(){
 
 const container = document.querySelector("#debtAnalyticsPage #debtAnalyticsList")
 
-container.innerHTML = ""
-
+container.innerHTML = "Yuklanmoqda..."
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
@@ -367,8 +351,7 @@ async function loadSalesAnalytics(){
 
 const container = document.getElementById("salesAnalyticsList")
 
-container.innerHTML = ""
-
+container.innerHTML = "Yuklanmoqda..."
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
