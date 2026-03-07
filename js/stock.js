@@ -159,23 +159,20 @@ async function editProduct(id, field, value){
 // DELETE PRODUCT
 // ===============================
 
-async function deleteProduct(id){
+function deleteProduct(id){
 
-  showConfirm("Mahsulotni o'chirishni xohlaysizmi?", async ()=>{
+showConfirm("Mahsulotni o'chirishni xohlaysizmi?", async () => {
 
-await db
+const ref = db
 .collection("shops")
 .doc(currentShopId)
 .collection("products")
 .doc(id)
-.delete()
+
+await ref.delete()
+
+showSuccess("Mahsulot o'chirildi")
 
 })
-    await db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("products")
-        .doc(id)
-        .delete();
 
 }
