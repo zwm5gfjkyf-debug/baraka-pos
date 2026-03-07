@@ -36,9 +36,15 @@ div.innerHTML = `
 <span>${formatMoney(product.price)} so'm</span>
 `
 
-div.addEventListener("pointerdown", () => {
+div.addEventListener("click", function(e){
+
+e.preventDefault()
+e.stopPropagation()
+
 addDebtToCart(product)
+
 results.innerHTML = ""
+
 })
 results.appendChild(div)
 
