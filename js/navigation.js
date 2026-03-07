@@ -31,5 +31,8 @@ function navigate(pageId){
 
   if(pageId === "stockPage") loadCurrentStock();
 
-  if(pageId === "analyticsPage") loadWeeklyAnalytics();
+if(pageId === "analyticsPage"){
+loadWeeklyAnalytics()
+loadMonthlyAnalytics()
+}
 }
