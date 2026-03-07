@@ -295,7 +295,49 @@ font:{size:10}
 // ===============================
 // LOAD ANALYTICS
 // ===============================
+async function loadDebtAnalytics(){
 
+const container = document.getElementById("debtAnalyticsList")
+
+container.innerHTML = ""
+
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("debts")
+.get()
+
+snapshot.forEach(doc => {
+
+const d = doc.data()
+
+let totalItems = 0
+
+d.items.forEach(i=>{
+totalItems += i.qty
+})
+
+const div = document.createElement("div")
+
+div.className = "dashboard-card glass"
+
+div.innerHTML = `
+
+<h3>${d.customer}</h3>
+
+<p>Mahsulotlar soni: ${totalItems}</p>
+
+<p>Jami nasiya: ${formatMoney(d.total)}</p>
+
+<p>Qolgan qarz: ${formatMoney(d.remaining)}</p>
+
+`
+
+container.appendChild(div)
+
+})
+
+}
 function openDebtAnalytics(){
 
 document.querySelectorAll(".page").forEach(p=>{
