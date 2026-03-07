@@ -66,3 +66,17 @@ function closeConfirm(){
   }
 
 }
+function showToast(message){
+
+const overlay = document.getElementById("successOverlay")
+const text = document.getElementById("successText")
+
+text.innerText = message
+
+overlay.classList.remove("hidden")
+
+setTimeout(()=>{
+overlay.classList.add("hidden")
+},2000)
+
+}
