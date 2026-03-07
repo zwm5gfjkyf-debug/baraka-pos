@@ -479,7 +479,11 @@ background:rgba(255,255,255,0.05);
 margin-bottom:10px;
 
 }
-
+.big-chart{
+grid-column:1 / -1;
+width:100%;
+min-height:260px;
+}
 
 /* =========================
 CHARTS
