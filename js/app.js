@@ -72,9 +72,10 @@ async function loadDashboard(){
         .doc(currentShopId)
         .collection("debts")
 
-    const salesSnapshot = await salesRef.get()
-    const debtsSnapshot = await debtsRef.get()
-
+    const [salesSnapshot, debtsSnapshot] = await Promise.all([
+    salesRef.get(),
+    debtsRef.get()
+])
     let todayRevenue = 0
     let todayItems = 0
     let todayProfit = 0
@@ -95,12 +96,17 @@ async function loadDashboard(){
 
 
     // SALES
-    salesSnapshot.forEach(doc => {
+   salesSnapshot.forEach(doc => {
 
-        const sale = doc.data()
+        const sale = doc.data() 
 
-        const date = new Date(sale.createdAt.seconds * 1000)
+      let date
 
+if(sale.createdAt?.seconds){
+    date = new Date(sale.createdAt.seconds * 1000)
+}else{
+    date = new Date(sale.createdAt)
+}
         if(date >= todayStart){
 
             todayRevenue += sale.total
@@ -200,9 +206,8 @@ async function syncOfflineSales(){
 async function deleteAllShopData(){
 
     if(!currentShopId) return
-    const confirmDelete = confirm("Hamma ma'lumotlar o'chiriladi. Ishonchingiz komilmi?")
-
-    if(!confirmDelete) return
+   const confirmDelete = confirm("Hamma ma'lumotlar o'chiriladi. Ishonchingiz komilmi?")
+if(!confirmDelete) return
 
     const shopRef = db.collection("shops").doc(currentShopId)
 
