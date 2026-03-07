@@ -298,15 +298,17 @@ font:{size:10}
 // ===============================
 async function loadDebtAnalytics(){
 
-const container = document.getElementById("debtAnalyticsList")
+console.log("Current shop:", currentShopId)
 
-container.innerHTML = ""
+const container = document.getElementById("debtAnalyticsList")
 
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
 .collection("debts")
 .get()
+
+console.log("Debts count:", snapshot.size)
 
 if(snapshot.empty){
 container.innerHTML = "Nasiya mavjud emas"
