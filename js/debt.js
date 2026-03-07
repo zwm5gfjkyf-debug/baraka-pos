@@ -390,9 +390,15 @@ async function payDebt(id, btn){
             .doc(id)
 
         const doc = await ref.get()
+
+        if(!doc.exists){
+            showToast("Qarz topilmadi")
+            return
+        }
+
         const data = doc.data()
 
-        // ❗ VALIDATION FIRST
+        // VALIDATION
         if(amount > data.remaining){
             showToast("To'lov qarzdan katta bo'lishi mumkin emas")
             return
@@ -410,7 +416,7 @@ async function payDebt(id, btn){
             })
         }
 
-        // ✅ ADD PAYMENT TO SALES ONLY AFTER VALIDATION
+        // ADD PAYMENT TO SALES
         const salesRef = db
             .collection("shops")
             .doc(currentShopId)
@@ -425,17 +431,19 @@ async function payDebt(id, btn){
 
         showSuccess("To'lov qabul qilindi")
 
+        input.value = ""
+
     }
     finally{
 
         debtPaymentProcessing = false
-
         btn.innerText = "To'lash"
         btn.disabled = false
 
     }
 
 }
+
 function changeDebtPrice(id,newPrice){
 
     const item = debtCart.find(i => i.id === id)
