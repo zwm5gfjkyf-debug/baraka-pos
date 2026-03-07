@@ -100,10 +100,10 @@ function searchProducts(text){
 
 function addToCart(product){
 
-    if(product.stock <= 0){
-        alert("Zaxirada qolmadi")
-        return
-    }
+  if(product.stock <= 0){
+    showToast("Zaxirada qolmadi")
+    return
+}
 
     const existing = cart.find(i => i.id === product.id)
 
@@ -181,7 +181,7 @@ onchange="changePrice('${item.id}', this.value)"
 
     })
 
-   document.getElementById("saleTotal").innerText = total + " so'm"
+document.getElementById("saleTotal").innerText = formatMoney(total)
 }
 
 
@@ -197,7 +197,7 @@ function increaseQty(id){
     const product = productCache.find(p => p.id === id)
 
     if(item.qty + 1 > product.stock){
-        alert("Zaxirada yetarli mahsulot yo'q")
+      showToast("Zaxirada yetarli mahsulot yo'q")
         return
     }
 
@@ -275,7 +275,7 @@ async function completeSale(){
 
     showSuccess("Sotuv yakunlandi")
 
-    generateReceipt(sale)
+  // generateReceipt(sale)
 
     btn.disabled = false
 }
@@ -296,7 +296,7 @@ async function updateStockAfterSale(items){
             const stock = doc.data().stock || 0
 
             if(stock < item.qty){
-                alert("Zaxirada yetarli mahsulot yo'q")
+            showToast("Zaxirada yetarli mahsulot yo'q")
                 throw new Error("Stock not enough")
             }
 
