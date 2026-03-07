@@ -366,22 +366,51 @@ To'lash
 // ===============================
 
 async function payDebt(id, btn){
+
     if(debtPaymentProcessing) return
     debtPaymentProcessing = true
 
-   
     btn.innerText = "To'lanmoqda..."
     btn.disabled = true
 
     try{
 
         const input = document.getElementById("pay_"+id)
-
         const amount = Number(input.value)
 
-        if(!amount) return
+        if(!amount){
+            showToast("To'lov summasini kiriting")
+            return
+        }
 
-        // ADD PAYMENT TO SALES
+        const ref = db
+            .collection("shops")
+            .doc(currentShopId)
+            .collection("debts")
+            .doc(id)
+
+        const doc = await ref.get()
+        const data = doc.data()
+
+        // ❗ VALIDATION FIRST
+        if(amount > data.remaining){
+            showToast("To'lov qarzdan katta bo'lishi mumkin emas")
+            return
+        }
+
+        const newRemaining = data.remaining - amount
+
+        // UPDATE DEBT
+        if(newRemaining <= 0){
+            await ref.delete()
+        }else{
+            await ref.update({
+                remaining: newRemaining,
+                status: "partial"
+            })
+        }
+
+        // ✅ ADD PAYMENT TO SALES ONLY AFTER VALIDATION
         const salesRef = db
             .collection("shops")
             .doc(currentShopId)
@@ -394,37 +423,13 @@ async function payDebt(id, btn){
             type: "debt_payment"
         })
 
-        const ref = db
-            .collection("shops")
-            .doc(currentShopId)
-            .collection("debts")
-            .doc(id)
-
-        const doc = await ref.get()
-        const data = doc.data()
-
-        if(amount > data.remaining){
-          showToast("To'lov qarzdan katta bo'lishi mumkin emas")
-            return
-        }
-
-        const newRemaining = data.remaining - amount
-
-        if(newRemaining <= 0){
-            await ref.delete()
-        }else{
-            await ref.update({
-                remaining: newRemaining,
-                status: "partial"
-            })
-        }
+        showSuccess("To'lov qabul qilindi")
 
     }
     finally{
 
         debtPaymentProcessing = false
 
-    
         btn.innerText = "To'lash"
         btn.disabled = false
 
