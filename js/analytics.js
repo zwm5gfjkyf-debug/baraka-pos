@@ -417,6 +417,28 @@ container.appendChild(row)
 })
 
 }
+function filterSalesTable(){
+
+const search = document
+.getElementById("salesSearch")
+.value
+.toLowerCase()
+
+const rows = document.querySelectorAll("#salesAnalyticsList tr")
+
+rows.forEach(row=>{
+
+const product = row.children[0].innerText.toLowerCase()
+
+if(product.includes(search)){
+row.style.display = ""
+}else{
+row.style.display = "none"
+}
+
+})
+
+}
 // ===============================
 // ANALYTICS CARDS
 // ===============================
