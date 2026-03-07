@@ -299,11 +299,14 @@ navigate("debtAnalyticsPage")
 loadDebtAnalytics()
 
 }
+
+
+
 async function loadDebtAnalytics(){
 
 const container = document.getElementById("debtAnalyticsList")
 
-container.innerHTML = ""
+container.innerHTML = "Yuklanmoqda..."
 
 const snapshot = await db
 .collection("shops")
@@ -311,28 +314,33 @@ const snapshot = await db
 .collection("debts")
 .get()
 
+container.innerHTML = ""
+
+if(snapshot.empty){
+container.innerHTML = "Nasiya ma'lumotlari yo'q"
+return
+}
+
 snapshot.forEach(doc => {
 
 const d = doc.data()
 
-let totalItems = 0
-
-d.items.forEach(i=>{
-totalItems += i.qty
-})
+const totalItems = d.items.reduce((sum,i)=> sum + i.qty,0)
 
 const div = document.createElement("div")
 
-div.className = "glass dashboard-card"
+div.className = "debt-item"
 
 div.innerHTML = `
+
 <b>${d.customer}</b>
 
-<div>Mahsulotlar: ${totalItems}</div>
+<div>Mahsulotlar soni: ${totalItems}</div>
 
-<div>Jami qarz: ${formatMoney(d.total)}</div>
+<div>Jami qarz: ${formatMoney(d.total)} so'm</div>
 
-<div>Qolgan qarz: ${formatMoney(d.remaining)}</div>
+<div>Qolgan qarz: ${formatMoney(d.remaining)} so'm</div>
+
 `
 
 container.appendChild(div)
