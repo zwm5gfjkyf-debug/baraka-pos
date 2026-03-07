@@ -134,9 +134,8 @@ ${p.name}
 
 <div class="stock-actions">
 
-<button onclick="editProductPrompt('${doc.id}')">
+<button onclick="editProduct('${doc.id}','stock', prompt('Yangi miqdor'))">
 Tahrirlash
-
 </button>
 
 <button onclick="deleteProduct('${doc.id}')" class="danger-btn">
@@ -163,21 +162,24 @@ O'chirish
 
 async function editProduct(id, field, value){
 
-    if(field !== "name"){
-        value = Number(value);
-    }
+if(value === null || value === "") return
 
-    await db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("products")
-        .doc(id)
-        .update({
-            [field]: value
-        });
-
+if(field !== "name"){
+value = Number(value)
 }
 
+await db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.doc(id)
+.update({
+[field]: value
+})
+
+showSuccess("Yangilandi")
+
+}
 
 // ===============================
 // DELETE PRODUCT
