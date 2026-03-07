@@ -1,4 +1,3 @@
-
 // ===============================
 // BARAKA POS DEBT SYSTEM
 // ===============================
@@ -7,6 +6,8 @@ let debtCart = []
 let debtProcessing = false
 let debtPaymentProcessing = false
 let lastClick = 0
+
+
 // ===============================
 // SEARCH PRODUCTS FOR DEBT
 // ===============================
@@ -46,53 +47,53 @@ addDebtToCart(product)
 results.innerHTML = ""
 
 })
+
 results.appendChild(div)
 
 })
 
 }
 
+
 // ===============================
 // ADD PRODUCT TO DEBT CART
 // ===============================
 
-
-
 function addDebtToCart(product){
 
-    const now = Date.now()
+const now = Date.now()
 
-    if(now - lastClick < 300) return
+if(now - lastClick < 300) return
 
-    lastClick = now
+lastClick = now
 
-    // STOCK CHECK
-    if(product.stock <= 0){
-    showToast("Zaxirada qolmadi")
-        return
-    }
+if(product.stock <= 0){
+showToast("Zaxirada qolmadi")
+return
+}
 
-    const existing = debtCart.find(i => i.id === product.id)
+const existing = debtCart.find(i => i.id === product.id)
 
-    if(existing){
+if(existing){
 
-        if(existing.qty + 1 > product.stock){
-   showToast("Zaxirada yetarli mahsulot yo'q")
-            return
-        }
+if(existing.qty + 1 > product.stock){
+showToast("Zaxirada yetarli mahsulot yo'q")
+return
+}
 
-        existing.qty++
+existing.qty++
 
-    }else{
+}else{
 
-        debtCart.push({
-            ...product,
-            qty:1
-        })
+debtCart.push({
+...product,
+qty:1
+})
 
-    }
+}
 
-    renderDebtCart()
+renderDebtCart()
+
 }
 
 
@@ -102,23 +103,23 @@ function addDebtToCart(product){
 
 function renderDebtCart(){
 
-    const list = document.getElementById("debtCartList");
+const list = document.getElementById("debtCartList")
 
-    list.innerHTML = "";
+list.innerHTML = ""
 
-    debtCart.forEach(item => {
+debtCart.forEach(item => {
 
-        const total = item.price * item.qty;
+const total = item.price * item.qty
 
-        const div = document.createElement("div");
+const div = document.createElement("div")
 
-        div.className = "cart-item";
+div.className = "cart-item"
 
-        div.innerHTML = `
+div.innerHTML = `
 
-        <b>${item.name}</b>
+<b>${item.name}</b>
 
-     <div>
+<div>
 
 <button onclick="decreaseDebtQty('${item.id}')">-</button>
 
@@ -137,11 +138,11 @@ onchange="changeDebtPrice('${item.id}',this.value)"
 
 <strong>${formatMoney(total)}</strong>
 
-        `;
+`
 
-        list.appendChild(div);
+list.appendChild(div)
 
-    });
+})
 
 }
 
@@ -152,38 +153,41 @@ onchange="changeDebtPrice('${item.id}',this.value)"
 
 function increaseDebtQty(id){
 
-    const item = debtCart.find(i => i.id === id)
+const item = debtCart.find(i => i.id === id)
 
-    const product = productCache.find(p => p.id === id)
+if(!item) return
 
-    if(!product){
-    showToast("Mahsulot topilmadi")
-        return
-    }
+const product = productCache.find(p => p.id === id)
 
-   if(item.qty + 1 > product.stock){
-    showToast("Zaxirada yetarli mahsulot yo'q")
-    return
+if(!product){
+showToast("Mahsulot topilmadi")
+return
 }
 
-    item.qty++
+if(item.qty + 1 > product.stock){
+showToast("Zaxirada yetarli mahsulot yo'q")
+return
+}
 
-    renderDebtCart()
+item.qty++
+
+renderDebtCart()
 
 }
+
 function decreaseDebtQty(id){
 
-    const item = debtCart.find(i => i.id === id);
+const item = debtCart.find(i => i.id === id)
 
-    item.qty--;
+if(!item) return
 
-    if(item.qty <= 0){
+item.qty--
 
-        debtCart = debtCart.filter(i => i.id !== id);
+if(item.qty <= 0){
+debtCart = debtCart.filter(i => i.id !== id)
+}
 
-    }
-
-    renderDebtCart();
+renderDebtCart()
 
 }
 
@@ -194,59 +198,59 @@ function decreaseDebtQty(id){
 
 async function completeDebtSale(){
 
-    if(debtProcessing) return
-    debtProcessing = true
+if(debtProcessing) return
+debtProcessing = true
 
-    const btn = document.getElementById("debtCompleteBtn")
-    btn.innerText = "Berilyapti..."
-    btn.disabled = true
-    try{
-    const customer = document
-        .getElementById("debtCustomerName")
-        .value
-        .trim();
+const btn = document.getElementById("debtCompleteBtn")
+btn.innerText = "Berilyapti..."
+btn.disabled = true
 
-   if(!customer){
-    showToast("Mijoz ismini kiriting")
-    debtProcessing = false
-    btn.innerText = "Nasiya berish"
-    btn.disabled = false
-    return
+try{
+
+const customer = document
+.getElementById("debtCustomerName")
+.value
+.trim()
+
+if(!customer){
+showToast("Mijoz ismini kiriting")
+btn.innerText = "Nasiya berish"
+btn.disabled = false
+debtProcessing = false
+return
 }
 
-   if(debtCart.length === 0){
-    showToast("Mahsulot tanlang")
-
-    debtProcessing = false
-    btn.innerText = "Nasiya berish"
-    btn.disabled = false
-
-    return
+if(debtCart.length === 0){
+showToast("Mahsulot tanlang")
+btn.innerText = "Nasiya berish"
+btn.disabled = false
+debtProcessing = false
+return
 }
-   let total = 0;
-let profit = 0;
+
+let total = 0
+let profit = 0
 
 debtCart.forEach(i => {
 
 total += i.price * i.qty
-
 profit += (i.price - i.cost) * i.qty
 
 })
 
-    const debtsRef = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("debts");
+const debtsRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("debts")
 
-    const existing = await debtsRef
-        .where("customer","==",customer)
-        .where("status","in",["unpaid","partial"])
-        .get();
+const existing = await debtsRef
+.where("customer","==",customer)
+.where("status","in",["unpaid","partial"])
+.get()
 
-    if(existing.empty){
+if(existing.empty){
 
-        await debtsRef.add({
+await debtsRef.add({
 customer: customer,
 items: debtCart,
 total: total,
@@ -254,68 +258,80 @@ remaining: total,
 profit: profit,
 status: "unpaid",
 createdAt: new Date()
-});
+})
 
-   }else{
+}else{
 
-const doc = existing.docs[0];
-const data = doc.data();
+const doc = existing.docs[0]
+const data = doc.data()
 
 await doc.ref.update({
-
 items: [...data.items, ...debtCart],
 total: data.total + total,
 remaining: data.remaining + total,
 profit: (data.profit || 0) + profit
-
-});
-    }
-
-    // UPDATE STOCK
-
- for(const item of debtCart){
-
-    const ref = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("products")
-        .doc(item.id);
-
-   await db.runTransaction(async t => {
-
-    const doc = await t.get(ref);
-
-    const stock = doc.data().stock || 0;
-
-  if(stock < item.qty){
-    showToast("Zaxirada yetarli mahsulot yo'q")
-    throw new Error("Not enough stock")
-}
-
-    t.update(ref,{
-        stock: stock - item.qty
-    });
-
-});
-
-    const p = productCache.find(p => p.id === item.id)
-    if(p){
-        p.stock -= item.qty
-    }
+})
 
 }
+
+
+// ===============================
+// UPDATE STOCK
+// ===============================
+
+for(const item of debtCart){
+
+const ref = db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.doc(item.id)
+
+await db.runTransaction(async t => {
+
+const doc = await t.get(ref)
+
+const stock = doc.data().stock || 0
+
+if(stock < item.qty){
+showToast("Zaxirada yetarli mahsulot yo'q")
+throw new Error("Not enough stock")
+}
+
+t.update(ref,{
+stock: stock - item.qty
+})
+
+})
+
+const p = productCache.find(p => p.id === item.id)
+
+if(p){
+p.stock -= item.qty
+}
+
+}
+
 
 // CLEAR CART
-  debtCart = []
-    renderDebtCart()
 
-    showSuccess("Nasiya saqlandi")
+debtCart = []
+
+renderDebtCart()
+
+showSuccess("Nasiya saqlandi")
+
 btn.innerText = "Nasiya berish"
 btn.disabled = false
- }
-finally{
-    debtProcessing = false
+
 }
+
+finally{
+
+debtProcessing = false
+
+}
+
 }
 
 
@@ -325,51 +341,50 @@ finally{
 
 function loadDebtCustomers(){
 
-    if(!currentShopId) return
+if(!currentShopId) return
 
-    db.collection("shops")
-    .doc(currentShopId)
-    .collection("debts")
-    .onSnapshot(snapshot => {
+db.collection("shops")
+.doc(currentShopId)
+.collection("debts")
+.onSnapshot(snapshot => {
 
-        const container = document.getElementById("debtCustomersList")
+const container = document.getElementById("debtCustomersList")
 
-        // CLEAR OLD UI
-        container.innerHTML = ""
+container.innerHTML = ""
 
-        snapshot.forEach(doc => {
+snapshot.forEach(doc => {
 
-            const d = doc.data()
+const d = doc.data()
 
-            const div = document.createElement("div")
+const div = document.createElement("div")
 
-            div.className = "debt-item"
+div.className = "debt-item"
 
-            div.innerHTML = `
+div.innerHTML = `
 
-            <b>${d.customer}</b>
+<b>${d.customer}</b>
 
-            <div>
-           Qolgan: ${formatMoney(d.remaining)}
-            </div>
+<div>
+Qolgan: ${formatMoney(d.remaining)}
+</div>
 
-            <input
-            type="number"
-            id="pay_${doc.id}"
-            placeholder="To'lov"
-            >
+<input
+type="number"
+id="pay_${doc.id}"
+placeholder="To'lov"
+>
 
-          <button onclick="payDebt('${doc.id}', this)">
+<button onclick="payDebt('${doc.id}', this)">
 To'lash
 </button>
 
-            `
+`
 
-            container.appendChild(div)
+container.appendChild(div)
 
-        })
+})
 
-    })
+})
 
 }
 
@@ -380,69 +395,69 @@ To'lash
 
 async function payDebt(id, btn){
 
-    if(debtPaymentProcessing) return
-    debtPaymentProcessing = true
+if(debtPaymentProcessing) return
+debtPaymentProcessing = true
 
-    btn.innerText = "To'lanmoqda..."
-    btn.disabled = true
+btn.innerText = "To'lanmoqda..."
+btn.disabled = true
 
-    try{
+try{
 
-        const input = document.getElementById("pay_"+id)
-        const amount = Number(input.value)
+const input = document.getElementById("pay_"+id)
+const amount = Number(input.value)
 
-        if(!amount){
-            showToast("To'lov summasini kiriting")
-            return
-        }
+if(!amount){
+showToast("To'lov summasini kiriting")
+return
+}
 
-        const ref = db
-            .collection("shops")
-            .doc(currentShopId)
-            .collection("debts")
-            .doc(id)
+const ref = db
+.collection("shops")
+.doc(currentShopId)
+.collection("debts")
+.doc(id)
 
-        const doc = await ref.get()
+const doc = await ref.get()
 
-        if(!doc.exists){
-            showToast("Qarz topilmadi")
-            return
-        }
+if(!doc.exists){
+showToast("Qarz topilmadi")
+return
+}
 
-        const data = doc.data()
+const data = doc.data()
 
-        // VALIDATION
-        if(amount > data.remaining){
-            showToast("To'lov qarzdan katta bo'lishi mumkin emas")
-            return
-        }
-const profitRatio = data.profit / data.total
+if(amount > data.remaining){
+showToast("To'lov qarzdan katta bo'lishi mumkin emas")
+return
+}
+
+const profitRatio = data.total ? data.profit / data.total : 0
 const profitPart = amount * profitRatio
-        const newRemaining = data.remaining - amount
 
-        // UPDATE DEBT
-      if(newRemaining <= 0){
+const newRemaining = data.remaining - amount
 
-    await ref.update({
-        remaining: 0,
-        status: "paid"
-    })
+if(newRemaining <= 0){
+
+await ref.update({
+remaining: 0,
+status: "paid"
+})
 
 }else{
 
-    await ref.update({
-        remaining: newRemaining,
-        status: "partial"
-    })
+await ref.update({
+remaining: newRemaining,
+status: "partial"
+})
 
 }
-        // ADD PAYMENT TO SALES
-        const salesRef = db
-            .collection("shops")
-            .doc(currentShopId)
-            .collection("sales")
 
-       await salesRef.add({
+const salesRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+
+await salesRef.add({
 items: [{
 name:"Debt payment",
 price:amount,
@@ -454,27 +469,35 @@ createdAt: new Date(),
 type: "debt_payment"
 })
 
-        showSuccess("To'lov qabul qilindi")
+showSuccess("To'lov qabul qilindi")
 
-        input.value = ""
-
-    }
-    finally{
-
-        debtPaymentProcessing = false
-        btn.innerText = "To'lash"
-        btn.disabled = false
-
-    }
+input.value = ""
 
 }
 
+finally{
+
+debtPaymentProcessing = false
+btn.innerText = "To'lash"
+btn.disabled = false
+
+}
+
+}
+
+
+// ===============================
+// CHANGE PRICE
+// ===============================
+
 function changeDebtPrice(id,newPrice){
 
-    const item = debtCart.find(i => i.id === id)
+const item = debtCart.find(i => i.id === id)
 
-    item.price = Number(newPrice)
+if(!item) return
 
-    renderDebtCart()
+item.price = Number(newPrice)
+
+renderDebtCart()
 
 }
