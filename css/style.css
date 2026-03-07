@@ -494,7 +494,10 @@ margin-top:20px;
 
 }
 
-
+.chart-container{
+height:280px;
+position:relative;
+}
 /* =========================
 BOTTOM NAV
 ========================= */
