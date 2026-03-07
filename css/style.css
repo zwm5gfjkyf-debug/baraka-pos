@@ -625,3 +625,17 @@ display:flex;
 gap:10px;
 justify-content:center;
 }
+.big-chart{
+height:260px;
+padding:20px;
+}
+
+.big-chart canvas{
+height:200px !important;
+}
+ticks:{
+color:"#9aa4b2",
+font:{
+size:10
+}
+}
