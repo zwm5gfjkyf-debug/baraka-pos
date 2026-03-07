@@ -36,11 +36,10 @@ div.innerHTML = `
 <span>${formatMoney(product.price)} so'm</span>
 `
 
-div.addEventListener("click", () => {
+div.addEventListener("pointerdown", () => {
 addDebtToCart(product)
 results.innerHTML = ""
 })
-
 results.appendChild(div)
 
 })
