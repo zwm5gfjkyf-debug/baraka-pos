@@ -318,48 +318,70 @@ let todayChart = null
 
 function renderTodaySalesChart(data){
 
-    const ctx = document.getElementById("todaySalesChart")
+const ctx = document.getElementById("todaySalesChart")
 
-    if(!ctx) return
+if(!ctx) return
 
-    if(todayChart) todayChart.destroy()
+new Chart(ctx,{
+type:"line",
 
-    todayChart = new Chart(ctx,{
+data:{
+labels:data.labels,
 
-        type:"line",
+datasets:[{
 
-        data:{
-            labels:data.labels,
-            datasets:[{
+data:data.values,
 
-                data:data.values,
+borderColor:"#22c55e",
 
-                borderColor:"#10b981",
-                backgroundColor:"rgba(16,185,129,0.15)",
+backgroundColor:"rgba(34,197,94,0.15)",
 
-                tension:0.4,
-                fill:true,
-                borderWidth:3,
-                pointRadius:3
+fill:true,
 
-            }]
-        },
+tension:0.4,
 
-        options:{
-            responsive:true,
-            plugins:{
-                legend:{display:false}
-            },
-            scales:{
-                x:{
-                    grid:{display:false}
-                },
-                y:{
-                    grid:{color:"rgba(255,255,255,0.05)"}
-                }
-            }
-        }
+borderWidth:3,
 
-    })
+pointRadius:0,
 
+pointHoverRadius:0
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+maintainAspectRatio:false,
+
+plugins:{
+legend:{display:false}
+},
+
+scales:{
+
+x:{
+grid:{display:false},
+ticks:{
+color:"#9aa4b2",
+font:{size:10}
+}
+},
+
+y:{
+beginAtZero:true,
+grid:{color:"rgba(255,255,255,0.05)"},
+ticks:{
+color:"#9aa4b2",
+font:{size:10}
+}
+}
+
+}
+
+}
+
+})
 }
