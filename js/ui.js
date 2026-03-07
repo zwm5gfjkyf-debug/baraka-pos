@@ -71,6 +71,8 @@ function showToast(message){
 const overlay = document.getElementById("successOverlay")
 const text = document.getElementById("successText")
 
+if(!overlay || !text) return
+
 text.innerText = message
 
 overlay.classList.remove("hidden")
