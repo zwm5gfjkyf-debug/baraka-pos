@@ -248,20 +248,19 @@ status: "unpaid",
 created: Date.now()
 });
 
-    }else{
+   }else{
 
-        const doc = existing.docs[0];
+const doc = existing.docs[0];
+const data = doc.data();
 
-        const data = doc.data();
+await doc.ref.update({
 
-        await doc.ref.update({
+items: [...data.items, ...debtCart],
+total: data.total + total,
+remaining: data.remaining + total,
+profit: (data.profit || 0) + profit
 
-            items: [...data.items, ...debtCart],
-            total: data.total + total,
-            remaining: data.remaining + total
-
-        });
-
+});
     }
 
     // UPDATE STOCK
