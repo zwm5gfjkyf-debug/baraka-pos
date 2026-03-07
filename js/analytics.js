@@ -351,7 +351,83 @@ document.getElementById("debtAnalyticsPage")
 loadDebtAnalytics()
 
 }
+function openSalesAnalytics(){
 
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.add("hidden")
+})
+
+document.getElementById("salesAnalyticsPage")
+.classList.remove("hidden")
+
+loadSalesAnalytics()
+
+}
+async function loadSalesAnalytics(){
+
+const container = document.getElementById("salesAnalyticsList")
+
+container.innerHTML = "Yuklanmoqda..."
+
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+.orderBy("createdAt","desc")
+.get()
+
+container.innerHTML = ""
+
+snapshot.forEach(doc=>{
+
+const sale = doc.data()
+
+let date
+
+if(sale.createdAt?.seconds){
+date = new Date(sale.createdAt.seconds*1000)
+}else{
+date = new Date(sale.createdAt)
+}
+
+const day = date.toLocaleDateString()
+const time = date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+
+const type = sale.type === "debt_payment" ? "Nasiya" : "Naqd"
+
+sale.items.forEach(item=>{
+
+const profit = (item.price - item.cost) * item.qty
+
+const div = document.createElement("div")
+
+div.className = "dashboard-card glass"
+
+div.innerHTML = `
+
+<h3>${item.name}</h3>
+
+<p>Turi: ${type}</p>
+
+<p>Soni: ${item.qty}</p>
+
+<p>Narx: ${formatMoney(item.price)}</p>
+
+<p>Foyda: ${formatMoney(profit)}</p>
+
+<p>Sana: ${day}</p>
+
+<p>Vaqt: ${time}</p>
+
+`
+
+container.appendChild(div)
+
+})
+
+})
+
+}
 // ===============================
 // ANALYTICS CARDS
 // ===============================
