@@ -363,10 +363,17 @@ Umumiy savdo tahlil
 
 <h2 class="page-title">Umumiy savdo tahlili</h2>
 
+<input
+id="salesSearch"
+placeholder="🔎 Mahsulot qidirish..."
+class="search-input"
+oninput="filterSalesTable()"
+style="margin:15px 0;width:100%"
+>
+
 <table class="sales-table">
 
 <thead>
-
 <tr>
 <th>📦 Mahsulot</th>
 <th>💳 Turi</th>
@@ -375,7 +382,6 @@ Umumiy savdo tahlil
 <th>📅 Sana</th>
 <th>⏰ Vaqt</th>
 </tr>
-
 </thead>
 
 <tbody id="salesAnalyticsList"></tbody>
