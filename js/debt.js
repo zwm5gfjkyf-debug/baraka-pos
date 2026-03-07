@@ -253,7 +253,7 @@ total: total,
 remaining: total,
 profit: profit,
 status: "unpaid",
-created: Date.now()
+createdAt: new Date()
 });
 
    }else{
@@ -421,15 +421,21 @@ const profitPart = amount * profitRatio
         const newRemaining = data.remaining - amount
 
         // UPDATE DEBT
-        if(newRemaining <= 0){
-            await ref.delete()
-        }else{
-            await ref.update({
-                remaining: newRemaining,
-                status: "partial"
-            })
-        }
+      if(newRemaining <= 0){
 
+    await ref.update({
+        remaining: 0,
+        status: "paid"
+    })
+
+}else{
+
+    await ref.update({
+        remaining: newRemaining,
+        status: "partial"
+    })
+
+}
         // ADD PAYMENT TO SALES
         const salesRef = db
             .collection("shops")
