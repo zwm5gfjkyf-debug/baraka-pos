@@ -153,10 +153,10 @@ function increaseDebtQty(id){
         return
     }
 
-    if(item.qty + 1 > product.stock){
-        alert("Zaxirada yetarli mahsulot yo'q")
-        return
-    }
+   if(item.qty + 1 > product.stock){
+    showToast("Zaxirada yetarli mahsulot yo'q")
+    return
+}
 
     item.qty++
 
@@ -274,10 +274,10 @@ async function completeDebtSale(){
 
     const stock = doc.data().stock || 0;
 
-    if(stock < item.qty){
-        alert("Zaxirada yetarli mahsulot yo'q")
-        throw new Error("Not enough stock")
-    }
+  if(stock < item.qty){
+    showToast("Zaxirada yetarli mahsulot yo'q")
+    throw new Error("Not enough stock")
+}
 
     t.update(ref,{
         stock: stock - item.qty
