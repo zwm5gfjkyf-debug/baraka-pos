@@ -323,10 +323,18 @@ d.items.forEach(i=>{
 totalItems += i.qty
 })
 
-const div = document.createElement("div")
+const row = document.createElement("tr")
 
-div.className = "dashboard-card glass"
+row.innerHTML = `
+<td>${item.name}</td>
+<td>${type}</td>
+<td>${item.qty}</td>
+<td>${formatMoney(profit)}</td>
+<td>${day}</td>
+<td>${time}</td>
+`
 
+container.appendChild(row)
 div.innerHTML = `
 <h3>${d.customer}</h3>
 <p>Mahsulotlar soni: ${totalItems}</p>
