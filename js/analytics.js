@@ -277,7 +277,66 @@ font:{size:10}
 })
 
 }
+async function loadTopProducts(){
 
+const container = document.getElementById("topProductsList")
+
+container.innerHTML = "Yuklanmoqda..."
+
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+.get()
+
+const stats = {}
+
+snapshot.forEach(doc=>{
+
+const sale = doc.data()
+
+if(!sale.items) return
+
+sale.items.forEach(item=>{
+
+if(item.name === "Debt payment") return
+
+const profit = (item.price - item.cost) * item.qty
+
+if(!stats[item.name]){
+stats[item.name] = 0
+}
+
+stats[item.name] += profit
+
+})
+
+})
+
+const sorted = Object.entries(stats)
+.sort((a,b)=>b[1]-a[1])
+.slice(0,10)
+
+container.innerHTML = ""
+
+sorted.forEach(p=>{
+
+const div = document.createElement("div")
+
+div.style.display = "flex"
+div.style.justifyContent = "space-between"
+div.style.padding = "8px 0"
+
+div.innerHTML = `
+<span>${p[0]}</span>
+<strong>${formatMoney(p[1])}</strong>
+`
+
+container.appendChild(div)
+
+})
+
+}
 // ===============================
 // LOAD ANALYTICS
 // ===============================
