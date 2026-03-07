@@ -322,7 +322,12 @@ const ctx = document.getElementById("todaySalesChart")
 
 if(!ctx) return
 
-new Chart(ctx,{
+// destroy old chart
+if(todayChart){
+todayChart.destroy()
+}
+
+todayChart = new Chart(ctx,{
 type:"line",
 
 data:{
@@ -342,9 +347,14 @@ tension:0.4,
 
 borderWidth:3,
 
-pointRadius:0,
+// only first and last dots
+pointRadius:(ctx)=>{
+if(ctx.dataIndex===0) return 5
+if(ctx.dataIndex===ctx.dataset.data.length-1) return 5
+return 0
+},
 
-pointHoverRadius:0
+pointBackgroundColor:"#22c55e"
 
 }]
 
@@ -353,7 +363,6 @@ pointHoverRadius:0
 options:{
 
 responsive:true,
-
 maintainAspectRatio:false,
 
 plugins:{
@@ -372,6 +381,7 @@ font:{size:10}
 
 y:{
 beginAtZero:true,
+suggestedMin:0,
 grid:{color:"rgba(255,255,255,0.05)"},
 ticks:{
 color:"#9aa4b2",
