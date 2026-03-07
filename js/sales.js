@@ -110,7 +110,7 @@ function addToCart(product){
     if(existing){
 
         if(existing.qty + 1 > product.stock){
-            alert("Zaxirada yetarli mahsulot yo'q")
+           showConfirm("Zaxirada yetarli mahsulot yo'q", ()=>{})
             return
         }
 
