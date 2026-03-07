@@ -292,6 +292,54 @@ font:{size:10}
 })
 
 }
+function openDebtAnalytics(){
+
+navigate("debtAnalyticsPage")
+
+loadDebtAnalytics()
+
+}
+async function loadDebtAnalytics(){
+
+const container = document.getElementById("debtAnalyticsList")
+
+container.innerHTML = ""
+
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("debts")
+.get()
+
+snapshot.forEach(doc => {
+
+const d = doc.data()
+
+let totalItems = 0
+
+d.items.forEach(i=>{
+totalItems += i.qty
+})
+
+const div = document.createElement("div")
+
+div.className = "glass dashboard-card"
+
+div.innerHTML = `
+<b>${d.customer}</b>
+
+<div>Mahsulotlar: ${totalItems}</div>
+
+<div>Jami qarz: ${formatMoney(d.total)}</div>
+
+<div>Qolgan qarz: ${formatMoney(d.remaining)}</div>
+`
+
+container.appendChild(div)
+
+})
+
+}
 // ===============================
 // LOAD ANALYTICS
 // ===============================
