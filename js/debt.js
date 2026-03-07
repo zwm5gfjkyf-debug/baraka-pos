@@ -13,34 +13,37 @@ let lastClick = 0
 
 function searchDebtProducts(text){
 
-    const results = document.getElementById("debtSearchResults");
+const results = document.getElementById("debtSearchResults")
 
-    results.innerHTML = "";
+results.innerHTML = ""
 
-    if(!text) return;
+if(!text) return
 
-    const query = text.toLowerCase();
+const query = text.toLowerCase()
 
-  const filtered = productCache.filter(p =>
-        p.name.toLowerCase().includes(query)
-    );
+const filtered = productCache.filter(p =>
+p.name.toLowerCase().startsWith(query)
+)
 
-    filtered.slice(0,10).forEach(product => {
+filtered.slice(0,10).forEach(product => {
 
-        const div = document.createElement("div");
+const div = document.createElement("div")
 
-        div.className = "search-item";
+div.className = "search-item"
 
-        div.innerHTML = `
-            <b>${product.name}</b>
-            <span>${product.price} so'm</span>
-        `;
+div.innerHTML = `
+<b>${product.name}</b>
+<span>${formatMoney(product.price)} so'm</span>
+`
 
-        div.onclick = () => addDebtToCart(product);
+div.addEventListener("click", () => {
+addDebtToCart(product)
+results.innerHTML = ""
+})
 
-        results.appendChild(div);
+results.appendChild(div)
 
-    });
+})
 
 }
 
