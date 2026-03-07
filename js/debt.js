@@ -60,7 +60,7 @@ function addDebtToCart(product){
 
     // STOCK CHECK
     if(product.stock <= 0){
-        alert("Zaxirada qolmadi")
+    showToast("Zaxirada qolmadi")
         return
     }
 
@@ -69,7 +69,7 @@ function addDebtToCart(product){
     if(existing){
 
         if(existing.qty + 1 > product.stock){
-            alert("Zaxirada yetarli mahsulot yo'q")
+   showToast("Zaxirada yetarli mahsulot yo'q")
             return
         }
 
@@ -127,7 +127,7 @@ class="price-input"
 onchange="changeDebtPrice('${item.id}',this.value)"
 >
 
-<strong>${total} so'm</strong>
+<strong>${formatMoney(total)}</strong>
 
         `;
 
@@ -149,7 +149,7 @@ function increaseDebtQty(id){
     const product = productCache.find(p => p.id === id)
 
     if(!product){
-        alert("Mahsulot topilmadi")
+    showToast("Mahsulot topilmadi")
         return
     }
 
@@ -198,16 +198,23 @@ async function completeDebtSale(){
         .value
         .trim();
 
-    if(!customer){
-        alert("Mijoz ismini kiriting");
-        return;
-    }
+   if(!customer){
+    showToast("Mijoz ismini kiriting")
+    debtProcessing = false
+    btn.innerText = "Nasiya berish"
+    btn.disabled = false
+    return
+}
 
-    if(debtCart.length === 0){
-        alert("Mahsulot tanlang");
-        return;
-    }
+   if(debtCart.length === 0){
+    showToast("Mahsulot tanlang")
 
+    debtProcessing = false
+    btn.innerText = "Nasiya berish"
+    btn.disabled = false
+
+    return
+}
     let total = 0;
 
     debtCart.forEach(i => total += i.price * i.qty);
@@ -330,7 +337,7 @@ function loadDebtCustomers(){
             <b>${d.customer}</b>
 
             <div>
-            Qolgan: ${d.remaining} so'm
+           Qolgan: ${formatMoney(d.remaining)}
             </div>
 
             <input
@@ -397,7 +404,7 @@ async function payDebt(id, btn){
         const data = doc.data()
 
         if(amount > data.remaining){
-            alert("To'lov qarzdan katta bo'lishi mumkin emas")
+          showToast("To'lov qarzdan katta bo'lishi mumkin emas")
             return
         }
 
