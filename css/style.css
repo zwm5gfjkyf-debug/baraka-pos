@@ -1185,3 +1185,85 @@ input, button{
 position:relative;
 z-index:5;
 }
+/* =========================
+STOCK CARD DESIGN
+========================= */
+
+.stock-card{
+
+display:flex;
+flex-direction:column;
+
+gap:10px;
+
+padding:16px;
+
+border-radius:16px;
+
+background:rgba(255,255,255,0.05);
+
+border:1px solid rgba(255,255,255,0.08);
+
+box-shadow:0 10px 30px rgba(0,0,0,0.35);
+
+}
+
+.stock-title{
+
+font-size:18px;
+
+font-weight:600;
+
+}
+
+.stock-divider{
+
+height:1px;
+
+background:rgba(255,255,255,0.08);
+
+margin:6px 0;
+
+}
+
+.stock-row{
+
+display:flex;
+
+justify-content:space-between;
+
+font-size:14px;
+
+color:var(--text-soft);
+
+}
+
+.stock-actions{
+
+display:flex;
+
+gap:10px;
+
+margin-top:8px;
+
+}
+
+.stock-actions button{
+
+flex:1;
+
+padding:10px;
+
+border-radius:10px;
+
+border:none;
+
+cursor:pointer;
+
+background:rgba(255,255,255,0.1);
+
+color:white;
+
+font-weight:500;
+
+}
