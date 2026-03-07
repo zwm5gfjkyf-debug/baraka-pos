@@ -28,16 +28,14 @@ auth.onAuthStateChanged(user => {
             .getElementById("appScreen")
             .classList.remove("hidden")
 
-     const emailBox = document.getElementById("profileEmail")
+        const emailBox = document.getElementById("profileEmail")
 
-if(emailBox){
-    emailBox.innerText = user.email
-}
+        if(emailBox){
+            emailBox.innerText = user.email
+        }
 
         loadProducts()
-
         loadDashboard()
-
         syncOfflineSales()
 
     }
@@ -54,6 +52,9 @@ if(emailBox){
     }
 
 })
+
+
+
 // =============================
 // DASHBOARD
 // =============================
@@ -73,9 +74,10 @@ async function loadDashboard(){
         .collection("debts")
 
     const [salesSnapshot, debtsSnapshot] = await Promise.all([
-    salesRef.get(),
-    debtsRef.get()
-])
+        salesRef.get(),
+        debtsRef.get()
+    ])
+
     let todayRevenue = 0
     let todayItems = 0
     let todayProfit = 0
@@ -90,77 +92,78 @@ async function loadDashboard(){
     )
 
     const chartLabels = []
-const chartValues = []
+    const chartValues = []
 
-let runningTotal = 0
+    let runningTotal = 0
 
-// start chart from zero
-chartLabels.push("0")
-chartValues.push(0)
+    // start chart from zero
+    chartLabels.push("0")
+    chartValues.push(0)
 
 
-   // SALES
-const sales = []
+    // SALES
+    const sales = []
 
-salesSnapshot.forEach(doc=>{
-sales.push(doc.data())
-})
+    salesSnapshot.forEach(doc=>{
+        sales.push(doc.data())
+    })
 
-// sort sales by time
-sales.sort((a,b)=>{
+    // sort sales by time
+    sales.sort((a,b)=>{
 
-const aTime = a.createdAt?.seconds
-? a.createdAt.seconds*1000
-: new Date(a.createdAt).getTime()
+        const aTime = a.createdAt?.seconds
+            ? a.createdAt.seconds*1000
+            : new Date(a.createdAt).getTime()
 
-const bTime = b.createdAt?.seconds
-? b.createdAt.seconds*1000
-: new Date(b.createdAt).getTime()
+        const bTime = b.createdAt?.seconds
+            ? b.createdAt.seconds*1000
+            : new Date(b.createdAt).getTime()
 
-return aTime-bTime
-})
+        return aTime-bTime
+    })
 
-sales.forEach(sale=>{
+    sales.forEach(sale=>{
 
-let date
+        let date
 
-if(sale.createdAt?.seconds){
-date=new Date(sale.createdAt.seconds*1000)
-}else{
-date=new Date(sale.createdAt)
-}
+        if(sale.createdAt?.seconds){
+            date=new Date(sale.createdAt.seconds*1000)
+        }else{
+            date=new Date(sale.createdAt)
+        }
 
-if(date>=todayStart){
+        if(date>=todayStart){
 
-todayRevenue+=sale.total
+            todayRevenue+=sale.total
 
-runningTotal+=sale.total
+            runningTotal+=sale.total
 
-const time=
-date.getHours()+":"+
-String(date.getMinutes()).padStart(2,"0")
+            const time = date.toLocaleTimeString([], {
+                hour:'2-digit',
+                minute:'2-digit'
+            })
 
-chartLabels.push(time)
-chartValues.push(runningTotal)
+            chartLabels.push(time)
+            chartValues.push(runningTotal)
 
-if(sale.items){
+            if(sale.items){
 
-sale.items.forEach(item=>{
+                sale.items.forEach(item=>{
 
-const qty=item.qty||0
-const price=item.price||0
-const cost=item.cost||0
+                    const qty=item.qty||0
+                    const price=item.price||0
+                    const cost=item.cost||0
 
-todayItems+=qty
-todayProfit+=(price-cost)*qty
+                    todayItems+=qty
+                    todayProfit+=(price-cost)*qty
 
-})
+                })
 
-}
+            }
 
-}
+        }
 
-})
+    })
 
 
     // DEBTS
@@ -189,19 +192,16 @@ todayProfit+=(price-cost)*qty
     document.getElementById("todayProfit").innerText = formatMoney(todayProfit)
     document.getElementById("todayDebt").innerText = formatMoney(todayDebt)
 
-// PREVENT EMPTY CHART
-if(chartLabels.length === 0){
-chartLabels.push("00:00")
-chartValues.push(0)
-}
-    // RENDER CHART (ONLY ONCE)
+
+    // RENDER CHART
     renderTodaySalesChart({
         labels: chartLabels,
         values: chartValues
     })
 
 }
- 
+
+
 
 // ===============================
 // SYNC OFFLINE SALES
@@ -221,19 +221,26 @@ async function syncOfflineSales(){
         .collection("sales")
 
     for(const sale of offline){
-
         await salesRef.add(sale)
-
     }
 
     localStorage.removeItem("offlineSales")
 
 }
+
+
+
+// ===============================
+// DELETE SHOP DATA
+// ===============================
+
 async function deleteAllShopData(){
 
     if(!currentShopId) return
-   const confirmDelete = confirm("Hamma ma'lumotlar o'chiriladi. Ishonchingiz komilmi?")
-if(!confirmDelete) return
+
+    const confirmDelete = prompt("DELETE deb yozing")
+
+    if(confirmDelete !== "DELETE") return
 
     const shopRef = db.collection("shops").doc(currentShopId)
 
