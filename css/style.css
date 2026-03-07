@@ -605,24 +605,42 @@ STOCK ITEM GRID
 
 .stock-item{
 
-display:grid;
+display:flex;
+flex-direction:column;
 
-grid-template-columns:
+gap:10px;
 
-1fr 80px 80px 90px 80px;
-
-gap:8px;
-
-padding:12px;
+padding:14px;
 
 border-radius:14px;
 
 background:rgba(255,255,255,0.05);
 
-margin-bottom:10px;
+margin-bottom:12px;
 
 }
+.stock-item input{
 
+width:100%;
+
+padding:10px;
+
+border-radius:10px;
+
+background:rgba(255,255,255,0.08);
+
+border:none;
+
+color:white;
+
+}
+.stock-item button{
+
+width:100%;
+
+margin-top:6px;
+
+}
 
 /* =========================================
 PRICE INPUT
