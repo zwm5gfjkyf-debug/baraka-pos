@@ -8,8 +8,14 @@ let productsListener = null;
 // ===============================
 // ADD PRODUCT
 // ===============================
+let stockProcessing = false
 
 async function addStock(){
+
+if(stockProcessing) return
+stockProcessing = true
+
+try{
 
 const name = document.getElementById("stockName").value.trim().toLowerCase()
 const qty = Number(document.getElementById("stockQty").value)
@@ -66,7 +72,13 @@ showSuccess("Zaxira yangilandi")
 loadCurrentStock()
 
 }
+finally{
 
+stockProcessing = false
+
+}
+
+}
 // ===============================
 // LOAD PRODUCTS (REALTIME)
 // ===============================
