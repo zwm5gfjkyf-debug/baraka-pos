@@ -34,5 +34,6 @@ function navigate(pageId){
 if(pageId === "analyticsPage"){
 loadWeeklyAnalytics()
 loadMonthlyAnalytics()
+loadTopProducts()
 }
 }
