@@ -298,21 +298,15 @@ font:{size:10}
 // ===============================
 async function loadDebtAnalytics(){
 
-console.log("Current shop:", currentShopId)
+const container = document.querySelector("#debtAnalyticsPage #debtAnalyticsList")
 
-const container = document.getElementById("debtAnalyticsList")
-
-container.innerHTML = "Yuklanmoqda..."
+container.innerHTML = ""
 
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
 .collection("debts")
 .get()
-
-container.innerHTML = ""
-
-console.log("Debts count:", snapshot.size)
 
 if(snapshot.empty){
 container.innerHTML = "Nasiya mavjud emas"
@@ -334,15 +328,10 @@ const div = document.createElement("div")
 div.className = "dashboard-card glass"
 
 div.innerHTML = `
-
 <h3>${d.customer}</h3>
-
 <p>Mahsulotlar soni: ${totalItems}</p>
-
 <p>Jami nasiya: ${formatMoney(d.total)}</p>
-
 <p>Qolgan qarz: ${formatMoney(d.remaining)}</p>
-
 `
 
 container.appendChild(div)
