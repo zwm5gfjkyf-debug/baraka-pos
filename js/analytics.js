@@ -4,90 +4,154 @@
 // ===============================
 
 let weeklyChart = null;
-let monthlyChart = null;
 
+async function loadWeeklyAnalytics(){
 
+if(!currentShopId) return
+
+const salesRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+
+const snapshot = await salesRef.get()
+
+let weekRevenue = 0
+let weekItems = 0
+let weekProfit = 0
+
+const now = new Date()
+
+const weekStart = new Date(now)
+weekStart.setDate(now.getDate() - now.getDay())
+
+const days = ["Yak","Dush","Sesh","Chor","Pay","Jum","Shan"]
+
+const chartTotals = [0,0,0,0,0,0,0]
+
+snapshot.forEach(doc=>{
+
+const sale = doc.data()
+
+let date
+
+if(sale.createdAt?.seconds){
+date = new Date(sale.createdAt.seconds*1000)
+}else{
+date = new Date(sale.createdAt)
+}
+
+if(date >= weekStart){
+
+weekRevenue += sale.total
+
+const day = date.getDay()
+
+chartTotals[day] += sale.total
+
+if(sale.items){
+
+sale.items.forEach(item=>{
+
+const qty = item.qty || 0
+const price = item.price || 0
+const cost = item.cost || 0
+
+weekItems += qty
+weekProfit += (price-cost)*qty
+
+})
+
+}
+
+}
+
+})
+
+document.getElementById("weekRevenue").innerText = formatMoney(weekRevenue)
+document.getElementById("weekItems").innerText = weekItems
+document.getElementById("weekProfit").innerText = formatMoney(weekProfit)
+
+renderWeeklyChart(days, chartTotals)
+
+}
+
+function renderWeeklyChart(labels, values){
+
+const ctx = document.getElementById("weeklySalesChart")
+
+if(!ctx) return
+
+if(weeklyChart){
+weeklyChart.destroy()
+}
+
+weeklyChart = new Chart(ctx,{
+
+type:"line",
+
+data:{
+labels:labels,
+
+datasets:[{
+
+data:values,
+
+borderColor:"#22c55e",
+backgroundColor:"rgba(34,197,94,0.15)",
+
+fill:true,
+tension:0.4,
+borderWidth:3,
+
+pointRadius:(ctx)=>{
+if(ctx.dataIndex===0) return 5
+if(ctx.dataIndex===ctx.dataset.data.length-1) return 5
+return 0
+},
+
+pointBackgroundColor:"#22c55e"
+
+}]
+
+},
+
+options:{
+responsive:true,
+maintainAspectRatio:false,
+
+plugins:{
+legend:{display:false}
+},
+
+scales:{
+x:{
+grid:{display:false},
+ticks:{
+color:"#9aa4b2",
+font:{size:10}
+}
+},
+
+y:{
+beginAtZero:true,
+grid:{color:"rgba(255,255,255,0.05)"},
+ticks:{
+color:"#9aa4b2",
+font:{size:10}
+}
+}
+
+}
+
+}
+
+})
+
+}
 // ===============================
 // LOAD ANALYTICS
 // ===============================
-
-async function loadAnalytics(){
-
-    const salesRef = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("sales");
-
-    const snapshot = await salesRef.get();
-
-    let totalRevenue = 0;
-    let totalSales = 0;
-    let totalProfit = 0;
-
-    const weeklyData = [0,0,0,0,0,0,0];
-    const monthlyData = new Array(31).fill(0);
-
-    const productStats = {};
-
-    const startWeek = getStartOfWeek();
-    const startMonth = getStartOfMonth();
-
-    snapshot.forEach(doc => {
-
-        const sale = doc.data();
-
-        if(!sale.createdAt) return;
-
-        const date = new Date(sale.createdAt.seconds * 1000);
-
-        totalRevenue += sale.total || 0;
-
-        totalSales++;
-
-        if(sale.items){
-
-           sale.items.forEach(item => {
-
-    const profit =
-        ((item.price || 0) - (item.cost || 0)) * (item.qty || 0);
-
-    totalProfit += profit;
-
-    if(!productStats[item.name]){
-        productStats[item.name] = 0;
-    }
-
-    productStats[item.name] += item.qty;
-
-});
-        }
-
-        if(date >= startWeek){
-
-            const day = (date.getDay()+6)%7;
-
-           weeklyData[day] += sale.total || 0;
-        }
-
-        if(date >= startMonth){
-
-            const d = date.getDate() - 1;
-
-           monthlyData[d] += sale.total || 0;
-
-        }
-
-    });
-
-    renderAnalyticsCards(totalRevenue,totalProfit,totalSales);
-
-    renderWeeklyChart(weeklyData);
-
-    renderMonthlyChart(monthlyData);
-
-    renderTopProducts(productStats);
-
-}
 
 
 
@@ -149,73 +213,12 @@ if(!container) return
 // WEEKLY CHART
 // ===============================
 
-function renderWeeklyChart(data){
-
-    const ctx = document.getElementById("weeklyChart");
-
-    if(weeklyChart) weeklyChart.destroy();
-
-    weeklyChart = new Chart(ctx,{
-
-        type:"bar",
-
-        data:{
-            labels:["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"],
-            datasets:[{
-                data:data,
-                backgroundColor:"rgba(16,185,129,0.7)",
-                borderRadius:8
-            }]
-        },
-
-        options:{
-            responsive:true,
-            plugins:{
-                legend:{display:false}
-            }
-        }
-
-    });
-
-}
-
 
 
 // ===============================
 // MONTHLY CHART
 // ===============================
 
-function renderMonthlyChart(data){
-
-    const ctx = document.getElementById("monthlyChart");
-
-    if(monthlyChart) monthlyChart.destroy();
-
-    monthlyChart = new Chart(ctx,{
-
-        type:"line",
-
-        data:{
-            labels:data.map((_,i)=>i+1),
-            datasets:[{
-                data:data,
-                borderColor:"#10b981",
-                backgroundColor:"rgba(16,185,129,0.2)",
-                fill:true,
-                tension:0.4
-            }]
-        },
-
-        options:{
-            responsive:true,
-            plugins:{
-                legend:{display:false}
-            }
-        }
-
-    });
-
-}
 
 
 
@@ -262,58 +265,7 @@ function renderTopProducts(stats){
 // LOAD DASHBOARD
 // ===============================
 
-async function loadDashboard(){
 
-    if(!currentShopId) return
-
-    const salesRef = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("sales")
-
-    const snapshot = await salesRef.get()
-
-    let today = 0
-    let week = 0
-    let month = 0
-
-    const now = new Date()
-
-    const startDay = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    const startWeek = new Date(now)
-    startWeek.setDate(now.getDate() - now.getDay())
-
-    const startMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-
-    snapshot.forEach(doc => {
-
-        const sale = doc.data()
-
-        if(!sale.createdAt) return
-
-        const date = sale.createdAt.toDate
-            ? sale.createdAt.toDate()
-            : new Date(sale.createdAt)
-
-        if(date >= startDay){
-            today += sale.total || 0
-        }
-
-        if(date >= startWeek){
-            week += sale.total || 0
-        }
-
-        if(date >= startMonth){
-            month += sale.total || 0
-        }
-
-    })
-
-    document.getElementById("todayRevenue").innerText = formatMoney(today)
-    document.getElementById("weekRevenue").innerText = formatMoney(week)
-    document.getElementById("monthRevenue").innerText = formatMoney(month)
-
-}
 let todayChart = null
 
 function renderTodaySalesChart(data){
