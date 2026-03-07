@@ -215,9 +215,16 @@ async function completeDebtSale(){
 
     return
 }
-    let total = 0;
+   let total = 0;
+let profit = 0;
 
-    debtCart.forEach(i => total += i.price * i.qty);
+debtCart.forEach(i => {
+
+total += i.price * i.qty
+
+profit += (i.price - i.cost) * i.qty
+
+})
 
     const debtsRef = db
         .collection("shops")
@@ -232,15 +239,14 @@ async function completeDebtSale(){
     if(existing.empty){
 
         await debtsRef.add({
-
-            customer: customer,
-            items: debtCart,
-            total: total,
-            remaining: total,
-            status: "unpaid",
-            created: Date.now()
-
-        });
+customer: customer,
+items: debtCart,
+total: total,
+remaining: total,
+profit: profit,
+status: "unpaid",
+created: Date.now()
+});
 
     }else{
 
@@ -403,7 +409,8 @@ async function payDebt(id, btn){
             showToast("To'lov qarzdan katta bo'lishi mumkin emas")
             return
         }
-
+const profitRatio = data.profit / data.total
+const profitPart = amount * profitRatio
         const newRemaining = data.remaining - amount
 
         // UPDATE DEBT
@@ -422,12 +429,17 @@ async function payDebt(id, btn){
             .doc(currentShopId)
             .collection("sales")
 
-        await salesRef.add({
-            items: [],
-            total: amount,
-            createdAt: new Date(),
-            type: "debt_payment"
-        })
+       await salesRef.add({
+items: [{
+name:"Debt payment",
+price:amount,
+cost:amount - profitPart,
+qty:1
+}],
+total: amount,
+createdAt: new Date(),
+type: "debt_payment"
+})
 
         showSuccess("To'lov qabul qilindi")
 
