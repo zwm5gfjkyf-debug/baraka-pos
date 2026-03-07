@@ -95,50 +95,69 @@ async function loadDashboard(){
     let runningTotal = 0
 
 
-    // SALES
-   salesSnapshot.forEach(doc => {
+   // SALES
+const sales = []
 
-        const sale = doc.data() 
+salesSnapshot.forEach(doc=>{
+    sales.push(doc.data())
+})
 
-      let date
+// sort sales by time
+sales.sort((a,b)=>{
+
+    const aTime = a.createdAt?.seconds 
+        ? a.createdAt.seconds * 1000
+        : new Date(a.createdAt).getTime()
+
+    const bTime = b.createdAt?.seconds
+        ? b.createdAt.seconds * 1000
+        : new Date(b.createdAt).getTime()
+
+    return aTime - bTime
+})
+
+sales.forEach(sale=>{
+
+let date
 
 if(sale.createdAt?.seconds){
     date = new Date(sale.createdAt.seconds * 1000)
 }else{
     date = new Date(sale.createdAt)
 }
-        if(date >= todayStart){
 
-            todayRevenue += sale.total
+if(date >= todayStart){
 
-            // chart data
-            runningTotal += sale.total
+todayRevenue += sale.total
 
-            const time =
-                date.getHours() + ":" +
-                String(date.getMinutes()).padStart(2,"0")
+// chart running total
+runningTotal += sale.total
 
-            chartLabels.push(time)
-            chartValues.push(runningTotal)
+const time =
+date.getHours()+":"+
+String(date.getMinutes()).padStart(2,"0")
 
-            if(sale.items){
+chartLabels.push(time)
+chartValues.push(runningTotal)
 
-                sale.items.forEach(item => {
+if(sale.items){
 
-                    const qty = item.qty || 0
-                    const price = item.price || 0
-                    const cost = item.cost || 0
+sale.items.forEach(item=>{
 
-                    todayItems += qty
-                    todayProfit += (price - cost) * qty
+const qty = item.qty || 0
+const price = item.price || 0
+const cost = item.cost || 0
 
-                })
+todayItems += qty
+todayProfit += (price-cost) * qty
 
-            }
+})
 
-        }
+}
 
-    })
+}
+
+})
 
 
     // DEBTS
@@ -167,7 +186,11 @@ if(sale.createdAt?.seconds){
     document.getElementById("todayProfit").innerText = formatMoney(todayProfit)
     document.getElementById("todayDebt").innerText = formatMoney(todayDebt)
 
-
+// PREVENT EMPTY CHART
+if(chartLabels.length === 0){
+chartLabels.push("00:00")
+chartValues.push(0)
+}
     // RENDER CHART (ONLY ONCE)
     renderTodaySalesChart({
         labels: chartLabels,
