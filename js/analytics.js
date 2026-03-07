@@ -292,62 +292,7 @@ font:{size:10}
 })
 
 }
-function openDebtAnalytics(){
 
-navigate("debtAnalyticsPage")
-
-loadDebtAnalytics()
-
-}
-
-
-
-async function loadDebtAnalytics(){
-
-const container = document.getElementById("debtAnalyticsList")
-
-container.innerHTML = "Yuklanmoqda..."
-
-const snapshot = await db
-.collection("shops")
-.doc(currentShopId)
-.collection("debts")
-.get()
-
-container.innerHTML = ""
-
-if(snapshot.empty){
-container.innerHTML = "Nasiya ma'lumotlari yo'q"
-return
-}
-
-snapshot.forEach(doc => {
-
-const d = doc.data()
-
-const totalItems = d.items.reduce((sum,i)=> sum + i.qty,0)
-
-const div = document.createElement("div")
-
-div.className = "debt-item"
-
-div.innerHTML = `
-
-<b>${d.customer}</b>
-
-<div>Mahsulotlar soni: ${totalItems}</div>
-
-<div>Jami qarz: ${formatMoney(d.total)} so'm</div>
-
-<div>Qolgan qarz: ${formatMoney(d.remaining)} so'm</div>
-
-`
-
-container.appendChild(div)
-
-})
-
-}
 // ===============================
 // LOAD ANALYTICS
 // ===============================
@@ -362,6 +307,11 @@ const snapshot = await db
 .doc(currentShopId)
 .collection("debts")
 .get()
+
+if(snapshot.empty){
+container.innerHTML = "Nasiya mavjud emas"
+return
+}
 
 snapshot.forEach(doc => {
 
