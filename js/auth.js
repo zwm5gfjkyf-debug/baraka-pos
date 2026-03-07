@@ -14,13 +14,16 @@ auth.onAuthStateChanged(user => {
 
     document.getElementById("appScreen").classList.remove("hidden");
 
-  const shopTitle = document.getElementById("shopTitle")
+    const shopTitle = document.getElementById("shopTitle");
 
-if(shopTitle){
-    shopTitle.innerText = "BARAKA"
-}
+    if(shopTitle){
+      shopTitle.innerText = "BARAKA";
+    }
 
-    loadDashboard();
+    // SAFE dashboard load
+    if(typeof loadDashboard === "function"){
+      loadDashboard();
+    }
 
   }else{
 
