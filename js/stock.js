@@ -11,35 +11,61 @@ let productsListener = null;
 
 async function addStock(){
 
-    const name = document.getElementById("stockName").value.trim();
-    const qty = Number(document.getElementById("stockQty").value);
-    const cost = Number(document.getElementById("stockCost").value);
-    const price = Number(document.getElementById("stockSellingPrice").value);
+const name = document.getElementById("stockName").value.trim().toLowerCase()
+const qty = Number(document.getElementById("stockQty").value)
+const cost = Number(document.getElementById("stockCost").value)
+const price = Number(document.getElementById("stockSellingPrice").value)
 
-    if(!name || !price){
-        alert("Mahsulot nomi va narx kerak");
-        return;
-    }
+if(!name || !price){
+showToast("Mahsulot nomi va narx kerak")
+return
+}
 
-    await db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("products")
-        .add({
-            name: name,
-            stock: qty || 0,
-            cost: cost || 0,
-            price: price,
-            created: Date.now()
-        });
+const productsRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
 
-    document.getElementById("stockName").value = "";
-    document.getElementById("stockQty").value = "";
-    document.getElementById("stockCost").value = "";
-    document.getElementById("stockSellingPrice").value = "";
+// check if product exists
+const existing = await productsRef
+.where("name","==",name)
+.get()
+
+if(existing.empty){
+
+// create new product
+await productsRef.add({
+name: name,
+stock: qty || 0,
+cost: cost || 0,
+price: price,
+created: Date.now()
+})
+
+}else{
+
+// update existing product
+const doc = existing.docs[0]
+const data = doc.data()
+
+await doc.ref.update({
+stock: (data.stock || 0) + (qty || 0),
+cost: cost || data.cost,
+price: price
+})
 
 }
 
+document.getElementById("stockName").value = ""
+document.getElementById("stockQty").value = ""
+document.getElementById("stockCost").value = ""
+document.getElementById("stockSellingPrice").value = ""
+
+showSuccess("Zaxira yangilandi")
+
+loadCurrentStock()
+
+}
 
 // ===============================
 // LOAD PRODUCTS (REALTIME)
