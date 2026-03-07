@@ -88,7 +88,7 @@ weeklyChart.destroy()
 
 weeklyChart = new Chart(ctx,{
 
-type:"line",
+type:"bar",
 
 data:{
 labels:labels,
@@ -97,20 +97,11 @@ datasets:[{
 
 data:values,
 
-borderColor:"#22c55e",
-backgroundColor:"rgba(34,197,94,0.15)",
+backgroundColor:"rgba(34,197,94,0.7)",
 
-fill:true,
-tension:0.4,
-borderWidth:3,
+borderRadius:8,
 
-pointRadius:(ctx)=>{
-if(ctx.dataIndex===0) return 5
-if(ctx.dataIndex===ctx.dataset.data.length-1) return 5
-return 0
-},
-
-pointBackgroundColor:"#22c55e"
+barThickness:28
 
 }]
 
@@ -125,11 +116,12 @@ legend:{display:false}
 },
 
 scales:{
+
 x:{
 grid:{display:false},
 ticks:{
 color:"#9aa4b2",
-font:{size:10}
+font:{size:11}
 }
 },
 
