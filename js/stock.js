@@ -105,37 +105,48 @@ function loadCurrentStock(){
 
                 div.className = "stock-item";
 
-                div.innerHTML = `
+              div.innerHTML = `
 
-                <input
-                value="${p.name}"
-                onchange="editProduct('${doc.id}','name',this.value)"
-                >
+<div class="stock-card">
 
-                <input
-                type="number"
-                value="${p.stock || 0}"
-                onchange="editProduct('${doc.id}','stock',this.value)"
-                >
+<div class="stock-title">
+${p.name}
+</div>
 
-                <input
-                type="number"
-                value="${p.cost || 0}"
-                onchange="editProduct('${doc.id}','cost',this.value)"
-                >
+<div class="stock-divider"></div>
 
-                <input
-                type="number"
-                value="${p.price || 0}"
-                onchange="editProduct('${doc.id}','price',this.value)"
-                >
+<div class="stock-row">
+<span>Stock</span>
+<span>${p.stock || 0}</span>
+</div>
 
-                <button onclick="deleteProduct('${doc.id}')">
-                O'chirish
-                </button>
+<div class="stock-row">
+<span>Cost</span>
+<span>${formatMoney(p.cost || 0)}</span>
+</div>
 
-                `;
+<div class="stock-row">
+<span>Price</span>
+<span>${formatMoney(p.price || 0)}</span>
+</div>
 
+<div class="stock-divider"></div>
+
+<div class="stock-actions">
+
+<button onclick="editProductPrompt('${doc.id}')">
+Edit
+</button>
+
+<button onclick="deleteProduct('${doc.id}')" class="danger-btn">
+Delete
+</button>
+
+</div>
+
+</div>
+
+`;
                 container.appendChild(div);
 
             });
@@ -186,5 +197,14 @@ await ref.delete()
 showSuccess("Mahsulot o'chirildi")
 
 })
+
+}
+function editProductPrompt(id){
+
+const newStock = prompt("New stock quantity")
+
+if(newStock === null) return
+
+editProduct(id,"stock",Number(newStock))
 
 }
