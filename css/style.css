@@ -65,7 +65,12 @@ color:var(--text-main);
 min-height:100vh;
 
 }
-
+body{
+-webkit-font-smoothing:antialiased;
+}
+body{
+overflow-x:hidden;
+}
 /* =========================================
 SCROLLBAR (PREMIUM)
 ========================================= */
