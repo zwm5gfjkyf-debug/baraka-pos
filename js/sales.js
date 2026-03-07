@@ -8,6 +8,7 @@ let productIndex = {}
 
 let cart = []
 
+
 // =======================================
 // LOAD PRODUCTS INTO MEMORY
 // =======================================
@@ -39,7 +40,6 @@ async function loadProducts(){
 
         productCache.push(product)
 
-        // create search index
         const key = product.name.toLowerCase()
 
         if(!productIndex[key]){
@@ -108,34 +108,36 @@ resultsBox.appendChild(div)
 
 function addToCart(product){
 
-  if(product.stock <= 0){
-    showToast("Zaxirada qolmadi")
-    return
+if(product.stock <= 0){
+showToast("Zaxirada qolmadi")
+return
 }
 
-    const existing = cart.find(i => i.id === product.id)
+const existing = cart.find(i => i.id === product.id)
 
-    if(existing){
+if(existing){
 
-        if(existing.qty + 1 > product.stock){
-        showToast("Zaxirada yetarli mahsulot yo'q")
-            return
-        }
+if(existing.qty + 1 > product.stock){
+showToast("Zaxirada yetarli mahsulot yo'q")
+return
+}
 
-        existing.qty++
+existing.qty++
 
-    }else{
+}else{
 
-        cart.push({
-            ...product,
-            qty:1
-        })
-
-    }
-
-    renderCart()
+cart.push({
+...product,
+qty:1
+})
 
 }
+
+renderCart()
+
+}
+
+
 
 // =======================================
 // RENDER CART
@@ -143,23 +145,23 @@ function addToCart(product){
 
 function renderCart(){
 
-    const list = document.getElementById("cartList")
+const list = document.getElementById("cartList")
 
-    list.innerHTML = ""
+list.innerHTML = ""
 
-    let total = 0
+let total = 0
 
-    cart.forEach(item => {
+cart.forEach(item => {
 
-        const itemTotal = item.price * item.qty
+const itemTotal = item.price * item.qty
 
-        total += itemTotal
+total += itemTotal
 
-        const div = document.createElement("div")
+const div = document.createElement("div")
 
-        div.className = "cart-item"
+div.className = "cart-item"
 
-       div.innerHTML = `
+div.innerHTML = `
 
 <b>${item.name}</b>
 
@@ -182,14 +184,16 @@ class="price-input"
 onchange="changePrice('${item.id}', this.value)"
 >
 
-<strong>${itemTotal} so'm</strong>
+<strong>${formatMoney(itemTotal)} so'm</strong>
 
 `
-        list.appendChild(div)
 
-    })
+list.appendChild(div)
+
+})
 
 document.getElementById("saleTotal").innerText = formatMoney(total)
+
 }
 
 
@@ -200,33 +204,40 @@ document.getElementById("saleTotal").innerText = formatMoney(total)
 
 function increaseQty(id){
 
-    const item = cart.find(i => i.id === id)
+const item = cart.find(i => i.id === id)
 
-    const product = productCache.find(p => p.id === id)
+const product = productCache.find(p => p.id === id)
 
-    if(item.qty + 1 > product.stock){
-      showToast("Zaxirada yetarli mahsulot yo'q")
-        return
-    }
+if(!product){
+showToast("Mahsulot topilmadi")
+return
+}
 
-    item.qty++
+if(item.qty + 1 > product.stock){
+showToast("Zaxirada yetarli mahsulot yo'q")
+return
+}
 
-    renderCart()
+item.qty++
+
+renderCart()
 
 }
+
+
 function decreaseQty(id){
 
-    const item = cart.find(i => i.id === id)
+const item = cart.find(i => i.id === id)
 
-    item.qty--
+item.qty--
 
-    if(item.qty <= 0){
+if(item.qty <= 0){
 
-        cart = cart.filter(i => i.id !== id)
+cart = cart.filter(i => i.id !== id)
 
-    }
+}
 
-    renderCart()
+renderCart()
 
 }
 
@@ -238,91 +249,107 @@ function decreaseQty(id){
 
 async function completeSale(){
 
-    if(cart.length === 0) return
+if(cart.length === 0) return
 
-    const btn = document.getElementById("completeSaleBtn")
-    btn.disabled = true
+const btn = document.getElementById("completeSaleBtn")
+btn.disabled = true
 
-    let total = 0
-    cart.forEach(i => total += i.price * i.qty)
+let total = 0
+cart.forEach(i => total += i.price * i.qty)
 
-    const sale = {
-        items: cart,
-        total: total,
-        createdAt: new Date()
-    }
-
-    try{
-
-        const salesRef = db
-            .collection("shops")
-            .doc(currentShopId)
-            .collection("sales")
-
-        await salesRef.add(sale)
-
-        await updateStockAfterSale(cart)
-
-    }
-    catch(e){
-
-        // SAVE SALE OFFLINE
-        let offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
-
-        offline.push(sale)
-
-        localStorage.setItem("offlineSales", JSON.stringify(offline))
-
-        console.warn("Sale saved offline")
-
-    }
-
-    cart = []
-
-    renderCart()
-
-    showSuccess("Sotuv yakunlandi")
-
-  // generateReceipt(sale)
-
-    btn.disabled = false
+const sale = {
+items: cart,
+total: total,
+createdAt: new Date()
 }
+
+try{
+
+const salesRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+
+await salesRef.add(sale)
+
+await updateStockAfterSale(cart)
+
+}
+catch(e){
+
+let offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
+
+offline.push(sale)
+
+localStorage.setItem("offlineSales", JSON.stringify(offline))
+
+console.warn("Sale saved offline")
+
+}
+
+cart = []
+
+renderCart()
+
+showSuccess("Sotuv yakunlandi")
+
+loadDashboard()
+
+btn.disabled = false
+
+}
+
+
+
+// =======================================
+// UPDATE STOCK
+// =======================================
+
 async function updateStockAfterSale(items){
 
-    for(const item of items){
+for(const item of items){
 
-        const ref = db
-            .collection("shops")
-            .doc(currentShopId)
-            .collection("products")
-            .doc(item.id)
+const ref = db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.doc(item.id)
 
-        await db.runTransaction(async t => {
+await db.runTransaction(async t => {
 
-            const doc = await t.get(ref)
+const doc = await t.get(ref)
 
-            const stock = doc.data().stock || 0
+const stock = doc.data().stock || 0
 
-            if(stock < item.qty){
-            showToast("Zaxirada yetarli mahsulot yo'q")
-                throw new Error("Stock not enough")
-            }
+if(stock < item.qty){
+showToast("Zaxirada yetarli mahsulot yo'q")
+throw new Error("Stock not enough")
+}
 
-            t.update(ref,{
-                stock: stock - item.qty
-            })
+t.update(ref,{
+stock: stock - item.qty
+})
 
-        })
-
-    }
+})
 
 }
+
+}
+
+
+
+// =======================================
+// CHANGE PRICE
+// =======================================
+
 function changePrice(id,newPrice){
 
-    const item = cart.find(i => i.id === id)
+const item = cart.find(i => i.id === id)
 
-    item.price = Number(newPrice)
+if(!item) return
 
-    renderCart()
+item.price = Number(newPrice)
+
+renderCart()
 
 }
