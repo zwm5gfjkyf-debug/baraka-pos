@@ -90,30 +90,34 @@ async function loadDashboard(){
     )
 
     const chartLabels = []
-    const chartValues = []
+const chartValues = []
 
-    let runningTotal = 0
+let runningTotal = 0
+
+// start chart from zero
+chartLabels.push("0")
+chartValues.push(0)
 
 
    // SALES
 const sales = []
 
 salesSnapshot.forEach(doc=>{
-    sales.push(doc.data())
+sales.push(doc.data())
 })
 
 // sort sales by time
 sales.sort((a,b)=>{
 
-    const aTime = a.createdAt?.seconds 
-        ? a.createdAt.seconds * 1000
-        : new Date(a.createdAt).getTime()
+const aTime = a.createdAt?.seconds
+? a.createdAt.seconds*1000
+: new Date(a.createdAt).getTime()
 
-    const bTime = b.createdAt?.seconds
-        ? b.createdAt.seconds * 1000
-        : new Date(b.createdAt).getTime()
+const bTime = b.createdAt?.seconds
+? b.createdAt.seconds*1000
+: new Date(b.createdAt).getTime()
 
-    return aTime - bTime
+return aTime-bTime
 })
 
 sales.forEach(sale=>{
@@ -121,19 +125,18 @@ sales.forEach(sale=>{
 let date
 
 if(sale.createdAt?.seconds){
-    date = new Date(sale.createdAt.seconds * 1000)
+date=new Date(sale.createdAt.seconds*1000)
 }else{
-    date = new Date(sale.createdAt)
+date=new Date(sale.createdAt)
 }
 
-if(date >= todayStart){
+if(date>=todayStart){
 
-todayRevenue += sale.total
+todayRevenue+=sale.total
 
-// chart running total
-runningTotal += sale.total
+runningTotal+=sale.total
 
-const time =
+const time=
 date.getHours()+":"+
 String(date.getMinutes()).padStart(2,"0")
 
@@ -144,12 +147,12 @@ if(sale.items){
 
 sale.items.forEach(item=>{
 
-const qty = item.qty || 0
-const price = item.price || 0
-const cost = item.cost || 0
+const qty=item.qty||0
+const price=item.price||0
+const cost=item.cost||0
 
-todayItems += qty
-todayProfit += (price-cost) * qty
+todayItems+=qty
+todayProfit+=(price-cost)*qty
 
 })
 
