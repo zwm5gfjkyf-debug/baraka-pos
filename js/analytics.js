@@ -296,7 +296,18 @@ font:{size:10}
 // LOAD ANALYTICS
 // ===============================
 
+function openDebtAnalytics(){
 
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.add("hidden")
+})
+
+document.getElementById("debtAnalyticsPage")
+.classList.remove("hidden")
+
+loadDebtAnalytics()
+
+}
 
 // ===============================
 // ANALYTICS CARDS
