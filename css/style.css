@@ -1,177 +1,269 @@
-/* =========================
-BARAKA POS PRO DESIGN
-========================= */
+/* =========================================
+BARAKA POS PREMIUM DESIGN SYSTEM
+Luxury Glass UI
+========================================= */
+
+/* =========================================
+THEME VARIABLES
+========================================= */
+
 :root{
 
---bg-main:#0f172a;
---bg-card:rgba(255,255,255,0.05);
---glass:rgba(255,255,255,0.06);
+--bg-main:#020617;
+--bg-secondary:#0f172a;
+
+--glass:rgba(255,255,255,0.05);
+--glass-strong:rgba(255,255,255,0.08);
 
 --accent:#22c55e;
+--accent-dark:#16a34a;
 --accent-soft:rgba(34,197,94,0.15);
 
---text-main:#f1f5f9;
---text-soft:#9aa4b2;
+--blue:#3b82f6;
+--orange:#f59e0b;
+--danger:#ef4444;
+
+--text-main:#f8fafc;
+--text-soft:#94a3b8;
 
 --border:rgba(255,255,255,0.08);
 
-}
-:root{
-
---bg:#0b1220;
-
---glass:rgba(255,255,255,0.05);
-
---glass-strong:rgba(255,255,255,0.08);
-
---primary:#10b981;
-
---primary-dark:#059669;
-
---text:#f1f5f9;
-
---text-soft:#94a3b8;
-
---danger:#ef4444;
-
---radius:16px;
+--radius:18px;
 
 }
 
-/* =========================
+/* =========================================
 RESET
-========================= */
+========================================= */
 
 *{
-box-sizing:border-box;
+
 margin:0;
 padding:0;
+
+box-sizing:border-box;
+
 font-family:'Inter',sans-serif;
+
 -webkit-tap-highlight-color:transparent;
+
 }
+
+/* =========================================
+BODY BACKGROUND
+========================================= */
 
 body{
-background: radial-gradient(circle at top,#1e293b,#020617);
+
+background:
+radial-gradient(circle at top,
+#1e293b,
+#020617 60%);
+
 color:var(--text-main);
-font-family:'Inter',sans-serif;
+
+min-height:100vh;
+
 }
 
+/* =========================================
+SCROLLBAR (PREMIUM)
+========================================= */
 
-/* =========================
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-track{
+background:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+background:rgba(255,255,255,0.15);
+border-radius:10px;
+}
+
+/* =========================================
 UTILITIES
-========================= */
+========================================= */
 
 .hidden{
 display:none!important;
 }
 
-.glass{
-
-background:var(--glass);
-
-backdrop-filter:blur(16px);
-
-border:1px solid rgba(255,255,255,0.06);
-
-box-shadow:0 10px 40px rgba(0,0,0,0.5);
-
-}
-
 .center-screen{
 
 display:flex;
-justify-content:center;
+
 align-items:center;
+justify-content:center;
 
 height:100vh;
 
 }
 
+/* =========================================
+GLASS SYSTEM
+========================================= */
 
-/* =========================
-LOADING
-========================= */
+.glass{
 
-.loading-card{
+background:var(--glass);
 
-text-align:center;
+backdrop-filter:blur(20px);
+-webkit-backdrop-filter:blur(20px);
 
-}
+border:1px solid var(--border);
 
-.loader{
-
-width:50px;
-height:50px;
-
-border:4px solid rgba(255,255,255,0.2);
-
-border-top:4px solid var(--primary);
-
-border-radius:50%;
-
-animation:spin 1s linear infinite;
-
-margin:auto;
-margin-bottom:20px;
+box-shadow:
+0 15px 40px rgba(0,0,0,0.45);
 
 }
 
-@keyframes spin{
+/* =========================================
+CONTAINER
+========================================= */
 
-to{
-transform:rotate(360deg);
+.main-content{
+
+padding:20px;
+
+padding-bottom:90px;
+
 }
 
+/* =========================================
+GRID SYSTEM
+========================================= */
+
+.dashboard-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(160px,1fr));
+
+gap:16px;
+
 }
 
+/* =========================================
+PAGE TITLES
+========================================= */
 
-/* =========================
-AUTH
-========================= */
+.page-title{
 
-.auth-container{
+font-size:18px;
 
-width:100%;
+font-weight:600;
+
+margin-bottom:16px;
+
+}
+
+/* =========================================
+HEADER
+========================================= */
+
+.app-header{
+
 display:flex;
-justify-content:center;
+
+align-items:center;
+justify-content:space-between;
+
+padding:18px;
+
+position:sticky;
+top:0;
+
+z-index:30;
+
+background:rgba(2,6,23,0.6);
+
+backdrop-filter:blur(20px);
+
+border-bottom:1px solid var(--border);
 
 }
 
-.auth-card{
+/* =========================================
+SHOP TITLE
+========================================= */
 
-width:90%;
-max-width:380px;
+.shop-label{
 
-padding:40px;
+font-size:12px;
 
-border-radius:var(--radius);
+color:var(--text-soft);
+
+letter-spacing:0.4px;
+
+}
+
+.shop-title{
+
+font-weight:600;
+
+font-size:16px;
+
+}
+
+/* =========================================
+MENU BUTTON
+========================================= */
+
+.menu-btn{
+
+background:transparent;
+
+border:none;
+
+font-size:20px;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+/* =========================================
+PROFILE MENU
+========================================= */
+
+.profile-menu{
+
+position:absolute;
+
+top:60px;
+right:18px;
+
+padding:12px;
+
+border-radius:14px;
 
 display:flex;
 flex-direction:column;
 
-gap:14px;
+gap:8px;
 
-text-align:center;
-
-}
-
-.auth-sub{
-
-color:var(--text-soft);
-
-font-size:14px;
+width:180px;
 
 }
+
+/* =========================================
+INPUT FIELDS
+========================================= */
 
 input{
 
 padding:12px;
 
-border-radius:10px;
+border-radius:12px;
 
 border:none;
 
-background:rgba(255,255,255,0.07);
+background:rgba(255,255,255,0.06);
 
 color:white;
 
@@ -183,164 +275,62 @@ input:focus{
 
 outline:none;
 
-box-shadow:0 0 0 2px var(--primary);
+box-shadow:0 0 0 2px var(--accent);
 
 }
 
+/* =========================================
+LOADING SPINNER
+========================================= */
 
-/* =========================
-BUTTONS
-========================= */
+.loader{
 
-button{
+width:50px;
+height:50px;
 
-border:none;
+border:4px solid rgba(255,255,255,0.2);
 
-padding:12px;
+border-top:4px solid var(--accent);
 
-border-radius:10px;
+border-radius:50%;
 
-font-weight:600;
+animation:spin 1s linear infinite;
 
-cursor:pointer;
-
-}
-
-.btn-primary{
-
-background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-
-color:white;
+margin:auto;
 
 }
 
-.btn-secondary{
+@keyframes spin{
 
-background:rgba(255,255,255,0.1);
-
-color:white;
-
+to{
+transform:rotate(360deg);
 }
 
-.danger-btn{
-
-background:var(--danger);
-
-color:white;
-
 }
+/* =========================================
+PART 2 — COMPONENTS
+Premium POS UI Elements
+========================================= */
 
 
-/* =========================
-HEADER
-========================= */
+/* =========================================
+DASHBOARD CARDS
+========================================= */
 
-.app-header{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:18px;
-
-position:sticky;
-
-top:0;
-
-z-index:20;
-
-}
-
-.shop-label{
-
-font-size:12px;
-
-color:var(--text-soft);
-
-}
-
-.shop-title{
-
-font-weight:600;
-
-font-size:15px;
-
-}
-
-.menu-btn{
-
-background:none;
-
-color:white;
-
-font-size:18px;
-
-}
-
-.profile-menu{
-
-position:absolute;
-
-right:20px;
-
-top:60px;
-
-padding:10px;
-
-border-radius:12px;
-
-}
-
-
-/* =========================
-MAIN
-========================= */
-
-.main-content{
-
-padding:20px;
-
-padding-bottom:90px;
-
-}
-
-.page-title{
-
-margin-bottom:16px;
-
-}
-
-
-/* =========================
-DASHBOARD
-========================= */
-
-.dashboard-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
-gap:14px;
-width:100%;
-}
 .dashboard-card{
 
-width:100%;
-
-box-sizing:border-box;
-
 padding:20px;
 
-border-radius:18px;
+border-radius:var(--radius);
 
-background:rgba(255,255,255,0.06);
+background:var(--glass);
 
-backdrop-filter:blur(18px);
--webkit-backdrop-filter:blur(18px);
+backdrop-filter:blur(20px);
 
-border:1px solid rgba(255,255,255,0.08);
+border:1px solid var(--border);
 
-box-shadow:0 12px 40px rgba(0,0,0,0.35);
+box-shadow:
+0 12px 40px rgba(0,0,0,0.35);
 
 transition:all 0.25s ease;
 
@@ -348,11 +338,34 @@ transition:all 0.25s ease;
 
 .dashboard-card:hover{
 
-transform:translateY(-3px);
+transform:translateY(-4px);
 
-box-shadow:0 18px 50px rgba(0,0,0,0.45);
+box-shadow:
+0 20px 50px rgba(0,0,0,0.45);
 
 }
+
+/* =========================================
+CARD TITLE
+========================================= */
+
+.card-title{
+
+font-size:12px;
+
+color:var(--text-soft);
+
+letter-spacing:0.6px;
+
+text-transform:uppercase;
+
+margin-bottom:6px;
+
+}
+
+/* =========================================
+CARD AMOUNT
+========================================= */
 
 .dashboard-amount{
 
@@ -362,9 +375,11 @@ font-weight:700;
 
 letter-spacing:0.4px;
 
-margin-top:6px;
-
 }
+
+/* =========================================
+SUB TEXT
+========================================= */
 
 .card-sub{
 
@@ -376,22 +391,91 @@ color:var(--text-soft);
 
 }
 
-.card-title{
 
-font-size:13px;
+/* =========================================
+BUTTON SYSTEM
+========================================= */
 
-color:var(--text-soft);
+button{
 
-font-weight:500;
+border:none;
 
-letter-spacing:0.6px;
+padding:12px 14px;
 
-text-transform:uppercase;
+border-radius:12px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:all 0.2s ease;
 
 }
-/* =========================
-SEARCH
-========================= */
+
+/* =========================================
+PRIMARY BUTTON
+========================================= */
+
+.btn-primary{
+
+background:linear-gradient(
+135deg,
+var(--accent),
+var(--accent-dark)
+);
+
+color:white;
+
+box-shadow:
+0 6px 20px rgba(34,197,94,0.35);
+
+}
+
+.btn-primary:hover{
+
+transform:translateY(-1px);
+
+box-shadow:
+0 10px 25px rgba(34,197,94,0.45);
+
+}
+
+
+/* =========================================
+SECONDARY BUTTON
+========================================= */
+
+.btn-secondary{
+
+background:rgba(255,255,255,0.1);
+
+color:white;
+
+}
+
+.btn-secondary:hover{
+
+background:rgba(255,255,255,0.15);
+
+}
+
+
+/* =========================================
+DANGER BUTTON
+========================================= */
+
+.danger-btn{
+
+background:var(--danger);
+
+color:white;
+
+}
+
+
+/* =========================================
+SEARCH RESULTS
+========================================= */
 
 #searchResults,
 #debtSearchResults{
@@ -406,13 +490,17 @@ gap:10px;
 
 }
 
+/* =========================================
+SEARCH ITEM
+========================================= */
+
 .search-item{
 
-padding:12px;
+padding:14px;
 
-border-radius:12px;
+border-radius:14px;
 
-background:rgba(255,255,255,0.06);
+background:rgba(255,255,255,0.05);
 
 cursor:pointer;
 
@@ -420,36 +508,47 @@ display:flex;
 
 justify-content:space-between;
 
+align-items:center;
+
+transition:all 0.2s;
+
 }
 
 .search-item:hover{
 
-background:rgba(255,255,255,0.1);
+background:rgba(255,255,255,0.08);
+
+transform:scale(1.01);
 
 }
 
 
-/* =========================
-CART
-========================= */
+/* =========================================
+CART ITEMS
+========================================= */
 
 .cart-item{
 
 padding:16px;
 
-border-radius:14px;
-
-margin-bottom:12px;
+border-radius:16px;
 
 background:rgba(255,255,255,0.05);
+
+margin-bottom:12px;
 
 display:flex;
 
 flex-direction:column;
 
-gap:8px;
+gap:10px;
 
 }
+
+
+/* =========================================
+QUANTITY CONTROLS
+========================================= */
 
 .quantity-controls{
 
@@ -468,62 +567,93 @@ height:34px;
 
 border-radius:50%;
 
-background:var(--primary);
+background:var(--accent);
 
 color:white;
 
 font-weight:bold;
 
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
 }
 
 
-/* =========================
-DEBT
-========================= */
+/* =========================================
+DEBT LIST ITEM
+========================================= */
 
 .debt-item{
 
 padding:14px;
 
-border-radius:12px;
+border-radius:14px;
 
 background:rgba(255,255,255,0.05);
 
 margin-bottom:10px;
 
+display:flex;
+
+flex-direction:column;
+
+gap:6px;
+
 }
 
 
-/* =========================
-STOCK
-========================= */
+/* =========================================
+STOCK ITEM GRID
+========================================= */
 
 .stock-item{
 
 display:grid;
 
-grid-template-columns:1fr 80px 80px 90px 80px;
+grid-template-columns:
+
+1fr 80px 80px 90px 80px;
 
 gap:8px;
 
 padding:12px;
 
-border-radius:12px;
+border-radius:14px;
 
 background:rgba(255,255,255,0.05);
 
 margin-bottom:10px;
 
 }
-.big-chart{
-grid-column:1 / -1;
+
+
+/* =========================================
+PRICE INPUT
+========================================= */
+
+.price-input{
+
+padding:8px;
+
+border-radius:8px;
+
+background:rgba(255,255,255,0.08);
+
+border:none;
+
+color:white;
+
 width:100%;
-min-height:260px;
+
 }
 
-/* =========================
-CHARTS
-========================= */
+
+/* =========================================
+CHART CONTAINER
+========================================= */
 
 .chart-container{
 
@@ -540,31 +670,85 @@ margin-top:16px;
 backdrop-filter:blur(20px);
 
 }
-/* =========================
-BOTTOM NAV
-========================= */
+
+/* =========================================
+CHART TITLE
+========================================= */
+
+.chart-title{
+
+font-size:14px;
+
+font-weight:600;
+
+margin-bottom:12px;
+
+color:var(--text-soft);
+
+}
+
+
+/* =========================================
+BIG CHART
+========================================= */
+
+.big-chart{
+
+grid-column:1 / -1;
+
+width:100%;
+
+height:260px;
+
+padding:20px;
+
+}
+
+.big-chart canvas{
+
+height:200px !important;
+
+}
+
+
+/* =========================================
+BOTTOM NAVIGATION
+========================================= */
 
 .bottom-nav{
 
 position:fixed;
 
-bottom:0;
+bottom:14px;
 
-left:0;
-
-right:0;
+left:12px;
+right:12px;
 
 display:flex;
 
 justify-content:space-around;
 
-padding:12px 0;
+background:rgba(15,23,42,0.7);
+
+backdrop-filter:blur(20px);
+
+border:1px solid var(--border);
+
+border-radius:18px;
+
+padding:10px;
+
+box-shadow:
+0 10px 40px rgba(0,0,0,0.45);
+
+z-index:30;
 
 }
 
 .bottom-nav button{
 
 background:transparent;
+
 border:none;
 
 color:var(--text-soft);
@@ -581,15 +765,24 @@ transition:all 0.2s;
 
 color:var(--accent);
 
-transform:scale(1.05);
+transform:scale(1.08);
 
 }
+/* =========================================
+PART 3 — PREMIUM EFFECTS & ANIMATIONS
+Luxury Micro-Interactions
+========================================= */
+
+
+/* =========================================
+FADE UP ANIMATION
+========================================= */
 
 @keyframes fadeUp{
 
 from{
 opacity:0;
-transform:translateY(10px);
+transform:translateY(12px);
 }
 
 to{
@@ -600,11 +793,103 @@ transform:translateY(0);
 }
 
 .dashboard-card{
-animation:fadeUp 0.4s ease;
+animation:fadeUp 0.45s ease;
 }
-/* =========================
-SUCCESS OVERLAY
-========================= */
+
+
+/* =========================================
+CARD GLOW EFFECT
+========================================= */
+
+.dashboard-card::before{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+border-radius:inherit;
+
+opacity:0;
+
+background:linear-gradient(
+120deg,
+transparent,
+rgba(255,255,255,0.15),
+transparent
+);
+
+transition:opacity 0.3s;
+
+}
+
+.dashboard-card:hover::before{
+opacity:1;
+}
+
+
+/* =========================================
+BUTTON PRESS ANIMATION
+========================================= */
+
+button:active{
+
+transform:scale(0.96);
+
+}
+
+
+/* =========================================
+SEARCH ITEM HOVER
+========================================= */
+
+.search-item{
+
+transition:
+transform 0.2s,
+background 0.2s,
+box-shadow 0.2s;
+
+}
+
+.search-item:hover{
+
+transform:translateY(-2px);
+
+box-shadow:
+0 10px 25px rgba(0,0,0,0.35);
+
+}
+
+
+/* =========================================
+CART ITEM ANIMATION
+========================================= */
+
+.cart-item{
+
+animation:fadeUp 0.35s ease;
+
+}
+
+
+/* =========================================
+INPUT FOCUS GLOW
+========================================= */
+
+input:focus{
+
+box-shadow:
+0 0 0 2px var(--accent),
+0 0 12px rgba(34,197,94,0.3);
+
+}
+
+
+/* =========================================
+SUCCESS POPUP
+========================================= */
 
 .success-overlay{
 
@@ -612,7 +897,7 @@ position:fixed;
 
 inset:0;
 
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.65);
 
 display:flex;
 
@@ -626,7 +911,11 @@ z-index:999;
 
 .success-card{
 
-background:linear-gradient(135deg,#10b981,#059669);
+background:linear-gradient(
+135deg,
+var(--accent),
+var(--accent-dark)
+);
 
 padding:40px;
 
@@ -638,7 +927,10 @@ font-weight:700;
 
 text-align:center;
 
-animation:popIn 0.3s ease;
+animation:popIn 0.35s ease;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,0.5);
 
 }
 
@@ -655,77 +947,218 @@ opacity:1;
 }
 
 }
+
+
+/* =========================================
+MODAL ANIMATION
+========================================= */
+
 .confirm-modal{
+
 position:fixed;
+
 top:0;
 left:0;
+
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.5);
+
+background:rgba(0,0,0,0.55);
+
 display:flex;
+
 align-items:center;
 justify-content:center;
+
 z-index:9999;
+
 }
 
 .confirm-box{
-padding:20px;
+
+padding:24px;
+
 width:320px;
+
 text-align:center;
-border-radius:12px;
-}
 
-.confirm-text{
-margin-bottom:20px;
-font-size:16px;
-}
+border-radius:18px;
 
-.confirm-buttons{
-display:flex;
-gap:10px;
-justify-content:center;
-}
-.big-chart{
-height:260px;
-padding:20px;
-}
-
-.big-chart canvas{
-height:200px !important;
-}
-
-.chart-title{
-
-font-size:14px;
-
-font-weight:600;
-
-margin-bottom:12px;
-
-color:var(--text-soft);
-
-}
-.bottom-nav{
-
-position:fixed;
-
-bottom:14px;
-left:12px;
-right:12px;
-
-display:flex;
-justify-content:space-around;
-
-background:rgba(15,23,42,0.7);
+background:var(--glass);
 
 backdrop-filter:blur(20px);
 
 border:1px solid var(--border);
 
-border-radius:18px;
+animation:fadeUp 0.3s ease;
 
-padding:10px;
+}
 
-box-shadow:0 10px 40px rgba(0,0,0,0.45);
+.confirm-text{
+
+margin-bottom:20px;
+
+font-size:16px;
+
+}
+
+.confirm-buttons{
+
+display:flex;
+
+gap:10px;
+
+justify-content:center;
+
+}
+
+
+/* =========================================
+BOTTOM NAV ICON ANIMATION
+========================================= */
+
+.bottom-nav button{
+
+transition:
+transform 0.2s,
+color 0.2s;
+
+}
+
+.bottom-nav button:hover{
+
+transform:translateY(-2px);
+
+}
+
+
+/* =========================================
+FLOATING HEADER SHADOW
+========================================= */
+
+.app-header{
+
+box-shadow:
+0 8px 30px rgba(0,0,0,0.35);
+
+}
+
+
+/* =========================================
+CHART FADE IN
+========================================= */
+
+.chart-container{
+
+animation:fadeUp 0.5s ease;
+
+}
+
+
+/* =========================================
+LOADING CARD
+========================================= */
+
+.loading-card{
+
+text-align:center;
+
+animation:fadeUp 0.5s ease;
+
+}
+
+
+/* =========================================
+SPINNER GLOW
+========================================= */
+
+.loader{
+
+box-shadow:
+0 0 20px rgba(34,197,94,0.4);
+
+}
+
+
+/* =========================================
+NAVIGATION ACTIVE INDICATOR
+========================================= */
+
+.bottom-nav button.active{
+
+color:var(--accent);
+
+position:relative;
+
+}
+
+.bottom-nav button.active::after{
+
+content:"";
+
+position:absolute;
+
+bottom:-6px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:6px;
+height:6px;
+
+border-radius:50%;
+
+background:var(--accent);
+
+}
+
+
+/* =========================================
+SOFT PAGE TRANSITION
+========================================= */
+
+.page{
+
+animation:fadeUp 0.35s ease;
+
+}
+
+
+/* =========================================
+HOVER LIGHT EFFECT
+========================================= */
+
+.glass:hover{
+
+box-shadow:
+0 15px 40px rgba(0,0,0,0.55);
+
+}
+
+
+/* =========================================
+SUBTLE PULSE (OPTIONAL)
+========================================= */
+
+@keyframes pulseGlow{
+
+0%{
+box-shadow:0 0 0 rgba(34,197,94,0.4);
+}
+
+50%{
+box-shadow:0 0 15px rgba(34,197,94,0.35);
+}
+
+100%{
+box-shadow:0 0 0 rgba(34,197,94,0.4);
+}
+
+}
+
+.btn-primary{
+
+animation:pulseGlow 3s infinite;
 
 }
