@@ -58,37 +58,45 @@ async function loadProducts(){
 // ULTRA FAST SEARCH
 // =======================================
 
-function searchProducts(text){
+async function searchProducts(text){
 
-    const resultsBox = document.getElementById("searchResults")
+const resultsBox = document.getElementById("searchResults")
+resultsBox.innerHTML = ""
 
-    // clear previous results
-    resultsBox.innerHTML = ""
+if(!text) return
 
-    if(!text) return
+const query = text.toLowerCase()
 
-    const query = text.toLowerCase()
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.orderBy("name")
+.startAt(query)
+.endAt(query + "\uf8ff")
+.limit(20)
+.get()
 
-    const results = productCache
-        .filter(p => p.name.toLowerCase().includes(query))
-        .slice(0,20)
+snapshot.forEach(doc => {
 
-    results.forEach(product => {
+const p = doc.data()
 
-        const div = document.createElement("div")
+const div = document.createElement("div")
+div.className = "search-item"
 
-        div.className = "search-item"
+div.innerHTML = `
+<span>${p.name}</span>
+<strong>${formatMoney(p.price)}</strong>
+`
 
-        div.innerHTML = `
-        <span>${product.name}</span>
-        <strong>${product.price} so'm</strong>
-        `
+div.onclick = () => addToCart({
+id: doc.id,
+...p
+})
 
-        div.onclick = () => addToCart(product)
+resultsBox.appendChild(div)
 
-        resultsBox.appendChild(div)
-
-    })
+})
 
 }
 
