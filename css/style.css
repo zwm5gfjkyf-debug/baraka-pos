@@ -1,5 +1,10 @@
 /* =========================================
 BARAKA POS PREMIUM DESIGN SYSTEM
+Luxury Glass UI
+========================================= */
+
+/* =========================================
+THEME VARIABLES
 ========================================= */
 
 :root{
@@ -7,28 +12,45 @@ BARAKA POS PREMIUM DESIGN SYSTEM
 --bg-main:#020617;
 --bg-secondary:#0f172a;
 
---glass:rgba(255,255,255,0.06);
---glass-strong:rgba(255,255,255,0.1);
+--glass:rgba(255,255,255,0.05);
+--glass-strong:rgba(255,255,255,0.08);
 
---border:rgba(255,255,255,0.08);
+--accent:#22c55e;
+--accent-dark:#16a34a;
+--accent-soft:rgba(34,197,94,0.15);
 
---text-main:#f1f5f9;
---text-soft:#9aa4b2;
-
-/* Accent colors */
-
---green:#22c55e;
 --blue:#3b82f6;
 --orange:#f59e0b;
---purple:#a855f7;
---red:#ef4444;
+--danger:#ef4444;
+
+--text-main:#f8fafc;
+--text-soft:#94a3b8;
+
+--border:rgba(255,255,255,0.08);
 
 --radius:18px;
 
 }
 
 /* =========================================
-BODY
+RESET
+========================================= */
+
+*{
+
+margin:0;
+padding:0;
+
+box-sizing:border-box;
+
+font-family:'Inter',sans-serif;
+
+-webkit-tap-highlight-color:transparent;
+
+}
+
+/* =========================================
+BODY BACKGROUND
 ========================================= */
 
 body{
@@ -36,86 +58,82 @@ body{
 background:
 radial-gradient(circle at top,
 #1e293b,
-#020617 70%);
+#020617 60%);
 
 color:var(--text-main);
-
-font-family:'Inter',sans-serif;
 
 min-height:100vh;
 
 }
 
 /* =========================================
-HEADER
+SCROLLBAR (PREMIUM)
 ========================================= */
 
-.app-header{
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-track{
+background:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+background:rgba(255,255,255,0.15);
+border-radius:10px;
+}
+
+/* =========================================
+UTILITIES
+========================================= */
+
+.hidden{
+display:none!important;
+}
+
+.center-screen{
 
 display:flex;
+
 align-items:center;
-justify-content:space-between;
+justify-content:center;
+
+height:100vh;
+
+}
+
+/* =========================================
+GLASS SYSTEM
+========================================= */
+
+.glass{
+
+background:var(--glass);
+
+backdrop-filter:blur(20px);
+-webkit-backdrop-filter:blur(20px);
+
+border:1px solid var(--border);
+
+box-shadow:
+0 15px 40px rgba(0,0,0,0.45);
+
+}
+
+/* =========================================
+CONTAINER
+========================================= */
+
+.main-content{
 
 padding:20px;
 
-position:sticky;
-top:0;
-
-background:rgba(2,6,23,0.7);
-
-backdrop-filter:blur(18px);
-
-border-bottom:1px solid var(--border);
-
-z-index:20;
+padding-bottom:90px;
 
 }
 
-.header-left{
-
-display:flex;
-flex-direction:column;
-
-}
-
-.shop-label{
-
-font-size:12px;
-color:var(--text-soft);
-
-}
-
-.shop-title{
-
-font-size:16px;
-font-weight:600;
-
-display:flex;
-align-items:center;
-gap:6px;
-
-}
-
-.header-right{
-
-display:flex;
-align-items:center;
-gap:10px;
-
-}
-
-.menu-btn{
-
-background:transparent;
-border:none;
-font-size:18px;
-color:white;
-
-cursor:pointer;
-
-}
 /* =========================================
-DASHBOARD GRID
+GRID SYSTEM
 ========================================= */
 
 .dashboard-grid{
@@ -130,12 +148,176 @@ gap:16px;
 }
 
 /* =========================================
-CARD
+PAGE TITLES
+========================================= */
+
+.page-title{
+
+font-size:18px;
+
+font-weight:600;
+
+margin-bottom:16px;
+
+}
+
+/* =========================================
+HEADER
+========================================= */
+
+.app-header{
+
+display:flex;
+
+align-items:center;
+justify-content:space-between;
+
+padding:18px;
+
+position:sticky;
+top:0;
+
+z-index:30;
+
+background:rgba(2,6,23,0.6);
+
+backdrop-filter:blur(20px);
+
+border-bottom:1px solid var(--border);
+
+}
+
+/* =========================================
+SHOP TITLE
+========================================= */
+
+.shop-label{
+
+font-size:12px;
+
+color:var(--text-soft);
+
+letter-spacing:0.4px;
+
+}
+
+.shop-title{
+
+font-weight:600;
+
+font-size:16px;
+
+}
+
+/* =========================================
+MENU BUTTON
+========================================= */
+
+.menu-btn{
+
+background:transparent;
+
+border:none;
+
+font-size:20px;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+/* =========================================
+PROFILE MENU
+========================================= */
+
+.profile-menu{
+
+position:absolute;
+
+top:60px;
+right:18px;
+
+padding:12px;
+
+border-radius:14px;
+
+display:flex;
+flex-direction:column;
+
+gap:8px;
+
+width:180px;
+
+}
+
+/* =========================================
+INPUT FIELDS
+========================================= */
+
+input{
+
+padding:12px;
+
+border-radius:12px;
+
+border:none;
+
+background:rgba(255,255,255,0.06);
+
+color:white;
+
+font-size:14px;
+
+}
+
+input:focus{
+
+outline:none;
+
+box-shadow:0 0 0 2px var(--accent);
+
+}
+
+/* =========================================
+LOADING SPINNER
+========================================= */
+
+.loader{
+
+width:50px;
+height:50px;
+
+border:4px solid rgba(255,255,255,0.2);
+
+border-top:4px solid var(--accent);
+
+border-radius:50%;
+
+animation:spin 1s linear infinite;
+
+margin:auto;
+
+}
+
+@keyframes spin{
+
+to{
+transform:rotate(360deg);
+}
+
+}
+/* =========================================
+PART 2 — COMPONENTS
+Premium POS UI Elements
+========================================= */
+
+
+/* =========================================
+DASHBOARD CARDS
 ========================================= */
 
 .dashboard-card{
-
-position:relative;
 
 padding:20px;
 
@@ -143,42 +325,14 @@ border-radius:var(--radius);
 
 background:var(--glass);
 
+backdrop-filter:blur(20px);
+
 border:1px solid var(--border);
 
-backdrop-filter:blur(18px);
+box-shadow:
+0 12px 40px rgba(0,0,0,0.35);
 
 transition:all 0.25s ease;
-
-overflow:hidden;
-
-}
-
-/* glow effect */
-
-.dashboard-card::before{
-
-content:"";
-
-position:absolute;
-
-inset:0;
-
-background:linear-gradient(
-120deg,
-transparent,
-rgba(255,255,255,0.12),
-transparent
-);
-
-opacity:0;
-
-transition:opacity 0.3s;
-
-}
-
-.dashboard-card:hover::before{
-
-opacity:1;
 
 }
 
@@ -187,60 +341,31 @@ opacity:1;
 transform:translateY(-4px);
 
 box-shadow:
-0 15px 45px rgba(0,0,0,0.45);
+0 20px 50px rgba(0,0,0,0.45);
 
 }
 
 /* =========================================
-CARD ICON
-========================================= */
-
-.card-icon{
-
-width:34px;
-height:34px;
-
-border-radius:10px;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-font-size:16px;
-
-margin-bottom:8px;
-
-}
-
-/* icon color variants */
-
-.icon-green{ background:rgba(34,197,94,0.15); color:var(--green); }
-
-.icon-blue{ background:rgba(59,130,246,0.15); color:var(--blue); }
-
-.icon-orange{ background:rgba(245,158,11,0.15); color:var(--orange); }
-
-.icon-purple{ background:rgba(168,85,247,0.15); color:var(--purple); }
-
-.icon-red{ background:rgba(239,68,68,0.15); color:var(--red); }
-
-/* =========================================
-CARD TEXT
+CARD TITLE
 ========================================= */
 
 .card-title{
 
 font-size:12px;
 
-text-transform:uppercase;
-
 color:var(--text-soft);
 
 letter-spacing:0.6px;
 
-margin-bottom:4px;
+text-transform:uppercase;
+
+margin-bottom:6px;
 
 }
+
+/* =========================================
+CARD AMOUNT
+========================================= */
 
 .dashboard-amount{
 
@@ -248,7 +373,284 @@ font-size:28px;
 
 font-weight:700;
 
+letter-spacing:0.4px;
+
 }
+
+/* =========================================
+SUB TEXT
+========================================= */
+
+.card-sub{
+
+margin-top:8px;
+
+font-size:13px;
+
+color:var(--text-soft);
+
+}
+
+
+/* =========================================
+BUTTON SYSTEM
+========================================= */
+
+button{
+
+border:none;
+
+padding:12px 14px;
+
+border-radius:12px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:all 0.2s ease;
+
+}
+
+/* =========================================
+PRIMARY BUTTON
+========================================= */
+
+.btn-primary{
+
+background:linear-gradient(
+135deg,
+var(--accent),
+var(--accent-dark)
+);
+
+color:white;
+
+box-shadow:
+0 6px 20px rgba(34,197,94,0.35);
+
+}
+
+.btn-primary:hover{
+
+transform:translateY(-1px);
+
+box-shadow:
+0 10px 25px rgba(34,197,94,0.45);
+
+}
+
+
+/* =========================================
+SECONDARY BUTTON
+========================================= */
+
+.btn-secondary{
+
+background:rgba(255,255,255,0.1);
+
+color:white;
+
+}
+
+.btn-secondary:hover{
+
+background:rgba(255,255,255,0.15);
+
+}
+
+
+/* =========================================
+DANGER BUTTON
+========================================= */
+
+.danger-btn{
+
+background:var(--danger);
+
+color:white;
+
+}
+
+
+/* =========================================
+SEARCH RESULTS
+========================================= */
+
+#searchResults,
+#debtSearchResults{
+
+margin-top:10px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+}
+
+/* =========================================
+SEARCH ITEM
+========================================= */
+
+.search-item{
+
+padding:14px;
+
+border-radius:14px;
+
+background:rgba(255,255,255,0.05);
+
+cursor:pointer;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+transition:all 0.2s;
+
+}
+
+.search-item:hover{
+
+background:rgba(255,255,255,0.08);
+
+transform:scale(1.01);
+
+}
+
+
+/* =========================================
+CART ITEMS
+========================================= */
+
+.cart-item{
+
+padding:16px;
+
+border-radius:16px;
+
+background:rgba(255,255,255,0.05);
+
+margin-bottom:12px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+}
+
+
+/* =========================================
+QUANTITY CONTROLS
+========================================= */
+
+.quantity-controls{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+}
+
+.qty-btn{
+
+width:34px;
+height:34px;
+
+border-radius:50%;
+
+background:var(--accent);
+
+color:white;
+
+font-weight:bold;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+}
+
+
+/* =========================================
+DEBT LIST ITEM
+========================================= */
+
+.debt-item{
+
+padding:14px;
+
+border-radius:14px;
+
+background:rgba(255,255,255,0.05);
+
+margin-bottom:10px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:6px;
+
+}
+
+
+/* =========================================
+STOCK ITEM GRID
+========================================= */
+
+.stock-item{
+
+display:grid;
+
+grid-template-columns:
+
+1fr 80px 80px 90px 80px;
+
+gap:8px;
+
+padding:12px;
+
+border-radius:14px;
+
+background:rgba(255,255,255,0.05);
+
+margin-bottom:10px;
+
+}
+
+
+/* =========================================
+PRICE INPUT
+========================================= */
+
+.price-input{
+
+padding:8px;
+
+border-radius:8px;
+
+background:rgba(255,255,255,0.08);
+
+border:none;
+
+color:white;
+
+width:100%;
+
+}
+
+
 /* =========================================
 CHART CONTAINER
 ========================================= */
@@ -261,41 +663,133 @@ border:1px solid var(--border);
 
 border-radius:20px;
 
-padding:20px;
+padding:18px;
 
 margin-top:16px;
 
+backdrop-filter:blur(20px);
+
+position:relative;
+
 height:260px;
 
-backdrop-filter:blur(18px);
+overflow:hidden;
+
+}
+.chart-container canvas{
+
+width:100% !important;
+
+height:200px !important;
+
+}
+/* =========================================
+CHART TITLE
+========================================= */
+
+.chart-title{
+
+font-size:14px;
+
+font-weight:600;
+
+margin-bottom:12px;
+
+color:var(--text-soft);
 
 }
 
-.chart-container canvas{
+
+/* =========================================
+BIG CHART
+========================================= */
+
+.big-chart{
+
+grid-column:1 / -1;
+
+height:260px;
+
+}
+.big-chart canvas{
 
 height:200px !important;
 
 }
 
+
 /* =========================================
-CHART GLOW
+BOTTOM NAVIGATION
 ========================================= */
 
-canvas{
+.bottom-nav{
 
-filter:drop-shadow(0 0 6px rgba(34,197,94,0.4));
+position:fixed;
+
+bottom:14px;
+
+left:12px;
+right:12px;
+
+display:flex;
+
+justify-content:space-around;
+
+background:rgba(15,23,42,0.7);
+
+backdrop-filter:blur(20px);
+
+border:1px solid var(--border);
+
+border-radius:18px;
+
+padding:10px;
+
+box-shadow:
+0 10px 40px rgba(0,0,0,0.45);
+
+z-index:30;
 
 }
 
+.bottom-nav button{
+
+background:transparent;
+
+border:none;
+
+color:var(--text-soft);
+
+font-weight:500;
+
+font-size:13px;
+
+transition:all 0.2s;
+
+}
+
+.bottom-nav button.active{
+
+color:var(--accent);
+
+transform:scale(1.08);
+
+}
 /* =========================================
-ANIMATION
+PART 3 — PREMIUM EFFECTS & ANIMATIONS
+Luxury Micro-Interactions
+========================================= */
+
+
+/* =========================================
+FADE UP ANIMATION
 ========================================= */
 
 @keyframes fadeUp{
 
 from{
 opacity:0;
-transform:translateY(10px);
+transform:translateY(12px);
 }
 
 to{
@@ -306,7 +800,372 @@ transform:translateY(0);
 }
 
 .dashboard-card{
+animation:fadeUp 0.45s ease;
+}
 
-animation:fadeUp 0.4s ease;
+
+/* =========================================
+CARD GLOW EFFECT
+========================================= */
+
+.dashboard-card::before{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+border-radius:inherit;
+
+opacity:0;
+
+background:linear-gradient(
+120deg,
+transparent,
+rgba(255,255,255,0.15),
+transparent
+);
+
+transition:opacity 0.3s;
+
+}
+
+.dashboard-card:hover::before{
+opacity:1;
+}
+
+
+/* =========================================
+BUTTON PRESS ANIMATION
+========================================= */
+
+button:active{
+
+transform:scale(0.96);
+
+}
+
+
+/* =========================================
+SEARCH ITEM HOVER
+========================================= */
+
+.search-item{
+
+transition:
+transform 0.2s,
+background 0.2s,
+box-shadow 0.2s;
+
+}
+
+.search-item:hover{
+
+transform:translateY(-2px);
+
+box-shadow:
+0 10px 25px rgba(0,0,0,0.35);
+
+}
+
+
+/* =========================================
+CART ITEM ANIMATION
+========================================= */
+
+.cart-item{
+
+animation:fadeUp 0.35s ease;
+
+}
+
+
+/* =========================================
+INPUT FOCUS GLOW
+========================================= */
+
+input:focus{
+
+box-shadow:
+0 0 0 2px var(--accent),
+0 0 12px rgba(34,197,94,0.3);
+
+}
+
+
+/* =========================================
+SUCCESS POPUP
+========================================= */
+
+.success-overlay{
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,0.65);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+z-index:999;
+
+}
+
+.success-card{
+
+background:linear-gradient(
+135deg,
+var(--accent),
+var(--accent-dark)
+);
+
+padding:40px;
+
+border-radius:20px;
+
+font-size:22px;
+
+font-weight:700;
+
+text-align:center;
+
+animation:popIn 0.35s ease;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,0.5);
+
+}
+
+@keyframes popIn{
+
+from{
+transform:scale(0.8);
+opacity:0;
+}
+
+to{
+transform:scale(1);
+opacity:1;
+}
+
+}
+
+
+/* =========================================
+MODAL ANIMATION
+========================================= */
+
+.confirm-modal{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,0.55);
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+z-index:9999;
+
+}
+
+.confirm-box{
+
+padding:24px;
+
+width:320px;
+
+text-align:center;
+
+border-radius:18px;
+
+background:var(--glass);
+
+backdrop-filter:blur(20px);
+
+border:1px solid var(--border);
+
+animation:fadeUp 0.3s ease;
+
+}
+
+.confirm-text{
+
+margin-bottom:20px;
+
+font-size:16px;
+
+}
+
+.confirm-buttons{
+
+display:flex;
+
+gap:10px;
+
+justify-content:center;
+
+}
+
+
+/* =========================================
+BOTTOM NAV ICON ANIMATION
+========================================= */
+
+.bottom-nav button{
+
+transition:
+transform 0.2s,
+color 0.2s;
+
+}
+
+.bottom-nav button:hover{
+
+transform:translateY(-2px);
+
+}
+
+
+/* =========================================
+FLOATING HEADER SHADOW
+========================================= */
+
+.app-header{
+
+box-shadow:
+0 8px 30px rgba(0,0,0,0.35);
+
+}
+
+
+/* =========================================
+CHART FADE IN
+========================================= */
+
+.chart-container{
+
+animation:fadeUp 0.5s ease;
+
+}
+
+
+/* =========================================
+LOADING CARD
+========================================= */
+
+.loading-card{
+
+text-align:center;
+
+animation:fadeUp 0.5s ease;
+
+}
+
+
+/* =========================================
+SPINNER GLOW
+========================================= */
+
+.loader{
+
+box-shadow:
+0 0 20px rgba(34,197,94,0.4);
+
+}
+
+
+/* =========================================
+NAVIGATION ACTIVE INDICATOR
+========================================= */
+
+.bottom-nav button.active{
+
+color:var(--accent);
+
+position:relative;
+
+}
+
+.bottom-nav button.active::after{
+
+content:"";
+
+position:absolute;
+
+bottom:-6px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:6px;
+height:6px;
+
+border-radius:50%;
+
+background:var(--accent);
+
+}
+
+
+/* =========================================
+SOFT PAGE TRANSITION
+========================================= */
+
+.page{
+
+animation:fadeUp 0.35s ease;
+
+}
+
+
+/* =========================================
+HOVER LIGHT EFFECT
+========================================= */
+
+.glass:hover{
+
+box-shadow:
+0 15px 40px rgba(0,0,0,0.55);
+
+}
+
+
+/* =========================================
+SUBTLE PULSE (OPTIONAL)
+========================================= */
+
+@keyframes pulseGlow{
+
+0%{
+box-shadow:0 0 0 rgba(34,197,94,0.4);
+}
+
+50%{
+box-shadow:0 0 15px rgba(34,197,94,0.35);
+}
+
+100%{
+box-shadow:0 0 0 rgba(34,197,94,0.4);
+}
+
+}
+
+.btn-primary{
+
+animation:pulseGlow 3s infinite;
 
 }
