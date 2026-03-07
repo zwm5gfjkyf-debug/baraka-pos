@@ -323,18 +323,10 @@ d.items.forEach(i=>{
 totalItems += i.qty
 })
 
-const row = document.createElement("tr")
+const div = document.createElement("div")
 
-row.innerHTML = `
-<td>${item.name}</td>
-<td>${type}</td>
-<td>${item.qty}</td>
-<td>${formatMoney(profit)}</td>
-<td>${day}</td>
-<td>${time}</td>
-`
+div.className = "dashboard-card glass"
 
-container.appendChild(row)
 div.innerHTML = `
 <h3>${d.customer}</h3>
 <p>Mahsulotlar soni: ${totalItems}</p>
@@ -375,7 +367,7 @@ async function loadSalesAnalytics(){
 
 const container = document.getElementById("salesAnalyticsList")
 
-container.innerHTML = "Yuklanmoqda..."
+container.innerHTML = ""
 
 const snapshot = await db
 .collection("shops")
@@ -383,8 +375,6 @@ const snapshot = await db
 .collection("sales")
 .orderBy("createdAt","desc")
 .get()
-
-container.innerHTML = ""
 
 snapshot.forEach(doc=>{
 
@@ -405,31 +395,22 @@ const type = sale.type === "debt_payment" ? "Nasiya" : "Naqd"
 
 sale.items.forEach(item=>{
 
+if(item.name === "Debt payment") return
+
 const profit = (item.price - item.cost) * item.qty
 
-const div = document.createElement("div")
+const row = document.createElement("tr")
 
-div.className = "dashboard-card glass"
-
-div.innerHTML = `
-
-<h3>${item.name}</h3>
-
-<p>Turi: ${type}</p>
-
-<p>Soni: ${item.qty}</p>
-
-<p>Narx: ${formatMoney(item.price)}</p>
-
-<p>Foyda: ${formatMoney(profit)}</p>
-
-<p>Sana: ${day}</p>
-
-<p>Vaqt: ${time}</p>
-
+row.innerHTML = `
+<td>${item.name}</td>
+<td>${type}</td>
+<td>${item.qty}</td>
+<td>${formatMoney(profit)}</td>
+<td>${day}</td>
+<td>${time}</td>
 `
 
-container.appendChild(div)
+container.appendChild(row)
 
 })
 
