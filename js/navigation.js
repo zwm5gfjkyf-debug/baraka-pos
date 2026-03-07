@@ -33,3 +33,6 @@ function navigate(pageId){
 
   if(pageId === "analyticsPage") loadAnalytics();
 }
+if(page === "analyticsPage"){
+loadWeeklyAnalytics()
+}
