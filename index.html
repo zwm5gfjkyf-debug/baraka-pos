@@ -282,20 +282,34 @@ Qo'shish
 
 <h2 class="page-title">Tahlil</h2>
 
-<div class="chart-container glass">
+<div class="dashboard-grid">
 
-<canvas id="weeklyChart"></canvas>
+<div class="dashboard-card glass">
+<div class="card-title">Haftalik tushum</div>
+<div id="weekRevenue" class="dashboard-amount">0</div>
+</div>
+
+<div class="dashboard-card glass">
+<div class="card-title">Haftada sotilgan mahsulotlar</div>
+<div id="weekItems" class="dashboard-amount">0</div>
+</div>
+
+<div class="dashboard-card glass">
+<div class="card-title">Haftalik foyda</div>
+<div id="weekProfit" class="dashboard-amount">0</div>
+</div>
 
 </div>
 
-<div class="chart-container glass">
+<div class="chart-container glass big-chart">
 
-<canvas id="monthlyChart"></canvas>
+<h3 class="chart-title">Haftalik savdo grafigi</h3>
+
+<canvas id="weeklySalesChart"></canvas>
 
 </div>
 
 </div>
-
 
 </main>
 
