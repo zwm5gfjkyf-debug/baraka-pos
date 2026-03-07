@@ -116,17 +116,17 @@ ${p.name}
 <div class="stock-divider"></div>
 
 <div class="stock-row">
-<span>Stock</span>
+<span>Miqdor</span>
 <span>${p.stock || 0}</span>
 </div>
 
 <div class="stock-row">
-<span>Cost</span>
+<span>Kelgan narxi</span>
 <span>${formatMoney(p.cost || 0)}</span>
 </div>
 
 <div class="stock-row">
-<span>Price</span>
+<span>Sotish narxi</span>
 <span>${formatMoney(p.price || 0)}</span>
 </div>
 
@@ -135,11 +135,12 @@ ${p.name}
 <div class="stock-actions">
 
 <button onclick="editProductPrompt('${doc.id}')">
-Edit
+Tahrirlash
+
 </button>
 
 <button onclick="deleteProduct('${doc.id}')" class="danger-btn">
-Delete
+O'chirish
 </button>
 
 </div>
@@ -199,12 +200,12 @@ showSuccess("Mahsulot o'chirildi")
 })
 
 }
-function editProductPrompt(id){
+async function editProductPrompt(id){
 
-const newStock = prompt("New stock quantity")
+const value = window.prompt("Yangi miqdor")
 
-if(newStock === null) return
+if(!value) return
 
-editProduct(id,"stock",Number(newStock))
+await editProduct(id,"stock",Number(value))
 
 }
