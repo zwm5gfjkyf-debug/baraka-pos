@@ -163,10 +163,16 @@ div.innerHTML = `
 
 </div>
 
+<input
+type="number"
+value="${item.price}"
+class="price-input"
+onchange="changePrice('${item.id}', this.value)"
+>
+
 <strong>${formatMoney(itemTotal)} so'm</strong>
 
 `
-
 list.appendChild(div)
 
 })
@@ -177,7 +183,11 @@ document.getElementById("saleTotal").innerText = formatMoney(total)
 
 function clearSearch(){
 
-document.getElementById("searchInput").value = ""
+const input = document.getElementById("saleSearch")
+
+if(input){
+input.value = ""
+}
 
 document.getElementById("searchResults").innerHTML = ""
 
@@ -326,6 +336,17 @@ await batch.commit()
 // CHANGE PRICE
 // =======================================
 
+function changePrice(id,newPrice){
+
+const item = cart.find(i => i.id === id)
+
+if(!item) return
+
+item.price = Number(newPrice)
+
+renderCart()
+
+}
 function changePrice(id,newPrice){
 
 const item = cart.find(i => i.id === id)
