@@ -9,6 +9,12 @@ async function loadWeeklyAnalytics(){
 
 if(!currentShopId) return
 
+const now = new Date()
+
+const weekStart = new Date()
+weekStart.setHours(0,0,0,0)
+weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+
 const salesRef = db
 .collection("shops")
 .doc(currentShopId)
@@ -146,13 +152,17 @@ async function loadMonthlyAnalytics(){
 
 if(!currentShopId) return
 
+const now = new Date()
+
+const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
 const salesRef = db
 .collection("shops")
 .doc(currentShopId)
 .collection("sales")
 
 const snapshot = await salesRef
-.where("createdAt",">=",new Date(now.getFullYear(), now.getMonth(), 1))
+.where("createdAt",">=",startOfMonth)
 .get()
    
 let monthRevenue = 0
