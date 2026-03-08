@@ -295,7 +295,9 @@ btn.disabled = false
 
 async function updateStockAfterSale(items){
 
-for(const item of items){
+const batch = db.batch()
+
+items.forEach(item => {
 
 const ref = db
 .collection("shops")
@@ -303,27 +305,25 @@ const ref = db
 .collection("products")
 .doc(item.id)
 
-await db.runTransaction(async t => {
+const product = productCache.find(p => p.id === item.id)
 
-const doc = await t.get(ref)
+if(product){
 
-const stock = doc.data().stock || 0
+const newStock = (product.stock || 0) - item.qty
 
-if(stock < item.qty){
-showToast("Zaxirada yetarli mahsulot yo'q")
-throw new Error("Stock not enough")
-}
-
-t.update(ref,{
-stock: stock - item.qty
+batch.update(ref,{
+stock: newStock
 })
 
+product.stock = newStock
+
+}
+
 })
 
-}
+await batch.commit()
 
 }
-
 
 
 // =======================================
