@@ -155,22 +155,13 @@ div.innerHTML = `
 
 <div class="quantity-controls">
 
-<button class="qty-btn"
-onclick="decreaseQty('${item.id}')">-</button>
+<button onclick="decreaseQty('${item.id}')">-</button>
 
 <span>${item.qty}</span>
 
-<button class="qty-btn"
-onclick="increaseQty('${item.id}')">+</button>
+<button onclick="increaseQty('${item.id}')">+</button>
 
 </div>
-
-<input
-type="number"
-value="${item.price}"
-class="price-input"
-onchange="changePrice('${item.id}', this.value)"
->
 
 <strong>${formatMoney(itemTotal)} so'm</strong>
 
@@ -184,8 +175,13 @@ document.getElementById("saleTotal").innerText = formatMoney(total)
 
 }
 
+function clearSearch(){
 
+document.getElementById("searchInput").value = ""
 
+document.getElementById("searchResults").innerHTML = ""
+
+}
 // =======================================
 // QUANTITY CONTROL
 // =======================================
