@@ -348,55 +348,56 @@ debtProcessing = false
 // LOAD DEBT CUSTOMERS
 // ===============================
 
-function loadDebtCustomers(){
-
-if(!currentShopId) return
-
-db.collection("shops")
-.doc(currentShopId)
-.collection("debts")
-.onSnapshot(snapshot => {
+async function loadDebtCustomers(){
 
 const container = document.getElementById("debtCustomersList")
 
 container.innerHTML = ""
 
-snapshot.forEach(doc => {
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("debts")
+.get()
+
+const customers = {}
+
+snapshot.forEach(doc=>{
 
 const d = doc.data()
+
+// ignore fully paid debts
+if(d.remaining <= 0) return
+
+// create customer entry if not exists
+if(!customers[d.customer]){
+customers[d.customer] = 0
+}
+
+// add remaining debt
+customers[d.customer] += d.remaining
+
+})
+
+Object.entries(customers).forEach(([name, remaining])=>{
 
 const div = document.createElement("div")
 
 div.className = "debt-item"
 
 div.innerHTML = `
+<strong>${name}</strong>
+<p>Qolgan: ${formatMoney(remaining)}</p>
 
-<b>${d.customer}</b>
-
-<div>
-Qolgan: ${formatMoney(d.remaining)}
-</div>
-
-<input
-type="number"
-id="pay_${doc.id}"
-placeholder="To'lov"
->
-
-<button onclick="payDebt('${doc.id}', this)">
-To'lash
-</button>
-
+<input placeholder="To'lov" id="pay-${name}">
+<button onclick="payDebt('${name}')">To'lash</button>
 `
 
 container.appendChild(div)
 
 })
 
-})
-
 }
-
 
 // ===============================
 // PAY DEBT
