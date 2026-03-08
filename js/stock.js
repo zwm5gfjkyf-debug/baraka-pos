@@ -133,7 +133,7 @@ ${p.name}
 
 <div class="stock-actions">
 
-<button onclick="editProduct('${doc.id}','stock', prompt('Yangi miqdor'))">
+<button onclick="openEditModal('${doc.id}')">
 Tahrirlash
 </button>
 
@@ -154,7 +154,46 @@ O'chirish
 
 }
 
+let editingProductId = null
 
+function openEditModal(id){
+
+editingProductId = id
+
+document.getElementById("editModal").classList.remove("hidden")
+
+}
+
+function closeEditModal(){
+
+document.getElementById("editModal").classList.add("hidden")
+
+}
+
+async function saveProductEdit(){
+
+const qty = Number(document.getElementById("editQty").value)
+const cost = Number(document.getElementById("editCost").value)
+const price = Number(document.getElementById("editPrice").value)
+
+await db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.doc(editingProductId)
+.update({
+
+stock: qty,
+cost: cost,
+price: price
+
+})
+
+closeEditModal()
+
+showSuccess("Mahsulot yangilandi")
+
+}
 // ===============================
 // EDIT PRODUCT
 // ===============================
