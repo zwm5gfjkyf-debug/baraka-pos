@@ -374,9 +374,14 @@ totalSell += stock * price
 
 const potentialProfit = totalSell - totalCost
 
-document.getElementById("inventoryCost").innerText = formatMoney(totalCost)
-document.getElementById("inventorySell").innerText = formatMoney(totalSell)
-document.getElementById("inventoryProfit").innerText = formatMoney(potentialProfit)
+document.getElementById("inventoryCost").innerText =
+formatMoney(totalCost) + " so'm"
+
+document.getElementById("inventorySell").innerText =
+formatMoney(totalSell) + " so'm"
+
+document.getElementById("inventoryProfit").innerText =
+formatMoney(potentialProfit) + " so'm"
 
 }
 // ===============================
