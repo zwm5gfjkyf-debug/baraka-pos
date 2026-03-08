@@ -242,7 +242,16 @@ const debtsRef = db
 .collection("shops")
 .doc(currentShopId)
 .collection("debts")
-
+await db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+.add({
+items: debtCart,
+total: total,
+type: "debt",
+createdAt: new Date()
+})
 const existing = await debtsRef
 .where("customer","==",customer)
 .where("status","in",["unpaid","partial"])
