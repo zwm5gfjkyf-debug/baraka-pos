@@ -22,8 +22,9 @@ let weekProfit = 0
 
 const now = new Date()
 
-const weekStart = new Date(now)
-weekStart.setDate(now.getDate() - now.getDay())
+const weekStart = new Date()
+weekStart.setHours(0,0,0,0)
+weekStart.setDate(weekStart.getDate() - weekStart.getDay())
 
 const days = ["Yak","Dush","Sesh","Chor","Pay","Jum","Shan"]
 
@@ -43,8 +44,7 @@ date = new Date(sale.createdAt)
 
 if(date >= weekStart){
 
-weekRevenue += sale.total
-
+weekRevenue += sale.total || 0
 const day = date.getDay()
 
 chartTotals[day] += sale.total
