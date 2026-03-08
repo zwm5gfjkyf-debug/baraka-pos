@@ -65,8 +65,6 @@ weekProfit += (price-cost)*qty
 
 }
 
-}
-
 })
 
 document.getElementById("weekRevenue").innerText = formatMoney(weekRevenue)
@@ -437,6 +435,8 @@ const time = date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
 if(sale.type === "debt_payment") return
 
 const type = sale.type === "debt" ? "Nasiya" : "Naqd"
+
+if(!sale.items) return
 
 sale.items.forEach(item=>{
 const profit = (item.price - item.cost) * item.qty
