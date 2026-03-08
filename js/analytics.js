@@ -385,30 +385,6 @@ container.appendChild(div)
 })
 
 }
-const d = doc.data()
-
-let totalItems = 0
-
-d.items.forEach(i=>{
-totalItems += i.qty
-})
-
-const div = document.createElement("div")
-
-div.className = "dashboard-card glass"
-
-div.innerHTML = `
-<h3>${d.customer}</h3>
-<p>Mahsulotlar soni: ${totalItems}</p>
-<p>Jami nasiya: ${formatMoney(d.total)}</p>
-<p>Qolgan qarz: ${formatMoney(d.remaining)}</p>
-`
-
-container.appendChild(div)
-
-})
-
-}
 function openDebtAnalytics(){
 
 document.querySelectorAll(".page").forEach(p=>{
