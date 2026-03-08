@@ -352,14 +352,12 @@ async function loadDebtCustomers(){
 
 const container = document.getElementById("debtCustomersList")
 
-container.innerHTML = ""
-
-const snapshot = await db
+db
 .collection("shops")
 .doc(currentShopId)
 .collection("debts")
-.get()
-
+.onSnapshot(snapshot=>{
+container.innerHTML = ""
 const customers = {}
 
 snapshot.forEach(doc=>{
@@ -400,7 +398,7 @@ To'lash
 container.appendChild(div)
 
 })
-
+})
 }
 // ===============================
 // PAY DEBT
@@ -486,7 +484,6 @@ showSuccess("To'lov qabul qilindi")
 
 input.value = ""
 
-loadDebtCustomers()
 
 }
 catch(e){
