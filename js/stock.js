@@ -34,7 +34,7 @@ const productsRef = db
 
 // check if product exists
 const existing = await productsRef
-.where("name","==",name.toLowerCase())
+.where("name","==",name)
 .limit(1)
 .get()
 
@@ -69,8 +69,6 @@ document.getElementById("stockCost").value = ""
 document.getElementById("stockSellingPrice").value = ""
 
 showSuccess("Zaxira yangilandi")
-
-loadCurrentStock()
 
 }
 finally{
