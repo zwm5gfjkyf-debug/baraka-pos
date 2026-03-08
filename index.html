@@ -354,6 +354,9 @@ Nasiya tahlil
 <button class="btn-secondary" onclick="openSalesAnalytics()" style="margin-top:10px;width:100%">
 Umumiy savdo tahlil
 </button>
+  <button class="btn-primary" onclick="openShopAnalytics()" style="margin-top:10px;width:100%">
+Do'kon tahlili
+</button>
 </div> <!-- analyticsPage ends -->
 
 <!-- DEBT ANALYTICS PAGE -->
@@ -405,7 +408,27 @@ style="margin:15px 0;width:100%"
 
 </div>
 </main>
+<!-- SHOP ANALYTICS PAGE -->
+<div id="shopAnalyticsPage" class="page hidden">
 
+<h2 class="page-title">Do'kon tahlili</h2>
+
+<div class="dashboard-card glass">
+<div class="card-title">Ombordagi qiymat</div>
+<div id="inventoryCost" class="dashboard-amount">0</div>
+</div>
+
+<div class="dashboard-card glass">
+<div class="card-title">Sotish qiymati</div>
+<div id="inventorySell" class="dashboard-amount">0</div>
+</div>
+
+<div class="dashboard-card glass">
+<div class="card-title">Potential profit</div>
+<div id="inventoryProfit" class="dashboard-amount">0</div>
+</div>
+
+</div>
 
 <!-- NAVIGATION -->
 
