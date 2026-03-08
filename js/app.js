@@ -73,10 +73,9 @@ const debtsRef = db
 .doc(currentShopId)
 .collection("debts")
 
-// REALTIME LISTENER
-salesRef.onSnapshot(async salesSnapshot => {
+salesRef.onSnapshot(salesSnapshot => {
 
-const debtsSnapshot = await debtsRef.get()
+debtsRef.get().then(debtsSnapshot => {
 
 let todayRevenue = 0
 let todayItems = 0
@@ -99,8 +98,6 @@ let runningTotal = 0
 chartLabels.push("0")
 chartValues.push(0)
 
-
-// SALES
 const sales = []
 
 salesSnapshot.forEach(doc=>{
@@ -121,7 +118,6 @@ return aTime-bTime
 
 })
 
-
 sales.forEach(sale=>{
 
 let date
@@ -132,13 +128,13 @@ date = new Date(sale.createdAt.seconds*1000)
 date = new Date(sale.createdAt)
 }
 
-if(date >= todayStart){
+if(date>=todayStart){
 
-todayRevenue += sale.total || 0
+todayRevenue+=sale.total
 
-runningTotal += sale.total || 0
+runningTotal+=sale.total
 
-const time = date.toLocaleTimeString([],{
+const time = date.toLocaleTimeString([], {
 hour:'2-digit',
 minute:'2-digit'
 })
@@ -150,12 +146,12 @@ if(sale.items){
 
 sale.items.forEach(item=>{
 
-const qty = item.qty || 0
-const price = item.price || 0
-const cost = item.cost || 0
+const qty=item.qty||0
+const price=item.price||0
+const cost=item.cost||0
 
-todayItems += qty
-todayProfit += (price - cost) * qty
+todayItems+=qty
+todayProfit+=(price-cost)*qty
 
 })
 
@@ -165,9 +161,7 @@ todayProfit += (price - cost) * qty
 
 })
 
-
-// DEBTS
-debtsSnapshot.forEach(doc=>{
+debtsSnapshot.forEach(doc => {
 
 const debt = doc.data()
 
@@ -176,25 +170,25 @@ if(debt.created){
 const date = new Date(debt.created)
 
 if(date >= todayStart){
+
 todayDebt += debt.total || 0
+
 }
 
 }
 
 })
 
-
-// UPDATE UI
 document.getElementById("todayRevenue").innerText = formatMoney(todayRevenue)
 document.getElementById("todayItems").innerText = todayItems
 document.getElementById("todayProfit").innerText = formatMoney(todayProfit)
 document.getElementById("todayDebt").innerText = formatMoney(todayDebt)
 
-
-// RENDER CHART
 renderTodaySalesChart({
 labels: chartLabels,
 values: chartValues
+})
+
 })
 
 })
