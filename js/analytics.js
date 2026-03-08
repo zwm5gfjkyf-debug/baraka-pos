@@ -301,10 +301,7 @@ sale.items.forEach(item=>{
 
 const profit = (item.price - item.cost) * item.qty
 
-   const profitPercent = item.cost
-? ((item.price - item.cost) / item.cost) * 100
-: 0
-   const percentColor = profitPercent >= 0 ? "#22c55e" : "#ef4444"
+   
 if(!stats[item.name]){
 stats[item.name] = 0
 }
@@ -448,7 +445,14 @@ const type = sale.type === "debt" ? "Nasiya" : "Naqd"
 if(!sale.items) return
 
 sale.items.forEach(item=>{
+
 const profit = (item.price - item.cost) * item.qty
+
+const profitPercent = item.cost
+? ((item.price - item.cost) / item.cost) * 100
+: 0
+
+const percentColor = profitPercent >= 0 ? "#22c55e" : "#ef4444"
 
 const row = document.createElement("tr")
 
@@ -469,7 +473,6 @@ ${profitPercent.toFixed(0)}%
 container.appendChild(row)
 
 })
-
 })
 
 }
