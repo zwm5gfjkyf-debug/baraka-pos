@@ -34,7 +34,8 @@ const productsRef = db
 
 // check if product exists
 const existing = await productsRef
-.where("name","==",name)
+.where("name","==",name.toLowerCase())
+.limit(1)
 .get()
 
 if(existing.empty){
