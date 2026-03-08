@@ -60,21 +60,31 @@
 
 <!-- AUTH -->
 
-<div id="authScreen" class="center-screen hidden">
+<div id="authScreen" class="auth-container">
 
-<div class="auth-container">
+<div class="auth-card">
 
-<div class="auth-card glass">
+<h1 class="auth-title">Baraka POS</h1>
+<p class="auth-subtitle">Biznesingiz uchun zamonaviy POS</p>
 
-<h1>Baraka POS</h1>
+<input
+id="shopName"
+class="auth-input"
+placeholder="Do'kon nomi"
+/>
 
-<p class="auth-sub">Biznesingiz uchun zamonaviy POS</p>
+<input
+id="email"
+class="auth-input"
+placeholder="Email"
+/>
 
-<input id="shopName" placeholder="Do'kon nomi">
-
-<input id="email" placeholder="Email">
-
-<input id="password" type="password" placeholder="Parol">
+<input
+type="password"
+id="password"
+class="auth-input"
+placeholder="Parol"
+/>
 
 <button class="btn-primary" onclick="register()">
 Ro'yxatdan o'tish
@@ -83,8 +93,6 @@ Ro'yxatdan o'tish
 <button class="btn-secondary" onclick="login()">
 Kirish
 </button>
-
-</div>
 
 </div>
 
