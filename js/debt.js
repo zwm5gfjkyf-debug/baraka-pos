@@ -386,11 +386,14 @@ const div = document.createElement("div")
 div.className = "debt-item"
 
 div.innerHTML = `
-<strong>${name}</strong>
-<p>Qolgan: ${formatMoney(remaining)}</p>
+<strong>${d.customer}</strong>
+<p>Qolgan: ${formatMoney(d.remaining)}</p>
 
-<input placeholder="To'lov" id="pay-${name}">
-<button onclick="payDebt('${name}')">To'lash</button>
+<input id="pay_${doc.id}" placeholder="To'lov">
+
+<button onclick="payDebt('${doc.id}', this)">
+To'lash
+</button>
 `
 
 container.appendChild(div)
