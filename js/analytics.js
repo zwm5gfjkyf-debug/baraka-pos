@@ -374,11 +374,16 @@ const div = document.createElement("div")
 
 div.className = "dashboard-card glass"
 
+const status = d.remaining <= 0 
+? "To'langan ✅"
+: "Qarzdor ⏳"
+
 div.innerHTML = `
 <h3>${d.customer}</h3>
 <p>Mahsulotlar soni: ${totalItems}</p>
 <p>Jami nasiya: ${formatMoney(d.total)}</p>
 <p>Qolgan qarz: ${formatMoney(d.remaining)}</p>
+<p>Status: ${status}</p>
 `
 
 container.appendChild(div)
