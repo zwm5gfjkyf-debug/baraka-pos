@@ -34,10 +34,10 @@ auth.onAuthStateChanged(user => {
             emailBox.innerText = user.email
         }
 
-        loadProducts()
-        loadDashboard()
-        syncOfflineSales()
-
+loadProducts()
+loadDashboard()
+loadLowStock()
+syncOfflineSales()
     }
     else{
 
