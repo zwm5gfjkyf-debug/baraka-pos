@@ -343,11 +343,14 @@ async function loadDebtAnalytics(){
 const container = document.querySelector("#debtAnalyticsPage #debtAnalyticsList")
 
 container.innerHTML = "Yuklanmoqda..."
+
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
 .collection("debts")
 .get()
+
+container.innerHTML = ""
 
 if(snapshot.empty){
 container.innerHTML = "Nasiya mavjud emas"
@@ -356,6 +359,32 @@ return
 
 snapshot.forEach(doc => {
 
+const d = doc.data()
+
+let totalItems = 0
+
+if(d.items){
+d.items.forEach(i=>{
+totalItems += i.qty || 0
+})
+}
+
+const div = document.createElement("div")
+
+div.className = "dashboard-card glass"
+
+div.innerHTML = `
+<h3>${d.customer}</h3>
+<p>Mahsulotlar soni: ${totalItems}</p>
+<p>Jami nasiya: ${formatMoney(d.total)}</p>
+<p>Qolgan qarz: ${formatMoney(d.remaining)}</p>
+`
+
+container.appendChild(div)
+
+})
+
+}
 const d = doc.data()
 
 let totalItems = 0
@@ -408,8 +437,8 @@ async function loadSalesAnalytics(){
 
 const container = document.getElementById("salesAnalyticsList")
 
-container.innerHTML = "Yuklanmoqda..."
-const snapshot = await db
+container.innerHTML = ""
+   const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
 .collection("sales")
