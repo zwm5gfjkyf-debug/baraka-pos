@@ -28,9 +28,6 @@ let weekRevenue = 0
 let weekItems = 0
 let weekProfit = 0
 
-const weekStart = new Date()
-weekStart.setHours(0,0,0,0)
-weekStart.setDate(weekStart.getDate() - weekStart.getDay())
 
 const days = ["Yak","Dush","Sesh","Chor","Pay","Jum","Shan"]
 
@@ -186,8 +183,6 @@ date = new Date(sale.createdAt)
 const month = date.getMonth()
 
 chartTotals[month] += sale.total || 0
-
-const now = new Date()
 
 if(
 date.getMonth() === now.getMonth() &&
