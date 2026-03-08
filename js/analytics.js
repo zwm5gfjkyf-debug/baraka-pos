@@ -336,6 +336,49 @@ container.appendChild(div)
 })
 
 }
+function openShopAnalytics(){
+
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.add("hidden")
+})
+
+document.getElementById("shopAnalyticsPage")
+.classList.remove("hidden")
+
+loadShopAnalytics()
+
+}
+async function loadShopAnalytics(){
+
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.get()
+
+let totalCost = 0
+let totalSell = 0
+
+snapshot.forEach(doc=>{
+
+const p = doc.data()
+
+const stock = p.stock || 0
+const cost = p.cost || 0
+const price = p.price || 0
+
+totalCost += stock * cost
+totalSell += stock * price
+
+})
+
+const potentialProfit = totalSell - totalCost
+
+document.getElementById("inventoryCost").innerText = formatMoney(totalCost)
+document.getElementById("inventorySell").innerText = formatMoney(totalSell)
+document.getElementById("inventoryProfit").innerText = formatMoney(potentialProfit)
+
+}
 // ===============================
 // LOAD ANALYTICS
 // ===============================
