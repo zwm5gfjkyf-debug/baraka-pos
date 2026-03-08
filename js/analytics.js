@@ -790,3 +790,45 @@ card.style.display = "none"
 })
 
 }
+function loadLowStock(){
+
+const container = document.getElementById("lowStockList")
+
+if(!container) return
+
+db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.where("stock","<=",5)
+.onSnapshot(snapshot=>{
+
+container.innerHTML = ""
+
+if(snapshot.empty){
+container.innerHTML = "Hammasi yetarli"
+return
+}
+
+snapshot.forEach(doc=>{
+
+const p = doc.data()
+
+const div = document.createElement("div")
+
+div.style.display = "flex"
+div.style.justifyContent = "space-between"
+div.style.padding = "6px 0"
+
+div.innerHTML = `
+<span>${p.name}</span>
+<strong style="color:#ef4444">${p.stock} ta qoldi</strong>
+`
+
+container.appendChild(div)
+
+})
+
+})
+
+}
