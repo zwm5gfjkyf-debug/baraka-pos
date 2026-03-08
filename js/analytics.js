@@ -343,7 +343,7 @@ async function loadDebtAnalytics(){
 
 const container = document.querySelector("#debtAnalyticsPage #debtAnalyticsList")
 
-container.innerHTML = "Yuklanmoqda..."
+container.innerHTML = ""
 
 const snapshot = await db
 .collection("shops")
@@ -351,38 +351,57 @@ const snapshot = await db
 .collection("debts")
 .get()
 
-container.innerHTML = ""
-
 if(snapshot.empty){
 container.innerHTML = "Nasiya mavjud emas"
 return
 }
 
-snapshot.forEach(doc => {
+const customers = {}
+
+snapshot.forEach(doc=>{
 
 const d = doc.data()
 
-let totalItems = 0
+if(!customers[d.customer]){
+
+customers[d.customer] = {
+items:0,
+total:0,
+remaining:0
+}
+
+}
+
+let itemCount = 0
 
 if(d.items){
 d.items.forEach(i=>{
-totalItems += i.qty || 0
+itemCount += i.qty || 0
 })
 }
+
+customers[d.customer].items += itemCount
+customers[d.customer].total += d.total || 0
+customers[d.customer].remaining += d.remaining || 0
+
+})
+
+Object.entries(customers).forEach(([name,data])=>{
+const paid = data.total - data.remaining
+const status = data.remaining <= 0
+? "To'langan ✅"
+: "Qarzdor ⏳"
 
 const div = document.createElement("div")
 
 div.className = "dashboard-card glass"
 
-const status = d.remaining <= 0 
-? "To'langan ✅"
-: "Qarzdor ⏳"
-
 div.innerHTML = `
-<h3>${d.customer}</h3>
-<p>Mahsulotlar soni: ${totalItems}</p>
-<p>Jami nasiya: ${formatMoney(d.total)}</p>
-<p>Qolgan qarz: ${formatMoney(d.remaining)}</p>
+<h3>${name}</h3>
+<p>Mahsulotlar soni: ${data.items}</p>
+<p>Jami nasiya: ${formatMoney(data.total)}</p>
+<p>To'langan: ${formatMoney(paid)}</p>
+<p>Qolgan qarz: ${formatMoney(data.remaining)}</p>
 <p>Status: ${status}</p>
 `
 
