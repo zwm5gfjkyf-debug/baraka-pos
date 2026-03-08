@@ -107,9 +107,13 @@ const list = document.getElementById("debtCartList")
 
 list.innerHTML = ""
 
+let total = 0
+
 debtCart.forEach(item => {
 
-const total = item.price * item.qty
+const itemTotal = item.price * item.qty
+
+total += itemTotal
 
 const div = document.createElement("div")
 
@@ -119,11 +123,11 @@ div.innerHTML = `
 
 <b>${item.name}</b>
 
-<div>
+<div class="quantity-controls">
 
 <button onclick="decreaseDebtQty('${item.id}')">-</button>
 
-${item.qty}
+<span>${item.qty}</span>
 
 <button onclick="increaseDebtQty('${item.id}')">+</button>
 
@@ -133,10 +137,10 @@ ${item.qty}
 type="number"
 value="${item.price}"
 class="price-input"
-onchange="changeDebtPrice('${item.id}',this.value)"
+onchange="changeDebtPrice('${item.id}', this.value)"
 >
 
-<strong>${formatMoney(total)}</strong>
+<strong>${formatMoney(itemTotal)} so'm</strong>
 
 `
 
@@ -144,8 +148,9 @@ list.appendChild(div)
 
 })
 
-}
+document.getElementById("debtTotal").innerText = formatMoney(total)
 
+}
 
 // ===============================
 // QTY CONTROLS
@@ -191,7 +196,17 @@ renderDebtCart()
 
 }
 
+function changeDebtPrice(id,newPrice){
 
+const item = debtCart.find(i => i.id === id)
+
+if(!item) return
+
+item.price = Number(newPrice)
+
+renderDebtCart()
+
+}
 // ===============================
 // COMPLETE DEBT SALE
 // ===============================
@@ -516,5 +531,16 @@ if(!item) return
 item.price = Number(newPrice)
 
 renderDebtCart()
+
+}
+function clearDebtSearch(){
+
+const input = document.getElementById("debtSearch")
+
+if(input){
+input.value = ""
+}
+
+document.getElementById("debtSearchResults").innerHTML = ""
 
 }
