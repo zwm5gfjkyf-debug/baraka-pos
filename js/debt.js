@@ -483,13 +483,20 @@ showSuccess("To'lov qabul qilindi")
 
 input.value = ""
 
-}
+loadDebtCustomers()
 
+}
+catch(e){
+
+console.error(e)
+showToast("Xatolik yuz berdi")
+
+}
 finally{
 
-debtPaymentProcessing = false
 btn.innerText = "To'lash"
 btn.disabled = false
+debtPaymentProcessing = false
 
 }
 
