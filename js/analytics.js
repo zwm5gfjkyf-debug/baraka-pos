@@ -301,6 +301,10 @@ sale.items.forEach(item=>{
 
 const profit = (item.price - item.cost) * item.qty
 
+   const profitPercent = item.cost
+? ((item.price - item.cost) / item.cost) * 100
+: 0
+   const percentColor = profitPercent >= 0 ? "#22c55e" : "#ef4444"
 if(!stats[item.name]){
 stats[item.name] = 0
 }
@@ -453,6 +457,11 @@ row.innerHTML = `
 <td>${type}</td>
 <td>${item.qty}</td>
 <td>${formatMoney(profit)}</td>
+
+<td style="color:${percentColor};font-weight:600">
+${profitPercent.toFixed(0)}%
+</td>
+
 <td>${day}</td>
 <td>${time}</td>
 `
