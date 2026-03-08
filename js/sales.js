@@ -67,19 +67,11 @@ if(!text) return
 
 const query = text.toLowerCase()
 
-const snapshot = await db
-.collection("shops")
-.doc(currentShopId)
-.collection("products")
-.orderBy("name")
-.startAt(query)
-.endAt(query + "\uf8ff")
-.limit(20)
-.get()
+const filtered = productCache
+.filter(p => p.name.toLowerCase().startsWith(query))
+.slice(0,20)
 
-snapshot.forEach(doc => {
-
-const p = doc.data()
+filtered.forEach(p => {
 
 const div = document.createElement("div")
 div.className = "search-item"
@@ -89,17 +81,13 @@ div.innerHTML = `
 <strong>${formatMoney(p.price)}</strong>
 `
 
-div.onclick = () => addToCart({
-id: doc.id,
-...p
-})
+div.onclick = () => addToCart(p)
 
 resultsBox.appendChild(div)
 
 })
 
 }
-
 
 
 // =======================================
