@@ -369,29 +369,30 @@ const d = doc.data()
 // ignore fully paid debts
 if(d.remaining <= 0) return
 
-// create customer entry if not exists
 if(!customers[d.customer]){
-customers[d.customer] = 0
+customers[d.customer] = {
+remaining:0,
+docId:doc.id
+}
 }
 
-// add remaining debt
-customers[d.customer] += d.remaining
+customers[d.customer].remaining += d.remaining
 
 })
 
-Object.entries(customers).forEach(([name, remaining])=>{
+Object.entries(customers).forEach(([name,data])=>{
 
 const div = document.createElement("div")
 
 div.className = "debt-item"
 
 div.innerHTML = `
-<strong>${d.customer}</strong>
-<p>Qolgan: ${formatMoney(d.remaining)}</p>
+<strong>${name}</strong>
+<p>Qolgan: ${formatMoney(data.remaining)}</p>
 
-<input id="pay_${doc.id}" placeholder="To'lov">
+<input id="pay_${data.docId}" placeholder="To'lov">
 
-<button onclick="payDebt('${doc.id}', this)">
+<button onclick="payDebt('${data.docId}', this)">
 To'lash
 </button>
 `
@@ -401,7 +402,6 @@ container.appendChild(div)
 })
 
 }
-
 // ===============================
 // PAY DEBT
 // ===============================
