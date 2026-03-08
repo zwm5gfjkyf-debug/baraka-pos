@@ -15,44 +15,44 @@ let cart = []
 
 async function loadProducts(){
 
-    if(!currentShopId) return
+if(!currentShopId) return
 
-    const snapshot = await db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("products")
-        .get()
+db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.onSnapshot(snapshot => {
 
-    productCache = []
-    productIndex = {}
+productCache = []
+productIndex = {}
 
-    snapshot.forEach(doc => {
+snapshot.forEach(doc => {
 
-        const data = doc.data()
+const data = doc.data()
 
-        const product = {
-            id: doc.id,
-            name: data.name || "",
-            price: data.price || 0,
-            cost: data.cost || 0,
-            stock: data.stock || 0
-        }
-
-        productCache.push(product)
-
-        const key = product.name.toLowerCase()
-
-        if(!productIndex[key]){
-            productIndex[key] = []
-        }
-
-        productIndex[key].push(product)
-
-    })
-
+const product = {
+id: doc.id,
+name: data.name || "",
+price: data.price || 0,
+cost: data.cost || 0,
+stock: data.stock || 0
 }
 
+productCache.push(product)
 
+const key = product.name.toLowerCase()
+
+if(!productIndex[key]){
+productIndex[key] = []
+}
+
+productIndex[key].push(product)
+
+})
+
+})
+
+}
 
 // =======================================
 // ULTRA FAST SEARCH
