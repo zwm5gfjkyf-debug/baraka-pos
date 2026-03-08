@@ -14,8 +14,10 @@ const salesRef = db
 .doc(currentShopId)
 .collection("sales")
 
-const snapshot = await salesRef.get()
-
+const snapshot = await salesRef
+.where("createdAt",">=",weekStart)
+.get()
+   
 let weekRevenue = 0
 let weekItems = 0
 let weekProfit = 0
@@ -149,8 +151,10 @@ const salesRef = db
 .doc(currentShopId)
 .collection("sales")
 
-const snapshot = await salesRef.get()
-
+const snapshot = await salesRef
+.where("createdAt",">=",new Date(now.getFullYear(), now.getMonth(), 1))
+.get()
+   
 let monthRevenue = 0
 let monthItems = 0
 let monthProfit = 0
