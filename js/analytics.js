@@ -49,7 +49,8 @@ const day = date.getDay()
 
 chartTotals[day] += sale.total
 
-if(sale.items){
+
+if(!sale.items) return
 
 sale.items.forEach(item=>{
 
@@ -281,8 +282,7 @@ async function loadTopProducts(){
 
 const container = document.getElementById("topProductsList")
 
-container.innerHTML = "Yuklanmoqda..."
-
+container.innerHTML = ""
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
@@ -297,9 +297,9 @@ const sale = doc.data()
 
 if(!sale.items) return
 
-sale.items.forEach(item=>{
+if(sale.type === "debt_payment") return
 
-if(item.name === "Debt payment") return
+sale.items.forEach(item=>{
 
 const profit = (item.price - item.cost) * item.qty
 
@@ -433,12 +433,12 @@ date = new Date(sale.createdAt)
 const day = date.toLocaleDateString()
 const time = date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
 
-const type = sale.type === "debt_payment" ? "Nasiya" : "Naqd"
+// skip debt payment records
+if(sale.type === "debt_payment") return
+
+const type = sale.type === "debt" ? "Nasiya" : "Naqd"
 
 sale.items.forEach(item=>{
-
-if(item.name === "Debt payment") return
-
 const profit = (item.price - item.cost) * item.qty
 
 const row = document.createElement("tr")
