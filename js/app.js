@@ -61,148 +61,145 @@ auth.onAuthStateChanged(user => {
 
 async function loadDashboard(){
 
-    if(!currentShopId) return
+if(!currentShopId) return
 
-    const salesRef = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("sales")
+const salesRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
 
-    const debtsRef = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("debts")
+const debtsRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("debts")
 
-    const [salesSnapshot, debtsSnapshot] = await Promise.all([
-        salesRef.get(),
-        debtsRef.get()
-    ])
+// REALTIME LISTENER
+salesRef.onSnapshot(async salesSnapshot => {
 
-    let todayRevenue = 0
-    let todayItems = 0
-    let todayProfit = 0
-    let todayDebt = 0
+const debtsSnapshot = await debtsRef.get()
 
-    const now = new Date()
+let todayRevenue = 0
+let todayItems = 0
+let todayProfit = 0
+let todayDebt = 0
 
-    const todayStart = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate()
-    )
+const now = new Date()
 
-    const chartLabels = []
-    const chartValues = []
+const todayStart = new Date(
+now.getFullYear(),
+now.getMonth(),
+now.getDate()
+)
 
-    let runningTotal = 0
+const chartLabels = []
+const chartValues = []
 
-    // start chart from zero
-    chartLabels.push("0")
-    chartValues.push(0)
+let runningTotal = 0
 
-
-    // SALES
-    const sales = []
-
-    salesSnapshot.forEach(doc=>{
-        sales.push(doc.data())
-    })
-
-    // sort sales by time
-    sales.sort((a,b)=>{
-
-        const aTime = a.createdAt?.seconds
-            ? a.createdAt.seconds*1000
-            : new Date(a.createdAt).getTime()
-
-        const bTime = b.createdAt?.seconds
-            ? b.createdAt.seconds*1000
-            : new Date(b.createdAt).getTime()
-
-        return aTime-bTime
-    })
-
-    sales.forEach(sale=>{
-
-        let date
-
-        if(sale.createdAt?.seconds){
-            date=new Date(sale.createdAt.seconds*1000)
-        }else{
-            date=new Date(sale.createdAt)
-        }
-
-        if(date>=todayStart){
-
-            todayRevenue+=sale.total
-
-            runningTotal+=sale.total
-
-            const time = date.toLocaleTimeString([], {
-                hour:'2-digit',
-                minute:'2-digit'
-            })
-
-            chartLabels.push(time)
-            chartValues.push(runningTotal)
-
-            if(sale.items){
-
-                sale.items.forEach(item=>{
-
-                    const qty=item.qty||0
-                    const price=item.price||0
-                    const cost=item.cost||0
-
-                    todayItems+=qty
-                    todayProfit+=(price-cost)*qty
-
-                })
-
-            }
-
-        }
-
-    })
+chartLabels.push("0")
+chartValues.push(0)
 
 
-    // DEBTS
-    debtsSnapshot.forEach(doc => {
+// SALES
+const sales = []
 
-        const debt = doc.data()
+salesSnapshot.forEach(doc=>{
+sales.push(doc.data())
+})
 
-        if(debt.created){
+sales.sort((a,b)=>{
 
-            const date = new Date(debt.created)
+const aTime = a.createdAt?.seconds
+? a.createdAt.seconds*1000
+: new Date(a.createdAt).getTime()
 
-            if(date >= todayStart){
+const bTime = b.createdAt?.seconds
+? b.createdAt.seconds*1000
+: new Date(b.createdAt).getTime()
 
-                todayDebt += debt.total || 0
+return aTime-bTime
 
-            }
-
-        }
-
-    })
-
-
-    // UPDATE DASHBOARD UI
-    document.getElementById("todayRevenue").innerText = formatMoney(todayRevenue)
-    document.getElementById("todayItems").innerText = todayItems
-    document.getElementById("todayProfit").innerText = formatMoney(todayProfit)
-    document.getElementById("todayDebt").innerText = formatMoney(todayDebt)
+})
 
 
-    // RENDER CHART
-    renderTodaySalesChart({
-        labels: chartLabels,
-        values: chartValues
-    })
+sales.forEach(sale=>{
+
+let date
+
+if(sale.createdAt?.seconds){
+date = new Date(sale.createdAt.seconds*1000)
+}else{
+date = new Date(sale.createdAt)
+}
+
+if(date >= todayStart){
+
+todayRevenue += sale.total || 0
+
+runningTotal += sale.total || 0
+
+const time = date.toLocaleTimeString([],{
+hour:'2-digit',
+minute:'2-digit'
+})
+
+chartLabels.push(time)
+chartValues.push(runningTotal)
+
+if(sale.items){
+
+sale.items.forEach(item=>{
+
+const qty = item.qty || 0
+const price = item.price || 0
+const cost = item.cost || 0
+
+todayItems += qty
+todayProfit += (price - cost) * qty
+
+})
 
 }
 
+}
+
+})
 
 
+// DEBTS
+debtsSnapshot.forEach(doc=>{
+
+const debt = doc.data()
+
+if(debt.created){
+
+const date = new Date(debt.created)
+
+if(date >= todayStart){
+todayDebt += debt.total || 0
+}
+
+}
+
+})
+
+
+// UPDATE UI
+document.getElementById("todayRevenue").innerText = formatMoney(todayRevenue)
+document.getElementById("todayItems").innerText = todayItems
+document.getElementById("todayProfit").innerText = formatMoney(todayProfit)
+document.getElementById("todayDebt").innerText = formatMoney(todayDebt)
+
+
+// RENDER CHART
+renderTodaySalesChart({
+labels: chartLabels,
+values: chartValues
+})
+
+})
+
+}
 // ===============================
 // SYNC OFFLINE SALES
 // ===============================
