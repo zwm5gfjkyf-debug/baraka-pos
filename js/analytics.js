@@ -439,13 +439,12 @@ async function loadSalesAnalytics(){
 const container = document.getElementById("salesAnalyticsList")
 
 container.innerHTML = ""
-   const snapshot = await db
+db
 .collection("shops")
 .doc(currentShopId)
 .collection("sales")
 .orderBy("createdAt","desc")
-.get()
-
+.onSnapshot(snapshot=>{
 snapshot.forEach(doc=>{
 
 const sale = doc.data()
@@ -498,7 +497,7 @@ container.appendChild(row)
 
 })
 })
-
+})
 }
 function filterSalesTable(){
 
