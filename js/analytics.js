@@ -28,8 +28,6 @@ let weekRevenue = 0
 let weekItems = 0
 let weekProfit = 0
 
-const now = new Date()
-
 const weekStart = new Date()
 weekStart.setHours(0,0,0,0)
 weekStart.setDate(weekStart.getDate() - weekStart.getDay())
