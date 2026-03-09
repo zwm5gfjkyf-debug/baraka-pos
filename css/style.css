@@ -1780,3 +1780,40 @@ margin-bottom:10px;
 border-bottom:1px solid #e5e7eb;
 padding-bottom:8px;
 }
+/* DARK MODE STOCK CARD */
+
+.stock-card{
+padding:18px;
+border-radius:16px;
+margin-bottom:16px;
+background:linear-gradient(145deg,#0f172a,#020617);
+border:1px solid rgba(255,255,255,0.05);
+box-shadow:0 10px 30px rgba(0,0,0,0.6);
+}
+.stock-card strong{
+color:#e5e7eb;
+}
+
+.light-mode .stock-card strong{
+color:#111827;
+}
+
+.stock-card span{
+color:#94a3b8;
+}
+
+.light-mode .stock-card span{
+color:#64748b;
+}
+.stock-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+padding-bottom:8px;
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.light-mode .stock-header{
+border-bottom:1px solid #e5e7eb;
+}
