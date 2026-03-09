@@ -68,9 +68,11 @@ if(!text) return
 const query = text.toLowerCase()
 
 const filtered = productCache
-.filter(p => p.name.toLowerCase().startsWith(query))
+.filter(p =>
+p.name.toLowerCase().includes(query) ||
+String(p.barcode).includes(query)
+)
 .slice(0,20)
-
 filtered.forEach(p => {
 
 const div = document.createElement("div")
@@ -347,28 +349,16 @@ item.price = Number(newPrice)
 renderCart()
 
 }
-function changePrice(id,newPrice){
 
-const item = cart.find(i => i.id === id)
-
-if(!item) return
-
-item.price = Number(newPrice)
-
-renderCart()
-
-}
 // ===============================
 // BARCODE SCANNER SYSTEM
 // ===============================
 
 let barcodeBuffer = ""
+let barcodeTimer = null
 
 document.addEventListener("keydown", function(e){
 
-if(!e.key) return
-
-// scanner sends Enter after barcode
 if(e.key === "Enter"){
 
 handleBarcodeScan(barcodeBuffer)
@@ -378,9 +368,16 @@ barcodeBuffer = ""
 return
 }
 
-// collect only numbers/letters
-if(e.key && e.key.length === 1){
+if(e.key.length === 1){
+
 barcodeBuffer += e.key
+
+clearTimeout(barcodeTimer)
+
+barcodeTimer = setTimeout(() => {
+barcodeBuffer = ""
+}, 100)
+
 }
 
 })
@@ -391,8 +388,9 @@ if(!barcode) return
 
 barcode = barcode.trim()
 
-const product = productCache.find(p => String(p.barcode) === String(barcode))
-
+const product = productCache.find(p => 
+String(p.barcode).trim() === String(barcode).trim()
+)
 if(!product){
 showToast("Mahsulot topilmadi")
 return
