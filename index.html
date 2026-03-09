@@ -292,21 +292,17 @@ Nasiya berish
 
 <h2 class="page-title">Zaxira</h2>
 
-<div class="glass dashboard-card">
+<div class="stock-top">
 
-<input id="stockName" placeholder="Mahsulot nomi">
-
-<input id="stockBarcode" placeholder="Barcode (skaner kod)">
-  
-<input id="stockQty" placeholder="Miqdor">
-
-<input id="stockCost" placeholder="Kelgan narx">
-
-<input id="stockSellingPrice" placeholder="Sotish narxi">
-
-<button class="btn-primary" onclick="addStock()">
-Qo'shish
+<button class="btn-primary" onclick="openAddProductModal()">
++ Tovar qo'shish
 </button>
+
+<input
+id="stockSearch"
+placeholder="🔍 Mahsulot qidirish..."
+oninput="filterStock(this.value)"
+>
 
 </div>
 
@@ -564,7 +560,37 @@ Muvaffaqiyatli
 
 </div>
 
+<div id="addProductModal" class="modal hidden">
 
+<div class="modal-card">
+
+<h3>Yangi mahsulot qo'shish</h3>
+
+<input id="stockName" placeholder="Mahsulot nomi">
+
+<input id="stockBarcode" placeholder="Barcode (skaner kod)">
+
+<input id="stockQty" placeholder="Miqdor">
+
+<input id="stockCost" placeholder="Kelgan narx">
+
+<input id="stockSellingPrice" placeholder="Sotish narxi">
+
+<div class="modal-buttons">
+
+<button onclick="addStock(); closeAddProductModal()" class="btn-primary">
+Saqlash
+</button>
+
+<button onclick="closeAddProductModal()" class="btn-secondary">
+Bekor qilish
+</button>
+
+</div>
+
+</div>
+
+</div>
 
 <script src="js/firebase.js"></script>
 <script src="js/utils.js"></script>
