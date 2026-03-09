@@ -389,6 +389,8 @@ function handleBarcodeScan(barcode){
 
 if(!barcode) return
 
+barcode = barcode.trim()
+
 const product = productCache.find(p => p.barcode === barcode)
 
 if(!product){
