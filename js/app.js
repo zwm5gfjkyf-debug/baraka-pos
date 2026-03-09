@@ -1,9 +1,10 @@
 // =============================
 // BARAKA POS MAIN ENGINE
 // =============================
-
+let salesCache = null
+let analyticsLoaded = false
 let currentShopId = null
-
+let dashboardSalesCache = []
 
 
 // =============================
@@ -98,14 +99,13 @@ let runningTotal = 0
 chartLabels.push("0")
 chartValues.push(0)
 
-const sales = []
+dashboardSalesCache = []
 
 salesSnapshot.forEach(doc=>{
-sales.push(doc.data())
+dashboardSalesCache.push(doc.data())
 })
 
-sales.sort((a,b)=>{
-
+dashboardSalesCache.sort((a,b)=>{
 const aTime = a.createdAt?.seconds
 ? a.createdAt.seconds*1000
 : new Date(a.createdAt).getTime()
@@ -118,8 +118,7 @@ return aTime-bTime
 
 })
 
-sales.forEach(sale=>{
-
+dashboardSalesCache.forEach(sale=>{
 let date
 
 if(sale.createdAt?.seconds){
@@ -130,10 +129,8 @@ date = new Date(sale.createdAt)
 
 if(date>=todayStart){
 
-todayRevenue+=sale.total
-
-runningTotal+=sale.total
-
+todayRevenue += sale.total || 0
+runningTotal += sale.total || 0
 const time = date.toLocaleTimeString([], {
 hour:'2-digit',
 minute:'2-digit'
