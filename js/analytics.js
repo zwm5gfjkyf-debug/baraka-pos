@@ -832,3 +832,29 @@ container.appendChild(div)
 })
 
 }
+function showAnalyticsTab(tab){
+
+document.getElementById("weeklyAnalytics").classList.add("hidden")
+document.getElementById("monthlyAnalytics").classList.add("hidden")
+document.getElementById("extraAnalytics").classList.add("hidden")
+
+document.getElementById("weeklyTab").classList.remove("active")
+document.getElementById("monthlyTab").classList.remove("active")
+document.getElementById("extraTab").classList.remove("active")
+
+if(tab === "weekly"){
+document.getElementById("weeklyAnalytics").classList.remove("hidden")
+document.getElementById("weeklyTab").classList.add("active")
+}
+
+if(tab === "monthly"){
+document.getElementById("monthlyAnalytics").classList.remove("hidden")
+document.getElementById("monthlyTab").classList.add("active")
+}
+
+if(tab === "extra"){
+document.getElementById("extraAnalytics").classList.remove("hidden")
+document.getElementById("extraTab").classList.add("active")
+}
+
+}
