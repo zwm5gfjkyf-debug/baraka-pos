@@ -16,6 +16,10 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db = firebase.firestore();
+firebase.firestore().settings({
+experimentalForceLongPolling: true
+})
+
 db.enablePersistence()
 .catch(err => {
 console.warn("Offline persistence failed", err)
