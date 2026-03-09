@@ -1500,3 +1500,51 @@ font-weight:600;
 background:#22c55e;
 color:black;
 }
+/* ======================
+LIGHT MODE
+====================== */
+
+.light-mode{
+background:#f5f6fa;
+color:#111;
+}
+
+.light-mode .glass{
+background:rgba(255,255,255,0.8);
+border:1px solid rgba(0,0,0,0.08);
+}
+
+.light-mode .dashboard-card{
+background:white;
+}
+
+.light-mode input{
+background:white;
+color:#111;
+border:1px solid #ddd;
+}
+
+.light-mode .bottom-nav{
+background:white;
+border-top:1px solid #ddd;
+}
+
+.light-mode .search-item{
+background:white;
+}
+
+.light-mode .cart-item{
+background:white;
+}
+.theme-btn{
+background:none;
+border:none;
+font-size:18px;
+cursor:pointer;
+margin-right:10px;
+color:white;
+}
+
+.light-mode .theme-btn{
+color:black;
+}
