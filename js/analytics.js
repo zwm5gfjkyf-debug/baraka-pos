@@ -21,7 +21,7 @@ const salesRef = db
 .collection("sales")
 
 const snapshot = await salesRef
-.where("createdAt",">=",weekStart)
+.where("createdAt", ">=", weekStart)
 .get()
    
 let weekRevenue = 0
@@ -157,7 +157,7 @@ const salesRef = db
 .collection("sales")
 
 const snapshot = await salesRef
-.where("createdAt",">=",startOfMonth)
+.where("createdAt", ">=", startOfMonth)
 .get()
    
 let monthRevenue = 0
