@@ -107,37 +107,32 @@ function loadCurrentStock(){
 
                 div.className = "stock-item";
 
-             div.innerHTML = `
-
+            div.innerHTML = `
 <div class="stock-card">
 
-<div class="stock-title">
-${p.name}
+<div class="stock-header">
+<b>${p.name}</b>
+<span class="barcode">${p.barcode || ""}</span>
 </div>
 
-<div class="stock-row">
-<span>Barcode</span>
-<span>${p.barcode || "-"}</span>
-</div>
+<div class="stock-stats">
 
-<div class="stock-divider"></div>
-
-<div class="stock-row">
+<div class="stock-stat">
 <span>Miqdor</span>
-<span>${p.stock || 0}</span>
+<strong>${p.stock || 0}</strong>
 </div>
 
-<div class="stock-row">
-<span>Kelgan narxi</span>
-<span>${formatMoney(p.cost || 0)}</span>
+<div class="stock-stat">
+<span>Kelgan</span>
+<strong>${formatMoney(p.cost || 0)}</strong>
 </div>
 
-<div class="stock-row">
-<span>Sotish narxi</span>
-<span>${formatMoney(p.price || 0)}</span>
+<div class="stock-stat">
+<span>Sotish</span>
+<strong>${formatMoney(p.price || 0)}</strong>
 </div>
 
-<div class="stock-divider"></div>
+</div>
 
 <div class="stock-actions">
 
@@ -152,7 +147,6 @@ O'chirish
 </div>
 
 </div>
-
 `
                 container.appendChild(div);
 
