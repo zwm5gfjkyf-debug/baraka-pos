@@ -1883,3 +1883,29 @@ display:flex;
 gap:10px;
 margin-top:10px;
 }
+.profit-buttons{
+display:flex;
+gap:8px;
+margin-bottom:4px;
+}
+
+.profit-buttons button{
+flex:1;
+padding:8px;
+border-radius:8px;
+border:none;
+background:#1e293b;
+color:white;
+cursor:pointer;
+font-size:13px;
+}
+
+.light-mode .profit-buttons button{
+background:#e2e8f0;
+color:black;
+}
+
+.profit-buttons button:hover{
+background:#22c55e;
+color:white;
+}
