@@ -18,6 +18,7 @@ stockProcessing = true
 try{
 
 const name = document.getElementById("stockName").value.trim().toLowerCase()
+const barcode = document.getElementById("stockBarcode").value.trim()
 const qty = Number(document.getElementById("stockQty").value)
 const cost = Number(document.getElementById("stockCost").value)
 const price = Number(document.getElementById("stockSellingPrice").value)
@@ -43,6 +44,7 @@ if(existing.empty){
 // create new product
 await productsRef.add({
 name: name,
+barcode: barcode || "",
 stock: qty || 0,
 cost: cost || 0,
 price: price,
@@ -64,6 +66,7 @@ price: price
 }
 
 document.getElementById("stockName").value = ""
+document.getElementById("stockBarcode").value = ""
 document.getElementById("stockQty").value = ""
 document.getElementById("stockCost").value = ""
 document.getElementById("stockSellingPrice").value = ""
