@@ -391,7 +391,7 @@ if(!barcode) return
 
 barcode = barcode.trim()
 
-const product = productCache.find(p => p.barcode === barcode)
+const product = productCache.find(p => String(p.barcode) === String(barcode))
 
 if(!product){
 showToast("Mahsulot topilmadi")
@@ -399,5 +399,7 @@ return
 }
 
 addToCart(product)
+
+document.getElementById("saleSearch").value = ""
 
 }
