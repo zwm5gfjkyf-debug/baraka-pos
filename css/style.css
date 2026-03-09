@@ -1909,3 +1909,24 @@ color:black;
 background:#22c55e;
 color:white;
 }
+.profit-buttons{
+display:flex;
+gap:8px;
+margin-top:4px;
+margin-bottom:4px;
+}
+
+.profit-buttons button{
+flex:1;
+padding:8px;
+border-radius:8px;
+border:none;
+background:#1e293b;
+color:white;
+cursor:pointer;
+font-size:13px;
+}
+
+.profit-buttons button:hover{
+background:#22c55e;
+}
