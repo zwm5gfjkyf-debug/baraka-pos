@@ -366,7 +366,9 @@ let barcodeBuffer = ""
 
 document.addEventListener("keydown", function(e){
 
-// scanner sends ENTER after scan
+if(!e.key) return
+
+// scanner sends Enter after barcode
 if(e.key === "Enter"){
 
 handleBarcodeScan(barcodeBuffer)
@@ -376,8 +378,8 @@ barcodeBuffer = ""
 return
 }
 
-// collect barcode numbers
-if(e.key.length === 1){
+// collect only numbers/letters
+if(e.key && e.key.length === 1){
 barcodeBuffer += e.key
 }
 
