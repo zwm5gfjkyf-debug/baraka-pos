@@ -23,9 +23,9 @@ db
 .collection("products")
 .onSnapshot(snapshot => {
 
-productCache = []
-productIndex = {}
-
+let productCache = []
+let productIndex = {}
+let productIndexBarcode = {}
 snapshot.forEach(doc => {
 
 const data = doc.data()
@@ -38,27 +38,30 @@ price: data.price || 0,
 cost: data.cost || 0,
 stock: data.stock || 0
 }
+
 productCache.push(product)
 
-const key = product.name.toLowerCase()
+// INDEX BY NAME
+const nameKey = product.name.toLowerCase()
 
-if(!productIndex[key]){
-productIndex[key] = []
+if(!productIndex[nameKey]){
+productIndex[nameKey] = []
 }
 
-productIndex[key].push(product)
+productIndex[nameKey].push(product)
 
-})
-
-})
-
+// INDEX BY BARCODE
+if(product.barcode){
+productIndexBarcode[product.barcode] = product
 }
+
+})
 
 // =======================================
 // ULTRA FAST SEARCH
 // =======================================
 
-async function searchProducts(text){
+function searchProducts(text){
 
 const resultsBox = document.getElementById("searchResults")
 resultsBox.innerHTML = ""
@@ -67,13 +70,25 @@ if(!text) return
 
 const query = text.toLowerCase()
 
-const filtered = productCache
-.filter(p =>
-p.name.toLowerCase().includes(query) ||
-String(p.barcode).includes(query)
-)
-.slice(0,20)
-filtered.forEach(p => {
+const keys = Object.keys(productIndex)
+
+let results = []
+
+for(let i=0;i<keys.length;i++){
+
+const key = keys[i]
+
+if(key.startsWith(query)){
+
+results = results.concat(productIndex[key])
+
+if(results.length >= 20) break
+
+}
+
+}
+
+results.slice(0,20).forEach(p => {
 
 const div = document.createElement("div")
 div.className = "search-item"
@@ -90,7 +105,6 @@ resultsBox.appendChild(div)
 })
 
 }
-
 
 // =======================================
 // CART SYSTEM
@@ -390,8 +404,7 @@ return
 
 barcode = barcode.trim()
 
-const product = productCache.find(p => String(p.barcode) === String(barcode))
-
+const product = productIndexBarcode[barcode]
 if(!product){
 showToast("Mahsulot topilmadi")
 return
