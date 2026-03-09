@@ -1556,3 +1556,107 @@ cursor:pointer;
 margin-right:10px;
 color:white;
 }
+/* ======================
+LIGHT MODE DESIGN SYSTEM
+====================== */
+
+.light-mode {
+  background: #f6f7fb;
+  color: #111827;
+}
+
+/* Header */
+.light-mode .app-header {
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+/* Glass cards */
+.light-mode .glass {
+  background: white;
+  border: 1px solid #e6e8ee;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+/* Dashboard cards */
+.light-mode .dashboard-card {
+  background: white;
+  border: 1px solid #e6e8ee;
+}
+
+/* Titles */
+.light-mode .card-title {
+  color: #64748b;
+}
+
+.light-mode .dashboard-amount {
+  color: #111827;
+}
+
+/* Inputs */
+.light-mode input {
+  background: #f9fafb;
+  border: 1px solid #dcdfe6;
+  color: #111827;
+}
+
+/* Buttons */
+.light-mode .btn-primary {
+  background: #22c55e;
+  color: white;
+}
+
+.light-mode .btn-secondary {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+/* Bottom Navigation */
+.light-mode .bottom-nav {
+  background: white;
+  border-top: 1px solid #e6e8ee;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+}
+
+/* Search results */
+.light-mode .search-item {
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+/* Cart items */
+.light-mode .cart-item {
+  background: #fafafa;
+  border: 1px solid #eee;
+}
+
+/* Charts container */
+.light-mode .chart-container {
+  background: white;
+  border: 1px solid #e6e8ee;
+}
+.theme-btn{
+  background:none;
+  border:none;
+  font-size:20px;
+  cursor:pointer;
+  margin-right:12px;
+}
+
+.light-mode .theme-btn{
+  color:#111827;
+}
+.light-mode .tab-btn{
+  background:#f1f5f9;
+  color:#475569;
+}
+
+.light-mode .tab-btn.active{
+  background:#22c55e;
+  color:white;
+}
+.light-mode .stock-card{
+  background:white;
+  border:1px solid #e5e7eb;
+  box-shadow:0 6px 16px rgba(0,0,0,0.05);
+}
