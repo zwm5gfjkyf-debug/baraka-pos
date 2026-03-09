@@ -3,8 +3,12 @@
 // =======================================
 
 // product cache (in memory)
+// product cache (in memory)
 let productCache = []
 let productIndex = {}
+let productIndexBarcode = {}
+let productKeys = []        // search optimization
+let productById = {}        // cart optimization
 
 let cart = []
 
@@ -23,9 +27,10 @@ db
 .collection("products")
 .onSnapshot(snapshot => {
 
-let productCache = []
-let productIndex = {}
-let productIndexBarcode = {}
+productCache = []
+productIndex = {}
+productIndexBarcode = {}
+productById = {}
 snapshot.forEach(doc => {
 
 const data = doc.data()
@@ -40,7 +45,8 @@ stock: data.stock || 0
 }
 
 productCache.push(product)
-
+productCache.push(product)
+productById[product.id] = product
 // INDEX BY NAME
 const nameKey = product.name.toLowerCase()
 
@@ -56,7 +62,7 @@ productIndexBarcode[product.barcode] = product
 }
 
 })
-
+productKeys = Object.keys(productIndex)
 // =======================================
 // ULTRA FAST SEARCH
 // =======================================
@@ -70,13 +76,9 @@ if(!text) return
 
 const query = text.toLowerCase()
 
-const keys = Object.keys(productIndex)
+for(let i=0;i<productKeys.length;i++){
 
-let results = []
-
-for(let i=0;i<keys.length;i++){
-
-const key = keys[i]
+const key = productKeys[i]
 
 if(key.startsWith(query)){
 
@@ -216,8 +218,7 @@ function increaseQty(id){
 
 const item = cart.find(i => i.id === id)
 
-const product = productCache.find(p => p.id === id)
-
+const product = productById[id]
 if(!product){
 showToast("Mahsulot topilmadi")
 return
@@ -259,6 +260,7 @@ renderCart()
 
 async function completeSale(){
 
+if(!currentShopId) return
 if(cart.length === 0) return
 
 const btn = document.getElementById("completeSaleBtn")
@@ -270,8 +272,7 @@ cart.forEach(i => total += i.price * i.qty)
 const sale = {
 items: cart,
 total: total,
-createdAt: new Date()
-}
+createdAt: firebase.firestore.FieldValue.serverTimestamp()}
 
 try{
 
@@ -327,8 +328,7 @@ const ref = db
 .collection("products")
 .doc(item.id)
 
-const product = productCache.find(p => p.id === item.id)
-
+const product = productById[item.id]
 if(product){
 
 const newStock = (product.stock || 0) - item.qty
@@ -376,7 +376,7 @@ document.addEventListener("keydown", function(e){
 if(!e.key) return
 
 // collect barcode characters
-if(e.key.length === 1){
+if(e.key.length === 1 && /[0-9a-zA-Z]/.test(e.key)){
 barcodeBuffer += e.key
 }
 
