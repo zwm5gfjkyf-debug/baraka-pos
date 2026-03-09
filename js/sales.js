@@ -63,6 +63,8 @@ productIndexBarcode[product.barcode] = product
 
 })
 productKeys = Object.keys(productIndex)
+})
+}
 // =======================================
 // ULTRA FAST SEARCH
 // =======================================
