@@ -102,3 +102,36 @@ d.setHours(0,0,0,0)
 return d
 
 }
+// ===============================
+// THEME SYSTEM
+// ===============================
+
+function toggleTheme(){
+
+const body = document.body
+
+if(body.classList.contains("light-mode")){
+
+body.classList.remove("light-mode")
+localStorage.setItem("theme","dark")
+
+}else{
+
+body.classList.add("light-mode")
+localStorage.setItem("theme","light")
+
+}
+
+}
+
+function loadTheme(){
+
+const savedTheme = localStorage.getItem("theme")
+
+if(savedTheme === "light"){
+document.body.classList.add("light-mode")
+}
+
+}
+
+document.addEventListener("DOMContentLoaded", loadTheme)
