@@ -1505,34 +1505,69 @@ LIGHT MODE
 ====================== */
 
 .light-mode{
-background:#f5f6fa;
-color:#111;
+  background:#f5f7fb;
+  color:#1e293b;
 }
 
 .light-mode .glass{
-background:rgba(255,255,255,0.8);
-border:1px solid rgba(0,0,0,0.08);
+  background:white;
+  border-radius:16px;
+  border:1px solid #eef1f6;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
 }
 
 .light-mode .dashboard-card{
-background:white;
+  background:white;
+  border-radius:16px;
+  border:1px solid #eef1f6;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
 }
 
 .light-mode input{
-background:white;
-color:#111;
-border:1px solid #ddd;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  color:#0f172a;
+}
+.light-mode .card-title{
+  color:#64748b;
+  font-weight:500;
 }
 
+.light-mode .dashboard-amount{
+  color:#0f172a;
+  font-weight:700;
+}
 .light-mode .bottom-nav{
-background:white;
-border-top:1px solid #ddd;
+  background:white;
+  border-top:1px solid #e5e7eb;
+  box-shadow:0 -5px 15px rgba(0,0,0,0.05);
 }
-
+.light-mode .chart-container{
+  background:white;
+  border-radius:16px;
+  border:1px solid #eef1f6;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+.light-mode .search-item{
+  background:white;
+  border-bottom:1px solid #f1f5f9;
+}
 .light-mode .search-item{
 background:white;
 }
+.light-mode .btn-primary{
+  background:#22c55e;
+  border:none;
+  color:white;
+  border-radius:10px;
+}
 
+.light-mode .btn-secondary{
+  background:#f1f5f9;
+  border:none;
+  color:#334155;
+}
 .light-mode .cart-item{
 background:white;
 }
