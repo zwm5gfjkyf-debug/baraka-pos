@@ -98,10 +98,14 @@ function loadCurrentStock(){
             const container = document.getElementById("currentStockList");
 
             container.innerHTML = "";
+let count = 0
+           snapshot.forEach(doc => {
 
-            snapshot.forEach(doc => {
+if(count >= 50) return
 
-                const p = doc.data();
+count++
+
+const p = doc.data()
 
                 const div = document.createElement("div");
 
