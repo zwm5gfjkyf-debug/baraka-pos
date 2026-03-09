@@ -50,8 +50,7 @@ if(date >= weekStart){
 weekRevenue += sale.total || 0
 const day = date.getDay()
 
-chartTotals[day] += sale.total
-
+chartTotals[day] += sale.total || 0
 
 if(!sale.items) return
 
@@ -164,10 +163,15 @@ let monthRevenue = 0
 let monthItems = 0
 let monthProfit = 0
 
-const months = ["Yan","Fev","Mar","Apr","May","Iyun","Iyul","Avg","Sen","Okt","Noy","Dek"]
+const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate()
 
-const chartTotals = new Array(12).fill(0)
+const labels = []
+const chartTotals = []
 
+for(let i=1;i<=daysInMonth;i++){
+labels.push(i.toString())
+chartTotals.push(0)
+}
 snapshot.forEach(doc=>{
 
 const sale = doc.data()
@@ -180,10 +184,9 @@ date = new Date(sale.createdAt.seconds*1000)
 date = new Date(sale.createdAt)
 }
 
-const month = date.getMonth()
+const day = date.getDate() - 1
 
-chartTotals[month] += sale.total || 0
-
+chartTotals[day] += sale.total || 0
 if(
 date.getMonth() === now.getMonth() &&
 date.getFullYear() === now.getFullYear()
@@ -213,8 +216,7 @@ document.getElementById("monthRevenue").innerText = formatMoney(monthRevenue)
 document.getElementById("monthItems").innerText = monthItems
 document.getElementById("monthProfit").innerText = formatMoney(monthProfit)
 
-renderMonthlyChart(months, chartTotals)
-
+renderMonthlyChart(labels, chartTotals)
 }
 let monthlyChart = null
 
@@ -287,14 +289,18 @@ async function loadTopProducts(){
 
 const container = document.getElementById("topProductsList")
 
-container.innerHTML = ""
+if(!container || !currentShopId) return
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
 .collection("sales")
+.orderBy("createdAt","desc")
+.limit(1000)
 .get()
 
 const stats = {}
+
+container.innerHTML = ""
 
 snapshot.forEach(doc=>{
 
@@ -493,13 +499,15 @@ async function loadSalesAnalytics(){
 
 const container = document.getElementById("salesAnalyticsList")
 
-container.innerHTML = ""
 db
 .collection("shops")
 .doc(currentShopId)
 .collection("sales")
 .orderBy("createdAt","desc")
 .onSnapshot(snapshot=>{
+
+container.innerHTML = ""
+
 snapshot.forEach(doc=>{
 
 const sale = doc.data()
@@ -794,7 +802,7 @@ function loadLowStock(){
 
 const container = document.getElementById("lowStockList")
 
-if(!container) return
+if(!container || !currentShopId) return
 
 db
 .collection("shops")
