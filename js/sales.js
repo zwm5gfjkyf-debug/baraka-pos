@@ -358,3 +358,42 @@ item.price = Number(newPrice)
 renderCart()
 
 }
+// ===============================
+// BARCODE SCANNER SYSTEM
+// ===============================
+
+let barcodeBuffer = ""
+
+document.addEventListener("keydown", function(e){
+
+// scanner sends ENTER after scan
+if(e.key === "Enter"){
+
+handleBarcodeScan(barcodeBuffer)
+
+barcodeBuffer = ""
+
+return
+}
+
+// collect barcode numbers
+if(e.key.length === 1){
+barcodeBuffer += e.key
+}
+
+})
+
+function handleBarcodeScan(barcode){
+
+if(!barcode) return
+
+const product = productCache.find(p => p.barcode === barcode)
+
+if(!product){
+showToast("Mahsulot topilmadi")
+return
+}
+
+addToCart(product)
+
+}
