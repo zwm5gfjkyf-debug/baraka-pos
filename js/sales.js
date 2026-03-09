@@ -359,24 +359,24 @@ let barcodeTimer = null
 
 document.addEventListener("keydown", function(e){
 
+if(!e.key) return
+
+// collect barcode characters
+if(e.key.length === 1){
+barcodeBuffer += e.key
+}
+
+// scanner presses enter after scan
 if(e.key === "Enter"){
+
+if(!barcodeBuffer || barcodeBuffer.length < 3){
+barcodeBuffer = ""
+return
+}
 
 handleBarcodeScan(barcodeBuffer)
 
 barcodeBuffer = ""
-
-return
-}
-
-if(e.key.length === 1){
-
-barcodeBuffer += e.key
-
-clearTimeout(barcodeTimer)
-
-barcodeTimer = setTimeout(() => {
-barcodeBuffer = ""
-}, 100)
 
 }
 
@@ -384,13 +384,14 @@ barcodeBuffer = ""
 
 function handleBarcodeScan(barcode){
 
-if(!barcode) return
+if(!barcode || !productCache || productCache.length === 0){
+return
+}
 
 barcode = barcode.trim()
 
-const product = productCache.find(p => 
-String(p.barcode).trim() === String(barcode).trim()
-)
+const product = productCache.find(p => String(p.barcode) === String(barcode))
+
 if(!product){
 showToast("Mahsulot topilmadi")
 return
