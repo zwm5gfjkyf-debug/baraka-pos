@@ -1695,3 +1695,57 @@ LIGHT MODE DESIGN SYSTEM
   border:1px solid #e5e7eb;
   box-shadow:0 6px 16px rgba(0,0,0,0.05);
 }
+.stock-card{
+padding:18px;
+border-radius:16px;
+background:white;
+box-shadow:0 8px 20px rgba(0,0,0,0.06);
+margin-bottom:16px;
+}
+
+.stock-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:14px;
+}
+
+.barcode{
+font-size:13px;
+color:#64748b;
+}
+
+.stock-stats{
+display:flex;
+justify-content:space-between;
+margin-bottom:16px;
+}
+
+.stock-stat span{
+display:block;
+font-size:13px;
+color:#64748b;
+}
+
+.stock-stat strong{
+font-size:18px;
+color:#0f172a;
+}
+
+.stock-actions{
+display:flex;
+gap:10px;
+}
+
+.stock-actions button{
+flex:1;
+padding:10px;
+border-radius:10px;
+border:none;
+cursor:pointer;
+}
+.stock-input-grid{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
+}
