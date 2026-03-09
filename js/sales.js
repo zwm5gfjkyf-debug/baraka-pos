@@ -33,11 +33,11 @@ const data = doc.data()
 const product = {
 id: doc.id,
 name: data.name || "",
+barcode: data.barcode || "",
 price: data.price || 0,
 cost: data.cost || 0,
 stock: data.stock || 0
 }
-
 productCache.push(product)
 
 const key = product.name.toLowerCase()
