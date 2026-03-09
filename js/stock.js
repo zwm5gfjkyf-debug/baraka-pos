@@ -25,6 +25,7 @@ const price = Number(document.getElementById("stockSellingPrice").value)
 
 if(!name || !price){
 showToast("Mahsulot nomi va narx kerak")
+stockProcessing = false
 return
 }
 
@@ -89,11 +90,13 @@ function loadCurrentStock(){
 
     if(productsListener) productsListener();
 
-    productsListener = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("products")
-        .onSnapshot(snapshot => {
+   productsListener = db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.orderBy("created","desc")
+.limit(50)
+.onSnapshot(snapshot => {
 
             const container = document.getElementById("currentStockList");
 
@@ -162,14 +165,26 @@ O'chirish
 
 let editingProductId = null
 
-function openEditModal(id){
+async function openEditModal(id){
 
 editingProductId = id
+
+const doc = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("products")
+.doc(id)
+.get()
+
+const p = doc.data()
+
+document.getElementById("editQty").value = p.stock || 0
+document.getElementById("editCost").value = p.cost || 0
+document.getElementById("editPrice").value = p.price || 0
 
 document.getElementById("editModal").classList.remove("hidden")
 
 }
-
 function closeEditModal(){
 
 document.getElementById("editModal").classList.add("hidden")
@@ -270,8 +285,7 @@ const cards = document.querySelectorAll(".stock-item")
 
 cards.forEach(card => {
 
-const name = card.innerText.toLowerCase()
-
+const name = card.querySelector("b").innerText.toLowerCase()
 if(name.includes(text)){
 card.style.display = "block"
 }else{
