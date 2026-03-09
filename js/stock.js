@@ -277,3 +277,14 @@ card.style.display = "none"
 })
 
 }
+function setProfit(percent){
+
+const cost = Number(document.getElementById("stockCost").value)
+
+if(!cost) return
+
+const sellPrice = Math.round(cost + (cost * percent / 100))
+
+document.getElementById("stockSellingPrice").value = sellPrice
+
+}
