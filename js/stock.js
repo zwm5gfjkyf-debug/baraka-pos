@@ -107,12 +107,17 @@ function loadCurrentStock(){
 
                 div.className = "stock-item";
 
-              div.innerHTML = `
+             div.innerHTML = `
 
 <div class="stock-card">
 
 <div class="stock-title">
 ${p.name}
+</div>
+
+<div class="stock-row">
+<span>Barcode</span>
+<span>${p.barcode || "-"}</span>
 </div>
 
 <div class="stock-divider"></div>
@@ -148,7 +153,7 @@ O'chirish
 
 </div>
 
-`;
+`
                 container.appendChild(div);
 
             });
