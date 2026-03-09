@@ -283,8 +283,8 @@ const cost = Number(document.getElementById("stockCost").value)
 
 if(!cost) return
 
-const sellPrice = Math.round(cost + (cost * percent / 100))
+const price = Math.round(cost + (cost * percent / 100))
 
-document.getElementById("stockSellingPrice").value = sellPrice
+document.getElementById("stockSellingPrice").value = price
 
 }
