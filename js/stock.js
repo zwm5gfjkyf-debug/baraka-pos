@@ -251,3 +251,29 @@ if(!value) return
 await editProduct(id,"stock",Number(value))
 
 }
+function openAddProductModal(){
+document.getElementById("addProductModal").classList.remove("hidden")
+}
+
+function closeAddProductModal(){
+document.getElementById("addProductModal").classList.add("hidden")
+}
+function filterStock(text){
+
+text = text.toLowerCase()
+
+const cards = document.querySelectorAll(".stock-item")
+
+cards.forEach(card => {
+
+const name = card.innerText.toLowerCase()
+
+if(name.includes(text)){
+card.style.display = "block"
+}else{
+card.style.display = "none"
+}
+
+})
+
+}
