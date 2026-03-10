@@ -4,37 +4,47 @@
 
 auth.onAuthStateChanged(user => {
 
-  const loading = document.getElementById("loadingScreen");
+  const loading = document.getElementById("loadingScreen")
+  if(loading) loading.classList.add("hidden")
 
-  if(loading) loading.classList.add("hidden");
+  const authScreen = document.getElementById("authScreen")
+  const appScreen = document.getElementById("appScreen")
 
   if(user){
 
-    document.getElementById("authScreen").classList.add("hidden");
+    if(authScreen) authScreen.classList.add("hidden")
+    if(appScreen) appScreen.classList.remove("hidden")
 
-    document.getElementById("appScreen").classList.remove("hidden");
-
-    const shopTitle = document.getElementById("shopTitle");
+    const shopTitle = document.getElementById("shopTitle")
 
     if(shopTitle){
-      shopTitle.innerText = "BARAKA";
+
+      db.collection("shops")
+      .doc(user.uid)
+      .get()
+      .then(doc => {
+
+        if(doc.exists){
+          const data = doc.data()
+          shopTitle.innerText = data.shopName || "BARAKA"
+        }
+
+      })
+
     }
 
     if(typeof loadDashboard === "function"){
-      loadDashboard();
+      loadDashboard()
     }
 
   }else{
 
-    document.getElementById("appScreen").classList.add("hidden");
-
-    document.getElementById("authScreen").classList.remove("hidden");
+    if(appScreen) appScreen.classList.add("hidden")
+    if(authScreen) authScreen.classList.remove("hidden")
 
   }
 
-});
-
-
+})
 
 /* =========================================
    REGISTER
@@ -42,23 +52,23 @@ auth.onAuthStateChanged(user => {
 
 async function register(){
 
-  const shopName = document.getElementById("shopName").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  const shopName = document.getElementById("shopName").value.trim()
+  const email = document.getElementById("email").value.trim()
+  const password = document.getElementById("password").value
 
   if(!shopName || !email || !password){
-    alert("Ma'lumotlarni to'ldiring");
-    return;
+    alert("Ma'lumotlarni to'ldiring")
+    return
   }
 
   if(password.length < 6){
-    alert("Parol kamida 6 ta belgi bo'lishi kerak");
-    return;
+    alert("Parol kamida 6 ta belgi bo'lishi kerak")
+    return
   }
 
   try{
 
-    const cred = await auth.createUserWithEmailAndPassword(email,password);
+    const cred = await auth.createUserWithEmailAndPassword(email,password)
 
     await db.collection("shops")
     .doc(cred.user.uid)
@@ -66,29 +76,27 @@ async function register(){
       shopName: shopName,
       ownerEmail: email,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    })
 
-    alert("Ro'yxatdan o'tish muvaffaqiyatli");
+    alert("Ro'yxatdan o'tish muvaffaqiyatli")
 
   }catch(e){
 
     if(e.code === "auth/email-already-in-use"){
-      alert("Bu email allaqachon ro'yxatdan o'tgan");
+      alert("Bu email allaqachon ro'yxatdan o'tgan")
     }
 
     else if(e.code === "auth/invalid-email"){
-      alert("Email noto'g'ri");
+      alert("Email noto'g'ri")
     }
 
     else{
-      alert("Ro'yxatdan o'tishda xatolik");
+      alert("Ro'yxatdan o'tishda xatolik")
     }
 
   }
 
 }
-
-
 
 /* =========================================
    LOGIN
@@ -96,46 +104,44 @@ async function register(){
 
 async function login(){
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+  const email = document.getElementById("email").value.trim()
+  const password = document.getElementById("password").value
 
   if(!email || !password){
-    alert("Email va parolni kiriting");
-    return;
+    alert("Email va parolni kiriting")
+    return
   }
 
   try{
 
-    await auth.signInWithEmailAndPassword(email,password);
+    await auth.signInWithEmailAndPassword(email,password)
 
   }catch(e){
 
     if(e.code === "auth/user-not-found"){
-      alert("Bunday akkaunt mavjud emas");
+      alert("Bunday akkaunt mavjud emas")
     }
 
     else if(e.code === "auth/wrong-password"){
-      alert("Parol noto'g'ri");
+      alert("Parol noto'g'ri")
     }
 
     else if(e.code === "auth/invalid-email"){
-      alert("Email noto'g'ri");
+      alert("Email noto'g'ri")
     }
 
     else{
-      alert("Kirishda xatolik");
+      alert("Kirishda xatolik")
     }
 
   }
 
 }
 
-
-
 /* =========================================
    LOGOUT
 ========================================= */
 
 function logout(){
-  auth.signOut();
+  auth.signOut()
 }
