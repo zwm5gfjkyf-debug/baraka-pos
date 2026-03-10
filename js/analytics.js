@@ -22,6 +22,7 @@ const salesRef = db
 
 const snapshot = await salesRef
 .where("createdAt", ">=", weekStart)
+.orderBy("createdAt")
 .get()
    
 let weekRevenue = 0
@@ -69,9 +70,13 @@ weekProfit += (price-cost)*qty
 
 })
 
-document.getElementById("weekRevenue").innerText = formatMoney(weekRevenue)
-document.getElementById("weekItems").innerText = weekItems
-document.getElementById("weekProfit").innerText = formatMoney(weekProfit)
+const rev = document.getElementById("weekRevenue")
+const items = document.getElementById("weekItems")
+const profit = document.getElementById("weekProfit")
+
+if(rev) rev.innerText = formatMoney(weekRevenue)
+if(items) items.innerText = weekItems
+if(profit) profit.innerText = formatMoney(weekProfit)
 
 renderWeeklyChart(days, chartTotals)
 
@@ -157,6 +162,7 @@ const salesRef = db
 
 const snapshot = await salesRef
 .where("createdAt", ">=", startOfMonth)
+.orderBy("createdAt")
 .get()
    
 let monthRevenue = 0
@@ -212,10 +218,13 @@ monthProfit += (price-cost)*qty
 }
 })
 
-document.getElementById("monthRevenue").innerText = formatMoney(monthRevenue)
-document.getElementById("monthItems").innerText = monthItems
-document.getElementById("monthProfit").innerText = formatMoney(monthProfit)
+const rev = document.getElementById("monthRevenue")
+const items = document.getElementById("monthItems")
+const profit = document.getElementById("monthProfit")
 
+if(rev) rev.innerText = formatMoney(monthRevenue)
+if(items) items.innerText = monthItems
+if(profit) profit.innerText = formatMoney(monthProfit)
 renderMonthlyChart(labels, chartTotals)
 }
 let monthlyChart = null
@@ -295,7 +304,7 @@ const snapshot = await db
 .doc(currentShopId)
 .collection("sales")
 .orderBy("createdAt","desc")
-.limit(1000)
+.limit(500)
 .get()
 
 const stats = {}
@@ -403,6 +412,7 @@ formatMoney(potentialProfit) + " so'm"
 async function loadDebtAnalytics(){
 
 const container = document.querySelector("#debtAnalyticsPage #debtAnalyticsList")
+if(!container) return
 
 container.innerHTML = ""
 
@@ -498,13 +508,14 @@ loadSalesAnalytics()
 async function loadSalesAnalytics(){
 
 const container = document.getElementById("salesAnalyticsList")
-
+if(!container) return
 db
 .collection("shops")
 .doc(currentShopId)
 .collection("sales")
 .orderBy("createdAt","desc")
-.onSnapshot(snapshot=>{
+.get()
+.then(snapshot=>{
 
 container.innerHTML = ""
 
@@ -809,6 +820,7 @@ db
 .doc(currentShopId)
 .collection("products")
 .where("stock","<=",5)
+.limit(20)
 .onSnapshot(snapshot=>{
 
 container.innerHTML = ""
