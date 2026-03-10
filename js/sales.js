@@ -66,17 +66,13 @@ productKeys = Object.keys(productIndex)
 }
 function getCurrentPage(){
 
-if(!document.getElementById("salePage").classList.contains("hidden")){
-return "sale"
-}
+const sale = document.getElementById("salePage")
+const debt = document.getElementById("debtPage")
+const stock = document.getElementById("stockPage")
 
-if(!document.getElementById("debtPage").classList.contains("hidden")){
-return "debt"
-}
-
-if(!document.getElementById("stockPage").classList.contains("hidden")){
-return "stock"
-}
+if(sale && !sale.classList.contains("hidden")) return "sale"
+if(debt && !debt.classList.contains("hidden")) return "debt"
+if(stock && !stock.classList.contains("hidden")) return "stock"
 
 return null
 
@@ -261,10 +257,10 @@ function decreaseQty(id){
 const item = cart.find(i => i.id === id)
 if(!item) return
 
+item.qty--
+
 if(item.qty <= 0){
-
 cart = cart.filter(i => i.id !== id)
-
 }
 
 renderCart()
@@ -393,12 +389,16 @@ document.addEventListener("keydown", function(e){
 
 if(!e.key) return
 
-// collect barcode characters
 if(e.key.length === 1 && /[0-9a-zA-Z]/.test(e.key)){
 barcodeBuffer += e.key
 }
 
-// scanner presses enter after scan
+clearTimeout(barcodeTimer)
+
+barcodeTimer = setTimeout(()=>{
+barcodeBuffer = ""
+},100)
+
 if(e.key === "Enter"){
 
 if(!barcodeBuffer || barcodeBuffer.length < 3){
@@ -482,47 +482,8 @@ document.getElementById("stockBarcode").value = barcode
 
 }
 
-// keep cursor ready for next scan
+// keep scanner ready
 const search = document.getElementById("saleSearch")
 if(search) search.focus()
-
-}
-// DEBT PAGE
-else if(page === "debt"){
-
-if(product){
-
-addToDebtCart(product)
-
-}else{
-
-showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
-
-openAddProductModal()
-
-document.getElementById("stockBarcode").value = barcode
-
-})
-
-}
-
-}
-
-// STOCK PAGE
-else if(page === "stock"){
-
-if(product){
-
-openEditModal(product.id)
-
-}else{
-
-openAddProductModal()
-
-document.getElementById("stockBarcode").value = barcode
-
-}
-
-}
 
 }
