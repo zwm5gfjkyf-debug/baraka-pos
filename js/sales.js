@@ -430,18 +430,12 @@ scanSound.play()
 if(page === "sale"){
 
 if(product){
-
 addToCart(product)
-
 }else{
-
 showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
-
 openAddProductModal()
 document.getElementById("stockBarcode").value = barcode
-
 })
-
 }
 
 }
@@ -450,18 +444,12 @@ document.getElementById("stockBarcode").value = barcode
 else if(page === "debt"){
 
 if(product){
-
 addToDebtCart(product)
-
 }else{
-
 showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
-
 openAddProductModal()
 document.getElementById("stockBarcode").value = barcode
-
 })
-
 }
 
 }
@@ -470,14 +458,10 @@ document.getElementById("stockBarcode").value = barcode
 else if(page === "stock"){
 
 if(product){
-
 openEditModal(product.id)
-
 }else{
-
 openAddProductModal()
 document.getElementById("stockBarcode").value = barcode
-
 }
 
 }
