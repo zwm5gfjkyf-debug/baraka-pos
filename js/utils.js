@@ -10,7 +10,6 @@ function formatMoney(num){
 
 return Number(num || 0)
 .toLocaleString("ru-RU")
-.replace(/,/g," ")
 
 }
 
@@ -19,6 +18,8 @@ ANIMATE NUMBER
 =============================== */
 
 function animateNumber(el,value,duration=800){
+
+if(!el) return
 
 let start = 0
 
@@ -58,7 +59,6 @@ START OF TODAY
 function getStartOfToday(){
 
 const d = new Date()
-
 d.setHours(0,0,0,0)
 
 return d
@@ -76,9 +76,7 @@ const d = new Date()
 const day = d.getDay() || 7
 
 if(day !== 1){
-
 d.setDate(d.getDate() - (day - 1))
-
 }
 
 d.setHours(0,0,0,0)
@@ -96,45 +94,12 @@ function getStartOfMonth(){
 const d = new Date()
 
 d.setDate(1)
-
 d.setHours(0,0,0,0)
 
 return d
 
 }
-// ===============================
-// THEME SYSTEM
-// ===============================
 
-function toggleTheme(){
-
-const body = document.body
-
-if(body.classList.contains("light-mode")){
-
-body.classList.remove("light-mode")
-localStorage.setItem("theme","dark")
-
-}else{
-
-body.classList.add("light-mode")
-localStorage.setItem("theme","light")
-
-}
-
-}
-
-function loadTheme(){
-
-const savedTheme = localStorage.getItem("theme")
-
-if(savedTheme === "light"){
-document.body.classList.add("light-mode")
-}
-
-}
-
-document.addEventListener("DOMContentLoaded", loadTheme)
 // ===============================
 // THEME SYSTEM
 // ===============================
@@ -175,4 +140,4 @@ if(btn) btn.innerText = "☀"
 
 }
 
-document.addEventListener("DOMContentLoaded", loadTheme)
+window.addEventListener("DOMContentLoaded", loadTheme)
