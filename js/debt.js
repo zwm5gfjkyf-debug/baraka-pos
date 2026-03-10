@@ -15,6 +15,7 @@ let lastClick = 0
 function searchDebtProducts(text){
 
 const results = document.getElementById("debtSearchResults")
+if(!results) return
 
 results.innerHTML = ""
 
@@ -162,8 +163,7 @@ const item = debtCart.find(i => i.id === id)
 
 if(!item) return
 
-const product = productCache.find(p => p.id === id)
-
+const product = productById[id]
 if(!product){
 showToast("Mahsulot topilmadi")
 return
@@ -187,7 +187,7 @@ const item = debtCart.find(i => i.id === id)
 if(!item) return
 
 item.qty--
-
+ 
 if(item.qty <= 0){
 debtCart = debtCart.filter(i => i.id !== id)
 }
@@ -196,7 +196,7 @@ renderDebtCart()
 
 }
 
-function changeDebtPrice(id,newPrice){
+
 
 const item = debtCart.find(i => i.id === id)
 
@@ -323,11 +323,8 @@ throw new Error("Not enough stock")
 }
 
 t.update(ref,{
-stock: stock - item.qty
+stock: Math.max(0, stock - item.qty)
 })
-
-})
-
 const p = productCache.find(p => p.id === item.id)
 
 if(p){
@@ -366,7 +363,7 @@ debtProcessing = false
 async function loadDebtCustomers(){
 
 const container = document.getElementById("debtCustomersList")
-
+if(!container) return
 db
 .collection("shops")
 .doc(currentShopId)
@@ -432,7 +429,7 @@ try{
 const input = document.getElementById("pay_"+id)
 const amount = Number(input.value)
 
-if(!amount){
+if(!amount || isNaN(amount)){
 showToast("To'lov summasini kiriting")
 return
 }
@@ -518,29 +515,3 @@ debtPaymentProcessing = false
 }
 
 
-// ===============================
-// CHANGE PRICE
-// ===============================
-
-function changeDebtPrice(id,newPrice){
-
-const item = debtCart.find(i => i.id === id)
-
-if(!item) return
-
-item.price = Number(newPrice)
-
-renderDebtCart()
-
-}
-function clearDebtSearch(){
-
-const input = document.getElementById("debtSearch")
-
-if(input){
-input.value = ""
-}
-
-document.getElementById("debtSearchResults").innerHTML = ""
-
-}
