@@ -4,6 +4,7 @@
 
 function navigate(pageId){
 
+  // hide all pages
   document.querySelectorAll(".page")
   .forEach(p => p.classList.add("hidden"));
 
@@ -13,27 +14,40 @@ function navigate(pageId){
     page.classList.remove("hidden");
   }
 
-  document.querySelectorAll(".bottom-nav button")
-  .forEach(btn => btn.classList.remove("active"));
+  const navButtons = document.querySelectorAll(".bottom-nav button");
 
-  document.querySelectorAll(".bottom-nav button")
-  .forEach(btn=>{
+  navButtons.forEach(btn => btn.classList.remove("active"));
+
+  navButtons.forEach(btn=>{
     if(btn.getAttribute("onclick")?.includes(pageId)){
       btn.classList.add("active");
     }
   });
 
-  if(pageId === "dashboardPage") loadDashboard();
+  if(pageId === "dashboardPage" && typeof loadDashboard === "function"){
+    loadDashboard();
+  }
 
-  if(pageId === "salePage") loadProducts();
+  if(pageId === "salePage" && typeof loadProducts === "function" && productCache.length === 0){
+    loadProducts();
+  }
 
-  if(pageId === "debtPage") loadDebtCustomers();
+  if(pageId === "debtPage" && typeof loadDebtCustomers === "function"){
+    loadDebtCustomers();
+  }
 
-  if(pageId === "stockPage") loadCurrentStock();
+  if(pageId === "stockPage" && typeof loadCurrentStock === "function"){
+    loadCurrentStock();
+  }
 
-if(pageId === "analyticsPage"){
-loadWeeklyAnalytics()
-loadMonthlyAnalytics()
-loadTopProducts()
-}
+  if(pageId === "analyticsPage"){
+
+    if(typeof loadWeeklyAnalytics === "function") loadWeeklyAnalytics();
+
+    if(typeof loadMonthlyAnalytics === "function") loadMonthlyAnalytics();
+
+    if(typeof loadTopProducts === "function") loadTopProducts();
+
+  }
+
 }
