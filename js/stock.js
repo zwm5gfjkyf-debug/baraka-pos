@@ -37,8 +37,7 @@ const productsRef = db
 
 // check if product exists
 const existing = await productsRef
-.where("name","==",name)
-.limit(1)
+.where("nameKey","==",nameKey).limit(1)
 .get()
 
 if(existing.empty){
@@ -46,8 +45,9 @@ if(existing.empty){
 // create new product
 await productsRef.add({
 name: name,
+nameKey: nameKey,
 barcode: barcode || "",
-stock: qty || 0,
+stock: Math.max(0, qty || 0),
 cost: cost || 0,
 price: price,
 created: Date.now()
@@ -60,7 +60,7 @@ const doc = existing.docs[0]
 const data = doc.data()
 
 await doc.ref.update({
-stock: (data.stock || 0) + (qty || 0),
+stock: Math.max(0,(data.stock || 0) + (qty || 0)),
 cost: cost || data.cost,
 price: price
 })
@@ -99,18 +99,14 @@ function loadCurrentStock(){
 .limit(50)
 .onSnapshot(snapshot => {
 
-            const container = document.getElementById("currentStockList");
+           const container = document.getElementById("currentStockList");
+if(!container) return
 
-            container.innerHTML = "";
-let count = 0
-           snapshot.forEach(doc => {
+container.innerHTML = ""
 
-if(count >= 50) return
-
-count++
+snapshot.forEach(doc => {
 
 const p = doc.data()
-
                 const div = document.createElement("div");
 
                 div.className = "stock-item";
@@ -163,7 +159,6 @@ O'chirish
         });
 
 }
-
 let editingProductId = null
 
 async function openEditModal(id){
@@ -187,12 +182,14 @@ document.getElementById("editPrice").value = p.price || 0
 
 document.getElementById("addStockInput").value = ""
 
-document.getElementById("editModal").classList.remove("hidden")
+const modal = document.getElementById("editModal")
+if(modal) modal.classList.remove("hidden")
 
 }
 function closeEditModal(){
 
-document.getElementById("editModal").classList.add("hidden")
+const modal = document.getElementById("editModal")
+if(modal) modal.classList.add("hidden")
 
 }
 
@@ -312,5 +309,16 @@ if(!cost) return
 const price = Math.round(cost + (cost * percent / 100))
 
 document.getElementById("stockSellingPrice").value = price
+
+}
+function setEditProfit(percent){
+
+const cost = Number(document.getElementById("editCost").value)
+
+if(!cost) return
+
+const price = Math.round(cost + (cost * percent / 100))
+
+document.getElementById("editPrice").value = price
 
 }
