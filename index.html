@@ -193,8 +193,9 @@ Hammasini o'chirish
 id="saleSearch"
 placeholder="Mahsulot qidirish..."
 oninput="searchProducts(this.value)"
+autocomplete="off"
+autofocus
 >
-
 <div id="searchResults"></div>
 
 </div>
@@ -219,8 +220,8 @@ oninput="searchProducts(this.value)"
 Jami: <span id="saleTotal">0</span> so'm
 </h3>
 
-<button id="completeSaleBtn" onclick="completeSale()">
-Sotuvni yakunlash
+<button id="completeSaleBtn" class="btn-primary" onclick="completeSale()">
+  Sotuvni yakunlash
 </button>
 
 </div>
@@ -306,8 +307,7 @@ oninput="filterStock(this.value)"
 
 </div>
 
-<div id="currentStockList"></div>
-
+<div id="currentStockList" class="stock-list"></div>
 </div>
 
 
@@ -530,18 +530,18 @@ Tahlil
 <input id="currentStock" disabled>
 
 <label>Qo'shiladigan miqdor</label>
-<input id="addStockInput" placeholder="Nechta qo'shiladi">
-<input id="editCost" placeholder="Kelgan narxi">
+<input id="addStockInput" type="number" placeholder="Nechta qo'shiladi">
+<input id="editCost" type="number" placeholder="Kelgan narxi">
+<input id="editPrice" type="number" placeholder="Sotish narxi">
   <div class="profit-buttons">
 
-<button onclick="setProfit(10)">10%</button>
-<button onclick="setProfit(15)">15%</button>
-<button onclick="setProfit(20)">20%</button>
-<button onclick="setProfit(30)">30%</button>
-<button onclick="setProfit(40)">40%</button>
+<button type="button" onclick="setEditProfit(10)">10%</button>
+<button type="button" onclick="setEditProfit(15)">15%</button>
+<button  type="button" onclick="setEditProfit(20)">20%</button>
+<button type="button" onclick="setEditProfit(30)">30%</button>
+<button type="button" onclick="setEditProfit(40)">40%</button>
 
 </div>
-<input id="editPrice" placeholder="Sotish narxi">
 
 <div class="modal-buttons">
 
@@ -568,7 +568,6 @@ Bekor qilish
 <span id="successText">
 Muvaffaqiyatli
 </span>
-></span>
 </div>
 
 </div>
@@ -583,10 +582,8 @@ Muvaffaqiyatli
 
 <input id="stockBarcode" placeholder="Barcode (skaner kod)">
 
-<input id="stockQty" placeholder="Miqdor">
-
-<input id="stockCost" placeholder="Kelgan narx">
-
+<input id="stockQty" type="number" placeholder="Miqdor">
+<input id="stockCost" type="number" placeholder="Kelgan narx">
 <div class="profit-buttons">
 
 <button type="button" onclick="setProfit(10)">10%</button>
@@ -597,8 +594,7 @@ Muvaffaqiyatli
 
 </div>
 
-<input id="stockSellingPrice" placeholder="Sotish narxi">
-
+<input id="stockSellingPrice" type="number" placeholder="Sotish narxi">
 <div class="modal-buttons">
 
 <button onclick="addStock(); closeAddProductModal()" class="btn-primary">
