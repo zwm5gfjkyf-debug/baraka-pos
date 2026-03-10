@@ -78,9 +78,13 @@ if(!text) return
 
 const query = text.toLowerCase()
 
-for(let i=0;i<productKeys.length;i++){
+let results = []   // ✅ THIS WAS MISSING
 
-const key = productKeys[i]
+const keys = Object.keys(productIndex)
+
+for(let i=0;i<keys.length;i++){
+
+const key = keys[i]
 
 if(key.startsWith(query)){
 
@@ -109,7 +113,6 @@ resultsBox.appendChild(div)
 })
 
 }
-
 // =======================================
 // CART SYSTEM
 // =======================================
