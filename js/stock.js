@@ -17,7 +17,8 @@ stockProcessing = true
 
 try{
 
-const name = document.getElementById("stockName").value.trim().toLowerCase()
+const name = document.getElementById("stockName").value.trim()
+const nameKey = name.toLowerCase()
 const barcode = document.getElementById("stockBarcode").value.trim()
 const qty = Number(document.getElementById("stockQty").value)
 const cost = Number(document.getElementById("stockCost").value)
@@ -176,6 +177,8 @@ const doc = await db
 .doc(id)
 .get()
 
+if(!doc.exists) return
+
 const p = doc.data()
 
 document.getElementById("currentStock").value = p.stock || 0
@@ -198,7 +201,9 @@ async function saveProductEdit(){
 const current = Number(document.getElementById("currentStock").value)
 const add = Number(document.getElementById("addStockInput").value) || 0
 
-const newStock = current + add
+const newStock = Math.max(0, current + add)
+const cost = Number(document.getElementById("editCost").value)
+const price = Number(document.getElementById("editPrice").value)
 
 await db
 .collection("shops")
