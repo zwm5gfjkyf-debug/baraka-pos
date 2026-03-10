@@ -12,7 +12,7 @@ let productById = {}        // cart optimization
 
 let cart = []
 
-
+const scanSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg")
 // =======================================
 // LOAD PRODUCTS INTO MEMORY
 // =======================================
@@ -64,6 +64,23 @@ productIndexBarcode[product.barcode] = product
 })
 productKeys = Object.keys(productIndex)
 })
+}
+function getCurrentPage(){
+
+if(!document.getElementById("salePage").classList.contains("hidden")){
+return "sale"
+}
+
+if(!document.getElementById("debtPage").classList.contains("hidden")){
+return "debt"
+}
+
+if(!document.getElementById("stockPage").classList.contains("hidden")){
+return "stock"
+}
+
+return null
+
 }
 // =======================================
 // ULTRA FAST SEARCH
@@ -403,20 +420,74 @@ barcodeBuffer = ""
 
 function handleBarcodeScan(barcode){
 
-if(!barcode || !productCache || productCache.length === 0){
-return
-}
+if(!barcode) return
 
 barcode = barcode.trim()
 
+const page = getCurrentPage()
+
 const product = productIndexBarcode[barcode]
-if(!product){
-showToast("Mahsulot topilmadi")
-return
-}
+
+// play sound
+scanSound.play()
+
+// SALE PAGE
+if(page === "sale"){
+
+if(product){
 
 addToCart(product)
 
-document.getElementById("saleSearch").value = ""
+}else{
+
+showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
+
+openAddProductModal()
+
+document.getElementById("stockBarcode").value = barcode
+
+})
+
+}
+
+}
+
+// DEBT PAGE
+else if(page === "debt"){
+
+if(product){
+
+addToDebtCart(product)
+
+}else{
+
+showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
+
+openAddProductModal()
+
+document.getElementById("stockBarcode").value = barcode
+
+})
+
+}
+
+}
+
+// STOCK PAGE
+else if(page === "stock"){
+
+if(product){
+
+openEditModal(product.id)
+
+}else{
+
+openAddProductModal()
+
+document.getElementById("stockBarcode").value = barcode
+
+}
+
+}
 
 }
