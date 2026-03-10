@@ -531,3 +531,18 @@ debtPaymentProcessing = false
 }
 
 
+function clearDebtSearch(){
+
+const input = document.getElementById("debtSearch")
+
+if(input){
+input.value = ""
+}
+
+const results = document.getElementById("debtSearchResults")
+
+if(results){
+results.innerHTML = ""
+}
+
+}
