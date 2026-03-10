@@ -178,9 +178,11 @@ const doc = await db
 
 const p = doc.data()
 
-document.getElementById("editQty").value = p.stock || 0
+document.getElementById("currentStock").value = p.stock || 0
 document.getElementById("editCost").value = p.cost || 0
 document.getElementById("editPrice").value = p.price || 0
+
+document.getElementById("addStockInput").value = ""
 
 document.getElementById("editModal").classList.remove("hidden")
 
@@ -193,9 +195,10 @@ document.getElementById("editModal").classList.add("hidden")
 
 async function saveProductEdit(){
 
-const qty = Number(document.getElementById("editQty").value)
-const cost = Number(document.getElementById("editCost").value)
-const price = Number(document.getElementById("editPrice").value)
+const current = Number(document.getElementById("currentStock").value)
+const add = Number(document.getElementById("addStockInput").value) || 0
+
+const newStock = current + add
 
 await db
 .collection("shops")
@@ -204,7 +207,7 @@ await db
 .doc(editingProductId)
 .update({
 
-stock: qty,
+stock: newStock,
 cost: cost,
 price: price
 
