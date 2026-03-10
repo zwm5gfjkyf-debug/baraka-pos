@@ -11,7 +11,7 @@ let productKeys = []        // search optimization
 let productById = {}        // cart optimization
 
 let cart = []
-
+let cartMap = {}
 const scanSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg")
 // =======================================
 // LOAD PRODUCTS INTO MEMORY
@@ -135,7 +135,7 @@ showToast("Zaxirada qolmadi")
 return
 }
 
-const existing = cart.find(i => i.id === product.id)
+let existing = cartMap[product.id]
 
 if(existing){
 
@@ -148,10 +148,13 @@ existing.qty++
 
 }else{
 
-cart.push({
+const item = {
 ...product,
 qty:1
-})
+}
+
+cart.push(item)
+cartMap[product.id] = item
 
 }
 
@@ -232,7 +235,8 @@ document.getElementById("searchResults").innerHTML = ""
 
 function increaseQty(id){
 
-const item = cart.find(i => i.id === id)
+const item = cartMap[id]
+if(!item) return
 
 const product = productById[id]
 if(!product){
@@ -254,13 +258,14 @@ renderCart()
 
 function decreaseQty(id){
 
-const item = cart.find(i => i.id === id)
+const item = cartMap[id]
 if(!item) return
 
 item.qty--
 
 if(item.qty <= 0){
 cart = cart.filter(i => i.id !== id)
+delete cartMap[id]
 }
 
 renderCart()
@@ -314,7 +319,7 @@ console.warn("Sale saved offline")
 }
 
 cart = []
-
+cartMap = {}
 renderCart()
 
 showSuccess("Sotuv yakunlandi")
