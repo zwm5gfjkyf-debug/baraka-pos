@@ -23,9 +23,18 @@ if(!text) return
 
 const query = text.toLowerCase()
 
-const filtered = productCache.filter(p =>
-p.name.toLowerCase().startsWith(query)
-)
+const keys = productKeys
+let filtered = []
+
+for(let i=0;i<keys.length;i++){
+
+const key = keys[i]
+
+if(key.startsWith(query)){
+filtered = filtered.concat(productIndex[key])
+}
+
+}
 
 filtered.slice(0,10).forEach(product => {
 
@@ -105,6 +114,7 @@ renderDebtCart()
 function renderDebtCart(){
 
 const list = document.getElementById("debtCartList")
+if(!list) return
 
 list.innerHTML = ""
 
@@ -149,8 +159,8 @@ list.appendChild(div)
 
 })
 
-document.getElementById("debtTotal").innerText = formatMoney(total)
-
+const totalEl = document.getElementById("debtTotal")
+if(totalEl) totalEl.innerText = formatMoney(total)
 }
 
 // ===============================
@@ -197,6 +207,8 @@ renderDebtCart()
 }
 
 
+
+function changeDebtPrice(id,newPrice){
 
 const item = debtCart.find(i => i.id === id)
 
@@ -325,6 +337,8 @@ throw new Error("Not enough stock")
 t.update(ref,{
 stock: Math.max(0, stock - item.qty)
 })
+
+})
 const p = productCache.find(p => p.id === item.id)
 
 if(p){
@@ -431,9 +445,11 @@ const amount = Number(input.value)
 
 if(!amount || isNaN(amount)){
 showToast("To'lov summasini kiriting")
+btn.innerText = "To'lash"
+btn.disabled = false
+debtPaymentProcessing = false
 return
 }
-
 const ref = db
 .collection("shops")
 .doc(currentShopId)
