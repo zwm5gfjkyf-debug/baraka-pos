@@ -5,7 +5,7 @@ let salesCache = null
 let analyticsLoaded = false
 let currentShopId = null
 let dashboardSalesCache = []
-
+let dashboardListener = null
 
 // =============================
 // AUTH STATE
@@ -74,8 +74,10 @@ const debtsRef = db
 .doc(currentShopId)
 .collection("debts")
 
-salesRef.onSnapshot(salesSnapshot => {
+if(dashboardListener) dashboardListener()
 
+dashboardListener = salesRef.onSnapshot(salesSnapshot => {
+    
 debtsRef.get().then(debtsSnapshot => {
 
 let todayRevenue = 0
@@ -105,18 +107,7 @@ salesSnapshot.forEach(doc=>{
 dashboardSalesCache.push(doc.data())
 })
 
-dashboardSalesCache.sort((a,b)=>{
-const aTime = a.createdAt?.seconds
-? a.createdAt.seconds*1000
-: new Date(a.createdAt).getTime()
 
-const bTime = b.createdAt?.seconds
-? b.createdAt.seconds*1000
-: new Date(b.createdAt).getTime()
-
-return aTime-bTime
-
-})
 
 dashboardSalesCache.forEach(sale=>{
 let date
@@ -176,15 +167,22 @@ todayDebt += debt.total || 0
 
 })
 
-document.getElementById("todayRevenue").innerText = formatMoney(todayRevenue)
-document.getElementById("todayItems").innerText = todayItems
-document.getElementById("todayProfit").innerText = formatMoney(todayProfit)
-document.getElementById("todayDebt").innerText = formatMoney(todayDebt)
+const rev = document.getElementById("todayRevenue")
+const items = document.getElementById("todayItems")
+const profit = document.getElementById("todayProfit")
+const debt = document.getElementById("todayDebt")
 
+if(rev) rev.innerText = formatMoney(todayRevenue)
+if(items) items.innerText = todayItems
+if(profit) profit.innerText = formatMoney(todayProfit)
+if(debt) debt.innerText = formatMoney(todayDebt)
+
+if(typeof renderTodaySalesChart === "function"){
 renderTodaySalesChart({
 labels: chartLabels,
 values: chartValues
 })
+}
 
 })
 
@@ -203,14 +201,19 @@ async function syncOfflineSales(){
 
     if(offline.length === 0) return
 
-    const salesRef = db
-        .collection("shops")
-        .doc(currentShopId)
-        .collection("sales")
+  const salesRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+.orderBy("createdAt")
+  const batch = db.batch()
 
-    for(const sale of offline){
-        await salesRef.add(sale)
-    }
+offline.forEach(sale=>{
+const ref = salesRef.doc()
+batch.set(ref,sale)
+})
+
+await batch.commit()
 
     localStorage.removeItem("offlineSales")
 
