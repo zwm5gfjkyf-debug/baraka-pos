@@ -31,6 +31,7 @@ productCache = []
 productIndex = {}
 productIndexBarcode = {}
 productById = {}
+productKeys = []
 snapshot.forEach(doc => {
 
 const data = doc.data()
@@ -99,8 +100,7 @@ const key = keys[i]
 
 if(key.startsWith(query)){
 
-results = results.concat(productIndex[key])
-
+results.push(...productIndex[key])
 if(results.length >= 20) break
 
 }
@@ -171,7 +171,7 @@ renderCart()
 function renderCart(){
 
 const list = document.getElementById("cartList")
-
+if(!list) return
 list.innerHTML = ""
 
 let total = 0
@@ -266,6 +266,8 @@ item.qty--
 if(item.qty <= 0){
 cart = cart.filter(i => i.id !== id)
 delete cartMap[id]
+}else{
+cartMap[id] = item
 }
 
 renderCart()
@@ -286,8 +288,7 @@ if(cart.length === 0) return
 const btn = document.getElementById("completeSaleBtn")
 btn.disabled = true
 
-let total = 0
-cart.forEach(i => total += i.price * i.qty)
+let total = cart.reduce((t,i)=>t + i.price*i.qty,0)
 
 const sale = {
 items: cart,
@@ -402,8 +403,7 @@ clearTimeout(barcodeTimer)
 
 barcodeTimer = setTimeout(()=>{
 barcodeBuffer = ""
-},100)
-
+},300)
 if(e.key === "Enter"){
 
 if(!barcodeBuffer || barcodeBuffer.length < 3){
@@ -429,8 +429,7 @@ const page = getCurrentPage()
 const product = productIndexBarcode[barcode]
 
 // play sound
-scanSound.play()
-
+scanSound.play().catch(()=>{})
 // SALE PAGE
 if(page === "sale"){
 
