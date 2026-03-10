@@ -45,7 +45,6 @@ stock: data.stock || 0
 }
 
 productCache.push(product)
-productCache.push(product)
 productById[product.id] = product
 // INDEX BY NAME
 const nameKey = product.name.toLowerCase()
@@ -97,8 +96,7 @@ const query = text.toLowerCase()
 
 let results = []   // ✅ THIS WAS MISSING
 
-const keys = Object.keys(productIndex)
-
+const keys = productKeys
 for(let i=0;i<keys.length;i++){
 
 const key = keys[i]
@@ -261,8 +259,7 @@ renderCart()
 function decreaseQty(id){
 
 const item = cart.find(i => i.id === id)
-
-item.qty--
+if(!item) return
 
 if(item.qty <= 0){
 
@@ -353,8 +350,7 @@ const ref = db
 const product = productById[item.id]
 if(product){
 
-const newStock = (product.stock || 0) - item.qty
-
+const newStock = Math.max(0,(product.stock || 0) - item.qty)
 batch.update(ref,{
 stock: newStock
 })
@@ -425,7 +421,6 @@ if(!barcode) return
 barcode = barcode.trim()
 
 const page = getCurrentPage()
-
 const product = productIndexBarcode[barcode]
 
 // play sound
@@ -443,7 +438,6 @@ addToCart(product)
 showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
 
 openAddProductModal()
-
 document.getElementById("stockBarcode").value = barcode
 
 })
@@ -452,6 +446,47 @@ document.getElementById("stockBarcode").value = barcode
 
 }
 
+// DEBT PAGE
+else if(page === "debt"){
+
+if(product){
+
+addToDebtCart(product)
+
+}else{
+
+showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
+
+openAddProductModal()
+document.getElementById("stockBarcode").value = barcode
+
+})
+
+}
+
+}
+
+// STOCK PAGE
+else if(page === "stock"){
+
+if(product){
+
+openEditModal(product.id)
+
+}else{
+
+openAddProductModal()
+document.getElementById("stockBarcode").value = barcode
+
+}
+
+}
+
+// keep cursor ready for next scan
+const search = document.getElementById("saleSearch")
+if(search) search.focus()
+
+}
 // DEBT PAGE
 else if(page === "debt"){
 
