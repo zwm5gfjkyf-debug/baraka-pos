@@ -110,18 +110,30 @@ dashboardSalesCache.push(doc.data())
 
 
 dashboardSalesCache.forEach(sale=>{
+
 let date
 
 if(sale.createdAt?.seconds){
-date = new Date(sale.createdAt.seconds*1000)
+date = new Date(sale.createdAt.seconds * 1000)
 }else{
 date = new Date(sale.createdAt)
 }
 
-if(date>=todayStart){
+if(date >= todayStart){
+
+// If it is NOT debt, count as revenue
+if(sale.type !== "debt"){
 
 todayRevenue += sale.total || 0
 runningTotal += sale.total || 0
+
+}
+
+// If it IS debt, count as debt
+if(sale.type === "debt"){
+todayDebt += sale.total || 0
+}
+
 const time = date.toLocaleTimeString([], {
 hour:'2-digit',
 minute:'2-digit'
@@ -130,16 +142,17 @@ minute:'2-digit'
 chartLabels.push(time)
 chartValues.push(runningTotal)
 
-if(sale.items){
+// Profit only from cash or debt payments
+if(sale.items && sale.type !== "debt"){
 
 sale.items.forEach(item=>{
 
-const qty=item.qty||0
-const price=item.price||0
-const cost=item.cost||0
+const qty = item.qty || 0
+const price = item.price || 0
+const cost = item.cost || 0
 
-todayItems+=qty
-todayProfit+=(price-cost)*qty
+todayItems += qty
+todayProfit += (price - cost) * qty
 
 })
 
