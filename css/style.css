@@ -6,7 +6,11 @@ Luxury Glass UI
 /* =========================================
 THEME VARIABLES
 ========================================= */
-
+html, body {
+width:100%;
+max-width:100vw;
+overflow-x:hidden;
+}
 :root{
 
 --bg-main:#020617;
@@ -1517,8 +1521,20 @@ background:linear-gradient(
 padding-bottom:env(safe-area-inset-bottom);
 }
 .page{
+width:100%;
+max-width:100vw;
 min-height:100vh;
+padding:16px;
 padding-bottom:110px;
+overflow-x:hidden;
+}
+body{
+overflow-x:hidden;
+}
+.app-container{
+width:100%;
+max-width:100vw;
+overflow-x:hidden;
 }
 
 .light-mode input{
@@ -1815,13 +1831,19 @@ border-bottom:1px solid #e5e7eb;
 display:flex;
 gap:12px;
 margin-bottom:16px;
+flex-wrap:wrap;
 }
 
 #stockSearch{
 flex:1;
+min-width:0;
+width:100%;
+max-width:100%;
 padding:10px;
 border-radius:10px;
-border:1px solid #e5e7eb;
+}
+*{
+max-width:100%;
 }
 
 .modal{
