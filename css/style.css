@@ -180,33 +180,11 @@ z-index:30;
 
 background:rgba(2,6,23,0.6);
 
-backdrop-filter:blur(20px);
-
+backdrop-filter:blur(12px);
 border-bottom:1px solid var(--border);
 
 }
-.search-item{
 
-padding:14px;
-
-border-radius:14px;
-
-background:rgba(255,255,255,0.05);
-
-cursor:pointer;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-position:relative;
-z-index:60;
-
-touch-action:manipulation;
-
-}
 /* =========================================
 SHOP TITLE
 ========================================= */
@@ -367,8 +345,7 @@ border-radius:var(--radius);
 
 background:var(--glass);
 
-backdrop-filter:blur(20px);
-
+backdrop-filter:blur(12px);
 border:1px solid var(--border);
 
 box-shadow:
@@ -730,8 +707,7 @@ padding:18px;
 
 margin-top:16px;
 
-backdrop-filter:blur(20px);
-
+backdrop-filter:blur(12px);
 position:relative;
 
 height:260px;
@@ -801,9 +777,10 @@ backdrop-filter: blur(10px);
 
 border-top: 1px solid rgba(255,255,255,0.05);
 
+padding-bottom:env(safe-area-inset-bottom);
+
 z-index: 9999;
 }
-
 .bottom-nav button{
 
 background:transparent;
@@ -900,7 +877,22 @@ transform:scale(0.96);
 
 }
 
-
+.bottom-nav button{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:4px;
+font-size:11px;
+}
+input, button, select{
+font-size:16px;
+}
+button{
+touch-action:manipulation;
+}
+.dashboard-card:hover{
+border-color:rgba(255,255,255,0.15);
+}
 /* =========================================
 SEARCH ITEM HOVER
 ========================================= */
@@ -1047,8 +1039,7 @@ border-radius:18px;
 
 background:var(--glass);
 
-backdrop-filter:blur(20px);
-
+backdrop-filter:blur(12px);
 border:1px solid var(--border);
 
 animation:fadeUp 0.3s ease;
@@ -1508,10 +1499,26 @@ LIGHT MODE
 }
 
 .light-mode .dashboard-card{
-  background:white;
-  border-radius:16px;
-  border:1px solid #eef1f6;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+background:linear-gradient(
+180deg,
+#ffffff,
+#f1f5ff
+);
+border:1px solid #e2e8f0;
+}
+.light-mode .chart-container{
+background:linear-gradient(
+180deg,
+#ffffff,
+#eef2ff
+);
+}
+.bottom-nav{
+padding-bottom:env(safe-area-inset-bottom);
+}
+.page{
+min-height:100vh;
+padding-bottom:110px;
 }
 
 .light-mode input{
@@ -1526,8 +1533,8 @@ LIGHT MODE
 }
 
 .light-mode .dashboard-amount{
-  color:#0f172a;
-  font-weight:700;
+color:#2563eb;
+font-weight:700;
 }
 .light-mode .bottom-nav{
   background:white;
@@ -1573,14 +1580,6 @@ color:white;
 
 .light-mode .theme-btn{
 color:black;
-}
-.theme-btn{
-background:none;
-border:none;
-font-size:18px;
-cursor:pointer;
-margin-right:10px;
-color:white;
 }
 /* ======================
 LIGHT MODE DESIGN SYSTEM
@@ -1628,8 +1627,12 @@ LIGHT MODE DESIGN SYSTEM
 
 /* Buttons */
 .light-mode .btn-primary {
-  background: #22c55e;
-  color: white;
+background:linear-gradient(
+135deg,
+var(--accent),
+var(--accent-dark)
+);
+color:white;
 }
 
 .light-mode .btn-secondary {
@@ -1874,11 +1877,6 @@ display:flex;
 gap:10px;
 margin-top:10px;
 }
-.profit-buttons{
-display:flex;
-gap:8px;
-margin-bottom:4px;
-}
 
 .profit-buttons button{
 flex:1;
@@ -1924,15 +1922,12 @@ background:#22c55e;
 html, body{
 height:100%;
 overflow-x:hidden;
+overflow-y:auto;
 }
-
 .app-container{
 min-height:100vh;
 display:flex;
 flex-direction:column;
-}
-*{
-box-sizing:border-box;
 }
 
 body{
@@ -1957,4 +1952,9 @@ touch-action: manipulation;
 }
 body{
 -webkit-tap-highlight-color: transparent;
+}
+.light-mode{
+--accent:#2563eb;
+--accent-dark:#1d4ed8;
+--accent-soft:rgba(37,99,235,0.15);
 }
