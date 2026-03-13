@@ -712,6 +712,14 @@ function renderTodaySalesChart(data){
 
 const ctx = document.getElementById("todaySalesChart")
 
+const isLight = document.body.classList.contains("light-mode")
+
+const lineColor = isLight ? "#2563eb" : "#22c55e"
+
+const bgColor = isLight
+? "rgba(37,99,235,0.15)"
+: "rgba(34,197,94,0.15)"
+
 if(!ctx) return
 
 // destroy old chart
@@ -729,13 +737,8 @@ datasets:[{
 
 data:data.values,
 
-const isLight = document.body.classList.contains("light-mode")
+borderColor: lineColor,
 
-const lineColor = isLight ? "#2563eb" : "#22c55e"
-const bgColor = isLight
-  ? "rgba(37,99,235,0.15)"
-  : "rgba(34,197,94,0.15)"
-   borderColor: lineColor,
 backgroundColor: bgColor,
 
 fill:true,
