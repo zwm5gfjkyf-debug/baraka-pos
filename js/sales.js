@@ -98,8 +98,7 @@ for(let i=0;i<keys.length;i++){
 
 const key = keys[i]
 
-if(key.startsWith(query)){
-
+if(key.includes(query)){
 results.push(...productIndex[key])
 if(results.length >= 20) break
 
@@ -188,15 +187,19 @@ div.className = "cart-item"
 
 div.innerHTML = `
 
-<b>${item.name}</b>
+<div class="cart-row">
+
+<span class="cart-name">${item.name}</span>
 
 <div class="quantity-controls">
 
-<button onclick="decreaseQty('${item.id}')">-</button>
+<button class="qty-btn" onclick="decreaseQty('${item.id}')">-</button>
 
-<span>${item.qty}</span>
+<span class="qty-number">${item.qty}</span>
 
-<button onclick="increaseQty('${item.id}')">+</button>
+<button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
+
+</div>
 
 </div>
 
@@ -392,7 +395,9 @@ let barcodeBuffer = ""
 let barcodeTimer = null
 
 document.addEventListener("keydown", function(e){
-
+if(document.activeElement && document.activeElement.tagName === "INPUT"){
+return
+}
 if(!e.key) return
 
 if(e.key.length === 1 && /[0-9a-zA-Z]/.test(e.key)){
