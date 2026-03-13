@@ -82,22 +82,30 @@ overlay.classList.add("hidden")
 },2000)
 
 }
-updateChartsTheme()
+
 function updateChartsTheme(){
 
-if(window.todaySalesChart){
-todaySalesChart.destroy()
-loadTodayChart()
+if(window.todayChart){
+todayChart.destroy()
 }
 
-if(window.weeklySalesChart){
-weeklySalesChart.destroy()
-loadWeeklyChart()
+if(window.weeklyChart){
+weeklyChart.destroy()
 }
 
-if(window.monthlySalesChart){
-monthlySalesChart.destroy()
-loadMonthlyChart()
+if(window.monthlyChart){
+monthlyChart.destroy()
 }
+
+loadDashboard()
+loadWeeklyAnalytics()
+loadMonthlyAnalytics()
+
+}
+function toggleTheme(){
+
+document.body.classList.toggle("light-mode")
+
+updateChartsTheme()
 
 }
