@@ -2138,3 +2138,14 @@ body{
 --accent-dark:#1d4ed8;
 --accent-soft:rgba(37,99,235,0.15);
 }
+.light-mode .chart-container{
+
+background:linear-gradient(
+180deg,
+#ffffff,
+#eef2ff
+);
+
+border:1px solid #dbeafe;
+
+}
