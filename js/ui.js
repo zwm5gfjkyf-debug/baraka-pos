@@ -82,3 +82,22 @@ overlay.classList.add("hidden")
 },2000)
 
 }
+updateChartsTheme()
+function updateChartsTheme(){
+
+if(window.todaySalesChart){
+todaySalesChart.destroy()
+loadTodayChart()
+}
+
+if(window.weeklySalesChart){
+weeklySalesChart.destroy()
+loadWeeklyChart()
+}
+
+if(window.monthlySalesChart){
+monthlySalesChart.destroy()
+loadMonthlyChart()
+}
+
+}
