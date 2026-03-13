@@ -6,6 +6,11 @@ Luxury Glass UI
 /* =========================================
 THEME VARIABLES
 ========================================= */
+html, body{
+height:100%;
+overflow-x:hidden;
+overflow-y:auto;
+}
 html, body {
 width:100%;
 max-width:100vw;
@@ -285,17 +290,15 @@ INPUT FIELDS
 
 input{
 
+width:100%;
+
+box-sizing:border-box;
+
 padding:12px;
 
 border-radius:12px;
 
-border:none;
-
 background:rgba(255,255,255,0.06);
-
-color:white;
-
-font-size:14px;
 
 }
 
@@ -795,7 +798,7 @@ bottom: 0;
 left: 0;
 width: 100%;
 height: 70px;
-
+padding-bottom:env(safe-area-inset-bottom);
 display: flex;
 justify-content: space-around;
 align-items: center;
