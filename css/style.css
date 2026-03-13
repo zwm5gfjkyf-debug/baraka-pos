@@ -2149,3 +2149,7 @@ background:linear-gradient(
 border:1px solid #dbeafe;
 
 }
+.light-mode .chart-title{
+color:#2563eb;
+font-weight:600;
+}
