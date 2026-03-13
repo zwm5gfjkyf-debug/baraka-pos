@@ -729,9 +729,14 @@ datasets:[{
 
 data:data.values,
 
-borderColor:"#22c55e",
+const isLight = document.body.classList.contains("light-mode")
 
-backgroundColor:"rgba(34,197,94,0.15)",
+const lineColor = isLight ? "#2563eb" : "#22c55e"
+const bgColor = isLight
+  ? "rgba(37,99,235,0.15)"
+  : "rgba(34,197,94,0.15)"
+   borderColor: lineColor,
+backgroundColor: bgColor,
 
 fill:true,
 
