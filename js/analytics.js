@@ -485,18 +485,7 @@ container.appendChild(div)
 })
 
 }
-function openDebtAnalytics(){
 
-document.querySelectorAll(".page").forEach(p=>{
-p.classList.add("hidden")
-})
-
-document.getElementById("debtAnalyticsPage")
-.classList.remove("hidden")
-
-loadDebtAnalytics()
-
-}
 function openSalesAnalytics(){
 
 document.querySelectorAll(".page").forEach(p=>{
@@ -907,7 +896,10 @@ list.innerHTML = "Yuklanmoqda..."
 let totalDebt = 0
 let customers = {}
 
-const snapshot = await db.collection("sales")
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
 .where("type","==","debt")
 .get()
 
