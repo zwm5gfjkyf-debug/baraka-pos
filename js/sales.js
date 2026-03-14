@@ -180,10 +180,11 @@ list.innerHTML = ""
 const saleTypeBox = document.getElementById("saleTypeContainer")
 const debtInput = document.getElementById("debtCustomer")
 
+if(!saleTypeBox) return
+
 if(cart.length > 0){
 
 saleTypeBox.classList.remove("hidden")
-
 }else{
 
 saleTypeBox.classList.add("hidden")
@@ -317,7 +318,17 @@ async function completeSale(){
 
 if(!currentShopId) return
 if(cart.length === 0) return
+// SAFETY: require customer name for debt
+if(saleType === "debt"){
 
+const name = document.getElementById("debtCustomer").value.trim()
+
+if(!name){
+showToast("Mijoz ismini kiriting")
+return
+}
+
+}
 const btn = document.getElementById("completeSaleBtn")
 btn.disabled = true
 
@@ -423,7 +434,11 @@ const item = cart.find(i => i.id === id)
 
 if(!item) return
 
-item.price = Number(newPrice)
+const price = Number(newPrice)
+
+if(isNaN(price) || price < 0) return
+
+item.price = price
 
 renderCart()
 
@@ -452,8 +467,9 @@ clearTimeout(barcodeTimer)
 barcodeTimer = setTimeout(()=>{
 barcodeBuffer = ""
 },200)
-if(e.key === "Enter" && barcodeBuffer){
-if(!barcodeBuffer || barcodeBuffer.length < 3){
+if(e.key === "Enter"){
+
+if(barcodeBuffer.length < 3){
 barcodeBuffer = ""
 return
 }
@@ -505,8 +521,14 @@ document.getElementById("stockBarcode").value = barcode
 }
 
 // keep scanner ready
+// keep scanner ready for next item
 const search = document.getElementById("saleSearch")
-if(search) search.focus()
+
+if(search){
+search.value = ""
+search.focus()
+}
+
 const results = document.getElementById("searchResults")
 if(results) results.innerHTML = ""
 }
