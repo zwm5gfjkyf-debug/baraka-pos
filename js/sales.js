@@ -330,13 +330,25 @@ return
 
 }
 const btn = document.getElementById("completeSaleBtn")
-btn.disabled = true
 
-let total = cart.reduce((t,i)=>t + i.price*i.qty,0)
+// prevent double click
+if(btn.disabled) return
+btn.disabled = true
+let total = 0
+let totalCost = 0
+let totalProfit = 0
+
+cart.forEach(i=>{
+total += i.price * i.qty
+totalCost += i.cost * i.qty
+totalProfit += (i.price - i.cost) * i.qty
+})
 
 const sale = {
 items: cart,
 total: total,
+totalCost: totalCost,
+totalProfit: totalProfit,
 type: saleType,
 
 customer: saleType === "debt"
@@ -368,6 +380,9 @@ localStorage.setItem("offlineSales", JSON.stringify(offline))
 console.warn("Sale saved offline")
 
 }
+finally{
+btn.disabled = false
+}
 
 cart = []
 cartMap = {}
@@ -383,8 +398,6 @@ renderCart()
 showSuccess("Sotuv yakunlandi")
 
 loadDashboard()
-
-btn.disabled = false
 
 }
 
@@ -475,8 +488,15 @@ barcodeBuffer = ""
 return
 }
 
+// prevent double scan
+if(window.scanLock) return
+window.scanLock = true
+
 handleBarcodeScan(barcodeBuffer)
 
+setTimeout(()=>{
+window.scanLock = false
+},400)
 barcodeBuffer = ""
 
 }
@@ -493,8 +513,9 @@ const page = getCurrentPage()
 const product = productIndexBarcode[barcode]
 
 // play sound
+scanSound.currentTime = 0
 scanSound.play().catch(()=>{})
-// SALE PAGE
+  // SALE PAGE
 if(page === "sale"){
 
 if(product){
