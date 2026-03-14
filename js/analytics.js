@@ -99,14 +99,20 @@ type:"bar",
 data:{
 labels:labels,
 
+const isLight = document.body.classList.contains("light-mode")
+
+const barColor = isLight
+? "rgba(37,99,235,0.7)"   // blue
+: "rgba(34,197,94,0.7)"   // green
+
+
 datasets:[{
 
 data:values,
 
-backgroundColor:"rgba(34,197,94,0.7)",
+backgroundColor: barColor,
 
 borderRadius:8,
-
 barThickness:28
 
 }]
@@ -238,7 +244,11 @@ if(!ctx) return
 if(monthlyChart){
 monthlyChart.destroy()
 }
+const isLight = document.body.classList.contains("light-mode")
 
+const barColor = isLight
+? "rgba(37,99,235,0.7)"
+: "rgba(34,197,94,0.7)"
 monthlyChart = new Chart(ctx,{
 
 type:"bar",
@@ -250,8 +260,7 @@ datasets:[{
 
 data:values,
 
-backgroundColor:"rgba(34,197,94,0.7)",
-
+backgroundColor: barColor
 borderRadius:8,
 
 barThickness:26
