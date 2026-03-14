@@ -343,8 +343,6 @@ customer: saleType === "debt"
 ? document.getElementById("debtCustomer").value || "Noma'lum"
 : null,
 
-remaining: saleType === "debt" ? total : 0,
-
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }
 try{
