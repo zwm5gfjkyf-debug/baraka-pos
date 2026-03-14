@@ -2229,11 +2229,15 @@ height:100%;
 }
 .camera-fixed{
 position:fixed;
-bottom:70px;
+bottom:80px;
 left:0;
-width:100%;
-padding:8px 12px;
-z-index:100;
+right:0;
+
+padding:10px 14px;
+
+z-index:9000;
+
+display:none;   /* important */
 }
 
 .camera-btn{
