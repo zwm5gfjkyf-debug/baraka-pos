@@ -19,8 +19,8 @@ auth.onAuthStateChanged(user => {
 
     if(user){
 
-        currentShopId = user.uid
-
+currentShopId = user.uid
+window.currentShopId = user.uid
         document
             .getElementById("authScreen")
             .classList.add("hidden")
@@ -76,8 +76,10 @@ const salesRef = db
 .collection("sales")
 
 
-if(dashboardListener) dashboardListener()
-
+if(dashboardListener){
+dashboardListener()
+dashboardListener = null
+}
 dashboardListener = salesRef.onSnapshot(salesSnapshot => {
 let todayRevenue = 0
 let todayItems = 0
@@ -100,16 +102,9 @@ let runningTotal = 0
 chartLabels.push("0")
 chartValues.push(0)
 
-dashboardSalesCache = []
-
 salesSnapshot.forEach(doc=>{
-dashboardSalesCache.push(doc.data())
-})
 
-
-
-dashboardSalesCache.forEach(sale=>{
-
+const sale = doc.data()
 let date
 
 if(sale.createdAt?.seconds){
@@ -184,15 +179,7 @@ todayProfit += (price - cost) * qty
 
 // Profit from debt payments
 if(sale.type === "debt_payment"){
-
 todayProfit += sale.profitPart || 0
-
-}
-// Profit from debt payments
-if(sale.type === "debt_payment"){
-
-todayProfit += sale.profitPart || 0
-
 }
 
 }
@@ -284,13 +271,18 @@ async function deleteAllShopData(){
     alert("Barcha ma'lumotlar o'chirildi")
 
 }
-function showTopBanner(message){
+function showTopBanner(message,type="success"){
 
 const banner = document.getElementById("topBanner")
 const text = document.getElementById("bannerMessage")
 
+if(!banner || !text) return
+
 text.innerText = message
 
+banner.classList.remove("success","error","warning")
+
+banner.classList.add(type)
 banner.classList.add("show")
 
 setTimeout(()=>{
