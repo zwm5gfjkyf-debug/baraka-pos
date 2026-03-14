@@ -981,20 +981,46 @@ list.appendChild(card)
 })
 
 }
-function reduceDebt(customer,total){
+async function reduceDebt(customer,total){
 
 const input = document.getElementById(
 "pay-"+customer.replace(/\s/g,'_')
 )
+
 const pay = Number(input.value)
 
-if(!pay || pay<=0){
+if(!pay || pay <= 0){
 alert("To'lov kiriting")
+return
+}
+
+if(pay > total){
+alert("To'lov qarzdan katta bo'lishi mumkin emas")
 return
 }
 
 const newDebt = total - pay
 
-alert(customer+" yangi qarz: "+newDebt)
+// save payment to firestore
+await db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+.add({
+
+type: "debt_payment",
+
+customer: customer,
+
+total: pay,
+
+createdAt: new Date()
+
+})
+
+// reload analytics page
+loadDebtAnalytics()
+
+alert("To'lov qo'shildi")
 
 }
