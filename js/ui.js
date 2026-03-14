@@ -85,27 +85,34 @@ overlay.classList.add("hidden")
 
 function updateChartsTheme(){
 
-if(window.todayChart){
+if(typeof todayChart !== "undefined" && todayChart){
 todayChart.destroy()
 }
 
-if(window.weeklyChart){
+if(typeof weeklyChart !== "undefined" && weeklyChart){
 weeklyChart.destroy()
 }
 
-if(window.monthlyChart){
+if(typeof monthlyChart !== "undefined" && monthlyChart){
 monthlyChart.destroy()
 }
 
+if(typeof loadDashboard === "function"){
 loadDashboard()
+}
+
+if(typeof loadWeeklyAnalytics === "function"){
 loadWeeklyAnalytics()
+}
+
+if(typeof loadMonthlyAnalytics === "function"){
 loadMonthlyAnalytics()
+}
 
 }
-function toggleTheme(){
+// Restore saved theme
+const savedTheme = localStorage.getItem("theme")
 
-document.body.classList.toggle("light-mode")
-
-updateChartsTheme()
-
+if(savedTheme === "light"){
+document.body.classList.add("light-mode")
 }
