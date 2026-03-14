@@ -555,3 +555,56 @@ input.focus()
 }
 
 }
+// ===============================
+// CAMERA BARCODE SCANNER
+// ===============================
+
+function startCameraScanner(){
+
+const container = document.getElementById("cameraScanner")
+container.classList.remove("hidden")
+
+Quagga.init({
+inputStream:{
+type:"LiveStream",
+target:document.querySelector('#scannerViewport'),
+constraints:{
+facingMode:"environment"
+}
+},
+decoder:{
+readers:["ean_reader","code_128_reader","upc_reader"]
+}
+},function(err){
+if(err){
+console.error(err)
+return
+}
+Quagga.start()
+})
+
+Quagga.onDetected(function(data){
+
+const code = data.codeResult.code
+
+stopCameraScanner()
+
+handleBarcodeScan(code)
+
+})
+
+}
+
+function stopCameraScanner(){
+
+const container = document.getElementById("cameraScanner")
+
+if(container){
+container.classList.add("hidden")
+}
+
+if(window.Quagga){
+Quagga.stop()
+}
+
+}
