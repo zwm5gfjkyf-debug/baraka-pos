@@ -48,8 +48,8 @@ stock: data.stock || 0
 productCache.push(product)
 productById[product.id] = product
 // INDEX BY NAME
-const nameKey = product.name.toLowerCase()
-
+const nameKey = (product.name || "").toLowerCase()
+  
 if(!productIndex[nameKey]){
 productIndex[nameKey] = []
 }
@@ -135,7 +135,7 @@ resultsBox.appendChild(div)
 function addToCart(product){
 
 if(product.stock <= 0){
-showToast("Zaxirada qolmadi")
+showTopBanner("Zaxirada qolmadi","error")
 return
 }
 
@@ -144,7 +144,7 @@ let existing = cartMap[product.id]
 if(existing){
 
 if(existing.qty + 1 > product.stock){
-showToast("Zaxirada yetarli mahsulot yo'q")
+showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
 return
 }
 
@@ -156,7 +156,6 @@ const item = {
 ...product,
 qty:1
 }
-
 cart.push(item)
 cartMap[product.id] = item
 
@@ -274,12 +273,12 @@ if(!item) return
 
 const product = productById[id]
 if(!product){
-showToast("Mahsulot topilmadi")
+showTopBanner("Mahsulot topilmadi","error")
 return
 }
 
 if(item.qty + 1 > product.stock){
-showToast("Zaxirada yetarli mahsulot yo'q")
+showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
 return
 }
 
@@ -324,7 +323,7 @@ if(saleType === "debt"){
 const name = document.getElementById("debtCustomer").value.trim()
 
 if(!name){
-showToast("Mijoz ismini kiriting")
+showTopBanner("Mijoz ismini kiriting","error")
 return
 }
 
@@ -337,7 +336,20 @@ btn.disabled = true
 let total = 0
 let totalCost = 0
 let totalProfit = 0
+// Final stock safety check
+for(const item of cart){
 
+const product = productById[item.id]
+
+if(!product || product.stock < item.qty){
+
+showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
+btn.disabled = false
+return
+
+}
+
+}
 cart.forEach(i=>{
 total += i.price * i.qty
 totalCost += i.cost * i.qty
@@ -345,7 +357,7 @@ totalProfit += (i.price - i.cost) * i.qty
 })
 
 const sale = {
-items: cart,
+items: [...cart],
 total: total,
 totalCost: totalCost,
 totalProfit: totalProfit,
@@ -395,8 +407,7 @@ document.getElementById("cashBtn").classList.add("active")
 document.getElementById("debtBtn").classList.remove("active")
 
 renderCart()
-showSuccess("Sotuv yakunlandi")
-
+showTopBanner("Sotuv yakunlandi","success")
 loadDashboard()
 
 }
@@ -513,8 +524,11 @@ const page = getCurrentPage()
 const product = productIndexBarcode[barcode]
 
 // play sound
+if(scanSound){
+scanSound.pause()
 scanSound.currentTime = 0
 scanSound.play().catch(()=>{})
+}
   // SALE PAGE
 if(page === "sale"){
 
@@ -584,8 +598,9 @@ function startCameraScanner(){
 const container = document.getElementById("cameraScanner")
 container.classList.remove("hidden")
 
-Quagga.init({
-inputStream:{
+Quagga.offDetected()
+
+Quagga.init({inputStream:{
 type:"LiveStream",
 target:document.querySelector('#scannerViewport'),
 constraints:{
