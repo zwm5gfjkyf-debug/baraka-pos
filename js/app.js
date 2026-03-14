@@ -276,13 +276,18 @@ function showTopBanner(message,type="success"){
 const banner = document.getElementById("topBanner")
 const text = document.getElementById("bannerMessage")
 
-if(!banner || !text) return
-
 text.innerText = message
 
-banner.classList.remove("success","error","warning")
+banner.classList.remove("success","error")
 
-banner.classList.add(type)
+if(type === "success"){
+banner.classList.add("success")
+}
+
+if(type === "error"){
+banner.classList.add("error")
+}
+
 banner.classList.add("show")
 
 setTimeout(()=>{
