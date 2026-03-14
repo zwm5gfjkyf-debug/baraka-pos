@@ -13,7 +13,16 @@ function navigate(pageId){
   if(page){
     page.classList.remove("hidden");
   }
+// CAMERA BUTTON CONTROL
+const cameraBtn = document.getElementById("cameraSaleButton")
 
+if(cameraBtn){
+  if(pageId === "salePage"){
+    cameraBtn.style.display = "block"
+  }else{
+    cameraBtn.style.display = "none"
+  }
+}
   const navButtons = document.querySelectorAll(".bottom-nav button");
 
   navButtons.forEach(btn => btn.classList.remove("active"));
