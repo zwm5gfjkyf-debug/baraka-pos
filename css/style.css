@@ -2243,3 +2243,41 @@ display:none;   /* important */
 .camera-btn{
 width:100%;
 }
+.top-banner{
+position:fixed;
+top:-100px;
+left:0;
+width:100%;
+background:#34c759;
+color:white;
+padding:14px 20px;
+font-weight:600;
+z-index:9999;
+display:flex;
+justify-content:center;
+transition:top 0.35s ease;
+box-shadow:0 5px 20px rgba(0,0,0,0.25);
+}
+
+.top-banner.show{
+top:0;
+}
+
+.banner-content{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.banner-check{
+background:white;
+color:#34c759;
+width:22px;
+height:22px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:14px;
+font-weight:bold;
+}
