@@ -890,3 +890,114 @@ document.getElementById("extraTab").classList.add("active")
 
 }
 window.showAnalyticsTab = showAnalyticsTab   
+function openDebtAnalytics(){
+
+navigate("debtAnalyticsPage")
+
+loadDebtAnalytics()
+
+}
+async function loadDebtAnalytics(){
+
+const list = document.getElementById("debtAnalyticsList")
+const totalBox = document.getElementById("totalDebtAmount")
+
+list.innerHTML = "Yuklanmoqda..."
+
+let totalDebt = 0
+let customers = {}
+
+const snapshot = await db.collection("sales")
+.where("type","==","debt")
+.get()
+
+snapshot.forEach(doc=>{
+
+const sale = doc.data()
+
+const name = sale.customer || "Noma'lum"
+
+if(!customers[name]){
+customers[name] = {
+total:0,
+lastDate:sale.date
+}
+}
+
+customers[name].total += sale.total
+totalDebt += sale.total
+
+if(sale.date > customers[name].lastDate){
+customers[name].lastDate = sale.date
+}
+
+})
+
+renderDebtCustomers(customers)
+
+totalBox.innerText = totalDebt.toLocaleString()+" so'm"
+
+}
+function renderDebtCustomers(customers){
+
+const list = document.getElementById("debtAnalyticsList")
+
+list.innerHTML = ""
+
+Object.keys(customers).forEach(name=>{
+
+const c = customers[name]
+
+const card = document.createElement("div")
+
+card.className = "glass dashboard-card"
+
+card.innerHTML = `
+
+<div style="font-weight:600;font-size:16px">
+${name}
+</div>
+
+<div style="margin-top:6px;color:#94a3b8">
+Qarz: ${c.total.toLocaleString()} so'm
+</div>
+
+<div style="font-size:12px;color:#64748b;margin-bottom:10px">
+Oxirgi nasiya: ${c.lastDate}
+</div>
+
+<input type="number"
+placeholder="To'lov miqdori"
+id="pay-${name}"
+style="margin-bottom:8px">
+
+<button class="btn-primary"
+onclick="reduceDebt('${name}',${c.total})">
+
+To'lov qo'shish
+
+</button>
+
+`
+
+list.appendChild(card)
+
+})
+
+}
+function reduceDebt(customer,total){
+
+const input = document.getElementById("pay-"+customer)
+
+const pay = Number(input.value)
+
+if(!pay || pay<=0){
+alert("To'lov kiriting")
+return
+}
+
+const newDebt = total - pay
+
+alert(customer+" yangi qarz: "+newDebt)
+
+}
