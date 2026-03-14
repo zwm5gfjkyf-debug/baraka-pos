@@ -449,19 +449,6 @@ document.getElementById("stockBarcode").value = barcode
 
 }
 
-// DEBT PAGE
-else if(page === "debt"){
-
-if(product){
-addToDebtCart(product)
-}else{
-showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
-openAddProductModal()
-document.getElementById("stockBarcode").value = barcode
-})
-}
-
-}
 
 // STOCK PAGE
 else if(page === "stock"){
