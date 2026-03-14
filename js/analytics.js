@@ -92,26 +92,21 @@ if(weeklyChart){
 weeklyChart.destroy()
 }
 
-weeklyChart = new Chart(ctx,{
-
-type:"bar",
-
-data:{
-labels:labels,
-
 const isLight = document.body.classList.contains("light-mode")
 
 const barColor = isLight
-? "rgba(37,99,235,0.7)"   // blue
-: "rgba(34,197,94,0.7)"   // green
+? "rgba(37,99,235,0.7)"
+: "rgba(34,197,94,0.7)"
 
+
+data:{
+labels:labels,
 
 datasets:[{
 
 data:values,
 
 backgroundColor: barColor,
-
 borderRadius:8,
 barThickness:28
 
@@ -580,7 +575,7 @@ container.appendChild(row)
 
 })
 })
-})
+}) 
 }
 function filterSalesTable(){
 
@@ -763,8 +758,7 @@ if(ctx.dataIndex===ctx.dataset.data.length-1) return 5
 return 0
 },
 
-pointBackgroundColor:"#22c55e"
-
+pointBackgroundColor: lineColor
 }]
 
 },
@@ -895,3 +889,4 @@ document.getElementById("extraTab").classList.add("active")
 }
 
 }
+   
