@@ -912,15 +912,15 @@ const name = sale.customer || "Noma'lum"
 if(!customers[name]){
 customers[name] = {
 total:0,
-lastDate:sale.date
+lastDate:sale.createdAt
 }
 }
 
 customers[name].total += sale.total
 totalDebt += sale.total
 
-if(sale.date > customers[name].lastDate){
-customers[name].lastDate = sale.date
+if(sale.createdAt > customers[name].lastDate){
+customers[name].lastDate = sale.createdAt
 }
 
 })
@@ -955,12 +955,16 @@ Qarz: ${c.total.toLocaleString()} so'm
 </div>
 
 <div style="font-size:12px;color:#64748b;margin-bottom:10px">
-Oxirgi nasiya: ${c.lastDate}
+Oxirgi nasiya: ${
+c.lastDate?.seconds
+? new Date(c.lastDate.seconds * 1000).toLocaleDateString()
+: "-"
+}
 </div>
 
 <input type="number"
 placeholder="To'lov miqdori"
-id="pay-${name}"
+id="pay-${name.replace(/\s/g,'_')}"
 style="margin-bottom:8px">
 
 <button class="btn-primary"
@@ -979,8 +983,9 @@ list.appendChild(card)
 }
 function reduceDebt(customer,total){
 
-const input = document.getElementById("pay-"+customer)
-
+const input = document.getElementById(
+"pay-"+customer.replace(/\s/g,'_')
+)
 const pay = Number(input.value)
 
 if(!pay || pay<=0){
