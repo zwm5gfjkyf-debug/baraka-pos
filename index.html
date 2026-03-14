@@ -197,7 +197,9 @@ autocomplete="off"
 >
 
 </div>
-
+<button class="btn-secondary" onclick="startCameraScanner()" style="margin-top:8px;width:100%">
+📷 Kamera orqali sotuv
+</button>
 <div id="searchResults"></div>
 
 <!-- CART -->
@@ -249,7 +251,15 @@ Sotuvni yakunlash
 
 </div>
 
+<div id="cameraScanner" class="hidden" style="margin-top:10px">
 
+<div id="scannerViewport" style="width:100%;height:250px;border-radius:12px;overflow:hidden"></div>
+
+<button onclick="stopCameraScanner()" class="btn-secondary" style="margin-top:6px;width:100%">
+❌ Kamerani yopish
+</button>
+
+</div>
 <!-- NASIYA -->
 
 
@@ -560,7 +570,7 @@ Bekor qilish
 </div>
 
 </div>
-
+<script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
 <script src="js/firebase.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/auth.js"></script>
