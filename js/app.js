@@ -284,3 +284,17 @@ async function deleteAllShopData(){
     alert("Barcha ma'lumotlar o'chirildi")
 
 }
+function showTopBanner(message){
+
+const banner = document.getElementById("topBanner")
+const text = document.getElementById("bannerMessage")
+
+text.innerText = message
+
+banner.classList.add("show")
+
+setTimeout(()=>{
+banner.classList.remove("show")
+},2000)
+
+}
