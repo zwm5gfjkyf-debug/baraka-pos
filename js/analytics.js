@@ -822,9 +822,6 @@ list.innerHTML = "Yuklanmoqda..."
 let totalDebt = 0
 let customers = {}
 
-let totalDebt = 0
-let customers = {}
-
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
@@ -856,32 +853,16 @@ customers[name].total -= sale.total
 totalDebt -= sale.total
 }
 
-if(sale.createdAt > customers[name].lastDate){
+if(
+sale.createdAt &&
+customers[name].lastDate &&
+sale.createdAt > customers[name].lastDate
+){
 customers[name].lastDate = sale.createdAt
 }
 
 })
-snapshot.forEach(doc=>{
 
-const sale = doc.data()
-
-const name = sale.customer || "Noma'lum"
-
-if(!customers[name]){
-customers[name] = {
-total:0,
-lastDate:sale.createdAt
-}
-}
-
-customers[name].total += sale.total
-totalDebt += sale.total
-
-if(sale.createdAt > customers[name].lastDate){
-customers[name].lastDate = sale.createdAt
-}
-
-})
 
 renderDebtCustomers(customers)
 
