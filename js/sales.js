@@ -526,9 +526,7 @@ const search = document.getElementById("saleSearch")
 
 if(search){
 search.value = ""
-search.focus()
 }
-
 const results = document.getElementById("searchResults")
 if(results) results.innerHTML = ""
 }
