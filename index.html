@@ -619,8 +619,12 @@ Bekor qilish
 <script src="js/debt.js"></script>
 <script src="js/stock.js"></script>
 <script src="js/analytics.js"></script>
-<script src="js/ui.js"></script>
 <script src="js/app.js"></script>
-
+<script src="js/ui.js"></script>
+<script>
+if(typeof showAnalyticsTab === "function"){
+window.showAnalyticsTab = showAnalyticsTab
+}
+</script>
 </body>
 </html>
