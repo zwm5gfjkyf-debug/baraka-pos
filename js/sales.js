@@ -116,8 +116,13 @@ div.innerHTML = `
 <strong>${formatMoney(p.price)}</strong>
 `
 
-div.onclick = () => addToCart(p)
+div.onclick = () => {
+addToCart(p)
+clearSearch()
 
+const input = document.getElementById("saleSearch")
+if(input) input.focus()
+}
 resultsBox.appendChild(div)
 
 })
