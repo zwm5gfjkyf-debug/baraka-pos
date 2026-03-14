@@ -217,13 +217,17 @@ autocomplete="off"
 Jami: <span id="saleTotal">0</span> so'm
 </h3>
 
-<div class="sale-type">
+<div id="saleTypeContainer" class="sale-type hidden">
 
-<button id="cashBtn" class="sale-type-btn active" onclick="setSaleType('cash')">
+<button id="cashBtn"
+class="sale-type-btn active"
+onclick="setSaleType('cash')">
 Naqd
 </button>
 
-<button id="debtBtn" class="sale-type-btn" onclick="setSaleType('debt')">
+<button id="debtBtn"
+class="sale-type-btn"
+onclick="setSaleType('debt')">
 Nasiya
 </button>
 
@@ -232,8 +236,8 @@ Nasiya
 <input
 id="debtCustomer"
 placeholder="Mijoz ismi"
-class="hidden"
->
+class="hidden debt-input"
+/>
 
 <button id="completeSaleBtn" class="btn-primary" onclick="completeSale()">
 Sotuvni yakunlash
