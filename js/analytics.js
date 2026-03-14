@@ -926,21 +926,53 @@ const input = document.getElementById(
 "pay-"+customer.replace(/\s/g,'_')
 )
 
+const btn = input.nextElementSibling
+
+// prevent double click
+if(btn.disabled) return
+btn.disabled = true
+
 const pay = Number(input.value)
 
 if(!pay || pay <= 0){
 alert("To'lov kiriting")
+btn.disabled = false
 return
 }
 
 if(pay > total){
 alert("To'lov qarzdan katta bo'lishi mumkin emas")
+btn.disabled = false
 return
 }
 
-const newDebt = total - pay
+// find all debt sales for this customer
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+.where("customer","==",customer)
+.where("type","==","debt")
+.get()
 
-// save payment to firestore
+let totalDebt = 0
+let totalCost = 0
+let totalProfit = 0
+
+snapshot.forEach(doc=>{
+const s = doc.data()
+totalDebt += s.total || 0
+totalCost += s.totalCost || 0
+totalProfit += s.totalProfit || 0
+})
+
+// calculate ratios
+const costRatio = totalCost / totalDebt
+const profitRatio = totalProfit / totalDebt
+
+const costPart = pay * costRatio
+const profitPart = pay * profitRatio
+
 await db
 .collection("shops")
 .doc(currentShopId)
@@ -953,13 +985,20 @@ customer: customer,
 
 total: pay,
 
-createdAt: new Date()
+costPart: costPart,
+
+profitPart: profitPart,
+
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
 
 })
 
-// reload analytics page
+input.value = ""
+
 loadDebtAnalytics()
 
 alert("To'lov qo'shildi")
+
+btn.disabled = false
 
 }
