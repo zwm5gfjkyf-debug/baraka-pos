@@ -154,6 +154,20 @@ chartValues.push(runningTotal)
 
 // Profit only from real product sales
 // Profit only from CASH sales
+// Count sold products (cash + debt)
+if(sale.items && (sale.type === "cash" || sale.type === "debt")){
+
+sale.items.forEach(item=>{
+
+const qty = item.qty || 0
+
+todayItems += qty
+
+})
+
+}
+
+// Profit only from CASH sales
 if(sale.items && sale.type === "cash"){
 
 sale.items.forEach(item=>{
@@ -162,13 +176,18 @@ const qty = item.qty || 0
 const price = item.price || 0
 const cost = item.cost || 0
 
-todayItems += qty
 todayProfit += (price - cost) * qty
 
 })
 
 }
 
+// Profit from debt payments
+if(sale.type === "debt_payment"){
+
+todayProfit += sale.profitPart || 0
+
+}
 // Profit from debt payments
 if(sale.type === "debt_payment"){
 
