@@ -395,12 +395,13 @@ let barcodeBuffer = ""
 let barcodeTimer = null
 
 document.addEventListener("keydown", function(e){
-if(document.activeElement && document.activeElement.tagName === "INPUT"){
+if(document.activeElement && 
+["INPUT","TEXTAREA"].includes(document.activeElement.tagName)){
 return
 }
 if(!e.key) return
 
-if(e.key.length === 1 && /[0-9a-zA-Z]/.test(e.key)){
+if(e.key.length === 1 && /[0-9]/.test(e.key)){
 barcodeBuffer += e.key
 }
 
@@ -408,9 +409,8 @@ clearTimeout(barcodeTimer)
 
 barcodeTimer = setTimeout(()=>{
 barcodeBuffer = ""
-},300)
-if(e.key === "Enter"){
-
+},200)
+if(e.key === "Enter" && barcodeBuffer){
 if(!barcodeBuffer || barcodeBuffer.length < 3){
 barcodeBuffer = ""
 return
@@ -425,7 +425,7 @@ barcodeBuffer = ""
 })
 
 function handleBarcodeScan(barcode){
-
+if(Object.keys(productIndexBarcode).length === 0) return
 if(!barcode) return
 
 barcode = barcode.trim()
@@ -478,5 +478,6 @@ document.getElementById("stockBarcode").value = barcode
 // keep scanner ready
 const search = document.getElementById("saleSearch")
 if(search) search.focus()
-
+const results = document.getElementById("searchResults")
+if(results) results.innerHTML = ""
 }
