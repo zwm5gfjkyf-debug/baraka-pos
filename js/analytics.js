@@ -410,81 +410,7 @@ document.getElementById("inventoryProfit").innerText =
 formatMoney(potentialProfit) + " so'm"
 
 }
-// ===============================
-// LOAD ANALYTICS
-// ===============================
-async function loadDebtAnalytics(){
 
-const container = document.querySelector("#debtAnalyticsPage #debtAnalyticsList")
-if(!container) return
-
-container.innerHTML = ""
-
-const snapshot = await db
-.collection("shops")
-.doc(currentShopId)
-.collection("debts")
-.get()
-
-if(snapshot.empty){
-container.innerHTML = "Nasiya mavjud emas"
-return
-}
-
-const customers = {}
-
-snapshot.forEach(doc=>{
-
-const d = doc.data()
-
-if(!customers[d.customer]){
-
-customers[d.customer] = {
-items:0,
-total:0,
-remaining:0
-}
-
-}
-
-let itemCount = 0
-
-if(d.items){
-d.items.forEach(i=>{
-itemCount += i.qty || 0
-})
-}
-
-customers[d.customer].items += itemCount
-customers[d.customer].total += d.total || 0
-customers[d.customer].remaining += d.remaining || 0
-
-})
-
-Object.entries(customers).forEach(([name,data])=>{
-const paid = data.total - data.remaining
-const status = data.remaining <= 0
-? "To'langan ✅"
-: "Qarzdor ⏳"
-
-const div = document.createElement("div")
-
-div.className = "dashboard-card glass"
-
-div.innerHTML = `
-<h3>${name}</h3>
-<p>Mahsulotlar soni: ${data.items}</p>
-<p>Jami nasiya: ${formatMoney(data.total)}</p>
-<p>To'langan: ${formatMoney(paid)}</p>
-<p>Qolgan qarz: ${formatMoney(data.remaining)}</p>
-<p>Status: ${status}</p>
-`
-
-container.appendChild(div)
-
-})
-
-}
 
 function openSalesAnalytics(){
 
@@ -896,13 +822,45 @@ list.innerHTML = "Yuklanmoqda..."
 let totalDebt = 0
 let customers = {}
 
+let totalDebt = 0
+let customers = {}
+
 const snapshot = await db
 .collection("shops")
 .doc(currentShopId)
 .collection("sales")
-.where("type","==","debt")
 .get()
 
+snapshot.forEach(doc=>{
+
+const sale = doc.data()
+
+if(sale.type !== "debt" && sale.type !== "debt_payment") return
+
+const name = sale.customer || "Noma'lum"
+
+if(!customers[name]){
+customers[name] = {
+total:0,
+lastDate:sale.createdAt
+}
+}
+
+if(sale.type === "debt"){
+customers[name].total += sale.total
+totalDebt += sale.total
+}
+
+if(sale.type === "debt_payment"){
+customers[name].total -= sale.total
+totalDebt -= sale.total
+}
+
+if(sale.createdAt > customers[name].lastDate){
+customers[name].lastDate = sale.createdAt
+}
+
+})
 snapshot.forEach(doc=>{
 
 const sale = doc.data()
