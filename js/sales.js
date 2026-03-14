@@ -178,11 +178,30 @@ const list = document.getElementById("cartList")
 if(!list) return
 list.innerHTML = ""
 const saleTypeBox = document.getElementById("saleTypeContainer")
-if(!saleTypeBox) return
+const debtInput = document.getElementById("debtCustomer")
+
 if(cart.length > 0){
+
 saleTypeBox.classList.remove("hidden")
+
 }else{
+
 saleTypeBox.classList.add("hidden")
+
+// reset everything when cart empty
+saleType = "cash"
+
+if(debtInput){
+debtInput.value = ""
+debtInput.classList.add("hidden")
+}
+
+const cash = document.getElementById("cashBtn")
+const debt = document.getElementById("debtBtn")
+
+if(cash) cash.classList.add("active")
+if(debt) debt.classList.remove("active")
+
 }
 let total = 0
 
