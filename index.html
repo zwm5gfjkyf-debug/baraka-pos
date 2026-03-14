@@ -197,9 +197,7 @@ autocomplete="off"
 >
 
 </div>
-<button class="btn-secondary" onclick="startCameraScanner()" style="margin-top:8px;width:100%">
-📷 Kamera orqali sotuv
-</button>
+
 <div id="searchResults"></div>
 <div id="cameraScanner" class="hidden" style="margin-top:10px">
 
@@ -453,7 +451,19 @@ style="margin:15px 0;width:100%"
 </div>
 
 </div>
+<div id="cameraScannerBox" class="camera-box">
 
+<button class="btn-secondary camera-btn" onclick="startCameraScanner()">
+📷 Kamera orqali sotuv
+</button>
+
+<div id="cameraScanner" class="hidden camera-preview">
+
+<div id="scannerViewport"></div>
+
+</div>
+
+</div>
 <!-- NAVIGATION -->
 
 <nav class="bottom-nav glass">
