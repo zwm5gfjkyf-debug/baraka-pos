@@ -177,7 +177,13 @@ function renderCart(){
 const list = document.getElementById("cartList")
 if(!list) return
 list.innerHTML = ""
-
+const saleTypeBox = document.getElementById("saleTypeContainer")
+if(!saleTypeBox) return
+if(cart.length > 0){
+saleTypeBox.classList.remove("hidden")
+}else{
+saleTypeBox.classList.add("hidden")
+}
 let total = 0
 
 cart.forEach(item => {
@@ -334,8 +340,15 @@ console.warn("Sale saved offline")
 
 cart = []
 cartMap = {}
-renderCart()
+saleType = "cash"
 
+document.getElementById("debtCustomer").value = ""
+document.getElementById("debtCustomer").classList.add("hidden")
+
+document.getElementById("cashBtn").classList.add("active")
+document.getElementById("debtBtn").classList.remove("active")
+
+renderCart()
 showSuccess("Sotuv yakunlandi")
 
 loadDashboard()
@@ -497,6 +510,7 @@ input.classList.add("hidden")
 if(type === "debt"){
 debt.classList.add("active")
 input.classList.remove("hidden")
+input.focus()
 }
 
 }
