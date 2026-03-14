@@ -75,17 +75,10 @@ const salesRef = db
 .doc(currentShopId)
 .collection("sales")
 
-const debtsRef = db
-.collection("shops")
-.doc(currentShopId)
-.collection("debts")
 
 if(dashboardListener) dashboardListener()
 
 dashboardListener = salesRef.onSnapshot(salesSnapshot => {
-    
-debtsRef.get().then(debtsSnapshot => {
-
 let todayRevenue = 0
 let todayItems = 0
 let todayProfit = 0
@@ -127,14 +120,21 @@ date = new Date(sale.createdAt)
 
 if(date >= todayStart){
 
-// If it is NOT debt, count as revenue
-if(sale.type !== "debt"){
+// Only cash sales increase revenue
+if(sale.type === "cash"){
 
 todayRevenue += sale.total || 0
 runningTotal += sale.total || 0
 
 }
 
+// Debt payments also increase revenue
+if(sale.type === "debt_payment"){
+
+todayRevenue += sale.total || 0
+runningTotal += sale.total || 0
+
+}
 // If it IS debt, count as debt
 if(sale.type === "debt"){
 todayDebt += sale.total || 0
@@ -152,9 +152,9 @@ minute:'2-digit'
 chartLabels.push(time)
 chartValues.push(runningTotal)
 
-// Profit only from cash or debt payments
-if(sale.items && sale.type !== "debt"){
-
+// Profit only from real product sales
+if(sale.items && (sale.type === "cash" || sale.type === "debt")){
+    
 sale.items.forEach(item=>{
 
 const qty = item.qty || 0
@@ -193,7 +193,7 @@ values: chartValues
 
 })
 
-})
+
 
 }
 // ===============================
