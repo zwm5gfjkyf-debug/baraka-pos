@@ -153,8 +153,9 @@ chartLabels.push(time)
 chartValues.push(runningTotal)
 
 // Profit only from real product sales
-if(sale.items && (sale.type === "cash" || sale.type === "debt")){
-    
+// Profit only from CASH sales
+if(sale.items && sale.type === "cash"){
+
 sale.items.forEach(item=>{
 
 const qty = item.qty || 0
@@ -165,6 +166,13 @@ todayItems += qty
 todayProfit += (price - cost) * qty
 
 })
+
+}
+
+// Profit from debt payments
+if(sale.type === "debt_payment"){
+
+todayProfit += sale.profitPart || 0
 
 }
 
