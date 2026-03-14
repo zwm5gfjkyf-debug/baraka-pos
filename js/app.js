@@ -6,7 +6,7 @@ let analyticsLoaded = false
 let currentShopId = null
 let dashboardSalesCache = []
 let dashboardListener = null
-
+window.currentShopId = null
 // =============================
 // AUTH STATE
 // =============================
@@ -37,7 +37,13 @@ auth.onAuthStateChanged(user => {
 
 loadProducts()
 loadDashboard()
-loadLowStock()
+
+setTimeout(()=>{
+    if(typeof loadLowStock === "function"){
+        loadLowStock()
+    }
+},300)
+
 syncOfflineSales()
     }
     else{
