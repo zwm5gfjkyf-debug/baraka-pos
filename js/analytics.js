@@ -98,20 +98,19 @@ const barColor = isLight
 ? "rgba(37,99,235,0.7)"
 : "rgba(34,197,94,0.7)"
 
+weeklyChart = new Chart(ctx,{
+
+type:"bar",
 
 data:{
 labels:labels,
 
 datasets:[{
-
 data:values,
-
 backgroundColor: barColor,
 borderRadius:8,
 barThickness:28
-
 }]
-
 },
 
 options:{
@@ -889,4 +888,4 @@ document.getElementById("extraTab").classList.add("active")
 }
 
 }
-   
+window.showAnalyticsTab = showAnalyticsTab   
