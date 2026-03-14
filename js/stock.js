@@ -73,8 +73,7 @@ document.getElementById("stockQty").value = ""
 document.getElementById("stockCost").value = ""
 document.getElementById("stockSellingPrice").value = ""
 
-showSuccess("Zaxira yangilandi")
-
+showTopBanner("Zaxira yangilandi")
 }
 finally{
 
