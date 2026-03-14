@@ -111,6 +111,7 @@ backgroundColor: barColor,
 borderRadius:8,
 barThickness:28
 }]
+
 },
 
 options:{
@@ -254,7 +255,7 @@ datasets:[{
 
 data:values,
 
-backgroundColor: barColor
+backgroundColor: barColor,
 borderRadius:8,
 
 barThickness:26
