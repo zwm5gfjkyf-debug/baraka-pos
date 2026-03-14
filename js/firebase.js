@@ -11,24 +11,26 @@ const firebaseConfig = {
   appId: "1:3915833554:web:36144e4699aaf4249e0d0b"
 };
 
+if (!firebase.apps.length) {
 firebase.initializeApp(firebaseConfig);
-
+}
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 db.settings({
-experimentalAutoDetectLongPolling: true
+experimentalAutoDetectLongPolling: true,
+merge: true
 })
 
 db.enablePersistence()
-.catch(err => {
+.catch((err) => {
 
-if (err.code === 'failed-precondition') {
-console.warn("Multiple tabs open — persistence disabled")
+if (err.code === "failed-precondition") {
+console.warn("⚠ Multiple tabs open — persistence disabled")
 }
 
-else if (err.code === 'unimplemented') {
-console.warn("Browser does not support persistence")
+if (err.code === "unimplemented") {
+console.warn("⚠ Browser does not support persistence")
 }
 
 })
