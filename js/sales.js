@@ -9,7 +9,7 @@ let productIndex = {}
 let productIndexBarcode = {}
 let productKeys = []        // search optimization
 let productById = {}        // cart optimization
-
+let saleType = "cash"
 let cart = []
 let cartMap = {}
 const scanSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg")
@@ -301,7 +301,12 @@ let total = cart.reduce((t,i)=>t + i.price*i.qty,0)
 const sale = {
 items: cart,
 total: total,
-createdAt: firebase.firestore.FieldValue.serverTimestamp()}
+type: saleType,
+customer: saleType === "debt" 
+? document.getElementById("debtCustomer").value || "Noma'lum"
+: null,
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
+}
 
 try{
 
@@ -472,4 +477,26 @@ const search = document.getElementById("saleSearch")
 if(search) search.focus()
 const results = document.getElementById("searchResults")
 if(results) results.innerHTML = ""
+}
+function setSaleType(type){
+
+saleType = type
+
+const cash = document.getElementById("cashBtn")
+const debt = document.getElementById("debtBtn")
+const input = document.getElementById("debtCustomer")
+
+cash.classList.remove("active")
+debt.classList.remove("active")
+
+if(type === "cash"){
+cash.classList.add("active")
+input.classList.add("hidden")
+}
+
+if(type === "debt"){
+debt.classList.add("active")
+input.classList.remove("hidden")
+}
+
 }
