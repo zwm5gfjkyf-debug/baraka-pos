@@ -140,6 +140,10 @@ if(sale.type === "debt"){
 todayDebt += sale.total || 0
 }
 
+if(sale.type === "debt_payment"){
+todayDebt -= sale.total || 0
+}
+
 const time = date.toLocaleTimeString([], {
 hour:'2-digit',
 minute:'2-digit'
@@ -168,23 +172,7 @@ todayProfit += (price - cost) * qty
 
 })
 
-debtsSnapshot.forEach(doc => {
 
-const debt = doc.data()
-
-if(debt.created){
-
-const date = new Date(debt.created)
-
-if(date >= todayStart){
-
-todayDebt += debt.total || 0
-
-}
-
-}
-
-})
 
 const rev = document.getElementById("todayRevenue")
 const items = document.getElementById("todayItems")
