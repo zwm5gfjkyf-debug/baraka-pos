@@ -541,8 +541,8 @@ Tahlil
 
 <div class="modal-buttons">
 
-<button onclick="openLabelPreview()" class="btn-primary">
-Saqlash va Chop Etish
+<button onclick="saveProductEdit()" class="btn-primary">
+Saqlash
 </button>
 
 <button onclick="closeEditModal()" class="btn-secondary">
@@ -564,9 +564,12 @@ Bekor qilish
 <span id="successText">
 Muvaffaqiyatli
 </span>
+
 </div>
 
 </div>
+
+<!-- ADD PRODUCT MODAL -->
 
 <div id="addProductModal" class="modal hidden">
 
@@ -576,16 +579,15 @@ Muvaffaqiyatli
 
 <input id="stockName" placeholder="Mahsulot nomi">
 
-
 <div style="display:flex; gap:6px">
 
-<input 
+<input
 id="stockBarcode"
 placeholder="Barcode"
 style="flex:1"
 >
 
-<button 
+<button
 type="button"
 onclick="generateBarcode()"
 style="
@@ -603,7 +605,9 @@ cursor:pointer;
 </div>
 
 <input id="stockQty" type="number" placeholder="Miqdor">
+
 <input id="stockCost" type="number" placeholder="Kelgan narx">
+
 <div class="profit-buttons">
 
 <button type="button" onclick="setProfit(10)">10%</button>
@@ -615,6 +619,7 @@ cursor:pointer;
 </div>
 
 <input id="stockSellingPrice" type="number" placeholder="Sotish narxi">
+
 <div class="modal-buttons">
 
 <button onclick="openLabelPreview()" class="btn-primary">
@@ -630,78 +635,21 @@ Bekor qilish
 </div>
 
 </div>
-<script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
-<script src="js/firebase.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/navigation.js"></script>
-<script src="js/sales.js"></script>
-<script src="js/stock.js"></script>
-<script src="js/analytics.js"></script>
-<script src="js/app.js"></script>
-<script src="js/ui.js"></script>
-<script>
-if(typeof showAnalyticsTab === "function"){
-window.showAnalyticsTab = showAnalyticsTab
-}
-</script>
-<div id="labelPreviewModal" class="modal hidden">
 
-<div class="modal-card">
+<!-- LABEL PREVIEW MODAL -->
 
-<h3>Yorliq preview</h3>
-
-<div id="labelPreview" style="
-width:180px;
-height:100px;
-border:1px dashed #ccc;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-margin:15px auto;
-font-family:monospace;
-text-align:center;
-">
-
-<div id="previewName" style="font-size:14px;font-weight:600"></div>
-
-<div id="previewPrice" style="font-size:14px;margin-top:2px"></div>
-
-<div id="previewBarcodeNumber" style="font-size:11px;margin-top:2px"></div>
-
-<svg id="previewBarcode" style="margin-top:4px"></svg>
-
-</div>
-
-<div class="modal-buttons">
-
-<button onclick="printLabels()" class="btn-primary">
-Chop etish
-</button>
-
-<button onclick="closeLabelPreview()" class="btn-secondary">
-Bekor
-</button>
-
-</div>
-
-</div>
-
-</div>
-  <div id="topBanner" class="top-banner">
-  <div class="banner-content">
-    <span class="banner-check">✔</span>
-    <span id="bannerMessage">Zaxira yangilandi</span>
-  </div>
-</div>
 <div id="labelPreviewModal" class="modal hidden">
 
 <div class="modal-card">
 
 <h3>Label Preview</h3>
 
-<div style="text-align:center">
+<div style="
+width:180px;
+margin:15px auto;
+text-align:center;
+font-family:monospace;
+">
 
 <div id="previewName" style="font-weight:600;font-size:16px"></div>
 
@@ -710,6 +658,32 @@ Bekor
 <svg id="previewBarcode"></svg>
 
 <div id="previewBarcodeNumber"></div>
+
+<div style="margin-top:10px">
+
+<label style="font-size:13px;opacity:.8">
+Nechta yorliq?
+</label>
+
+<br>
+
+<input
+id="labelQty"
+type="number"
+value="1"
+min="1"
+style="
+width:80px;
+text-align:center;
+margin-top:5px;
+padding:6px;
+border-radius:6px;
+border:none;
+background:#0f172a;
+color:white;
+"
+/>
+</div>
 
 </div>
 
@@ -726,28 +700,36 @@ Bekor qilish
 </div>
 
 </div>
-<div style="margin-top:10px;text-align:center">
-
-<label style="font-size:13px;opacity:.8">
-Nechta yorliq?
-</label>
-
-<input
-id="labelQty"
-type="number"
-style="
-width:80px;
-text-align:center;
-margin-top:4px;
-padding:6px;
-border-radius:6px;
-border:none;
-background:#0f172a;
-color:white;
-"
->
 
 </div>
+
+<!-- TOP BANNER -->
+
+<div id="topBanner" class="top-banner">
+
+<div class="banner-content">
+
+<span class="banner-check">✔</span>
+
+<span id="bannerMessage">Zaxira yangilandi</span>
+
 </div>
-</body>
-</html>
+
+</div>
+
+<script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
+<script src="js/firebase.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/navigation.js"></script>
+<script src="js/sales.js"></script>
+<script src="js/stock.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/app.js"></script>
+<script src="js/ui.js"></script>
+
+<script>
+if(typeof showAnalyticsTab === "function"){
+window.showAnalyticsTab = showAnalyticsTab
+}
+</script>
