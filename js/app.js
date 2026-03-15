@@ -296,3 +296,22 @@ banner.classList.remove("show")
 },2000)
 
 }
+function openSidebar(){
+
+const sidebar = document.getElementById("sidebar")
+const overlay = document.getElementById("sidebarOverlay")
+
+sidebar.classList.add("open")
+overlay.classList.add("show")
+
+}
+
+function closeSidebar(){
+
+const sidebar = document.getElementById("sidebar")
+const overlay = document.getElementById("sidebarOverlay")
+
+sidebar.classList.remove("open")
+overlay.classList.remove("show")
+
+}
