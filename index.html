@@ -64,7 +64,7 @@
 <div class="auth-card">
 
 <h1 class="auth-title">Baraka POS</h1>
-<p class="auth-subtitle">Biznesingiz uchun zamonaviy POS</p>
+<p class="auth-subtitle">Biznesingiz uchun zamonaviy ilova</p>
 
 <input
 id="shopName"
@@ -97,7 +97,29 @@ Kirish
 
 </div>
 
+<div id="sidebar" class="sidebar">
 
+<div class="sidebar-header">
+BARAKA
+</div>
+
+<button onclick="navigate('dashboardPage')">🏠 Asosiy</button>
+
+<button onclick="navigate('salePage')">🛒 Sotuv</button>
+
+<button onclick="navigate('stockPage')">📦 Zaxira</button>
+
+<button onclick="navigate('analyticsPage')">📊 Tahlil</button>
+
+<hr>
+
+<button onclick="logout()">🚪 Chiqish</button>
+
+<button onclick="deleteAllShopData()">🗑 Hammasini o'chirish</button>
+
+</div>
+
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
 
 <!-- APP -->
 
