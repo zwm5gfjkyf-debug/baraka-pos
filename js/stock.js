@@ -357,11 +357,15 @@ function openLabelPreview(){
 const name = document.getElementById("stockName").value
 const price = document.getElementById("stockSellingPrice").value
 const barcode = document.getElementById("stockBarcode").value
+const qty = document.getElementById("stockQty").value
 
 document.getElementById("previewName").innerText = name
 document.getElementById("previewPrice").innerText =
 Number(price).toLocaleString("ru-RU") + " so'm"
+
 document.getElementById("previewBarcodeNumber").innerText = barcode
+
+document.getElementById("labelQty").value = qty || 1
 
 JsBarcode("#previewBarcode", barcode, {
 format: "CODE128",
@@ -370,10 +374,10 @@ height: 40,
 margin: 0,
 displayValue: false
 })
+
 document.getElementById("labelPreviewModal").classList.remove("hidden")
 
 }
-
 function closeLabelPreview(){
 document.getElementById("labelPreviewModal").classList.add("hidden")
 }
