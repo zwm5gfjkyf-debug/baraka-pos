@@ -578,9 +578,30 @@ Muvaffaqiyatli
 
 <input id="stockBarcode" placeholder="Barcode">
 
-<button type="button" onclick="generateBarcode()">
-yaratish
+<div style="display:flex; gap:6px">
+
+<input 
+id="stockBarcode"
+placeholder="Barcode"
+style="flex:1"
+>
+
+<button 
+type="button"
+onclick="generateBarcode()"
+style="
+padding:0 12px;
+background:#22c55e;
+border:none;
+border-radius:6px;
+color:white;
+font-weight:600;
+cursor:pointer;
+">
++
 </button>
+
+</div>
 
 <input id="stockQty" type="number" placeholder="Miqdor">
 <input id="stockCost" type="number" placeholder="Kelgan narx">
