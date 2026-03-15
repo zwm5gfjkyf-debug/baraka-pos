@@ -359,16 +359,17 @@ const price = document.getElementById("stockSellingPrice").value
 const barcode = document.getElementById("stockBarcode").value
 
 document.getElementById("previewName").innerText = name
-document.getElementById("previewPrice").innerText = price + " so'm"
+document.getElementById("previewPrice").innerText =
+Number(price).toLocaleString("ru-RU") + " so'm"
 document.getElementById("previewBarcodeNumber").innerText = barcode
 
 JsBarcode("#previewBarcode", barcode, {
 format: "CODE128",
-width: 1.5,
-height: 30,
+width: 2,
+height: 40,
+margin: 0,
 displayValue: false
 })
-
 document.getElementById("labelPreviewModal").classList.remove("hidden")
 
 }
