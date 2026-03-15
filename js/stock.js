@@ -331,9 +331,7 @@ const ref = db
 .collection("settings")
 .doc("barcode")
 
-const result = await db.runTransaction(async (t)=>{
-
-const doc = await t.get(ref)
+const doc = await ref.get()
 
 let counter = 1
 
@@ -343,13 +341,9 @@ counter = doc.data().barcodeCounter || 1
 
 counter++
 
-t.set(ref,{ barcodeCounter: counter },{ merge:true })
+ref.set({ barcodeCounter: counter }, { merge:true })
 
-return counter
-
-})
-
-const barcode = String(result).padStart(9,"0")
+const barcode = String(counter).padStart(9,"0")
 
 const input = document.getElementById("stockBarcode")
 
