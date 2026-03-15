@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -645,6 +645,50 @@ if(typeof showAnalyticsTab === "function"){
 window.showAnalyticsTab = showAnalyticsTab
 }
 </script>
+<div id="labelPreviewModal" class="modal hidden">
+
+<div class="modal-card">
+
+<h3>Yorliq preview</h3>
+
+<div id="labelPreview" style="
+width:180px;
+height:100px;
+border:1px dashed #ccc;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+margin:15px auto;
+font-family:monospace;
+text-align:center;
+">
+
+<div id="previewName" style="font-size:14px;font-weight:600"></div>
+
+<div id="previewPrice" style="font-size:14px;margin-top:2px"></div>
+
+<div id="previewBarcodeNumber" style="font-size:11px;margin-top:2px"></div>
+
+<svg id="previewBarcode" style="margin-top:4px"></svg>
+
+</div>
+
+<div class="modal-buttons">
+
+<button onclick="printLabels()" class="btn-primary">
+Chop etish
+</button>
+
+<button onclick="closeLabelPreview()" class="btn-secondary">
+Bekor
+</button>
+
+</div>
+
+</div>
+
+</div>
   <div id="topBanner" class="top-banner">
   <div class="banner-content">
     <span class="banner-check">✔</span>
