@@ -139,9 +139,10 @@ if(sale.type === "debt_payment"){
 todayDebt -= sale.total || 0
 }
 
-const time = date.toLocaleTimeString([], {
+const time = date.toLocaleTimeString('uz-UZ', {
 hour:'2-digit',
-minute:'2-digit'
+minute:'2-digit',
+hour12:false
 })
 
 chartLabels.push(time)
