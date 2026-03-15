@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -694,6 +694,39 @@ Bekor
     <span class="banner-check">✔</span>
     <span id="bannerMessage">Zaxira yangilandi</span>
   </div>
+</div>
+<div id="labelPreviewModal" class="modal hidden">
+
+<div class="modal-card">
+
+<h3>Label Preview</h3>
+
+<div style="text-align:center">
+
+<div id="previewName" style="font-weight:600;font-size:16px"></div>
+
+<div id="previewPrice" style="margin:4px 0"></div>
+
+<svg id="previewBarcode"></svg>
+
+<div id="previewBarcodeNumber"></div>
+
+</div>
+
+<div class="modal-buttons">
+
+<button onclick="addStock(); closeLabelPreview(); closeAddProductModal()" class="btn-primary">
+Tasdiqlash
+</button>
+
+<button onclick="closeLabelPreview()" class="btn-secondary">
+Bekor qilish
+</button>
+
+</div>
+
+</div>
+
 </div>
 </body>
 </html>
