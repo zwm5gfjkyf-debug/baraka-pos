@@ -451,8 +451,11 @@ date = new Date(sale.createdAt)
 }
 
 const day = date.toLocaleDateString()
-const time = date.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
-
+const time = date.toLocaleTimeString('uz-UZ', {
+hour:'2-digit',
+minute:'2-digit',
+hour12:false
+})
 // skip debt payment records
 if(sale.type === "debt_payment") return
 
