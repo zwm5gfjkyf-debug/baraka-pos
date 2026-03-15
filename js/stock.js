@@ -321,3 +321,40 @@ const price = Math.round(cost + (cost * percent / 100))
 document.getElementById("editPrice").value = price
 
 }
+async function generateBarcode(){
+
+if(!currentShopId) return
+
+const ref = db
+.collection("shops")
+.doc(currentShopId)
+.collection("settings")
+.doc("barcode")
+
+const result = await db.runTransaction(async (t)=>{
+
+const doc = await t.get(ref)
+
+let counter = 1
+
+if(doc.exists){
+counter = doc.data().barcodeCounter || 1
+}
+
+counter++
+
+t.set(ref,{ barcodeCounter: counter },{ merge:true })
+
+return counter
+
+})
+
+const barcode = String(result).padStart(9,"0")
+
+const input = document.getElementById("stockBarcode")
+
+if(input){
+input.value = barcode
+}
+
+}
