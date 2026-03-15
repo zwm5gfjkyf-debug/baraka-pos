@@ -352,3 +352,27 @@ input.value = barcode
 }
 
 }
+function openLabelPreview(){
+
+const name = document.getElementById("stockName").value
+const price = document.getElementById("stockSellingPrice").value
+const barcode = document.getElementById("stockBarcode").value
+
+document.getElementById("previewName").innerText = name
+document.getElementById("previewPrice").innerText = price + " so'm"
+document.getElementById("previewBarcodeNumber").innerText = barcode
+
+JsBarcode("#previewBarcode", barcode, {
+format: "CODE128",
+width: 1.5,
+height: 30,
+displayValue: false
+})
+
+document.getElementById("labelPreviewModal").classList.remove("hidden")
+
+}
+
+function closeLabelPreview(){
+document.getElementById("labelPreviewModal").classList.add("hidden")
+}
