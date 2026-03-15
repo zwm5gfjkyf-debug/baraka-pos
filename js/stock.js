@@ -25,7 +25,7 @@ const cost = Number(document.getElementById("stockCost").value)
 const price = Number(document.getElementById("stockSellingPrice").value)
 
 if(!name || !price){
-showToast("Mahsulot nomi va narx kerak")
+showTopBanner("Mahsulot nomi va narx kerak","error")
 stockProcessing = false
 return
 }
@@ -341,7 +341,7 @@ counter = doc.data().barcodeCounter || 1
 
 counter++
 
-ref.set({ barcodeCounter: counter }, { merge:true })
+await ref.set({ barcodeCounter: counter }, { merge:true })
 
 const barcode = String(counter).padStart(9,"0")
 
@@ -354,10 +354,15 @@ input.value = barcode
 }
 function openLabelPreview(){
 
-const name = document.getElementById("stockName").value
+const name = document.getElementById("stockName").value.trim()
 const price = document.getElementById("stockSellingPrice").value
 const barcode = document.getElementById("stockBarcode").value
 const qty = document.getElementById("stockQty").value
+
+if(!name || !price){
+showTopBanner("Mahsulot nomi va narx kerak","error")
+return
+}
 
 document.getElementById("previewName").innerText = name
 document.getElementById("previewPrice").innerText =
@@ -365,8 +370,7 @@ Number(price).toLocaleString("ru-RU") + " so'm"
 
 document.getElementById("previewBarcodeNumber").innerText = barcode
 
-document.getElementById("labelQty").value = qty || 1
-
+document.getElementById("labelQty").value = Number(qty) > 0 ? qty : 1
 JsBarcode("#previewBarcode", barcode, {
 format: "CODE128",
 width: 2,
