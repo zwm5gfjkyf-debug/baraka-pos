@@ -62,31 +62,7 @@ font-family:'Inter',sans-serif;
 BODY BACKGROUND
 ========================================= */
 
-body{
 
-background:
-radial-gradient(circle at top,
-#1e293b,
-#020617 60%);
-
-color:var(--text-main);
-
-min-height:100vh;
-
-}
-body{
--webkit-font-smoothing:antialiased;
-}
-body{
-overflow-x:hidden;
-}
-/* =========================================
-SCROLLBAR (PREMIUM)
-========================================= */
-
-::-webkit-scrollbar{
-width:8px;
-}
 
 ::-webkit-scrollbar-track{
 background:transparent;
@@ -1295,25 +1271,7 @@ z-index:5;
 STOCK CARD DESIGN
 ========================= */
 
-.stock-card{
 
-padding:18px;
-
-border-radius:16px;
-
-background:linear-gradient(
-145deg,
-#0f172a,
-#020617
-);
-
-border:1px solid rgba(255,255,255,0.05);
-
-box-shadow:0 10px 30px rgba(0,0,0,0.6);
-
-transition:all 0.2s ease;
-
-}
 
 .stock-card:hover{
 
@@ -1528,9 +1486,7 @@ margin-top:10px;
 
 }
 
-.hidden{
-display:none;
-}
+
 .add-more-btn{
 margin-top:10px;
 padding:10px 14px;
@@ -1578,33 +1534,7 @@ color:black;
 LIGHT MODE
 ====================== */
 
-.light-mode{
-  background:#f5f7fb;
-  color:#1e293b;
-}
 
-.light-mode .glass{
-  background:white;
-  border-radius:16px;
-  border:1px solid #eef1f6;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
-}
-
-.light-mode .dashboard-card{
-background:linear-gradient(
-180deg,
-#ffffff,
-#f1f5ff
-);
-border:1px solid #e2e8f0;
-}
-.light-mode .chart-container{
-background:linear-gradient(
-180deg,
-#ffffff,
-#eef2ff
-);
-}
 .search-box input{
 
 width:100%;
@@ -1623,9 +1553,7 @@ font-size:15px;
 
 }
 
-body{
-overflow-x:hidden;
-}
+
 .app-container{
 min-height:100vh;
 display:flex;
@@ -1633,181 +1561,8 @@ flex-direction:column;
 justify-content:flex-start;
 }
 
-.light-mode input{
-  background:#f8fafc;
-  border:1px solid #e2e8f0;
-  border-radius:10px;
-  color:#0f172a;
-}
-.light-mode .card-title{
-  color:#64748b;
-  font-weight:500;
-}
 
-.light-mode .dashboard-amount{
-color:#2563eb;
-font-weight:700;
-}
-.light-mode .bottom-nav{
-  background:white;
-  border-top:1px solid #e5e7eb;
-  box-shadow:0 -5px 15px rgba(0,0,0,0.05);
-}
-.light-mode .chart-container{
-  background:white;
-  border-radius:16px;
-  border:1px solid #eef1f6;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
-}
-.light-mode .search-item{
-  background:white;
-  border-bottom:1px solid #f1f5f9;
-}
-.light-mode .search-item{
-background:white;
-}
-.light-mode .btn-primary{
-  background:#22c55e;
-  border:none;
-  color:white;
-  border-radius:10px;
-}
 
-.light-mode .btn-secondary{
-  background:#f1f5f9;
-  border:none;
-  color:#334155;
-}
-.light-mode .cart-item{
-background:white;
-}
-.theme-btn{
-background:none;
-border:none;
-font-size:18px;
-cursor:pointer;
-margin-right:10px;
-color:white;
-}
-
-.light-mode .theme-btn{
-color:black;
-}
-/* ======================
-LIGHT MODE DESIGN SYSTEM
-====================== */
-
-.light-mode {
-  background: #f6f7fb;
-  color: #111827;
-}
-
-/* Header */
-.light-mode .app-header {
-  background: white;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-}
-
-/* Glass cards */
-.light-mode .glass {
-  background: white;
-  border: 1px solid #e6e8ee;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-}
-
-/* Dashboard cards */
-.light-mode .dashboard-card {
-  background: white;
-  border: 1px solid #e6e8ee;
-}
-
-/* Titles */
-.light-mode .card-title {
-  color: #64748b;
-}
-
-.light-mode .dashboard-amount {
-  color: #111827;
-}
-
-/* Inputs */
-.light-mode input {
-  background: #f9fafb;
-  border: 1px solid #dcdfe6;
-  color: #111827;
-}
-
-/* Buttons */
-.light-mode .btn-primary {
-background:linear-gradient(
-135deg,
-var(--accent),
-var(--accent-dark)
-);
-color:white;
-}
-
-.light-mode .btn-secondary {
-  background: #f3f4f6;
-  color: #111827;
-}
-
-/* Bottom Navigation */
-.light-mode .bottom-nav {
-  background: white;
-  border-top: 1px solid #e6e8ee;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
-}
-
-/* Search results */
-.light-mode .search-item {
-  background: white;
-  border-bottom: 1px solid #eee;
-}
-
-/* Cart items */
-.light-mode .cart-item {
-  background: #fafafa;
-  border: 1px solid #eee;
-}
-
-/* Charts container */
-.light-mode .chart-container {
-  background: white;
-  border: 1px solid #e6e8ee;
-}
-.theme-btn{
-  background:none;
-  border:none;
-  font-size:20px;
-  cursor:pointer;
-  margin-right:12px;
-}
-
-.light-mode .theme-btn{
-  color:#111827;
-}
-.light-mode .tab-btn{
-  background:#f1f5f9;
-  color:#475569;
-}
-
-.light-mode .tab-btn.active{
-  background:#22c55e;
-  color:white;
-}
-.light-mode .stock-card{
-  background:white;
-  border:1px solid #e5e7eb;
-  box-shadow:0 6px 16px rgba(0,0,0,0.05);
-}
-.stock-card{
-padding:18px;
-border-radius:16px;
-background:white;
-box-shadow:0 8px 20px rgba(0,0,0,0.06);
-margin-bottom:16px;
-}
 
 .stock-header{
 display:flex;
@@ -1857,17 +1612,7 @@ gap:10px;
 }
 /* STOCK ACTION BUTTONS */
 
-.light-mode .stock-actions button{
-background:#f1f5f9;
-color:#1e293b;
-border:1px solid #e2e8f0;
-}
 
-.light-mode .stock-actions .danger-btn{
-background:#fee2e2;
-color:#b91c1c;
-border:1px solid #fecaca;
-}
 .stock-actions{
 display:flex;
 gap:10px;
@@ -1900,17 +1645,12 @@ box-shadow:0 10px 30px rgba(0,0,0,0.6);
 color:#e5e7eb;
 }
 
-.light-mode .stock-card strong{
-color:#111827;
-}
 
 .stock-card span{
 color:#94a3b8;
 }
 
-.light-mode .stock-card span{
-color:#64748b;
-}
+
 .stock-header{
 display:flex;
 justify-content:space-between;
@@ -1920,9 +1660,7 @@ padding-bottom:8px;
 border-bottom:1px solid rgba(255,255,255,0.05);
 }
 
-.light-mode .stock-header{
-border-bottom:1px solid #e5e7eb;
-}
+
 .stock-top{
 display:flex;
 gap:12px;
@@ -1973,10 +1711,7 @@ flex-direction:column;
 gap:14px;
 }
 
-.light-mode .modal-card{
-background:white;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
-}
+
 
 .modal-card h3{
 margin-bottom:6px;
@@ -2007,10 +1742,7 @@ gap:10px;
 margin-bottom:12px;
 
 }
-.light-mode .modal-card input{
-background:#f1f5f9;
-color:black;
-}
+
 
 .modal-buttons{
 display:flex;
@@ -2054,10 +1786,7 @@ cursor:pointer;
 font-size:13px;
 }
 
-.light-mode .profit-buttons button{
-background:#e2e8f0;
-color:black;
-}
+
 
 .profit-buttons button:hover{
 background:#22c55e;
@@ -2127,36 +1856,23 @@ width:100%;
 max-width:100%;
 }
 
+
 body{
-touch-action: manipulation;
-}
-body{
--webkit-tap-highlight-color: transparent;
-}
-.light-mode{
---accent:#2563eb;
---accent-dark:#1d4ed8;
---accent-soft:rgba(37,99,235,0.15);
-}
-.light-mode .chart-container{
+margin:0;
+padding:0;
+min-height:100vh;
+overflow-x:hidden;
 
-background:linear-gradient(
-180deg,
-#ffffff,
-#eef2ff
-);
+background:
+radial-gradient(circle at top,#1e293b,#020617 60%);
 
-border:1px solid #dbeafe;
+color:var(--text-main);
 
+-webkit-font-smoothing:antialiased;
+touch-action:manipulation;
+-webkit-tap-highlight-color:transparent;
 }
-.light-mode .chart-title{
-color:#2563eb;
-font-weight:600;
-}
-.light-mode .chart-title{
-color:#2563eb;
-font-weight:600;
-}
+
 .sale-type{
 display:flex;
 gap:10px;
@@ -2358,4 +2074,1839 @@ z-index:9998;
 
 .sidebar-overlay.show{
 display:block;
+}
+/* =====================================================
+BARAKA POS LIGHT MODE
+BLUE PREMIUM THEME
+===================================================== */
+
+body.light-mode{
+
+--accent:#2563eb;
+--accent-dark:#1d4ed8;
+--accent-soft:rgba(37,99,235,0.15);
+
+--bg-main:#f4f7fb;
+--bg-secondary:#eef2f7;
+
+--card-bg:#ffffff;
+
+--text-main:#0f172a;
+--text-soft:#64748b;
+
+--border:#e5e7eb;
+
+background:var(--bg-main);
+color:var(--text-main);
+
+}
+
+/* =====================================================
+BODY
+===================================================== */
+
+body.light-mode{
+
+background:
+linear-gradient(
+180deg,
+#f8fafc,
+#f1f5f9
+);
+
+color:#0f172a;
+
+}
+
+/* =====================================================
+SCROLLBAR
+===================================================== */
+
+body.light-mode::-webkit-scrollbar{
+width:8px;
+}
+
+body.light-mode::-webkit-scrollbar-thumb{
+background:#cbd5e1;
+border-radius:10px;
+}
+
+/* =====================================================
+HEADER
+===================================================== */
+
+body.light-mode .app-header{
+
+background:#ffffff;
+
+border-bottom:1px solid var(--border);
+
+box-shadow:
+0 3px 12px rgba(0,0,0,0.05);
+
+}
+
+/* =====================================================
+TEXT COLORS
+===================================================== */
+
+body.light-mode .page-title{
+color:#111827;
+}
+
+body.light-mode .shop-title{
+color:#0f172a;
+}
+
+body.light-mode .shop-label{
+color:#64748b;
+}
+
+/* =====================================================
+CARDS
+===================================================== */
+
+body.light-mode .glass{
+
+background:#ffffff;
+
+border:1px solid var(--border);
+
+box-shadow:
+0 8px 20px rgba(0,0,0,0.06);
+
+}
+
+/* =====================================================
+DASHBOARD CARDS
+===================================================== */
+
+body.light-mode .dashboard-card{
+
+background:#ffffff;
+
+border:1px solid var(--border);
+
+box-shadow:
+0 6px 18px rgba(0,0,0,0.05);
+
+}
+
+/* =====================================================
+CARD TITLES
+===================================================== */
+
+body.light-mode .card-title{
+
+color:#64748b;
+
+font-weight:500;
+
+}
+
+/* =====================================================
+CARD NUMBERS
+===================================================== */
+
+body.light-mode .dashboard-amount{
+
+color:var(--accent);
+
+font-weight:700;
+
+}
+
+/* =====================================================
+BUTTONS
+===================================================== */
+
+body.light-mode button{
+color:#0f172a;
+}
+
+/* PRIMARY */
+
+body.light-mode .btn-primary{
+
+background:
+linear-gradient(
+135deg,
+#2563eb,
+#1d4ed8
+);
+
+color:white;
+
+box-shadow:
+0 6px 18px rgba(37,99,235,0.25);
+
+}
+
+body.light-mode .btn-primary:hover{
+
+box-shadow:
+0 10px 22px rgba(37,99,235,0.35);
+
+}
+
+/* SECONDARY */
+
+body.light-mode .btn-secondary{
+
+background:#f1f5f9;
+
+border:1px solid var(--border);
+
+color:#334155;
+
+}
+
+body.light-mode .btn-secondary:hover{
+background:#e2e8f0;
+}
+
+/* DANGER */
+
+body.light-mode .danger-btn{
+background:#ef4444;
+color:white;
+}
+
+/* =====================================================
+INPUTS
+===================================================== */
+
+body.light-mode input{
+
+background:#ffffff;
+
+border:1px solid var(--border);
+
+color:#0f172a;
+
+}
+
+body.light-mode input::placeholder{
+color:#94a3b8;
+}
+
+body.light-mode input:focus{
+
+border-color:var(--accent);
+
+box-shadow:
+0 0 0 3px rgba(37,99,235,0.15);
+
+}
+
+/* =====================================================
+SEARCH RESULTS
+===================================================== */
+
+body.light-mode .search-item{
+
+background:#ffffff;
+
+border:1px solid var(--border);
+
+}
+
+body.light-mode .search-item:hover{
+
+background:#f8fafc;
+
+}
+
+/* =====================================================
+CART ITEMS
+===================================================== */
+
+body.light-mode .cart-item{
+
+background:#ffffff;
+
+border:1px solid var(--border);
+
+}
+
+body.light-mode .cart-row{
+color:#0f172a;
+}
+
+/* =====================================================
+TOTAL AMOUNT
+===================================================== */
+
+body.light-mode .total-amount{
+
+color:var(--accent);
+
+font-weight:700;
+
+}
+
+/* =====================================================
+BOTTOM NAV
+===================================================== */
+
+body.light-mode .bottom-nav{
+
+background:#ffffff;
+
+border-top:1px solid var(--border);
+
+box-shadow:
+0 -3px 12px rgba(0,0,0,0.05);
+
+}
+
+body.light-mode .bottom-nav button{
+
+color:#64748b;
+
+}
+
+body.light-mode .bottom-nav button.active{
+
+color:var(--accent);
+
+}
+
+/* =====================================================
+MODALS
+===================================================== */
+
+body.light-mode .modal{
+
+background:rgba(0,0,0,0.4);
+
+}
+
+body.light-mode .modal-card{
+
+background:#ffffff;
+
+border:1px solid var(--border);
+
+box-shadow:
+0 20px 50px rgba(0,0,0,0.12);
+
+}
+
+body.light-mode .modal-card input{
+
+background:#f8fafc;
+
+border:1px solid var(--border);
+
+color:#0f172a;
+
+}
+
+/* =====================================================
+ANALYTICS TABS
+===================================================== */
+
+body.light-mode .tab-btn{
+
+background:#f1f5f9;
+
+border:1px solid var(--border);
+
+color:#475569;
+
+}
+
+body.light-mode .tab-btn.active{
+
+background:var(--accent);
+
+color:white;
+
+border:none;
+
+}
+
+/* =====================================================
+STOCK CARDS
+===================================================== */
+
+body.light-mode .stock-card{
+
+background:#ffffff;
+
+border:1px solid var(--border);
+
+box-shadow:
+0 6px 16px rgba(0,0,0,0.05);
+
+}
+
+body.light-mode .stock-header{
+
+border-bottom:1px solid var(--border);
+
+}
+
+body.light-mode .stock-card strong{
+
+color:var(--accent);
+
+}
+
+body.light-mode .stock-card span{
+
+color:#64748b;
+
+}
+/* =====================================================
+BARAKA POS LIGHT MODE
+PART 2 — CHARTS & ANALYTICS
+BLUE DASHBOARD SYSTEM
+===================================================== */
+
+/* =====================================================
+CHART CONTAINER
+===================================================== */
+
+body.light-mode .chart-container{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+border-radius:16px;
+
+box-shadow:
+0 8px 22px rgba(0,0,0,0.05);
+
+}
+
+/* =====================================================
+CHART TITLE
+===================================================== */
+
+body.light-mode .chart-title{
+
+color:#2563eb;
+
+font-weight:600;
+
+letter-spacing:0.2px;
+
+}
+
+/* =====================================================
+CHART CANVAS
+===================================================== */
+
+body.light-mode .chart-container canvas{
+
+background:transparent;
+
+}
+
+/* =====================================================
+BIG CHART
+===================================================== */
+
+body.light-mode .big-chart{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+}
+
+/* =====================================================
+CHART TOOLTIP
+===================================================== */
+
+body.light-mode .chartjs-tooltip{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+color:#0f172a;
+
+box-shadow:
+0 6px 18px rgba(0,0,0,0.08);
+
+}
+
+/* =====================================================
+ANALYTICS GRID
+===================================================== */
+
+body.light-mode .analytics-grid{
+
+gap:16px;
+
+}
+
+/* =====================================================
+ANALYTICS CARDS
+===================================================== */
+
+body.light-mode .info-card{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+border-radius:14px;
+
+box-shadow:
+0 6px 18px rgba(0,0,0,0.05);
+
+}
+
+/* =====================================================
+ANALYTICS TEXT
+===================================================== */
+
+body.light-mode .info-card span{
+
+color:#64748b;
+
+}
+
+body.light-mode .info-card strong{
+
+color:#2563eb;
+
+font-weight:700;
+
+}
+
+/* =====================================================
+PROFIT COLORS
+===================================================== */
+
+body.light-mode .profit-positive{
+
+color:#2563eb;
+
+font-weight:700;
+
+}
+
+body.light-mode .profit-negative{
+
+color:#ef4444;
+
+}
+
+/* =====================================================
+SALES TABLE
+===================================================== */
+
+body.light-mode .sales-table{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+box-shadow:
+0 8px 22px rgba(0,0,0,0.05);
+
+}
+
+/* =====================================================
+TABLE HEADER
+===================================================== */
+
+body.light-mode .sales-table th{
+
+color:#64748b;
+
+background:#f8fafc;
+
+}
+
+/* =====================================================
+TABLE ROW
+===================================================== */
+
+body.light-mode .sales-table td{
+
+color:#0f172a;
+
+border-bottom:1px solid #f1f5f9;
+
+}
+
+/* =====================================================
+TABLE HOVER
+===================================================== */
+
+body.light-mode .sales-table tr:hover{
+
+background:#f9fafb;
+
+}
+
+/* =====================================================
+ANALYTICS BUTTONS
+===================================================== */
+
+body.light-mode .analytics-tabs{
+
+gap:10px;
+
+}
+
+body.light-mode .tab-btn{
+
+background:#f1f5f9;
+
+border:1px solid #e5e7eb;
+
+color:#64748b;
+
+}
+
+body.light-mode .tab-btn:hover{
+
+background:#e2e8f0;
+
+}
+
+body.light-mode .tab-btn.active{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+/* =====================================================
+STAT BADGES
+===================================================== */
+
+body.light-mode .badge{
+
+background:#e0ecff;
+
+color:#2563eb;
+
+}
+
+body.light-mode .badge-red{
+
+background:#fee2e2;
+
+color:#b91c1c;
+
+}
+
+/* =====================================================
+SMALL STATS
+===================================================== */
+
+body.light-mode .stats-card{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+box-shadow:
+0 6px 18px rgba(0,0,0,0.05);
+
+}
+
+body.light-mode .stats-card span{
+
+color:#64748b;
+
+}
+
+body.light-mode .stats-card strong{
+
+color:#2563eb;
+
+font-weight:700;
+
+}
+
+/* =====================================================
+CHART LEGEND
+===================================================== */
+
+body.light-mode .chart-legend{
+
+color:#475569;
+
+}
+
+/* =====================================================
+CHART GRID LINES
+===================================================== */
+
+body.light-mode .chart-grid{
+
+stroke:#e5e7eb;
+
+}
+
+/* =====================================================
+CHART VALUE TEXT
+===================================================== */
+
+body.light-mode .chart-value{
+
+fill:#2563eb;
+
+font-weight:600;
+
+}
+
+/* =====================================================
+ANALYTICS SECTION
+===================================================== */
+
+body.light-mode #weeklyAnalytics,
+body.light-mode #monthlyAnalytics,
+body.light-mode #extraAnalytics{
+
+background:transparent;
+
+}
+/* =====================================================
+BARAKA POS LIGHT MODE
+PART 3 — INVENTORY / STOCK / POS
+BLUE POS SYSTEM
+===================================================== */
+
+/* =====================================================
+STOCK LIST
+===================================================== */
+
+body.light-mode #currentStockList{
+
+display:flex;
+flex-direction:column;
+gap:14px;
+
+}
+
+/* =====================================================
+STOCK CARD
+===================================================== */
+
+body.light-mode .stock-card{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+border-radius:16px;
+
+box-shadow:
+0 6px 20px rgba(0,0,0,0.05);
+
+transition:all 0.2s;
+
+}
+
+body.light-mode .stock-card:hover{
+
+transform:translateY(-2px);
+
+box-shadow:
+0 12px 26px rgba(0,0,0,0.08);
+
+}
+
+/* =====================================================
+STOCK HEADER
+===================================================== */
+
+body.light-mode .stock-header{
+
+border-bottom:1px solid #e5e7eb;
+
+padding-bottom:10px;
+
+}
+
+/* =====================================================
+PRODUCT NAME
+===================================================== */
+
+body.light-mode .stock-header b{
+
+color:#0f172a;
+
+font-weight:600;
+
+}
+
+/* =====================================================
+BARCODE
+===================================================== */
+
+body.light-mode .barcode{
+
+color:#64748b;
+
+font-family:monospace;
+
+}
+
+/* =====================================================
+STOCK STATS
+===================================================== */
+
+body.light-mode .stock-stats{
+
+display:flex;
+justify-content:space-between;
+
+}
+
+/* =====================================================
+STAT BLOCK
+===================================================== */
+
+body.light-mode .stock-stat{
+
+text-align:center;
+
+}
+
+/* LABEL */
+
+body.light-mode .stock-stat span{
+
+color:#64748b;
+font-size:13px;
+
+}
+
+/* VALUE */
+
+body.light-mode .stock-stat strong{
+
+color:#2563eb;
+
+font-size:18px;
+font-weight:700;
+
+}
+
+/* =====================================================
+STOCK ACTION BUTTONS
+===================================================== */
+
+body.light-mode .stock-actions{
+
+display:flex;
+gap:10px;
+
+}
+
+body.light-mode .stock-actions button{
+
+background:#f1f5f9;
+
+border:1px solid #e5e7eb;
+
+color:#334155;
+
+}
+
+body.light-mode .stock-actions button:hover{
+
+background:#e2e8f0;
+
+}
+
+/* DELETE BUTTON */
+
+body.light-mode .stock-actions .danger-btn{
+
+background:#fee2e2;
+
+color:#b91c1c;
+
+border:1px solid #fecaca;
+
+}
+
+/* =====================================================
+SEARCH BOX
+===================================================== */
+
+body.light-mode .search-box{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+border-radius:14px;
+
+box-shadow:
+0 4px 12px rgba(0,0,0,0.04);
+
+}
+
+/* =====================================================
+SEARCH INPUT
+===================================================== */
+
+body.light-mode .search-box input{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+}
+
+/* =====================================================
+SEARCH RESULT ITEM
+===================================================== */
+
+body.light-mode .search-item{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+border-radius:12px;
+
+}
+
+body.light-mode .search-item:hover{
+
+background:#f8fafc;
+
+}
+
+/* =====================================================
+CART LIST
+===================================================== */
+
+body.light-mode #cartList{
+
+display:flex;
+flex-direction:column;
+gap:10px;
+
+}
+
+/* =====================================================
+CART ITEM
+===================================================== */
+
+body.light-mode .cart-item{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+border-radius:14px;
+
+}
+
+/* CART TEXT */
+
+body.light-mode .cart-name{
+
+color:#0f172a;
+
+}
+
+body.light-mode .cart-price{
+
+color:#2563eb;
+font-weight:700;
+
+}
+
+body.light-mode .cart-qty{
+
+color:#64748b;
+
+}
+
+/* =====================================================
+REMOVE BUTTON
+===================================================== */
+
+body.light-mode .cart-remove{
+
+background:#ef4444;
+
+color:white;
+
+}
+
+/* =====================================================
+QUANTITY CONTROLS
+===================================================== */
+
+body.light-mode .quantity-controls{
+
+background:#f1f5f9;
+
+border:1px solid #e5e7eb;
+
+}
+
+body.light-mode .qty-btn{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+body.light-mode .qty-number{
+
+color:#0f172a;
+
+}
+
+/* =====================================================
+TOTAL BLOCK
+===================================================== */
+
+body.light-mode .total-block{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+}
+
+body.light-mode .total-amount{
+
+color:#2563eb;
+
+font-weight:700;
+
+}
+
+/* =====================================================
+SALE TYPE BUTTONS
+===================================================== */
+
+body.light-mode .sale-type-btn{
+
+background:#f1f5f9;
+
+border:1px solid #e5e7eb;
+
+color:#475569;
+
+}
+
+body.light-mode .sale-type-btn.active{
+
+background:#2563eb;
+
+color:white;
+
+}
+
+/* =====================================================
+DEBT INPUT
+===================================================== */
+
+body.light-mode .debt-input{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+color:#0f172a;
+
+}
+
+/* =====================================================
+PROFIT BUTTONS
+===================================================== */
+
+body.light-mode .profit-buttons button{
+
+background:#f1f5f9;
+
+border:1px solid #e5e7eb;
+
+color:#334155;
+
+}
+
+body.light-mode .profit-buttons button:hover{
+
+background:#2563eb;
+
+color:white;
+
+}
+/* =====================================================
+BARAKA POS LIGHT MODE
+PART 4 — NAVIGATION / SIDEBAR / NOTIFICATIONS
+BLUE MOBILE APP UI
+===================================================== */
+
+
+/* =====================================================
+SIDEBAR
+===================================================== */
+
+body.light-mode .sidebar{
+
+background:#ffffff;
+
+border-right:1px solid #e5e7eb;
+
+box-shadow:
+6px 0 25px rgba(0,0,0,0.05);
+
+}
+
+/* SIDEBAR HEADER */
+
+body.light-mode .sidebar-header{
+
+color:#0f172a;
+
+}
+
+/* SIDEBAR BUTTONS */
+
+body.light-mode .sidebar button{
+
+color:#334155;
+
+}
+
+/* HOVER */
+
+body.light-mode .sidebar button:hover{
+
+background:#f1f5f9;
+
+}
+
+/* =====================================================
+SIDEBAR OVERLAY
+===================================================== */
+
+body.light-mode .sidebar-overlay{
+
+background:rgba(0,0,0,0.25);
+
+}
+
+/* =====================================================
+PROFILE MENU
+===================================================== */
+
+body.light-mode .profile-menu{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,0.08);
+
+}
+
+body.light-mode .profile-email{
+
+color:#64748b;
+
+}
+
+/* =====================================================
+MENU BUTTON
+===================================================== */
+
+body.light-mode .menu-btn{
+
+color:#2563eb;
+
+}
+
+/* =====================================================
+THEME BUTTON
+===================================================== */
+
+body.light-mode .theme-btn{
+
+color:#2563eb;
+
+}
+
+/* =====================================================
+TOP SUCCESS BANNER
+===================================================== */
+
+body.light-mode #topBanner{
+
+background:#2563eb;
+
+color:white;
+
+box-shadow:
+0 6px 18px rgba(37,99,235,0.35);
+
+}
+
+body.light-mode #topBanner.success{
+
+background:#2563eb;
+
+}
+
+body.light-mode #topBanner.error{
+
+background:#ef4444;
+
+}
+
+/* =====================================================
+BANNER CHECK ICON
+===================================================== */
+
+body.light-mode .banner-check{
+
+background:white;
+
+color:#2563eb;
+
+}
+
+/* =====================================================
+SUCCESS OVERLAY
+===================================================== */
+
+body.light-mode .success-overlay{
+
+background:rgba(0,0,0,0.4);
+
+}
+
+/* =====================================================
+SUCCESS CARD
+===================================================== */
+
+body.light-mode .success-card{
+
+background:linear-gradient(
+135deg,
+#2563eb,
+#1d4ed8
+);
+
+color:white;
+
+box-shadow:
+0 20px 50px rgba(0,0,0,0.15);
+
+}
+
+/* =====================================================
+EMPTY STOCK STATE
+===================================================== */
+
+body.light-mode .empty-stock{
+
+color:#64748b;
+
+}
+
+/* =====================================================
+STOCK COUNT
+===================================================== */
+
+body.light-mode .stock-count{
+
+color:#64748b;
+
+}
+
+/* =====================================================
+CAMERA SCANNER
+===================================================== */
+
+body.light-mode .camera-box{
+
+background:transparent;
+
+}
+
+/* CAMERA BUTTON */
+
+body.light-mode .camera-btn{
+
+background:linear-gradient(
+135deg,
+#2563eb,
+#1d4ed8
+);
+
+color:white;
+
+box-shadow:
+0 6px 18px rgba(37,99,235,0.25);
+
+}
+
+/* CAMERA PREVIEW */
+
+body.light-mode .camera-preview{
+
+background:#000;
+
+border-radius:12px;
+
+border:1px solid #e5e7eb;
+
+}
+
+/* =====================================================
+SCANNER VIEWPORT
+===================================================== */
+
+body.light-mode #scannerViewport{
+
+border-radius:12px;
+
+}
+
+/* =====================================================
+FLOATING CAMERA BUTTON
+===================================================== */
+
+body.light-mode .camera-fixed{
+
+background:transparent;
+
+}
+
+/* =====================================================
+ADD PRODUCT BUTTON
+===================================================== */
+
+body.light-mode .add-product-btn{
+
+background:linear-gradient(
+135deg,
+#2563eb,
+#1d4ed8
+);
+
+color:white;
+
+box-shadow:
+0 6px 18px rgba(37,99,235,0.25);
+
+}
+
+/* =====================================================
+MODAL BUTTONS
+===================================================== */
+
+body.light-mode .modal-buttons .btn-primary{
+
+background:#2563eb;
+
+}
+
+body.light-mode .modal-buttons .btn-secondary{
+
+background:#f1f5f9;
+
+border:1px solid #e5e7eb;
+
+color:#334155;
+
+}
+
+/* =====================================================
+CONFIRM MODAL
+===================================================== */
+
+body.light-mode .confirm-box{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+box-shadow:
+0 20px 40px rgba(0,0,0,0.12);
+
+}
+
+/* =====================================================
+CONFIRM TEXT
+===================================================== */
+
+body.light-mode .confirm-text{
+
+color:#0f172a;
+
+}
+
+/* =====================================================
+LOADING CARD
+===================================================== */
+
+body.light-mode .loading-card{
+
+background:#ffffff;
+
+border:1px solid #e5e7eb;
+
+box-shadow:
+0 8px 20px rgba(0,0,0,0.08);
+
+}
+
+/* =====================================================
+LOADER
+===================================================== */
+
+body.light-mode .loader{
+
+border:4px solid #e5e7eb;
+
+border-top:4px solid #2563eb;
+
+}
+
+/* =====================================================
+PAGE TRANSITION
+===================================================== */
+
+body.light-mode .page{
+
+background:transparent;
+
+}
+
+/* =====================================================
+SCROLL IMPROVEMENT
+===================================================== */
+
+body.light-mode html{
+
+scroll-behavior:smooth;
+
+}
+
+/* =====================================================
+MICRO INTERACTION
+===================================================== */
+
+body.light-mode button{
+
+transition:
+background .2s,
+transform .1s,
+box-shadow .2s;
+
+}
+
+/* BUTTON PRESS */
+
+body.light-mode button:active{
+
+transform:scale(.96);
+
+}
+
+/* =====================================================
+HOVER EFFECT
+===================================================== */
+
+body.light-mode .glass:hover{
+
+box-shadow:
+0 12px 28px rgba(0,0,0,0.08);
+
+}
+/* =====================================================
+BARAKA POS LIGHT MODE
+PART 5 — FINAL POLISH
+PREMIUM DASHBOARD EFFECTS
+===================================================== */
+
+
+/* =====================================================
+DASHBOARD CARD ACCENT STRIPE
+===================================================== */
+
+body.light-mode .dashboard-card{
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+body.light-mode .dashboard-card::before{
+
+content:"";
+
+position:absolute;
+
+left:0;
+top:0;
+
+width:4px;
+height:100%;
+
+background:linear-gradient(
+180deg,
+#2563eb,
+#1d4ed8
+);
+
+}
+
+/* =====================================================
+DASHBOARD HOVER
+===================================================== */
+
+body.light-mode .dashboard-card:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+0 12px 30px rgba(0,0,0,0.08);
+
+}
+
+/* =====================================================
+DASHBOARD NUMBER STYLE
+===================================================== */
+
+body.light-mode .dashboard-amount{
+
+font-size:22px;
+
+font-weight:700;
+
+letter-spacing:0.3px;
+
+color:#2563eb;
+
+}
+
+/* =====================================================
+CARD SUBTEXT
+===================================================== */
+
+body.light-mode .card-sub{
+
+color:#64748b;
+
+}
+
+/* =====================================================
+ANALYTICS CARDS
+===================================================== */
+
+body.light-mode .info-card{
+
+transition:all .2s;
+
+}
+
+body.light-mode .info-card:hover{
+
+transform:translateY(-2px);
+
+box-shadow:
+0 10px 24px rgba(0,0,0,0.08);
+
+}
+
+/* =====================================================
+STATS NUMBERS
+===================================================== */
+
+body.light-mode .stats-card strong{
+
+color:#2563eb;
+
+font-weight:700;
+
+}
+
+/* =====================================================
+TABLE NUMBERS
+===================================================== */
+
+body.light-mode .sales-table td strong{
+
+color:#2563eb;
+
+}
+
+/* =====================================================
+CHART LINES (LINE CHART)
+===================================================== */
+
+body.light-mode canvas{
+
+filter:brightness(1.02);
+
+}
+
+/* =====================================================
+CHART CONTAINER HOVER
+===================================================== */
+
+body.light-mode .chart-container:hover{
+
+box-shadow:
+0 12px 30px rgba(0,0,0,0.08);
+
+}
+
+/* =====================================================
+CHART TITLE
+===================================================== */
+
+body.light-mode .chart-title{
+
+font-size:15px;
+
+font-weight:600;
+
+color:#2563eb;
+
+}
+
+/* =====================================================
+BADGES
+===================================================== */
+
+body.light-mode .badge{
+
+background:#e0ecff;
+
+color:#2563eb;
+
+font-weight:600;
+
+}
+
+/* =====================================================
+PROFIT POSITIVE
+===================================================== */
+
+body.light-mode .profit-positive{
+
+color:#2563eb;
+
+font-weight:700;
+
+}
+
+/* =====================================================
+LOSS NEGATIVE
+===================================================== */
+
+body.light-mode .profit-negative{
+
+color:#ef4444;
+
+font-weight:700;
+
+}
+
+/* =====================================================
+SEARCH HOVER EFFECT
+===================================================== */
+
+body.light-mode .search-item:hover{
+
+transform:translateY(-1px);
+
+box-shadow:
+0 6px 16px rgba(0,0,0,0.06);
+
+}
+
+/* =====================================================
+CART HOVER
+===================================================== */
+
+body.light-mode .cart-item:hover{
+
+box-shadow:
+0 6px 16px rgba(0,0,0,0.06);
+
+}
+
+/* =====================================================
+MODAL INPUT FOCUS
+===================================================== */
+
+body.light-mode .modal-card input:focus{
+
+border-color:#2563eb;
+
+box-shadow:
+0 0 0 3px rgba(37,99,235,0.15);
+
+}
+
+/* =====================================================
+BUTTON GLOW
+===================================================== */
+
+body.light-mode .btn-primary{
+
+transition:
+transform .15s,
+box-shadow .2s;
+
+}
+
+body.light-mode .btn-primary:hover{
+
+transform:translateY(-1px);
+
+box-shadow:
+0 12px 26px rgba(37,99,235,0.35);
+
+}
+
+/* =====================================================
+BOTTOM NAV ICON HOVER
+===================================================== */
+
+body.light-mode .bottom-nav button:hover{
+
+transform:translateY(-1px);
+
+}
+
+/* =====================================================
+SIDEBAR BUTTON HOVER
+===================================================== */
+
+body.light-mode .sidebar button:hover{
+
+transform:translateX(3px);
+
+}
+
+/* =====================================================
+SUCCESS CARD EFFECT
+===================================================== */
+
+body.light-mode .success-card{
+
+animation:popIn 0.35s ease;
+
+}
+
+/* =====================================================
+POP ANIMATION
+===================================================== */
+
+@keyframes popIn{
+
+from{
+
+opacity:0;
+transform:scale(.9);
+
+}
+
+to{
+
+opacity:1;
+transform:scale(1);
+
+}
+
+}
+
+/* =====================================================
+PAGE FADE
+===================================================== */
+
+body.light-mode .page{
+
+animation:fadePage .2s ease;
+
+}
+
+@keyframes fadePage{
+
+from{
+
+opacity:0;
+transform:translateY(6px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
+}
+
+/* =====================================================
+TYPOGRAPHY POLISH
+===================================================== */
+
+body.light-mode{
+
+font-smoothing:antialiased;
+
+letter-spacing:0.1px;
+
+}
+
+/* =====================================================
+FINAL SHADOW SYSTEM
+===================================================== */
+
+body.light-mode .glass,
+body.light-mode .stock-card,
+body.light-mode .info-card,
+body.light-mode .chart-container{
+
+transition:
+box-shadow .2s,
+transform .15s;
+
+}
+
+/* =====================================================
+APP FADE ON LOAD
+===================================================== */
+
+body.light-mode{
+
+animation:appFade .25s ease;
+
+}
+
+@keyframes appFade{
+
+from{
+opacity:0;
+}
+
+to{
+opacity:1;
+}
+
 }
