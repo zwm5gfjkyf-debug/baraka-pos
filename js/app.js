@@ -315,3 +315,6 @@ sidebar.classList.remove("open")
 overlay.classList.remove("show")
 
 }
+setTimeout(() => {
+document.getElementById("loadingScreen").style.display = "none"
+}, 2000)
