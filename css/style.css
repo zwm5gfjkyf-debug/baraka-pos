@@ -2828,3 +2828,6 @@ height:60px;
 }
 
 }
+#loadingScreen.hidden{
+display:none;
+}
