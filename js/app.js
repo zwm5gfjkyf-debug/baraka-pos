@@ -327,3 +327,33 @@ function handleMenuClick(action){
   closeSidebar()
   setTimeout(action, 150) // smooth UX
 }
+function toggleCamera(){
+
+  let current = localStorage.getItem("camera") === "true"
+
+  let newValue = !current
+
+  localStorage.setItem("camera", newValue)
+
+  updateCamera()
+
+}
+function updateCamera(){
+
+  let enabled = localStorage.getItem("camera") === "true"
+
+  let cameraBox = document.querySelector(".camera-fixed")
+  let status = document.getElementById("cameraStatus")
+
+  if(enabled){
+    if(cameraBox) cameraBox.style.display = "block"
+    if(status) status.innerText = "ON"
+  }else{
+    if(cameraBox) cameraBox.style.display = "none"
+    if(status) status.innerText = "OFF"
+  }
+
+}
+document.addEventListener("DOMContentLoaded", function(){
+  updateCamera()
+})
