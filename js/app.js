@@ -296,54 +296,44 @@ banner.classList.remove("show")
 },2000)
 
 }
+// =============================
+// SIDEBAR CONTROL
+// =============================
+
 function openSidebar(){
-
-const sidebar = document.getElementById("sidebar")
-const overlay = document.getElementById("sidebarOverlay")
-
-sidebar.classList.add("open")
-overlay.classList.add("show")
-
+  document.getElementById("sidebar").classList.add("open")
+  document.getElementById("sidebarOverlay").classList.add("show")
 }
 
-function closeSidebar(){
-
-const sidebar = document.getElementById("sidebar")
-const overlay = document.getElementById("sidebarOverlay")
-
-sidebar.classList.remove("open")
-overlay.classList.remove("show")
-
-}
-setTimeout(() => {
-document.getElementById("loadingScreen").style.display = "none"
-}, 2000)
-function closeSidebar(){
-  document.querySelector(".sidebar").classList.remove("open")
-  document.querySelector(".sidebar-overlay").classList.remove("show")
+function closeMenu(){
+  document.getElementById("sidebar").classList.remove("open")
+  document.getElementById("sidebarOverlay").classList.remove("show")
 }
 
-function handleMenuClick(action){
-  closeSidebar()
-  setTimeout(action, 150) // smooth UX
+// used in HTML (menuClick)
+function menuClick(action){
+  closeMenu()
+  setTimeout(action, 150)
 }
+// =============================
+// CAMERA TOGGLE SYSTEM
+// =============================
+
 function toggleCamera(){
-
-  let current = localStorage.getItem("camera") === "true"
-
-  let newValue = !current
+  const current = localStorage.getItem("camera") === "true"
+  const newValue = !current
 
   localStorage.setItem("camera", newValue)
 
   updateCamera()
-
 }
+
 function updateCamera(){
 
-  let enabled = localStorage.getItem("camera") === "true"
+  const enabled = localStorage.getItem("camera") === "true"
 
-  let cameraBox = document.querySelector(".camera-fixed")
-  let status = document.getElementById("cameraStatus")
+  const cameraBox = document.getElementById("cameraSaleButton")
+  const status = document.getElementById("cameraStatus")
 
   if(enabled){
     if(cameraBox) cameraBox.style.display = "block"
@@ -354,6 +344,6 @@ function updateCamera(){
   }
 
 }
-document.addEventListener("DOMContentLoaded", function(){
-  updateCamera()
-})
+
+// run on load
+document.addEventListener("DOMContentLoaded", updateCamera)
