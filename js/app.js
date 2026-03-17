@@ -318,3 +318,12 @@ overlay.classList.remove("show")
 setTimeout(() => {
 document.getElementById("loadingScreen").style.display = "none"
 }, 2000)
+function closeSidebar(){
+  document.querySelector(".sidebar").classList.remove("open")
+  document.querySelector(".sidebar-overlay").classList.remove("show")
+}
+
+function handleMenuClick(action){
+  closeSidebar()
+  setTimeout(action, 150) // smooth UX
+}
