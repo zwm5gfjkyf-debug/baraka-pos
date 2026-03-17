@@ -103,24 +103,46 @@ Kirish
 BARAKA
 </div>
 
-<button onclick="navigate('dashboardPage')">🏠 Asosiy</button>
+<div class="sidebar" id="sidebar">
 
-<button onclick="navigate('salePage')">🛒 Sotuv</button>
+<button onclick="menuClick(() => navigate('dashboardPage'))">
+🏠 Asosiy
+</button>
 
-<button onclick="navigate('stockPage')">📦 Zaxira</button>
+<button onclick="menuClick(() => navigate('salePage'))">
+🛒 Sotuv
+</button>
 
-<button onclick="navigate('analyticsPage')">📊 Tahlil</button>
+<button onclick="menuClick(() => navigate('stockPage'))">
+📦 Zaxira
+</button>
+
+<button onclick="menuClick(() => navigate('analyticsPage'))">
+📊 Tahlil
+</button>
 
 <hr>
 
-<button onclick="logout()">🚪 Chiqish</button>
+<!-- CAMERA TOGGLE -->
+<button onclick="menuClick(toggleCamera)">
+📷 Kamera orqali sotuv
+<span id="cameraStatus" style="margin-left:auto;font-weight:600"></span>
+</button>
 
-<button onclick="deleteAllShopData()">🗑 Hammasini o'chirish</button>
+<hr>
+
+<button onclick="menuClick(logout)">
+🚪 Chiqish
+</button>
+
+<button onclick="menuClick(deleteAllShopData)">
+🗑 Hammasini o‘chirish
+</button>
 
 </div>
 
-<div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
-
+<!-- OVERLAY -->
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="closeMenu()"></div>
 <!-- APP -->
 
 <div id="appScreen" class="hidden">
