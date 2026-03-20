@@ -334,6 +334,8 @@ const btn = document.getElementById("completeSaleBtn")
 
 // prevent double click
 if(btn.disabled) return
+
+btn.innerText = "⏳ Jarayonda..."
 btn.disabled = true
 let total = 0
 let totalCost = 0
@@ -371,7 +373,11 @@ customer: saleType === "debt"
 
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }
-try{
+  
+// 🔥 INSTANT UI UPDATE (MOVE HERE)
+cart = []
+cartMap = {}
+renderCart()
 
 const salesRef = db
 .collection("shops")
@@ -379,6 +385,9 @@ const salesRef = db
 .collection("sales")
 
 await salesRef.add(sale)
+
+// 🔥 SHOW SUCCESS EARLY (IMPORTANT)
+showTopBanner("Sotuv yakunlandi", "success")
 
 await updateStockAfterSale(cart)
 
@@ -391,11 +400,11 @@ offline.push(sale)
 
 localStorage.setItem("offlineSales", JSON.stringify(offline))
 
-showTopBanner("Internet yo'q — offline saqlandi", "error")
-
+showTopBanner("Internet yo'q — offline saqlandi", "success")
 }
 finally{
 btn.disabled = false
+btn.innerText = "Sotuvni yakunlash"
 }
 
 cart = []
@@ -410,7 +419,6 @@ document.getElementById("debtBtn").classList.remove("active")
 
 renderCart()
 
-showTopBanner("Sotuv yakunlandi","success")
 
 if(scanSound){
   scanSound.currentTime = 0
