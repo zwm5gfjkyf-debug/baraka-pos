@@ -274,7 +274,9 @@ showTopBanner("O'chirishda xatolik", "error")
 
 }
 
-}
+}) // ✅ CLOSE showConfirm
+
+} // ✅ CLOSE function
 async function editProductPrompt(id){
 
 const value = prompt("Yangi miqdor")
@@ -284,7 +286,7 @@ await editProduct(id,"stock",Number(value))
 
 }
 function openAddProductModal(){
-document.getElementById("addProductModal").classList.remove("hidden")
+  document.getElementById("addProductModal").classList.remove("hidden")
 }
 
 function closeAddProductModal(){
