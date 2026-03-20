@@ -3979,3 +3979,12 @@ MOBILE TABLE FIX
   background:rgba(255,255,255,0.2);
   border-radius:10px;
 }
+@media (max-width:600px){
+
+  .sales-table th,
+  .sales-table td{
+    font-size:12px;
+    padding:8px;
+  }
+
+}
