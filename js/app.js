@@ -363,9 +363,7 @@ if(cameraBtn){
 }
 } // ✅ THIS WAS MISSING
 // run on load
-document.addEventListener("DOMContentLoaded", () => {
-  updateCamera()
-})
+
 function startCameraScanner(){
 
   const enabled = localStorage.getItem("camera") === "true"
@@ -386,14 +384,15 @@ function navigate(pageId){
   })
 
   // show selected page
-  document.getElementById(pageId).classList.remove("hidden")
+  const page = document.getElementById(pageId)
+  if(page) page.classList.remove("hidden")
 
-  // 🔥 FIX ACTIVE NAV BUTTON
+  // reset nav
   document.querySelectorAll(".bottom-nav button").forEach(btn=>{
     btn.classList.remove("active")
   })
 
-  // match button to page
+  // match navigation
   if(pageId === "dashboardPage"){
     document.querySelector(".bottom-nav button:nth-child(1)").classList.add("active")
   }
@@ -406,14 +405,15 @@ function navigate(pageId){
     document.querySelector(".bottom-nav button:nth-child(3)").classList.add("active")
   }
 
-  if(pageId === "analyticsPage"){
+  // 🔥 FIX: ALL analytics-related pages
+  if(
+    pageId === "analyticsPage" ||
+    pageId === "salesAnalyticsPage" ||
+    pageId === "debtAnalyticsPage" ||
+    pageId === "shopAnalyticsPage"
+  ){
     document.querySelector(".bottom-nav button:nth-child(4)").classList.add("active")
   }
 
   updateCamera()
 }
-
-// ✅ OUTSIDE ALL FUNCTIONS
-document.addEventListener("DOMContentLoaded", () => {
-  updateCamera()
-})
