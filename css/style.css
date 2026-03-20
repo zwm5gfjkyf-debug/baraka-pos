@@ -3956,3 +3956,26 @@ body.dark .toggle.active{
 .toggle.active::after{
   transform:translateX(20px);
 }
+/* ======================
+MOBILE TABLE FIX
+====================== */
+
+.table-wrapper{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.sales-table{
+  min-width:700px; /* IMPORTANT */
+}
+
+/* smooth scroll */
+.table-wrapper::-webkit-scrollbar{
+  height:6px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,0.2);
+  border-radius:10px;
+}
