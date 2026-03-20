@@ -1948,22 +1948,36 @@ display:none;   /* important */
 .camera-btn{
 width:100%;
 }
+.banner-icon{
+width:22px;
+height:22px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:14px;
+font-weight:bold;
+background:white;
+color:#22c55e;
+}
+#topBanner.error .banner-icon{
+color:#ef4444;
+}
 .top-banner{
 position:fixed;
-top:-100px;
-left:0;
-width:100%;
-background:#34c759;
+top:-80px;
+left:50%;
+transform:translateX(-50%);
+padding:12px 20px;
+border-radius:12px;
 color:white;
-padding:14px 20px;
 font-weight:600;
 z-index:9999;
 display:flex;
 justify-content:center;
-transition:top 0.35s ease;
-box-shadow:0 5px 20px rgba(0,0,0,0.25);
+transition:all 0.2s ease; /* ⚡ faster */
+box-shadow:0 8px 25px rgba(0,0,0,0.3);
 }
-
 .top-banner.show{
 top:0;
 }
@@ -1974,18 +1988,7 @@ align-items:center;
 gap:10px;
 }
 
-.banner-check{
-background:white;
-color:#34c759;
-width:22px;
-height:22px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:14px;
-font-weight:bold;
-}
+
 #topBanner{
 position:fixed;
 top:-80px;
@@ -2004,11 +2007,11 @@ top:20px;
 }
 
 #topBanner.success{
-background:#22c55e;
+background:linear-gradient(135deg,#22c55e,#16a34a);
 }
 
 #topBanner.error{
-background:#ef4444;
+background:linear-gradient(135deg,#ef4444,#dc2626);
 }
 .sidebar{
 position:fixed;
@@ -3263,12 +3266,9 @@ background:#ef4444;
 BANNER CHECK ICON
 ===================================================== */
 
-body.light-mode .banner-check{
-
+body.light-mode .banner-icon{
 background:white;
-
 color:#2563eb;
-
 }
 
 /* =====================================================
