@@ -77,8 +77,8 @@ if(now - lastClick < 300) return
 
 lastClick = now
 
-if(product.stock <= 0){
-showToast("Zaxirada qolmadi")
+if(!product || product.stock <= 0){
+showTopBanner("Zaxirada qolmadi","error")
 return
 }
 
@@ -87,7 +87,7 @@ const existing = debtCart.find(i => i.id === product.id)
 if(existing){
 
 if(existing.qty + 1 > product.stock){
-showToast("Zaxirada yetarli mahsulot yo'q")
+showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
 return
 }
 
@@ -163,6 +163,7 @@ const totalEl = document.getElementById("debtTotal")
 if(totalEl) totalEl.innerText = formatMoney(total)
 }
 
+
 // ===============================
 // QTY CONTROLS
 // ===============================
@@ -175,12 +176,12 @@ if(!item) return
 
 const product = productById[id]
 if(!product){
-showToast("Mahsulot topilmadi")
+showTopBanner("Mahsulot topilmadi","error")
 return
 }
 
 if(item.qty + 1 > product.stock){
-showToast("Zaxirada yetarli mahsulot yo'q")
+showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
 return
 }
 
@@ -207,18 +208,19 @@ renderDebtCart()
 }
 
 
-
 function changeDebtPrice(id,newPrice){
 
 const item = debtCart.find(i => i.id === id)
 
 if(!item) return
 
-item.price = Number(newPrice)
+item.price = Number(newPrice || 0)
 
 renderDebtCart()
 
 }
+
+
 // ===============================
 // COMPLETE DEBT SALE
 // ===============================
@@ -229,28 +231,33 @@ if(debtProcessing) return
 debtProcessing = true
 
 const btn = document.getElementById("debtCompleteBtn")
+
+if(btn){
 btn.innerText = "Berilyapti..."
 btn.disabled = true
+}
 
 try{
 
 const customer = document
-.getElementById("debtCustomerName")
-.value
-.trim()
+.getElementById("debtCustomerName")?.value.trim() || ""
 
 if(!customer){
-showToast("Mijoz ismini kiriting")
+showTopBanner("Mijoz ismini kiriting","error")
+if(btn){
 btn.innerText = "Nasiya berish"
 btn.disabled = false
+}
 debtProcessing = false
 return
 }
 
 if(debtCart.length === 0){
-showToast("Mahsulot tanlang")
+showTopBanner("Mahsulot tanlang","error")
+if(btn){
 btn.innerText = "Nasiya berish"
 btn.disabled = false
+}
 debtProcessing = false
 return
 }
@@ -259,16 +266,15 @@ let total = 0
 let profit = 0
 
 debtCart.forEach(i => {
-
 total += i.price * i.qty
 profit += (i.price - i.cost) * i.qty
-
 })
 
 const debtsRef = db
 .collection("shops")
 .doc(currentShopId)
 .collection("debts")
+
 await db
 .collection("shops")
 .doc(currentShopId)
@@ -277,14 +283,14 @@ await db
 items: debtCart,
 total: total,
 type: "debt",
-createdAt: new Date()
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
 })
+
 const existing = await debtsRef
 .where("customer","==",customer)
 .where("status","in",["unpaid","partial"])
 .get()
-
-if(existing.empty){
+ if(existing.empty){
 
 await debtsRef.add({
 customer: customer,
@@ -293,7 +299,7 @@ total: total,
 remaining: total,
 profit: profit,
 status: "unpaid",
-createdAt: new Date()
+createdAt: firebase.firestore.FieldValue.serverTimestamp()
 })
 
 }else{
@@ -326,11 +332,10 @@ const ref = db
 await db.runTransaction(async t => {
 
 const doc = await t.get(ref)
-
 const stock = doc.data().stock || 0
 
 if(stock < item.qty){
-showToast("Zaxirada yetarli mahsulot yo'q")
+showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
 throw new Error("Not enough stock")
 }
 
@@ -339,14 +344,13 @@ stock: Math.max(0, stock - item.qty)
 })
 
 })
-const p = productCache.find(p => p.id === item.id)
 
+const p = productCache.find(p => p.id === item.id)
 if(p){
 p.stock -= item.qty
 }
 
 }
-
 
 // CLEAR CART
 
@@ -354,17 +358,21 @@ debtCart = []
 
 renderDebtCart()
 
-showSuccess("Nasiya saqlandi")
-
-btn.innerText = "Nasiya berish"
-btn.disabled = false
-
+if(typeof scanSound !== "undefined"){
+scanSound.currentTime = 0
+scanSound.play().catch(()=>{})
 }
 
+showTopBanner("Nasiya saqlandi","success")
+
+if(btn){
+btn.innerText = "Nasiya berish"
+btn.disabled = false
+}
+
+}
 finally{
-
 debtProcessing = false
-
 }
 
 }
@@ -378,19 +386,21 @@ async function loadDebtCustomers(){
 
 const container = document.getElementById("debtCustomersList")
 if(!container) return
+
 db
 .collection("shops")
 .doc(currentShopId)
 .collection("debts")
 .onSnapshot(snapshot=>{
+
 container.innerHTML = ""
+
 const customers = {}
 
 snapshot.forEach(doc=>{
 
 const d = doc.data()
 
-// ignore fully paid debts
 if(d.remaining <= 0) return
 
 if(!customers[d.customer]){
@@ -424,8 +434,11 @@ To'lash
 container.appendChild(div)
 
 })
+
 })
 }
+
+
 // ===============================
 // PAY DEBT
 // ===============================
@@ -444,12 +457,10 @@ const input = document.getElementById("pay_"+id)
 const amount = Number(input.value)
 
 if(!amount || isNaN(amount)){
-showToast("To'lov summasini kiriting")
-btn.innerText = "To'lash"
-btn.disabled = false
-debtPaymentProcessing = false
+showTopBanner("To'lov summasini kiriting","error")
 return
 }
+
 const ref = db
 .collection("shops")
 .doc(currentShopId)
@@ -459,14 +470,14 @@ const ref = db
 const doc = await ref.get()
 
 if(!doc.exists){
-showToast("Qarz topilmadi")
+showTopBanner("Qarz topilmadi","error")
 return
 }
 
 const data = doc.data()
 
 if(amount > data.remaining){
-showToast("To'lov qarzdan katta bo'lishi mumkin emas")
+showTopBanner("To'lov qarzdan katta bo'lishi mumkin emas","error")
 return
 }
 
@@ -504,21 +515,23 @@ cost:amount - profitPart,
 qty:1
 }],
 total: amount,
-createdAt: new Date(),
+createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 type: "debt_payment"
 })
 
-showSuccess("To'lov qabul qilindi")
+if(typeof scanSound !== "undefined"){
+scanSound.currentTime = 0
+scanSound.play().catch(()=>{})
+}
+
+showTopBanner("To'lov qabul qilindi","success")
 
 input.value = ""
 
-
 }
 catch(e){
-
 console.error(e)
-showToast("Xatolik yuz berdi")
-
+showTopBanner("Xatolik yuz berdi","error")
 }
 finally{
 
@@ -530,6 +543,10 @@ debtPaymentProcessing = false
 
 }
 
+
+// ===============================
+// CLEAR SEARCH
+// ===============================
 
 function clearDebtSearch(){
 
