@@ -16,23 +16,17 @@ function navigate(pageId){
 // CAMERA BUTTON CONTROL
 const cameraBtn = document.getElementById("cameraSaleButton")
 
-if(cameraBtn){
-  if(pageId === "salePage"){
-    cameraBtn.style.display = "block"
-  }else{
-    cameraBtn.style.display = "none"
-  }
+if(typeof updateCamera === "function"){
+  updateCamera()
 }
-  const navButtons = document.querySelectorAll(".bottom-nav button");
+const navButtons = document.querySelectorAll(".bottom-nav button");
 
-  navButtons.forEach(btn => btn.classList.remove("active"));
+navButtons.forEach(btn => btn.classList.remove("active"));
 
-  navButtons.forEach(btn=>{
-    if(btn.getAttribute("onclick")?.includes(pageId)){
-      btn.classList.add("active");
-    }
-  });
-
+if(pageId === "dashboardPage") navButtons[0].classList.add("active");
+if(pageId === "salePage") navButtons[1].classList.add("active");
+if(pageId === "stockPage") navButtons[2].classList.add("active");
+if(pageId === "analyticsPage") navButtons[3].classList.add("active");
   if(pageId === "dashboardPage" && typeof loadDashboard === "function"){
     loadDashboard();
   }
@@ -49,14 +43,10 @@ if(cameraBtn){
     loadCurrentStock();
   }
 
-  if(pageId === "analyticsPage"){
-
-    if(typeof loadWeeklyAnalytics === "function") loadWeeklyAnalytics();
-
-    if(typeof loadMonthlyAnalytics === "function") loadMonthlyAnalytics();
-
-    if(typeof loadTopProducts === "function") loadTopProducts();
-
+if(pageId === "analyticsPage"){
+  if(typeof showAnalyticsTab === "function"){
+    showAnalyticsTab("weekly") // default tab
   }
+}
 
 }
