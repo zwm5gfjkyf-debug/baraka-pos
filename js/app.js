@@ -402,4 +402,23 @@ function navigate(pageId){
   }
 
   updateCamera()
+    const backBtn = document.getElementById("backBtn")
+
+if(backBtn){
+
+  if(
+    pageId === "salesAnalyticsPage" ||
+    pageId === "debtAnalyticsPage" ||
+    pageId === "shopAnalyticsPage"
+  ){
+    backBtn.style.display = "block"
+  }else{
+    backBtn.style.display = "none"
+  }
+
+}
+}
+
+function goBack(){
+  navigate("analyticsPage")
 }
