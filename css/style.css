@@ -839,7 +839,7 @@ transition:all 0.2s;
 
 }
 .page{
-  padding-top: 10px !important;
+  padding-top: 0 !important;
 }
 .bottom-nav button.active{
 
@@ -4014,15 +4014,13 @@ h1, h2, h3{
   margin-top: 0 !important;
 }
 #backBtn{
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  font-size: 20px;
-  background: none;
-  border: none;
-  color: white;
-  display: none;
-  cursor: pointer;
+  position: relative;
+  margin-right:10px;
+  font-size:20px;
+  background:none;
+  border:none;
+  color:white;
+  cursor:pointer;
 }
 #backBtn{
   background:none;
