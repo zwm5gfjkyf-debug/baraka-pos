@@ -839,8 +839,7 @@ transition:all 0.2s;
 
 }
 .page{
-width:100%;
-padding:0;
+  padding-top: 10px !important;
 }
 .bottom-nav button.active{
 
@@ -4010,4 +4009,7 @@ body{
 }
 .table-wrapper{
   display:block;
+}
+h1, h2, h3{
+  margin-top: 0 !important;
 }
