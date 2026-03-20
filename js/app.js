@@ -402,7 +402,7 @@ function navigate(pageId){
   }
 
   updateCamera()
-    const backBtn = document.getElementById("backBtn")
+  const backBtn = document.getElementById("backBtn")
 
 if(backBtn){
 
@@ -411,9 +411,9 @@ if(backBtn){
     pageId === "debtAnalyticsPage" ||
     pageId === "shopAnalyticsPage"
   ){
-    backBtn.style.display = "block"
+    backBtn.classList.remove("hidden")
   }else{
-    backBtn.style.display = "none"
+    backBtn.classList.add("hidden")
   }
 
 }
