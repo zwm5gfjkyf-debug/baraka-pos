@@ -361,7 +361,7 @@ if(cameraBtn){
   }
 
 }
-
+} // ✅ THIS WAS MISSING
 // run on load
 document.addEventListener("DOMContentLoaded", () => {
   updateCamera()
@@ -379,12 +379,16 @@ function startCameraScanner(){
 
 }
 function navigate(pageId){
-
   document.querySelectorAll(".page").forEach(p=>{
     p.classList.add("hidden")
   })
 
   document.getElementById(pageId).classList.remove("hidden")
 
-  updateCamera() // ✅ ADD THIS
+  updateCamera()
 }
+
+// ✅ OUTSIDE ALL FUNCTIONS
+document.addEventListener("DOMContentLoaded", () => {
+  updateCamera()
+})
