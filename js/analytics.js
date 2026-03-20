@@ -53,8 +53,9 @@ if(sale.type !== "debt"){
 }
 const day = date.getDay()
 
-chartTotals[day] += sale.total || 0
-
+if(sale.type !== "debt_payment"){
+  chartTotals[day] += sale.total || 0
+}
 if(!sale.items) return
 
 sale.items.forEach(item=>{
@@ -195,7 +196,7 @@ date = new Date(sale.createdAt)
 
 const day = date.getDate() - 1
 
-if(chartTotals[day] !== undefined){
+if(chartTotals[day] !== undefined && sale.type !== "debt_payment"){
   chartTotals[day] += sale.total || 0
 }
 if(
@@ -829,8 +830,8 @@ async function loadDebtAnalytics(){
 const list = document.getElementById("debtAnalyticsList")
 const totalBox = document.getElementById("totalDebtAmount")
 
-list.innerHTML = "Yuklanmoqda..."
-
+list.innerHTML = "<div style='opacity:0.6'>Yuklanmoqda...</div>"
+   
 let totalDebt = 0
 let customers = {}
 
@@ -944,16 +945,15 @@ const btn = input.nextElementSibling
 if(btn.disabled) return
 btn.disabled = true
 
-const pay = Number(input.value)
-
+const pay = Number(input.value || 0)
 if(!pay || pay <= 0){
-alert("To'lov kiriting")
+showTopBanner("To'lov kiriting", "error")
 btn.disabled = false
 return
 }
 
 if(pay > total){
-alert("To'lov qarzdan katta bo'lishi mumkin emas")
+showTopBanner("To'lov qarzdan katta bo'lishi mumkin emas", "error")
 btn.disabled = false
 return
 }
@@ -979,11 +979,13 @@ totalProfit += s.totalProfit || 0
 })
 
 // calculate ratios
-const costRatio = totalCost / totalDebt
-const profitRatio = totalProfit / totalDebt
+const costRatio = totalDebt ? totalCost / totalDebt : 0
+const profitRatio = totalDebt ? totalProfit / totalDebt : 0
 
 const costPart = pay * costRatio
 const profitPart = pay * profitRatio
+
+try{
 
 await db
 .collection("shops")
@@ -992,15 +994,10 @@ await db
 .add({
 
 type: "debt_payment",
-
 customer: customer,
-
 total: pay,
-
 costPart: costPart,
-
 profitPart: profitPart,
-
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 
 })
@@ -1009,7 +1006,13 @@ input.value = ""
 
 loadDebtAnalytics()
 
-alert("To'lov qo'shildi")
+showTopBanner("To'lov qo'shildi", "success")
+
+}catch(e){
+
+showTopBanner("Xatolik yuz berdi", "error")
+
+}
 
 btn.disabled = false
 
