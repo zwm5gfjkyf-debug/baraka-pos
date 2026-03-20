@@ -223,21 +223,31 @@ async function syncOfflineSales(){
 
     if(offline.length === 0) return
 
-  const salesRef = db
-.collection("shops")
-.doc(currentShopId)
-.collection("sales")
-.orderBy("createdAt")
-  const batch = db.batch()
+    try{
 
-offline.forEach(sale=>{
-const ref = salesRef.doc()
-batch.set(ref,sale)
-})
+        const salesRef = db
+        .collection("shops")
+        .doc(currentShopId)
+        .collection("sales")
 
-await batch.commit()
+        const batch = db.batch()
 
-    localStorage.removeItem("offlineSales")
+        offline.forEach(sale=>{
+            const ref = salesRef.doc()
+            batch.set(ref,sale)
+        })
+
+        await batch.commit()
+
+        localStorage.removeItem("offlineSales")
+
+        showTopBanner("Offline savdolar yuklandi", "success")
+
+    }catch(e){
+
+        showTopBanner("Offline sync xato", "error")
+
+    }
 
 }
 
@@ -269,33 +279,9 @@ async function deleteAllShopData(){
 
     }
 
-    alert("Barcha ma'lumotlar o'chirildi")
-
-}
-function showTopBanner(message,type="success"){
-
-const banner = document.getElementById("topBanner")
-const text = document.getElementById("bannerMessage")
-
-text.innerText = message
-
-banner.classList.remove("success","error")
-
-if(type === "success"){
-banner.classList.add("success")
+showTopBanner("Barcha ma'lumotlar o'chirildi", "success")
 }
 
-if(type === "error"){
-banner.classList.add("error")
-}
-
-banner.classList.add("show")
-
-setTimeout(()=>{
-banner.classList.remove("show")
-},2000)
-
-}
 // =============================
 // SIDEBAR CONTROL
 // =============================
@@ -368,9 +354,9 @@ function startCameraScanner(){
 
   const enabled = localStorage.getItem("camera") === "true"
 
-  if(!enabled){
-    alert("Kamera o‘chirilgan ❌")
-    return
+if(!enabled){
+showTopBanner("Kamera o‘chirilgan", "error")
+return
   }
 
   document.getElementById("cameraScanner").classList.remove("hidden")
