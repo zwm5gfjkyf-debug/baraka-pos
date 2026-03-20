@@ -109,7 +109,7 @@ CONTAINER
 ========================================= */
 
 .main-content{
-padding:16px;
+padding:10px;
 padding-bottom:110px;
 width:100%;
 }
@@ -4023,4 +4023,11 @@ h1, h2, h3{
   color: white;
   display: none;
   cursor: pointer;
+}
+#backBtn{
+  background:none;
+  border:none;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
 }
