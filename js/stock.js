@@ -19,11 +19,10 @@ try{
 
 const name = document.getElementById("stockName").value.trim()
 const nameKey = name.toLowerCase()
-const barcode = document.getElementById("stockBarcode").value.trim()
-const qty = Number(document.getElementById("stockQty").value)
-const cost = Number(document.getElementById("stockCost").value)
-const price = Number(document.getElementById("stockSellingPrice").value)
-
+const barcode = document.getElementById("stockBarcode")?.value.trim() || ""
+const qty = Number(document.getElementById("stockQty")?.value || 0)
+const cost = Number(document.getElementById("stockCost")?.value || 0)
+const price = Number(document.getElementById("stockSellingPrice")?.value || 0)
 if(!name || !price){
 showTopBanner("Mahsulot nomi va narx kerak","error")
 stockProcessing = false
@@ -40,9 +39,10 @@ const existing = await productsRef
 .where("nameKey","==",nameKey).limit(1)
 .get()
 
+try{
+
 if(existing.empty){
 
-// create new product
 await productsRef.add({
 name: name,
 nameKey: nameKey,
@@ -55,7 +55,6 @@ created: Date.now()
 
 }else{
 
-// update existing product
 const doc = existing.docs[0]
 const data = doc.data()
 
@@ -67,13 +66,21 @@ price: price
 
 }
 
+showTopBanner("Zaxira yangilandi", "success")
+
+}catch(e){
+
+showTopBanner("Xatolik yuz berdi", "error")
+
+}
+
 document.getElementById("stockName").value = ""
 document.getElementById("stockBarcode").value = ""
 document.getElementById("stockQty").value = ""
 document.getElementById("stockCost").value = ""
 document.getElementById("stockSellingPrice").value = ""
 
-showTopBanner("Zaxira yangilandi")
+showTopBanner("Zaxira yangilandi", "success")
 }
 finally{
 
@@ -216,8 +223,7 @@ price: price
 
 closeEditModal()
 
-showSuccess("Mahsulot yangilandi")
-
+showTopBanner("Mahsulot yangilandi", "success")
 }
 // ===============================
 // EDIT PRODUCT
@@ -240,8 +246,7 @@ await db
 [field]: value
 })
 
-showSuccess("Yangilandi")
-
+showTopBanner("Yangilandi", "success")
 }
 
 // ===============================
@@ -258,17 +263,21 @@ const ref = db
 .collection("products")
 .doc(id)
 
+try{
+
 await ref.delete()
+showTopBanner("Mahsulot o'chirildi", "success")
 
-showSuccess("Mahsulot o'chirildi")
+}catch(e){
 
-})
+showTopBanner("O'chirishda xatolik", "error")
+
+}
 
 }
 async function editProductPrompt(id){
 
-const value = window.prompt("Yangi miqdor")
-
+const value = prompt("Yangi miqdor")
 if(!value) return
 
 await editProduct(id,"stock",Number(value))
@@ -354,12 +363,13 @@ input.value = barcode
 }
 function openLabelPreview(){
 
-const name = document.getElementById("stockName").value.trim()
+const nameInput = document.getElementById("stockName")
+const name = nameInput ? nameInput.value.trim() : ""
 const price = document.getElementById("stockSellingPrice").value
 const barcode = document.getElementById("stockBarcode").value
 const qty = document.getElementById("stockQty").value
 
-if(!name || !price){
+if(!name || price <= 0){
 showTopBanner("Mahsulot nomi va narx kerak","error")
 return
 }
