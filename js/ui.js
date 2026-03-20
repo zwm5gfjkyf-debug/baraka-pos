@@ -12,22 +12,7 @@ function toggleProfileMenu(){
 
 }
 
-function showSuccess(message){
 
-  const overlay = document.getElementById("successOverlay")
-  const text = document.getElementById("successText")
-
-  if(!overlay || !text) return
-
-  text.innerText = message
-
-  overlay.classList.remove("hidden")
-
-  setTimeout(()=>{
-    overlay.classList.add("hidden")
-  },1500)
-
-}
 
 
 /* =========================================
@@ -64,22 +49,6 @@ function closeConfirm(){
   if(modal){
     modal.classList.add("hidden")
   }
-
-}
-function showToast(message){
-
-const overlay = document.getElementById("successOverlay")
-const text = document.getElementById("successText")
-
-if(!overlay || !text) return
-
-text.innerText = message
-
-overlay.classList.remove("hidden")
-
-setTimeout(()=>{
-overlay.classList.add("hidden")
-},2000)
 
 }
 
@@ -129,3 +98,41 @@ localStorage.setItem("theme","dark")
 updateChartsTheme()
 
 }
+function showTopBanner(message, type = "success"){
+
+  const banner = document.getElementById("topBanner")
+  const text = document.getElementById("bannerMessage")
+  const icon = document.getElementById("bannerIcon")
+
+  if(!banner || !text || !icon) return
+
+  // set text
+  text.innerText = message
+
+  // reset classes
+  banner.classList.remove("success","error")
+
+  // set type
+  if(type === "success"){
+    banner.classList.add("success")
+    icon.innerText = "✔"
+  }else{
+    banner.classList.add("error")
+    icon.innerText = "✖"
+  }
+
+  // show instantly
+  banner.classList.add("show")
+
+  // auto hide (FAST)
+  clearTimeout(window.bannerTimeout)
+  window.bannerTimeout = setTimeout(()=>{
+    banner.classList.remove("show")
+  },1800) // ⚡ faster
+}
+document.addEventListener("DOMContentLoaded", ()=>{
+  const banner = document.getElementById("topBanner")
+  if(banner){
+    banner.style.transition = "all 0.2s ease"
+  }
+})
