@@ -48,7 +48,9 @@ date = new Date(sale.createdAt)
 
 if(date >= weekStart){
 
-weekRevenue += sale.total || 0
+if(sale.type !== "debt"){
+  weekRevenue += sale.total || 0
+}
 const day = date.getDay()
 
 chartTotals[day] += sale.total || 0
@@ -193,7 +195,9 @@ date = new Date(sale.createdAt)
 
 const day = date.getDate() - 1
 
-chartTotals[day] += sale.total || 0
+if(chartTotals[day] !== undefined){
+  chartTotals[day] += sale.total || 0
+}
 if(
 date.getMonth() === now.getMonth() &&
 date.getFullYear() === now.getFullYear()
@@ -1010,3 +1014,8 @@ alert("To'lov qo'shildi")
 btn.disabled = false
 
 }
+document.addEventListener("DOMContentLoaded", () => {
+  if(typeof showAnalyticsTab === "function"){
+    showAnalyticsTab("weekly") // default load
+  }
+})
