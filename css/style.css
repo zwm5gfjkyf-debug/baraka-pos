@@ -3910,50 +3910,7 @@ opacity:1;
 }
 
 }
-/* TOGGLE SWITCH */
-.toggle-switch{
-width:50px;
-height:28px;
-border-radius:20px;
-background:#ccc;
-position:relative;
-cursor:pointer;
-transition:.3s;
-}
 
-.toggle-circle{
-width:22px;
-height:22px;
-background:white;
-border-radius:50%;
-position:absolute;
-top:3px;
-left:3px;
-transition:.3s;
-}
-
-/* ACTIVE STATE DARK (GREEN) */
-.toggle-switch.active{
-background:#22c55e;
-}
-
-.toggle-switch.active .toggle-circle{
-left:25px;
-}
-
-/* LIGHT MODE (BLUE) */
-.light-mode .toggle-switch.active{
-background:#3b82f6;
-}
-
-/* ALIGN */
-.menu-toggle-row{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:12px 20px;
-color:white;
-}
 /* TOGGLE ROW */
 .menu-toggle-row{
   display:flex;
