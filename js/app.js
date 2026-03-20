@@ -379,11 +379,36 @@ function startCameraScanner(){
 
 }
 function navigate(pageId){
+
+  // hide all pages
   document.querySelectorAll(".page").forEach(p=>{
     p.classList.add("hidden")
   })
 
+  // show selected page
   document.getElementById(pageId).classList.remove("hidden")
+
+  // 🔥 FIX ACTIVE NAV BUTTON
+  document.querySelectorAll(".bottom-nav button").forEach(btn=>{
+    btn.classList.remove("active")
+  })
+
+  // match button to page
+  if(pageId === "dashboardPage"){
+    document.querySelector(".bottom-nav button:nth-child(1)").classList.add("active")
+  }
+
+  if(pageId === "salePage"){
+    document.querySelector(".bottom-nav button:nth-child(2)").classList.add("active")
+  }
+
+  if(pageId === "stockPage"){
+    document.querySelector(".bottom-nav button:nth-child(3)").classList.add("active")
+  }
+
+  if(pageId === "analyticsPage"){
+    document.querySelector(".bottom-nav button:nth-child(4)").classList.add("active")
+  }
 
   updateCamera()
 }
