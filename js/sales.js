@@ -134,7 +134,7 @@ resultsBox.appendChild(div)
 
 function addToCart(product){
 
-if(product.stock <= 0){
+if(!product || product.stock <= 0){
 showTopBanner("Zaxirada qolmadi","error")
 return
 }
@@ -316,8 +316,10 @@ renderCart()
 async function completeSale(){
 
 if(!currentShopId) return
-if(cart.length === 0) return
-// SAFETY: require customer name for debt
+if(cart.length === 0){
+showTopBanner("Savat bo'sh", "error")
+return
+}// SAFETY: require customer name for debt
 if(saleType === "debt"){
 
 const name = document.getElementById("debtCustomer").value.trim()
@@ -389,7 +391,7 @@ offline.push(sale)
 
 localStorage.setItem("offlineSales", JSON.stringify(offline))
 
-console.warn("Sale saved offline")
+showTopBanner("Internet yo'q — offline saqlandi", "error")
 
 }
 finally{
@@ -407,7 +409,14 @@ document.getElementById("cashBtn").classList.add("active")
 document.getElementById("debtBtn").classList.remove("active")
 
 renderCart()
+
 showTopBanner("Sotuv yakunlandi","success")
+
+if(scanSound){
+  scanSound.currentTime = 0
+  scanSound.play().catch(()=>{})
+}
+
 loadDashboard()
 
 }
@@ -459,8 +468,7 @@ const item = cart.find(i => i.id === id)
 
 if(!item) return
 
-const price = Number(newPrice)
-
+const price = Number(newPrice || 0)
 if(isNaN(price) || price < 0) return
 
 item.price = price
@@ -596,7 +604,7 @@ input.focus()
 function startCameraScanner(){
 
 const container = document.getElementById("cameraScanner")
-container.classList.remove("hidden")
+if(container) container.classList.remove("hidden")
 
 Quagga.offDetected()
 
