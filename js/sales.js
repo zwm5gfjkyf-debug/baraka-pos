@@ -374,7 +374,11 @@ customer: saleType === "debt"
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }
   
-// 🔥 INSTANT UI UPDATE (MOVE HERE)
+try{
+
+const itemsToUpdate = [...cart]
+
+// 🔥 INSTANT UI UPDATE
 cart = []
 cartMap = {}
 renderCart()
@@ -386,13 +390,12 @@ const salesRef = db
 
 await salesRef.add(sale)
 
-// 🔥 SHOW SUCCESS EARLY (IMPORTANT)
+// 🔥 SHOW SUCCESS EARLY
 showTopBanner("Sotuv yakunlandi", "success")
 
-await updateStockAfterSale(cart)
+await updateStockAfterSale(itemsToUpdate)
 
-}
-catch(e){
+}catch(e){
 
 let offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
 
@@ -400,13 +403,14 @@ offline.push(sale)
 
 localStorage.setItem("offlineSales", JSON.stringify(offline))
 
-showTopBanner("Internet yo'q — offline saqlandi", "success")
-}
-finally{
+showTopBanner("Internet yo'q — offline saqlandi", "error")
+
+}finally{
+
 btn.disabled = false
 btn.innerText = "Sotuvni yakunlash"
-}
 
+}
 cart = []
 cartMap = {}
 saleType = "cash"
