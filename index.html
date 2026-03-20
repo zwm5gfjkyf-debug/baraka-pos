@@ -407,65 +407,22 @@ Boshqa tahlillar
 <canvas id="monthlySalesChart"></canvas>
 </div>
 </div>
- <div id="extraAnalytics" class="hidden">
-
+<div id="extraAnalytics" class="hidden">
 
 <button class="btn-primary" onclick="openDebtAnalytics()" style="margin-top:15px;width:100%">
 Nasiya tahlil
 </button>
+
 <button class="btn-secondary" onclick="openSalesAnalytics()" style="margin-top:10px;width:100%">
 Umumiy savdo tahlil
 </button>
-  <button class="btn-primary" onclick="openShopAnalytics()" style="margin-top:10px;width:100%">
+
+<button class="btn-primary" onclick="openShopAnalytics()" style="margin-top:10px;width:100%">
 Do'kon tahlili
 </button>
-   </div>
-</div>
-  <!-- analyticsPage ends -->
 
-<!-- DEBT ANALYTICS PAGE -->
-<div id="debtAnalyticsPage" class="page hidden">
-
-<h2 class="page-title">Nasiya tahlili</h2>
-
-<!-- TOTAL DEBT -->
-<div class="dashboard-card glass">
-
-<div class="card-title">Umumiy nasiya</div>
-
-<div id="totalDebtAmount" class="dashboard-amount">
-0 so'm
-</div>
-
-</div>
-
-<!-- SEARCH -->
-<input
-id="debtAnalyticsSearch"
-placeholder="🔎 Mijoz qidirish..."
-class="search-input"
-oninput="filterDebtAnalytics()"
-style="margin:15px 0;width:100%"
->
-
-<!-- CUSTOMER LIST -->
-<div id="debtAnalyticsList"></div>
-
-</div>
-<!-- SALES ANALYTICS PAGE -->
-<div id="salesAnalyticsPage" class="page hidden">
-
-<h2 class="page-title">Umumiy savdo tahlili</h2>
-
-<input
-id="salesSearch"
-placeholder="🔎 Mahsulot qidirish..."
-class="search-input"
-oninput="filterSalesTable()"
-style="margin:15px 0;width:100%"
->
-
-<div class="table-wrapper">
+<!-- 🔥 TABLE NOW INSIDE TAB -->
+<div class="table-wrapper" style="margin-top:15px;">
 
 <table class="sales-table">
 <thead>
@@ -485,6 +442,36 @@ style="margin:15px 0;width:100%"
 </table>
 
 </div>
+
+</div>
+</div>
+<!-- analyticsPage ends -->
+</main>
+
+
+<!-- DEBT ANALYTICS PAGE -->
+<div id="debtAnalyticsPage" class="page hidden">
+<h2 class="page-title">Nasiya tahlili</h2>
+
+<div class="dashboard-card glass">
+<div class="card-title">Umumiy nasiya</div>
+<div id="totalDebtAmount" class="dashboard-amount">0 so'm</div>
+</div>
+
+<input
+id="debtAnalyticsSearch"
+placeholder="🔎 Mijoz qidirish..."
+class="search-input"
+oninput="filterDebtAnalytics()"
+style="margin:15px 0;width:100%"
+>
+
+<div id="debtAnalyticsList"></div>
+
+</div>
+
+
+
 <!-- SHOP ANALYTICS PAGE -->
 <div id="shopAnalyticsPage" class="page hidden">
 
@@ -506,13 +493,14 @@ style="margin:15px 0;width:100%"
 </div>
 
 </div>
-</main>
+
+
+
 <!-- CAMERA BUTTON -->
 <div id="cameraSaleButton" class="camera-fixed" style="display:none;">
 <button class="btn-secondary camera-btn" onclick="startCameraScanner()">
 📷 Kamera orqali sotuv
 </button>
-
 </div>
 <!-- NAVIGATION -->
 
