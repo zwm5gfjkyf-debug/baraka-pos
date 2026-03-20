@@ -7,10 +7,7 @@ FORMAT MONEY
 =============================== */
 
 function formatMoney(num){
-
-return Number(num || 0)
-.toLocaleString("ru-RU")
-
+return Number(num || 0).toLocaleString("ru-RU") + " so'm"
 }
 
 /* ===============================
@@ -23,8 +20,7 @@ if(!el) return
 
 let start = 0
 
-const step = Math.max(1,Math.ceil(value/80))
-
+const step = Math.max(1, Math.ceil(Math.abs(value)/80))
 const interval = setInterval(()=>{
 
 start += step
@@ -100,44 +96,3 @@ return d
 
 }
 
-// ===============================
-// THEME SYSTEM
-// ===============================
-
-function toggleTheme(){
-
-const body = document.body
-const btn = document.querySelector(".theme-btn")
-
-if(body.classList.contains("light-mode")){
-
-body.classList.remove("light-mode")
-localStorage.setItem("theme","dark")
-
-if(btn) btn.innerText = "🌙"
-
-}else{
-
-body.classList.add("light-mode")
-localStorage.setItem("theme","light")
-
-if(btn) btn.innerText = "☀"
-
-}
-
-}
-
-function loadTheme(){
-
-const savedTheme = localStorage.getItem("theme")
-
-if(savedTheme === "light"){
-document.body.classList.add("light-mode")
-
-const btn = document.querySelector(".theme-btn")
-if(btn) btn.innerText = "☀"
-}
-
-}
-
-window.addEventListener("DOMContentLoaded", loadTheme)
