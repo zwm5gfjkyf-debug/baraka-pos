@@ -320,34 +320,44 @@ function menuClick(action){
 // =============================
 
 function toggleCamera(){
+
   const current = localStorage.getItem("camera") === "true"
   const newValue = !current
 
   localStorage.setItem("camera", newValue)
 
   updateCamera()
-}
 
+}
 function updateCamera(){
 
   const enabled = localStorage.getItem("camera") === "true"
 
-  const cameraBox = document.getElementById("cameraSaleButton")
-  const cameraScanner = document.getElementById("cameraScanner")
-  const status = document.getElementById("cameraStatus")
-
-  if(enabled){
-    if(cameraBox) cameraBox.style.display = "block"
-    if(status) status.innerText = "ON"
-  }else{
-    if(cameraBox) cameraBox.style.display = "none"
-
-    // 🔥 IMPORTANT: hide scanner too
-    if(cameraScanner){
-      cameraScanner.classList.add("hidden")
+  const toggle = document.getElementById("cameraToggle")
+  const cameraBtn = document.getElementById("cameraSaleButton")
+const currentPage = document.querySelector(".page:not(.hidden)") || null
+  // TOGGLE UI
+  if(toggle){
+    if(enabled){
+      toggle.classList.add("active")
+    }else{
+      toggle.classList.remove("active")
     }
+  }
 
-    if(status) status.innerText = "OFF"
+  // SHOW ONLY IN SALE PAGE
+if(cameraBtn){
+
+  if(enabled && currentPage && currentPage.id === "salePage"){
+    cameraBtn.style.display = "block"
+  }else{
+    cameraBtn.style.display = "none"
+
+    // 🔥 ADD THIS (important)
+    const scanner = document.getElementById("cameraScanner")
+    if(scanner){
+      scanner.classList.add("hidden")
+    }
   }
 
 }
@@ -361,12 +371,20 @@ function startCameraScanner(){
   const enabled = localStorage.getItem("camera") === "true"
 
   if(!enabled){
-    alert("Kamera menyudan yoqilmagan ❌")
+    alert("Kamera o‘chirilgan ❌")
     return
   }
 
-  const scanner = document.getElementById("cameraScanner")
-  if(scanner) scanner.classList.remove("hidden")
+  document.getElementById("cameraScanner").classList.remove("hidden")
 
-  // your existing camera logic continues...
+}
+function navigate(pageId){
+
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.add("hidden")
+  })
+
+  document.getElementById(pageId).classList.remove("hidden")
+
+  updateCamera() // ✅ ADD THIS
 }
