@@ -4015,3 +4015,11 @@ TABLE MOBILE FIX
 body{
   overflow-x:hidden;
 }
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sales-table {
+  min-width: 700px;
+}
