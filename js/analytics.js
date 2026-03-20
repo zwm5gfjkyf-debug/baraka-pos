@@ -794,18 +794,23 @@ document.getElementById("extraTab").classList.remove("active")
 if(tab === "weekly"){
 document.getElementById("weeklyAnalytics").classList.remove("hidden")
 document.getElementById("weeklyTab").classList.add("active")
+
+// 🔥 ADD THIS
+loadWeeklyAnalytics()
 }
 
 if(tab === "monthly"){
 document.getElementById("monthlyAnalytics").classList.remove("hidden")
 document.getElementById("monthlyTab").classList.add("active")
+
+// 🔥 ADD THIS
+loadMonthlyAnalytics()
 }
 
 if(tab === "extra"){
 document.getElementById("extraAnalytics").classList.remove("hidden")
 document.getElementById("extraTab").classList.add("active")
 }
-
 }
 window.showAnalyticsTab = showAnalyticsTab   
 function openDebtAnalytics(){
