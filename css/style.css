@@ -3988,3 +3988,30 @@ MOBILE TABLE FIX
   }
 
 }
+/* ======================
+TABLE MOBILE FIX
+====================== */
+
+.table-wrapper{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* IMPORTANT — makes scroll possible */
+.sales-table{
+  min-width:750px;
+}
+
+/* smooth scrollbar */
+.table-wrapper::-webkit-scrollbar{
+  height:6px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,0.2);
+  border-radius:10px;
+}
+body{
+  overflow-x:hidden;
+}
