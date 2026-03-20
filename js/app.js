@@ -333,6 +333,7 @@ function updateCamera(){
   const enabled = localStorage.getItem("camera") === "true"
 
   const cameraBox = document.getElementById("cameraSaleButton")
+  const cameraScanner = document.getElementById("cameraScanner")
   const status = document.getElementById("cameraStatus")
 
   if(enabled){
@@ -340,10 +341,32 @@ function updateCamera(){
     if(status) status.innerText = "ON"
   }else{
     if(cameraBox) cameraBox.style.display = "none"
+
+    // 🔥 IMPORTANT: hide scanner too
+    if(cameraScanner){
+      cameraScanner.classList.add("hidden")
+    }
+
     if(status) status.innerText = "OFF"
   }
 
 }
 
 // run on load
-document.addEventListener("DOMContentLoaded", updateCamera)
+document.addEventListener("DOMContentLoaded", () => {
+  updateCamera()
+})
+function startCameraScanner(){
+
+  const enabled = localStorage.getItem("camera") === "true"
+
+  if(!enabled){
+    alert("Kamera menyudan yoqilmagan ❌")
+    return
+  }
+
+  const scanner = document.getElementById("cameraScanner")
+  if(scanner) scanner.classList.remove("hidden")
+
+  // your existing camera logic continues...
+}
