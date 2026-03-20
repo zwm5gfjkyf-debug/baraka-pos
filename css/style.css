@@ -3954,3 +3954,48 @@ align-items:center;
 padding:12px 20px;
 color:white;
 }
+/* TOGGLE ROW */
+.menu-toggle-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  width:100%;
+}
+
+/* TOGGLE */
+.toggle{
+  width:46px;
+  height:26px;
+  background:#374151;
+  border-radius:20px;
+  position:relative;
+  transition:0.3s;
+}
+
+/* CIRCLE */
+.toggle::after{
+  content:"";
+  width:20px;
+  height:20px;
+  background:white;
+  border-radius:50%;
+  position:absolute;
+  top:3px;
+  left:3px;
+  transition:0.3s;
+}
+
+/* ON STATE (LIGHT MODE = BLUE) */
+.toggle.active{
+  background:#3b82f6;
+}
+
+/* ON STATE (DARK MODE = GREEN) */
+body.dark .toggle.active{
+  background:#22c55e;
+}
+
+/* MOVE CIRCLE */
+.toggle.active::after{
+  transform:translateX(20px);
+}
