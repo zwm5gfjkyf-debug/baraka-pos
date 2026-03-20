@@ -402,7 +402,7 @@ function navigate(pageId){
   }
 
   updateCamera()
-  const backBtn = document.getElementById("backBtn")
+ const backBtn = document.getElementById("backBtn")
 
 if(backBtn){
 
