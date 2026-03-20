@@ -109,15 +109,9 @@ CONTAINER
 ========================================= */
 
 .main-content{
-
-padding:12px 6px;
-
-padding-bottom:100px;
-
+padding:16px;
+padding-bottom:110px;
 width:100%;
-
-flex:1;
-
 }
 /* =========================================
 GRID SYSTEM
@@ -846,8 +840,7 @@ transition:all 0.2s;
 }
 .page{
 width:100%;
-padding:12px 6px;
-padding-bottom:110px;
+padding:0;
 }
 .bottom-nav button.active{
 
@@ -1813,11 +1806,7 @@ font-size:13px;
 .profit-buttons button:hover{
 background:#22c55e;
 }
-html, body{
-height:100%;
-overflow-x:hidden;
-overflow-y:auto;
-}
+
 .app-container{
 min-height:100vh;
 display:flex;
@@ -3948,8 +3937,8 @@ opacity:1;
 }
 
 /* ON STATE (DARK MODE = GREEN) */
-body.dark .toggle.active{
-  background:#22c55e;
+body:not(.light-mode) .toggle.active{
+background:#22c55e;
 }
 
 /* MOVE CIRCLE */
@@ -3960,15 +3949,7 @@ body.dark .toggle.active{
 MOBILE TABLE FIX
 ====================== */
 
-.table-wrapper{
-  width:100%;
-  overflow-x:auto;
-  -webkit-overflow-scrolling:touch;
-}
 
-.sales-table{
-  min-width:700px; /* IMPORTANT */
-}
 
 /* smooth scroll */
 .table-wrapper::-webkit-scrollbar{
@@ -3999,9 +3980,7 @@ TABLE MOBILE FIX
 }
 
 /* IMPORTANT — makes scroll possible */
-.sales-table{
-  min-width:750px;
-}
+
 
 /* smooth scrollbar */
 .table-wrapper::-webkit-scrollbar{
@@ -4020,6 +3999,15 @@ body{
   -webkit-overflow-scrolling: touch;
 }
 
-.sales-table {
-  min-width: 700px;
+.table-wrapper{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+.sales-table{
+  min-width:800px;
+}
+.table-wrapper{
+  display:block;
 }
