@@ -37,17 +37,17 @@ auth.onAuthStateChanged(async (user) => {
 
 async function register(){
 
-  const shopName = document.getElementById("shopName").value.trim()
-  const email = document.getElementById("email").value.trim()
-  const password = document.getElementById("password").value
+  const shopName = document.getElementById("shopName")?.value.trim() || ""
+  const email = document.getElementById("email")?.value.trim() || ""
+  const password = document.getElementById("password")?.value || ""
 
   if(!shopName || !email || !password){
-    alert("Ma'lumotlarni to'ldiring")
+    showTopBanner("Ma'lumotlarni to'ldiring", "error")
     return
   }
 
   if(password.length < 6){
-    alert("Parol kamida 6 ta belgi bo'lishi kerak")
+    showTopBanner("Parol kamida 6 ta belgi bo'lishi kerak", "error")
     return
   }
 
@@ -63,26 +63,26 @@ async function register(){
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     })
 
-    alert("Ro'yxatdan o'tish muvaffaqiyatli")
+    showTopBanner("Ro'yxatdan o'tish muvaffaqiyatli", "success")
 
   }catch(e){
 
     console.error(e)
 
     if(e.code === "auth/email-already-in-use"){
-      alert("Bu email allaqachon ro'yxatdan o'tgan")
+      showTopBanner("Bu email allaqachon ro'yxatdan o'tgan", "error")
     }
 
     else if(e.code === "auth/invalid-email"){
-      alert("Email noto'g'ri")
+      showTopBanner("Email noto'g'ri", "error")
     }
 
     else if(e.code === "auth/weak-password"){
-      alert("Parol juda oddiy")
+      showTopBanner("Parol juda oddiy", "error")
     }
 
     else{
-      alert("Ro'yxatdan o'tishda xatolik")
+      showTopBanner("Ro'yxatdan o'tishda xatolik", "error")
     }
 
   }
@@ -95,11 +95,11 @@ async function register(){
 
 async function login(){
 
-  const email = document.getElementById("email").value.trim()
-  const password = document.getElementById("password").value
+  const email = document.getElementById("email")?.value.trim() || ""
+  const password = document.getElementById("password")?.value || ""
 
   if(!email || !password){
-    alert("Email va parolni kiriting")
+    showTopBanner("Email va parolni kiriting", "error")
     return
   }
 
@@ -107,24 +107,26 @@ async function login(){
 
     await auth.signInWithEmailAndPassword(email,password)
 
+    showTopBanner("Xush kelibsiz!", "success")
+
   }catch(e){
 
     console.error(e)
 
     if(e.code === "auth/user-not-found"){
-      alert("Bunday akkaunt mavjud emas")
+      showTopBanner("Bunday akkaunt mavjud emas", "error")
     }
 
     else if(e.code === "auth/wrong-password"){
-      alert("Parol noto'g'ri")
+      showTopBanner("Parol noto'g'ri", "error")
     }
 
     else if(e.code === "auth/invalid-email"){
-      alert("Email noto'g'ri")
+      showTopBanner("Email noto'g'ri", "error")
     }
 
     else{
-      alert("Kirishda xatolik")
+      showTopBanner("Kirishda xatolik", "error")
     }
 
   }
@@ -139,6 +141,8 @@ function logout(){
 
   auth.signOut()
 
+  showTopBanner("Tizimdan chiqdingiz", "success")
+   
   const appScreen = document.getElementById("appScreen")
   const authScreen = document.getElementById("authScreen")
 
