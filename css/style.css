@@ -950,13 +950,8 @@ box-shadow 0.2s;
 
 }
 
-.search-item:hover{
-
-transform:translateY(-2px);
-
-box-shadow:
-0 10px 25px rgba(0,0,0,0.35);
-
+.cart-item:hover{
+transform:none !important;
 }
 
 
@@ -965,11 +960,8 @@ CART ITEM ANIMATION
 ========================================= */
 
 .cart-item{
-
-animation:fadeUp 0.35s ease;
-
+animation:none;
 }
-
 .dashboard-card:focus-within{
 transform:none !important;
 box-shadow:0 6px 20px rgba(0,0,0,0.35);
@@ -1121,7 +1113,10 @@ transform 0.2s,
 color 0.2s;
 
 }
-
+.cart-item:focus-within{
+transform:none !important;
+box-shadow:0 6px 20px rgba(0,0,0,0.35);
+}
 .bottom-nav button:hover{
 
 transform:translateY(-2px);
