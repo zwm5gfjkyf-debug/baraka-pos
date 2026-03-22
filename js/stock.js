@@ -408,10 +408,28 @@ const el = document.getElementById("profitPreview")
 if(!el) return
 
 if(cost > 0 && price > 0){
+
 const percent = Math.round(((price - cost) / cost) * 100)
+
+// 🔥 PROFIT (GREEN)
+if(percent > 0){
 el.innerText = `+${percent}% foyda`
+el.style.color = "#22c55e"
+}
+
+// 🔴 LOSS (RED)
+else if(percent < 0){
+el.innerText = `${percent}% zarar`
+el.style.color = "#ef4444"
+}
+
+// ⚪ ZERO
+else{
+el.innerText = `0%`
+el.style.color = "#94a3b8"
+}
+
 }else{
 el.innerText = ""
 }
-
 }
