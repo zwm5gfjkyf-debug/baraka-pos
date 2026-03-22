@@ -422,3 +422,17 @@ if(backBtn){
 function goBack(){
   navigate("analyticsPage")
 }
+function formatNumberInput(input){
+
+  let value = input.value.replace(/\s/g, '') // remove spaces
+
+  if(value === "") return
+
+  // allow only numbers
+  value = value.replace(/\D/g, '')
+
+  // format with spaces
+  value = value.replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+
+  input.value = value
+}
