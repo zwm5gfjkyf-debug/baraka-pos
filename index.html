@@ -559,8 +559,8 @@ cursor:pointer;
 
 <input id="stockQty" type="number" placeholder="Miqdor">
 
-<input id="stockCost" type="number" placeholder="Kelgan narx">
-
+<input id="stockCost" oninput="formatNumberInput(this)" placeholder="Kelgan narx">
+  
 <div class="profit-buttons">
 
 <button type="button" onclick="setProfit(10)">10%</button>
@@ -571,8 +571,7 @@ cursor:pointer;
 
 </div>
 
-<input id="stockSellingPrice" type="number" placeholder="Sotish narxi">
-
+<input id="stockSellingPrice" oninput="formatNumberInput(this)" placeholder="Sotish narxi">
 <div class="modal-buttons">
 
 <button onclick="openLabelPreview()" class="btn-primary">
