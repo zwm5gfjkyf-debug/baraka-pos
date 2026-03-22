@@ -446,12 +446,8 @@ box-shadow:
 }
 
 .btn-primary:hover{
-
-transform:translateY(-1px);
-
-box-shadow:
-0 10px 25px rgba(34,197,94,0.45);
-
+transform:none;
+box-shadow:none;
 }
 
 
@@ -531,11 +527,8 @@ transition:all 0.2s;
 }
 
 .search-item:hover{
-
 background:rgba(255,255,255,0.08);
-
-transform:scale(1.01);
-
+transform:none;
 }
 
 
@@ -883,32 +876,6 @@ animation:fadeUp 0.45s ease;
 CARD GLOW EFFECT
 ========================================= */
 
-.dashboard-card::before{
-
-content:"";
-
-position:absolute;
-
-inset:0;
-
-border-radius:inherit;
-
-opacity:0;
-
-background:linear-gradient(
-120deg,
-transparent,
-rgba(255,255,255,0.15),
-transparent
-);
-
-transition:opacity 0.3s;
-
-}
-
-.dashboard-card:hover::before{
-opacity:1;
-}
 
 
 /* =========================================
@@ -1117,9 +1084,7 @@ transform:none !important;
 box-shadow:0 6px 20px rgba(0,0,0,0.35);
 }
 .bottom-nav button:hover{
-
-transform:translateY(-2px);
-
+transform:none;
 }
 
 
@@ -1215,43 +1180,14 @@ SOFT PAGE TRANSITION
 HOVER LIGHT EFFECT
 ========================================= */
 
-.glass:hover{
-
-box-shadow:
-0 15px 40px rgba(0,0,0,0.55);
-
-}
 
 
 /* =========================================
 SUBTLE PULSE (OPTIONAL)
 ========================================= */
 
-@keyframes pulseGlow{
+.stock-card:hover{
 
-0%{
-box-shadow:0 0 0 rgba(34,197,94,0.4);
-}
-
-50%{
-box-shadow:0 0 15px rgba(34,197,94,0.35);
-}
-
-100%{
-box-shadow:0 0 0 rgba(34,197,94,0.4);
-}
-
-}
-
-.btn-primary{
-
-animation:pulseGlow 3s infinite;
-width:100%;
-
-height:48px;
-
-font-size:16px;
-}
 input, button{
 position:relative;
 z-index:5;
@@ -1263,11 +1199,8 @@ STOCK CARD DESIGN
 
 
 .stock-card:hover{
-
-transform:translateY(-3px);
-
-box-shadow:0 20px 40px rgba(0,0,0,0.6);
-
+transform:none;
+box-shadow:none;
 }
 #currentStockList{
 
@@ -2799,12 +2732,8 @@ transition:all 0.2s;
 }
 
 body.light-mode .stock-card:hover{
-
-transform:translateY(-2px);
-
-box-shadow:
-0 12px 26px rgba(0,0,0,0.08);
-
+transform:none;
+box-shadow:none;
 }
 
 /* =====================================================
@@ -3727,12 +3656,8 @@ CART HOVER
 ===================================================== */
 
 body.light-mode .cart-item:hover{
-
-box-shadow:
-0 6px 16px rgba(0,0,0,0.06);
-
+box-shadow:none;
 }
-
 /* =====================================================
 MODAL INPUT FOCUS
 ===================================================== */
@@ -3759,12 +3684,8 @@ box-shadow .2s;
 }
 
 body.light-mode .btn-primary:hover{
-
-transform:translateY(-1px);
-
-box-shadow:
-0 12px 26px rgba(37,99,235,0.35);
-
+transform:none;
+box-shadow:none;
 }
 
 /* =====================================================
