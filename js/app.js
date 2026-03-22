@@ -406,11 +406,12 @@ function navigate(pageId){
 
 if(backBtn){
 
-  if(
-    pageId === "salesAnalyticsPage" ||
-    pageId === "debtAnalyticsPage" ||
-    pageId === "shopAnalyticsPage"
-  ){
+ if(
+  pageId === "salesAnalyticsPage" ||
+  pageId === "debtAnalyticsPage" ||
+  pageId === "shopAnalyticsPage" ||
+  pageId === "addProductPage"
+){
     backBtn.classList.remove("hidden")
   }else{
     backBtn.classList.add("hidden")
@@ -420,7 +421,7 @@ if(backBtn){
 }
 
 function goBack(){
-  navigate("analyticsPage")
+  navigate("stockPage")
 }
 function formatNumberInput(input){
 
