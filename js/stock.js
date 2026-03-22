@@ -355,26 +355,11 @@ function syncBarcodeCounter(counter){
 
 if(!currentShopId) return
 
-// 🔥 run in background (no await = FAST)
 db.collection("shops")
 .doc(currentShopId)
 .collection("settings")
 .doc("barcode")
 .set({ barcodeCounter: counter }, { merge:true })
-
-}
-
-counter++
-
-await ref.set({ barcodeCounter: counter }, { merge:true })
-
-const barcode = String(counter).padStart(9,"0")
-
-const input = document.getElementById("stockBarcode")
-
-if(input){
-input.value = barcode
-}
 
 }
 function openLabelPreview(){
