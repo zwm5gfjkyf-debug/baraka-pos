@@ -4032,3 +4032,9 @@ h1, h2, h3{
   font-size:20px;
   cursor:pointer;
 }
+.form-container{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
