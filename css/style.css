@@ -326,7 +326,6 @@ PART 2 — COMPONENTS
 Premium POS UI Elements
 ========================================= */
 
-
 /* =========================================
 DASHBOARD CARDS
 ========================================= */
@@ -355,10 +354,7 @@ min-height:80px;
 
 .dashboard-card:hover{
 transform:none;
-}
-box-shadow:
-0 20px 50px rgba(0,0,0,0.45);
-
+box-shadow:0 8px 25px rgba(0,0,0,0.35);
 }
 
 /* =========================================
@@ -1186,22 +1182,7 @@ HOVER LIGHT EFFECT
 SUBTLE PULSE (OPTIONAL)
 ========================================= */
 
-.stock-card:hover{
 
-input, button{
-position:relative;
-z-index:5;
-}
-/* =========================
-STOCK CARD DESIGN
-========================= */
-
-
-
-.stock-card:hover{
-transform:none;
-box-shadow:none;
-}
 #currentStockList{
 
 display:flex;
@@ -2733,9 +2714,8 @@ transition:all 0.2s;
 
 body.light-mode .stock-card:hover{
 transform:none;
-box-shadow:none;
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
 }
-
 /* =====================================================
 STOCK HEADER
 ===================================================== */
@@ -3656,7 +3636,7 @@ CART HOVER
 ===================================================== */
 
 body.light-mode .cart-item:hover{
-box-shadow:none;
+box-shadow:0 6px 16px rgba(0,0,0,0.06);
 }
 /* =====================================================
 MODAL INPUT FOCUS
@@ -3685,9 +3665,8 @@ box-shadow .2s;
 
 body.light-mode .btn-primary:hover{
 transform:none;
-box-shadow:none;
+box-shadow:0 8px 20px rgba(37,99,235,0.25);
 }
-
 /* =====================================================
 BOTTOM NAV ICON HOVER
 ===================================================== */
