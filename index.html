@@ -477,7 +477,7 @@ style="margin:15px 0;width:100%">
 <!-- COST -->
 <div class="form-group">
 <label>Kelgan narx</label>
-<input id="stockCost" oninput="formatNumberInput(this); updateProfitPreview()">
+<input id="stockCost" oninput="formatNumberInput(this); updateProfitPreview()" ...>
 </div>
 
 <!-- PROFIT BUTTONS -->
@@ -492,8 +492,7 @@ style="margin:15px 0;width:100%">
 <!-- SELLING PRICE -->
 <div class="form-group">
 <label>Sotish narxi</label>
-<input id="stockSellingPrice" oninput="formatNumberInput(this); updateProfitPreview()">
-
+<input id="stockSellingPrice" oninput="formatNumberInput(this); updateProfitPreview()" ...>
 <!-- 🔥 AUTO PROFIT % -->
 <div id="profitPreview" class="profit-preview"></div>
 </div>
@@ -644,7 +643,7 @@ color:white;
 
 <div class="modal-buttons">
 
-<button onclick="addStock(); closeLabelPreview(); closeAddProductModal()" class="btn-primary">
+<button onclick="addStock(); closeLabelPreview()" class="btn-primary">
 Tasdiqlash
 </button>
 
