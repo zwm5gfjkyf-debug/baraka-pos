@@ -276,8 +276,7 @@ Sotuvni yakunlash
 <h2 class="page-title">Zaxira</h2>
 
 <div class="stock-top">
-<button class="btn-primary" onclick="openAddProductModal()">➕ Tovar qo'shish</button>
-
+<button class="btn-primary" onclick="navigate('addProductPage')">➕ Tovar qo'shish</button>
 <input
 id="stockSearch"
 placeholder="🔍 Mahsulot qidirish..."
@@ -446,7 +445,41 @@ style="margin:15px 0;width:100%">
 </div>
 
 </div>
+<!-- ADD PRODUCT FULL PAGE -->
+<div id="addProductPage" class="page hidden">
 
+<h2 class="page-title">Yangi mahsulot qo'shish</h2>
+
+<div class="dashboard-card glass">
+
+<input id="stockName" placeholder="Mahsulot nomi">
+
+<div style="display:flex; gap:6px">
+<input id="stockBarcode" placeholder="Barcode" style="flex:1">
+<button onclick="generateBarcode()" style="width:50px">+</button>
+</div>
+
+<input id="stockQty" type="number" placeholder="Miqdor">
+
+<input id="stockCost" placeholder="Kelgan narx" oninput="formatNumberInput(this)">
+
+<div class="profit-buttons">
+<button onclick="setProfit(10)">10%</button>
+<button onclick="setProfit(15)">15%</button>
+<button onclick="setProfit(20)">20%</button>
+<button onclick="setProfit(30)">30%</button>
+<button onclick="setProfit(40)">40%</button>
+</div>
+
+<input id="stockSellingPrice" placeholder="Sotish narxi" oninput="formatNumberInput(this)">
+
+<button onclick="addStock(); navigate('stockPage')" class="btn-primary">
+Saqlash
+</button>
+
+</div>
+
+</div>
 </main>
 
 
@@ -522,71 +555,7 @@ Bekor qilish
 </div>
 
 
-<!-- ADD PRODUCT MODAL -->
 
-<div id="addProductModal" class="modal hidden">
-
-<div class="modal-card">
-
-<h3>Yangi mahsulot qo'shish</h3>
-
-<input id="stockName" placeholder="Mahsulot nomi">
-
-<div style="display:flex; gap:6px">
-
-<input
-id="stockBarcode"
-placeholder="Barcode"
-style="flex:1"
->
-
-<button
-type="button"
-onclick="generateBarcode()"
-style="
-padding:0 12px;
-background:#22c55e;
-border:none;
-border-radius:6px;
-color:white;
-font-weight:600;
-cursor:pointer;
-">
-+
-</button>
-
-</div>
-
-<input id="stockQty" type="number" placeholder="Miqdor">
-
-<input id="stockCost" oninput="formatNumberInput(this)" placeholder="Kelgan narx">
-  
-<div class="profit-buttons">
-
-<button type="button" onclick="setProfit(10)">10%</button>
-<button type="button" onclick="setProfit(15)">15%</button>
-<button type="button" onclick="setProfit(20)">20%</button>
-<button type="button" onclick="setProfit(30)">30%</button>
-<button type="button" onclick="setProfit(40)">40%</button>
-
-</div>
-
-<input id="stockSellingPrice" oninput="formatNumberInput(this)" placeholder="Sotish narxi">
-<div class="modal-buttons">
-
-<button onclick="openLabelPreview()" class="btn-primary">
-Saqlash va Chop Etish
-</button>
-
-<button onclick="closeAddProductModal()" class="btn-secondary">
-Bekor qilish
-</button>
-
-</div>
-
-</div>
-
-</div>
 
 <!-- LABEL PREVIEW MODAL -->
 
