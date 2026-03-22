@@ -331,22 +331,37 @@ const price = Math.round(cost + (cost * percent / 100))
 document.getElementById("editPrice").value = price
 
 }
-async function generateBarcode(){
+let localBarcodeCounter = Number(localStorage.getItem("barcodeCounter") || 100000000)
+
+function generateBarcode(){
+
+localBarcodeCounter++
+
+localStorage.setItem("barcodeCounter", localBarcodeCounter)
+
+const barcode = String(localBarcodeCounter).padStart(9,"0")
+
+const input = document.getElementById("stockBarcode")
+
+if(input){
+input.value = barcode
+}
+
+// 🔥 OPTIONAL: sync in background (no waiting)
+syncBarcodeCounter(localBarcodeCounter)
+
+}
+function syncBarcodeCounter(counter){
 
 if(!currentShopId) return
 
-const ref = db
-.collection("shops")
+// 🔥 run in background (no await = FAST)
+db.collection("shops")
 .doc(currentShopId)
 .collection("settings")
 .doc("barcode")
+.set({ barcodeCounter: counter }, { merge:true })
 
-const doc = await ref.get()
-
-let counter = 1
-
-if(doc.exists){
-counter = doc.data().barcodeCounter || 1
 }
 
 counter++
