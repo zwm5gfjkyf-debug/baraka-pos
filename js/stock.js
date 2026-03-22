@@ -79,8 +79,8 @@ document.getElementById("stockBarcode").value = ""
 document.getElementById("stockQty").value = ""
 document.getElementById("stockCost").value = ""
 document.getElementById("stockSellingPrice").value = ""
-
-showTopBanner("Zaxira yangilandi", "success")
+const preview = document.getElementById("profitPreview")
+if(preview) preview.innerText = ""
 }
 finally{
 
@@ -318,7 +318,7 @@ if(!cost) return
 const price = Math.round(cost + (cost * percent / 100))
 
 document.getElementById("stockSellingPrice").value = price
-
+updateProfitPreview()
 }
 function setEditProfit(percent){
 
@@ -366,7 +366,7 @@ function openLabelPreview(){
 
 const nameInput = document.getElementById("stockName")
 const name = nameInput ? nameInput.value.trim() : ""
-const price = document.getElementById("stockSellingPrice").value
+const price = Number(document.getElementById("stockSellingPrice").value.replace(/\s/g,""))
 const barcode = document.getElementById("stockBarcode").value
 const qty = document.getElementById("stockQty").value
 
