@@ -21,8 +21,8 @@ const name = document.getElementById("stockName").value.trim()
 const nameKey = name.toLowerCase()
 const barcode = document.getElementById("stockBarcode")?.value.trim() || ""
 const qty = Number(document.getElementById("stockQty")?.value || 0)
-const cost = Number(document.getElementById("stockCost")?.value || 0)
-const price = Number(document.getElementById("stockSellingPrice")?.value || 0)
+const cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
+const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
 if(!name || !price){
 showTopBanner("Mahsulot nomi va narx kerak","error")
 stockProcessing = false
@@ -312,8 +312,7 @@ card.style.display = "none"
 }
 function setProfit(percent){
 
-const cost = Number(document.getElementById("stockCost").value)
-
+const cost = Number(document.getElementById("stockCost").value.replace(/\s/g,""))
 if(!cost) return
 
 const price = Math.round(cost + (cost * percent / 100))
@@ -396,4 +395,23 @@ document.getElementById("labelPreviewModal").classList.remove("hidden")
 }
 function closeLabelPreview(){
 document.getElementById("labelPreviewModal").classList.add("hidden")
+}
+function updateProfitPreview(){
+
+const costRaw = document.getElementById("stockCost")?.value || "0"
+const priceRaw = document.getElementById("stockSellingPrice")?.value || "0"
+
+const cost = Number(costRaw.replace(/\s/g,""))
+const price = Number(priceRaw.replace(/\s/g,""))
+
+const el = document.getElementById("profitPreview")
+if(!el) return
+
+if(cost > 0 && price > 0){
+const percent = Math.round(((price - cost) / cost) * 100)
+el.innerText = `+${percent}% foyda`
+}else{
+el.innerText = ""
+}
+
 }
