@@ -95,4 +95,27 @@ d.setHours(0,0,0,0)
 return d
 
 }
+/* ===============================
+FORMAT NUMBER INPUT (LIVE)
+=============================== */
 
+function formatNumberInput(input){
+
+if(!input) return
+
+// remove all non-numbers
+let value = input.value.replace(/\D/g, "")
+
+// convert to number
+let number = Number(value)
+
+// if empty → clear
+if(!value){
+input.value = ""
+return
+}
+
+// format with spaces (RU style)
+input.value = number.toLocaleString("ru-RU")
+
+}
