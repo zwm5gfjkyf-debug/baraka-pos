@@ -972,10 +972,9 @@ INPUT FOCUS GLOW
 
 input:focus{
 outline:none;
-border-color:var(--accent);
+border:1px solid var(--accent);
 box-shadow:none;
 }
-
 
 /* =========================================
 SUCCESS POPUP
