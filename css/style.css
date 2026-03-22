@@ -4038,3 +4038,8 @@ h1, h2, h3{
   gap: 14px;
   padding: 16px;
 }
+.sidebar button{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
