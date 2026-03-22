@@ -5,7 +5,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Baraka POS</title>
+<title>Baraka</title>
 
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2838/2838895.png">
 
@@ -450,19 +450,37 @@ style="margin:15px 0;width:100%">
 
 <h2 class="page-title">Yangi mahsulot qo'shish</h2>
 
-<div class="dashboard-card glass">
+<div class="dashboard-card glass form-container">
 
-<input id="stockName" placeholder="Mahsulot nomi">
-
-<div style="display:flex; gap:6px">
-<input id="stockBarcode" placeholder="Barcode" style="flex:1">
-<button onclick="generateBarcode()" style="width:50px">+</button>
+<!-- NAME -->
+<div class="form-group">
+<label>Mahsulot nomi</label>
+<input id="stockName">
 </div>
 
-<input id="stockQty" type="number" placeholder="Miqdor">
+<!-- BARCODE -->
+<div class="form-group">
+<label>Barcode</label>
 
-<input id="stockCost" placeholder="Kelgan narx" oninput="formatNumberInput(this)">
+<div class="input-row">
+<input id="stockBarcode">
+<button onclick="generateBarcode()" class="barcode-btn">+</button>
+</div>
+</div>
 
+<!-- QTY -->
+<div class="form-group">
+<label>Miqdor</label>
+<input id="stockQty" type="number">
+</div>
+
+<!-- COST -->
+<div class="form-group">
+<label>Kelgan narx</label>
+<input id="stockCost" oninput="formatNumberInput(this); updateProfitPreview()">
+</div>
+
+<!-- PROFIT BUTTONS -->
 <div class="profit-buttons">
 <button onclick="setProfit(10)">10%</button>
 <button onclick="setProfit(15)">15%</button>
@@ -471,11 +489,27 @@ style="margin:15px 0;width:100%">
 <button onclick="setProfit(40)">40%</button>
 </div>
 
-<input id="stockSellingPrice" placeholder="Sotish narxi" oninput="formatNumberInput(this)">
+<!-- SELLING PRICE -->
+<div class="form-group">
+<label>Sotish narxi</label>
+<input id="stockSellingPrice" oninput="formatNumberInput(this); updateProfitPreview()">
 
-<button onclick="addStock(); navigate('stockPage')" class="btn-primary">
-Saqlash
+<!-- 🔥 AUTO PROFIT % -->
+<div id="profitPreview" class="profit-preview"></div>
+</div>
+
+<!-- BUTTONS -->
+<div class="form-actions">
+
+<button onclick="openLabelPreview()" class="btn-primary">
+Saqlash va Chop Etish
 </button>
+
+<button onclick="addStock(); navigate('stockPage')" class="btn-secondary">
+Faqat saqlash
+</button>
+
+</div>
 
 </div>
 
