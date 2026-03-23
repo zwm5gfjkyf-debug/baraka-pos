@@ -80,7 +80,10 @@ if(dashboardListener){
 dashboardListener()
 dashboardListener = null
 }
-dashboardListener = salesRef.onSnapshot(salesSnapshot => {
+dashboardListener = salesRef
+.orderBy("createdAt","desc")
+.limit(200)
+.onSnapshot(salesSnapshot => {
 let todayRevenue = 0
 let todayItems = 0
 let todayProfit = 0
@@ -233,9 +236,14 @@ async function syncOfflineSales(){
         const batch = db.batch()
 
         offline.forEach(sale=>{
-            const ref = salesRef.doc()
-            batch.set(ref,sale)
-        })
+    const id = sale.localId || Date.now() + "_" + Math.random()
+    const ref = salesRef.doc(id)
+
+    batch.set(ref, {
+        ...sale,
+        synced: true
+    })
+})
 
         await batch.commit()
 
