@@ -93,9 +93,8 @@ const query = text.toLowerCase()
 
 let results = []   // ✅ THIS WAS MISSING
 
-const keys = productKeys
+const keys = productKeys.slice(0, 300) // limit search
 for(let i=0;i<keys.length;i++){
-
 const key = keys[i]
 
 if(key.includes(query)){
@@ -134,7 +133,7 @@ resultsBox.appendChild(div)
 
 function addToCart(product){
 
-if(!product || product.stock <= 0){
+if(!product){
 showTopBanner("Zaxirada qolmadi","error")
 return
 }
@@ -170,87 +169,84 @@ renderCart()
 // =======================================
 // RENDER CART
 // =======================================
+let cartRenderScheduled = false
 
 function renderCart(){
 
+if(cartRenderScheduled) return
+cartRenderScheduled = true
+
+requestAnimationFrame(()=>{
+
+cartRenderScheduled = false
+
 const list = document.getElementById("cartList")
 if(!list) return
+
 list.innerHTML = ""
+
 const saleTypeBox = document.getElementById("saleTypeContainer")
 const debtInput = document.getElementById("debtCustomer")
 
 if(!saleTypeBox) return
 
 if(cart.length > 0){
-
-saleTypeBox.classList.remove("hidden")
+  saleTypeBox.classList.remove("hidden")
 }else{
+  saleTypeBox.classList.add("hidden")
 
-saleTypeBox.classList.add("hidden")
+  saleType = "cash"
 
-// reset everything when cart empty
-saleType = "cash"
+  if(debtInput){
+    debtInput.value = ""
+    debtInput.classList.add("hidden")
+  }
 
-if(debtInput){
-debtInput.value = ""
-debtInput.classList.add("hidden")
+  const cash = document.getElementById("cashBtn")
+  const debt = document.getElementById("debtBtn")
+
+  if(cash) cash.classList.add("active")
+  if(debt) debt.classList.remove("active")
 }
 
-const cash = document.getElementById("cashBtn")
-const debt = document.getElementById("debtBtn")
-
-if(cash) cash.classList.add("active")
-if(debt) debt.classList.remove("active")
-
-}
 let total = 0
 
 cart.forEach(item => {
 
-const itemTotal = item.price * item.qty
+  const itemTotal = item.price * item.qty
+  total += itemTotal
 
-total += itemTotal
+  const div = document.createElement("div")
+  div.className = "cart-item"
 
-const div = document.createElement("div")
+  div.innerHTML = `
+    <div class="cart-row">
+      <span class="cart-name">${item.name}</span>
 
-div.className = "cart-item"
+      <div class="quantity-controls">
+        <button class="qty-btn" onclick="decreaseQty('${item.id}')">-</button>
+        <span class="qty-number">${item.qty}</span>
+        <button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
+      </div>
+    </div>
 
-div.innerHTML = `
+    <input
+      type="number"
+      value="${item.price}"
+      class="price-input"
+      onchange="changePrice('${item.id}', this.value)"
+    >
 
-<div class="cart-row">
+    <strong>${formatMoney(itemTotal)} so'm</strong>
+  `
 
-<span class="cart-name">${item.name}</span>
-
-<div class="quantity-controls">
-
-<button class="qty-btn" onclick="decreaseQty('${item.id}')">-</button>
-
-<span class="qty-number">${item.qty}</span>
-
-<button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
-
-</div>
-
-</div>
-
-<input
-type="number"
-value="${item.price}"
-class="price-input"
-onchange="changePrice('${item.id}', this.value)"
->
-
-<strong>${formatMoney(itemTotal)} so'm</strong>
-
-`
-list.appendChild(div)
-
+  list.appendChild(div)
 })
 
 document.getElementById("saleTotal").innerText = formatMoney(total)
 
+})
 }
-
 function clearSearch(){
 
 const input = document.getElementById("saleSearch")
@@ -492,7 +488,7 @@ renderCart()
 // ===============================
 // BARCODE SCANNER SYSTEM
 // ===============================
-
+let lastScanTime = 0
 let barcodeBuffer = ""
 let barcodeTimer = null
 
@@ -511,15 +507,20 @@ clearTimeout(barcodeTimer)
 
 barcodeTimer = setTimeout(()=>{
 barcodeBuffer = ""
-},200)
+},500) // more stable scanner
 if(e.key === "Enter"){
 
-if(barcodeBuffer.length < 3){
+const now = Date.now()
+
+// prevent spam scans
+if(now - lastScanTime < 100) return
+lastScanTime = now
+
+if(barcodeBuffer.length < 6){ // stronger validation
 barcodeBuffer = ""
 return
 }
 
-// prevent double scan
 if(window.scanLock) return
 window.scanLock = true
 
@@ -527,11 +528,11 @@ handleBarcodeScan(barcodeBuffer)
 
 setTimeout(()=>{
 window.scanLock = false
-},400)
+},150)
+
 barcodeBuffer = ""
 
 }
-
 })
 
 function handleBarcodeScan(barcode){
