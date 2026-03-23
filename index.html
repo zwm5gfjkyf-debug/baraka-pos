@@ -21,6 +21,14 @@
 
 </head>
 <body>
+<input 
+  id="hiddenScannerInput" 
+  type="text" 
+  inputmode="none"
+  autofocus
+  autocomplete="off"
+  style="position:absolute;opacity:0;height:0;width:0;border:none;"
+>
 <div id="confirmModal" class="confirm-modal hidden">
 
   <div class="confirm-box glass">
@@ -683,4 +691,25 @@ Bekor qilish
 if(typeof showAnalyticsTab === "function"){
 window.showAnalyticsTab = showAnalyticsTab
 }
+</script>
+<script>
+function focusScanner(){
+  const el = document.getElementById("hiddenScannerInput")
+  if(el){
+    el.focus()
+  }
+}
+
+// focus on load
+window.addEventListener("load", focusScanner)
+
+// focus after any click
+document.addEventListener("click", focusScanner)
+
+// focus after navigation (VERY IMPORTANT)
+document.addEventListener("visibilitychange", () => {
+  if(!document.hidden){
+    focusScanner()
+  }
+})
 </script>
