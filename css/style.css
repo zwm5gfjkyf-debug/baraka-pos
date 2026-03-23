@@ -1875,16 +1875,15 @@ color:#ef4444;
 }
 .top-banner {
   position: fixed;
-  top: 20px;
+  top: 10px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-20px); /* start hidden above */
 
-  width: calc(100% - 40px); /* space on both sides */
-  max-width: 420px; /* not too wide on desktop */
+  width: calc(100% - 40px);
+  max-width: 420px;
 
   padding: 14px 18px;
-
-  border-radius: 16px; /* more rounded */
+  border-radius: 16px;
 
   display: flex;
   align-items: center;
@@ -1896,10 +1895,13 @@ color:#ef4444;
 
   opacity: 0;
   pointer-events: none;
+
   transition: all 0.25s ease;
 }
-.top-banner.show{
-top:0;
+.top-banner.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
 }
 .banner-content {
   display: flex;
