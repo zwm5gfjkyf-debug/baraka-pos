@@ -1,14 +1,12 @@
 // =======================================
 // BARAKA POS – ULTRA FAST SALES ENGINE
 // =======================================
-
-// product cache (in memory)
 // product cache (in memory)
 let productCache = []
 let productIndex = {}
 let productIndexBarcode = {}
-let productKeys = []        // search optimization
-let productById = {}        // cart optimization
+let productKeys = []       
+let productById = {}        
 let saleType = "cash"
 let cart = []
 let cartMap = {}
@@ -133,7 +131,7 @@ resultsBox.appendChild(div)
 
 function addToCart(product){
 
-if(!product){
+if(!product || product.stock <= 0){
 showTopBanner("Zaxirada qolmadi","error")
 return
 }
@@ -486,106 +484,89 @@ renderCart()
 }
 
 // ===============================
-// BARCODE SCANNER SYSTEM
+// 🔥 NEW FAST BARCODE SYSTEM
 // ===============================
-let lastScanTime = 0
-let barcodeBuffer = ""
-let barcodeTimer = null
 
-document.addEventListener("keydown", function(e){
-if(document.activeElement && 
-["INPUT","TEXTAREA"].includes(document.activeElement.tagName)){
-return
-}
-if(!e.key) return
+let scanInput = null
 
-if(e.key.length === 1 && /[0-9]/.test(e.key)){
-barcodeBuffer += e.key
+function initScannerInput(){
+scanInput = document.getElementById("hiddenScannerInput")
+if(!scanInput) return
+
+  scanInput.addEventListener("input", onScanInput)
 }
 
-clearTimeout(barcodeTimer)
+let scanTimeout = null
 
-barcodeTimer = setTimeout(()=>{
-barcodeBuffer = ""
-},500) // more stable scanner
-if(e.key === "Enter"){
+function onScanInput(e){
 
-const now = Date.now()
+  const value = e.target.value.trim()
 
-// prevent spam scans
-if(now - lastScanTime < 100) return
-lastScanTime = now
+  // reset timer
+  clearTimeout(scanTimeout)
 
-if(barcodeBuffer.length < 6){ // stronger validation
-barcodeBuffer = ""
-return
+  // wait small time → detect scanner
+  scanTimeout = setTimeout(()=>{
+
+    if(value.length >= 6){
+      handleBarcodeScan(value)
+    }
+
+    e.target.value = ""
+
+  }, 50) // ⚡ VERY FAST
 }
 
-if(window.scanLock) return
-window.scanLock = true
 
-handleBarcodeScan(barcodeBuffer)
-
-setTimeout(()=>{
-window.scanLock = false
-},150)
-
-barcodeBuffer = ""
-
-}
-})
+// ===============================
+// HANDLE BARCODE (SHARED)
+// ===============================
 
 function handleBarcodeScan(barcode){
-if(Object.keys(productIndexBarcode).length === 0) return
-if(!barcode) return
 
-barcode = barcode.trim()
+  if(!barcode) return
 
-const page = getCurrentPage()
-const product = productIndexBarcode[barcode]
+  barcode = barcode.trim()
 
-// play sound
-if(scanSound){
-scanSound.pause()
-scanSound.currentTime = 0
-scanSound.play().catch(()=>{})
-}
-  // SALE PAGE
-if(page === "sale"){
+  const product = productIndexBarcode[barcode]
 
-if(product){
-addToCart(product)
-}else{
-showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
-openAddProductModal()
-document.getElementById("stockBarcode").value = barcode
-})
-}
+  // 🔊 sound
+  if(scanSound){
+    scanSound.currentTime = 0
+    scanSound.play().catch(()=>{})
+  }
 
-}
+  const page = getCurrentPage()
 
+  // SALE
+  if(page === "sale"){
 
-// STOCK PAGE
-else if(page === "stock"){
+    if(product){
+      addToCart(product)
+    }else{
+      showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
+        openAddProductModal()
+        document.getElementById("stockBarcode").value = barcode
+      })
+    }
 
-if(product){
-openEditModal(product.id)
-}else{
-openAddProductModal()
-document.getElementById("stockBarcode").value = barcode
-}
+  }
 
-}
+  // STOCK
+  if(page === "stock"){
 
-// keep scanner ready
-// keep scanner ready for next item
-const search = document.getElementById("saleSearch")
+    if(product){
+      openEditModal(product.id)
+    }else{
+      openAddProductModal()
+      document.getElementById("stockBarcode").value = barcode
+    }
 
-if(search){
-search.value = ""
-}
-const results = document.getElementById("searchResults")
-if(results) results.innerHTML = ""
+  }
+
+  // cleanup UI
+  const results = document.getElementById("searchResults")
+  if(results) results.innerHTML = ""
 }
 function setSaleType(type){
 
@@ -611,56 +592,87 @@ input.focus()
 
 }
 // ===============================
-// CAMERA BARCODE SCANNER
+// CAMERA BARCODE SCANNER (PRO VERSION)
 // ===============================
+
+let lastCameraScan = 0
+let isScannerRunning = false
 
 function startCameraScanner(){
 
-const container = document.getElementById("cameraScanner")
-if(container) container.classList.remove("hidden")
+  const container = document.getElementById("cameraScanner")
+  if(container) container.classList.remove("hidden")
 
-Quagga.offDetected()
+  // prevent double start
+  if(isScannerRunning) return
+  isScannerRunning = true
 
-Quagga.init({inputStream:{
-type:"LiveStream",
-target:document.querySelector('#scannerViewport'),
-constraints:{
-facingMode:"environment"
+  // clean old listeners
+  if(window.Quagga && Quagga.offDetected){
+    Quagga.offDetected()
+  }
+
+  Quagga.init({
+    inputStream:{
+      type:"LiveStream",
+      target:document.querySelector('#scannerViewport'),
+      constraints:{
+        facingMode:"environment",
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    },
+    decoder:{
+      readers:["ean_reader","code_128_reader","upc_reader"]
+    },
+    locate: true // better detection
+  }, function(err){
+
+    if(err){
+      console.error("Camera error:", err)
+      isScannerRunning = false
+      return
+    }
+
+    Quagga.start()
+  })
+
+  Quagga.onDetected(function(data){
+
+    const code = data.codeResult.code
+    const now = Date.now()
+
+    // prevent duplicate scans
+    if(now - lastCameraScan < 500) return
+    lastCameraScan = now
+
+    handleBarcodeScan(code)
+  })
+
 }
-},
-decoder:{
-readers:["ean_reader","code_128_reader","upc_reader"]
-}
-},function(err){
-if(err){
-console.error(err)
-return
-}
-Quagga.start()
-})
 
-Quagga.onDetected(function(data){
 
-const code = data.codeResult.code
-
-stopCameraScanner()
-
-handleBarcodeScan(code)
-
-})
-
-}
+// ===============================
+// STOP CAMERA
+// ===============================
 
 function stopCameraScanner(){
 
-const container = document.getElementById("cameraScanner")
+  const container = document.getElementById("cameraScanner")
 
-if(container){
-container.classList.add("hidden")
-}
+  if(container){
+    container.classList.add("hidden")
+  }
 
-if(window.Quagga){
-Quagga.stop()
-}
+  if(window.Quagga){
+    Quagga.stop()
+    if(Quagga.offDetected){
+      Quagga.offDetected()
+    }
+  }
 
+  isScannerRunning = false
 }
+document.addEventListener("DOMContentLoaded", () => {
+  initScannerInput()
+})
