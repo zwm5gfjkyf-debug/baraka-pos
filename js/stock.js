@@ -23,7 +23,7 @@ const barcode = document.getElementById("stockBarcode")?.value.trim() || ""
 const qty = Number(document.getElementById("stockQty")?.value || 0)
 const cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
 const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
-if(!name || !price){
+if(!name || price <= 0){
 showTopBanner("Mahsulot nomi va narx kerak","error")
 stockProcessing = false
 return
@@ -58,12 +58,20 @@ created: Date.now()
 const doc = existing.docs[0]
 const data = doc.data()
 
-await doc.ref.update({
-stock: Math.max(0,(data.stock || 0) + (qty || 0)),
-cost: cost || data.cost,
+await db.runTransaction(async (t) => {
+
+const freshDoc = await t.get(doc.ref)
+const freshData = freshDoc.data()
+
+const newStock = Math.max(0, (freshData.stock || 0) + (qty || 0))
+
+t.update(doc.ref, {
+stock: newStock,
+cost: cost || freshData.cost,
 price: price
 })
 
+})
 }
 
 showTopBanner("Zaxira yangilandi", "success")
@@ -101,8 +109,9 @@ function loadCurrentStock(){
 .collection("shops")
 .doc(currentShopId)
 .collection("products")
+.where("deleted","!=", true)
 .orderBy("created","desc")
-.limit(50)
+.limit(30)
 .onSnapshot(snapshot => {
 
            const container = document.getElementById("currentStockList");
@@ -265,7 +274,9 @@ const ref = db
 
 try{
 
-await ref.delete()
+await ref.update({
+deleted: true
+})
 showTopBanner("Mahsulot o'chirildi", "success")
 
 }catch(e){
@@ -296,8 +307,7 @@ function filterStock(text){
 
 text = text.toLowerCase()
 
-const cards = document.querySelectorAll(".stock-item")
-
+const cards = document.getElementById("currentStockList").children
 cards.forEach(card => {
 
 const name = card.querySelector("b").innerText.toLowerCase()
