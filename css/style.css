@@ -1873,25 +1873,42 @@ color:#22c55e;
 #topBanner.error .banner-icon{
 color:#ef4444;
 }
-.top-banner{
-position:fixed;
-top:-80px;
-left:50%;
-transform:translateX(-50%);
-padding:12px 20px;
-border-radius:12px;
-color:white;
-font-weight:600;
-z-index:9999;
-display:flex;
-justify-content:center;
-transition:all 0.2s ease; /* ⚡ faster */
-box-shadow:0 8px 25px rgba(0,0,0,0.3);
+.top-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: calc(100% - 40px); /* space on both sides */
+  max-width: 420px; /* not too wide on desktop */
+
+  padding: 14px 18px;
+
+  border-radius: 16px; /* more rounded */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  backdrop-filter: blur(10px);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
 }
 .top-banner.show{
 top:0;
 }
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
+  font-size: 14px;
+  font-weight: 500;
+}
 .banner-content{
 display:flex;
 align-items:center;
