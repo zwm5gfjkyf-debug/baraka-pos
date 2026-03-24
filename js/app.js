@@ -38,11 +38,9 @@ loadProducts()
 loadDashboard()
 loadCurrentStock() // 🔥 ADD THIS
 
-setTimeout(()=>{
-    if(typeof loadLowStock === "function"){
-        loadLowStock()
-    }
-},300)
+if(typeof loadLowStock === "function"){
+    loadLowStock()
+}
 
 syncOfflineSales()
     }
@@ -329,8 +327,8 @@ function updateCamera(){
 
   const toggle = document.getElementById("cameraToggle")
   const cameraBtn = document.getElementById("cameraSaleButton")
-const currentPage = document.querySelector(".page:not(.hidden)") || null
-  // TOGGLE UI
+const currentPageId = document.querySelector(".page:not(.hidden)")?.id
+// TOGGLE UI
   if(toggle){
     if(enabled){
       toggle.classList.add("active")
@@ -342,8 +340,8 @@ const currentPage = document.querySelector(".page:not(.hidden)") || null
   // SHOW ONLY IN SALE PAGE
 if(cameraBtn){
 
-  if(enabled && currentPage && currentPage.id === "salePage"){
-    cameraBtn.style.display = "block"
+if(enabled && currentPageId === "salePage")
+cameraBtn.style.display = "block"
   }else{
     cameraBtn.style.display = "none"
 
@@ -374,7 +372,7 @@ function startCameraScanner(){
   if(window.startCameraScanner){
     window.startCameraScanner()
   }
-}if(scanner){
+}
 
 function navigate(pageId){
 
