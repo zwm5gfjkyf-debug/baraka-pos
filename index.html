@@ -266,28 +266,7 @@ Hammasini o'chirish
 Sotuvni yakunlash
 </button>
 
-<div id="cameraSection" style="margin-top:10px; display:none;">
 
-  <!-- BUTTON FIRST -->
-  <button id="cameraToggleBtn"
-    class="btn-secondary"
-    style="width:100%;"
-    onclick="toggleCameraScanner()">
-    📷 Kamera orqali sotuv
-  </button>
-
-  <!-- CAMERA BELOW BUTTON -->
-  <div id="cameraScanner" class="hidden">
-    <div id="scannerViewport" style="
-      width:100%;
-      height:200px;
-      border-radius:12px;
-      overflow:hidden;
-      margin-top:10px;
-    "></div>
-  </div>
-
-</div>
 </div>
   </div>  <!-- ✅ THIS closes salePage -->
 <!-- INVENTORY -->
@@ -534,7 +513,37 @@ Faqat saqlash
 </div>
 </main>
 
+<!-- CAMERA FIXED ABOVE NAV -->
+<div id="cameraSection" style="
+  position: fixed;
+  bottom: 70px;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  display: none;
+  z-index: 10;
+">
 
+  <!-- CAMERA VIEW (ABOVE BUTTON) -->
+  <div id="cameraScanner" class="hidden">
+    <div id="scannerViewport" style="
+      width:100%;
+      height:200px;
+      border-radius:12px;
+      overflow:hidden;
+      margin-bottom:10px;
+    "></div>
+  </div>
+
+  <!-- BUTTON (STAYS FIXED) -->
+  <button id="cameraToggleBtn"
+    class="btn-secondary"
+    style="width:100%;"
+    onclick="toggleCameraScanner()">
+    📷 Kamera orqali sotuv
+  </button>
+
+</div>
 
 <!-- NAVIGATION -->
 
