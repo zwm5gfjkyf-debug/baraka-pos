@@ -370,9 +370,9 @@ function startCameraScanner(){
   }
 
   // ✅ call scanner from sales.js WITHOUT recursion
-  if(typeof window.startCameraScanner === "function"){
-    window.startCameraScanner()
-  }
+  if(typeof startRealCameraScanner === "function"){
+    startRealCameraScanner()
+}
 }
 function navigate(pageId){
 
