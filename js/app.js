@@ -370,19 +370,7 @@ const currentPageId = document.querySelector(".page:not(.hidden)")?.id
 }
 // run on load
 
-function startCameraScanner(){
-  const enabled = localStorage.getItem("camera") === "true"
 
-  if(!enabled){
-    showTopBanner("Kamera o‘chirilgan", "error")
-    return
-  }
-
-  // ✅ call scanner from sales.js WITHOUT recursion
-  if(typeof startRealCameraScanner === "function"){
-    startRealCameraScanner()
-}
-}
 function navigate(pageId){
 
   // hide all pages
