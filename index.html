@@ -694,6 +694,16 @@ window.showAnalyticsTab = showAnalyticsTab
 </script>
 <script>
 function focusScanner(){
+  const active = document.activeElement
+
+  // ❗ DO NOT steal focus if user is typing
+  if(active && (
+    active.tagName === "INPUT" ||
+    active.tagName === "TEXTAREA"
+  )){
+    return
+  }
+
   const el = document.getElementById("hiddenScannerInput")
   if(el){
     el.focus()
@@ -703,10 +713,14 @@ function focusScanner(){
 // focus on load
 window.addEventListener("load", focusScanner)
 
-// focus after any click
-document.addEventListener("click", focusScanner)
+// focus only when clicking OUTSIDE inputs
+document.addEventListener("click", (e) => {
+  if(e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA"){
+    focusScanner()
+  }
+})
 
-// focus after navigation (VERY IMPORTANT)
+// fix after tab switch
 document.addEventListener("visibilitychange", () => {
   if(!document.hidden){
     focusScanner()
