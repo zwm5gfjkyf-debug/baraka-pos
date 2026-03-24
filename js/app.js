@@ -479,15 +479,14 @@ function toggleCameraScanner(){
 
   if(!scanner || !btn) return
 
-  // prevent fast double click
-  if(window.cameraBusy) return
-  window.cameraBusy = true
-  setTimeout(()=> window.cameraBusy = false, 300)
-
   cameraOpen = !cameraOpen
 
   if(cameraOpen){
+
+    // SHOW CAMERA ABOVE BUTTON
     scanner.classList.remove("hidden")
+
+    // CHANGE BUTTON TEXT
     btn.innerText = "❌ Kamerani yopish"
 
     if(typeof startRealCameraScanner === "function"){
@@ -495,7 +494,11 @@ function toggleCameraScanner(){
     }
 
   }else{
+
+    // HIDE CAMERA
     scanner.classList.add("hidden")
+
+    // RESET BUTTON TEXT
     btn.innerText = "📷 Kamera orqali sotuv"
 
     if(typeof stopCameraScanner === "function"){
