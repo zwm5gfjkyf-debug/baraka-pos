@@ -109,7 +109,6 @@ function loadCurrentStock(){
 .collection("shops")
 .doc(currentShopId)
 .collection("products")
-.where("deleted","!=", true)
 .orderBy("created","desc")
 .limit(30)
 .onSnapshot(snapshot => {
@@ -122,6 +121,9 @@ container.innerHTML = ""
 snapshot.forEach(doc => {
 
 const p = doc.data()
+
+// ❗ skip deleted manually
+if(p.deleted === true) return
                 const div = document.createElement("div");
 
                 div.className = "stock-item";
@@ -307,7 +309,7 @@ function filterStock(text){
 
 text = text.toLowerCase()
 
-const cards = document.getElementById("currentStockList").children
+const cards = Array.from(document.getElementById("currentStockList").children)
 cards.forEach(card => {
 
 const name = card.querySelector("b").innerText.toLowerCase()
