@@ -34,6 +34,7 @@ snapshot.forEach(doc => {
 
 const data = doc.data()
 
+if(data.deleted === true) return
 const product = {
 id: doc.id,
 name: data.name || "",
@@ -46,8 +47,7 @@ stock: data.stock || 0
 productCache.push(product)
 productById[product.id] = product
 // INDEX BY NAME
-const nameKey = (product.name || "").toLowerCase()
-  
+const nameKey = (product.name || "").toLowerCase().trim()  
 if(!productIndex[nameKey]){
 productIndex[nameKey] = []
 }
@@ -641,7 +641,7 @@ function startCameraScanner(){
 
     const code = data.codeResult.code
     const now = Date.now()
-
+if(!data || !data.codeResult || !data.codeResult.code) return
     // prevent duplicate scans
     if(now - lastCameraScan < 500) return
     lastCameraScan = now
