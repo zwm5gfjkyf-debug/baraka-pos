@@ -248,13 +248,7 @@ autocomplete="off">
 
 <div id="searchResults"></div>
 
-<div id="cameraScanner" class="hidden" style="margin-top:10px">
-<div id="scannerViewport" style="width:100%;height:250px;border-radius:12px;overflow:hidden"></div>
 
-<button onclick="stopCameraScanner()" class="btn-secondary" style="margin-top:6px;width:100%">
-❌ Kamerani yopish
-</button>
-</div>
 
 <div class="glass dashboard-card">
 <h3>🧾 Savat</h3>
@@ -525,10 +519,26 @@ Faqat saqlash
 
 
 <!-- CAMERA BUTTON -->
-<div id="cameraSaleButton" class="camera-fixed" style="display:none;">
-<button class="btn-secondary camera-btn" onclick="startCameraScanner()">
-📷 Kamera orqali sotuv
-</button>
+<div id="cameraSection" class="camera-fixed" style="display:none;">
+
+  <!-- CAMERA VIEW -->
+  <div id="cameraScanner" class="hidden">
+    <div id="scannerViewport" style="
+      width:100%;
+      height:220px;
+      border-radius:12px;
+      overflow:hidden;
+      margin-bottom:10px;
+    "></div>
+  </div>
+
+  <!-- TOGGLE BUTTON -->
+  <button id="cameraToggleBtn"
+    class="btn-secondary camera-btn"
+    onclick="toggleCameraScanner()">
+    📷 Kamera orqali sotuv
+  </button>
+
 </div>
 <!-- NAVIGATION -->
 
