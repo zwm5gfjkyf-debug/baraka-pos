@@ -267,27 +267,6 @@ autocomplete="off">
 <button id="completeSaleBtn" class="btn-primary complete-sale-btn" onclick="completeSale()">
 Sotuvni yakunlash
 </button>
-<div id="cameraSection" style="margin-top:12px; display:none;">
-
-  <div id="cameraScanner" class="hidden">
-    <div id="scannerViewport" style="
-      width:100%;
-      height:220px;
-      border-radius:12px;
-      overflow:hidden;
-      margin-bottom:10px;
-    "></div>
-  </div>
-
-  <button id="cameraToggleBtn"
-    class="btn-secondary"
-    style="width:100%; margin-top:8px;"
-    onclick="toggleCameraScanner()">
-    📷 Kamera orqali sotuv
-  </button>
-
-</div>
-</div>
 
 </div>
 
@@ -536,7 +515,28 @@ Faqat saqlash
 </main>
 
 
+<div id="cameraSection" style="position:fixed; bottom:70px; left:0; width:100%; padding:10px; display:none;">
 
+  <!-- CAMERA VIEW -->
+  <div id="cameraScanner" class="hidden">
+    <div id="scannerViewport" style="
+      width:100%;
+      height:220px;
+      border-radius:12px;
+      overflow:hidden;
+      margin-bottom:10px;
+    "></div>
+  </div>
+
+  <!-- BUTTON -->
+  <button id="cameraToggleBtn"
+    class="btn-secondary"
+    style="width:100%;"
+    onclick="toggleCameraScanner()">
+    📷 Kamera orqali sotuv
+  </button>
+
+</div>
 <!-- NAVIGATION -->
 
 <nav class="bottom-nav glass">
