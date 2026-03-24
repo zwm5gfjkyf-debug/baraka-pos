@@ -6,7 +6,6 @@ let analyticsLoaded = false
 let currentShopId = null
 let dashboardSalesCache = []
 let dashboardListener = null
-window.currentShopId = null
 // =============================
 // AUTH STATE
 // =============================
@@ -83,7 +82,7 @@ dashboardListener = null
 }
 dashboardListener = salesRef
 .orderBy("createdAt","desc")
-.limit(200)
+.limit(100)
 .onSnapshot(salesSnapshot => {
 let todayRevenue = 0
 let todayItems = 0
@@ -350,9 +349,13 @@ if(cameraBtn){
 
     // 🔥 ADD THIS (important)
     const scanner = document.getElementById("cameraScanner")
-    if(scanner){
-      scanner.classList.add("hidden")
-    }
+   if(scanner){
+  scanner.classList.add("hidden")
+
+  if(typeof stopCameraScanner === "function"){
+    stopCameraScanner()
+  }
+}
   }
 
 }
@@ -360,17 +363,19 @@ if(cameraBtn){
 // run on load
 
 function startCameraScanner(){
-
   const enabled = localStorage.getItem("camera") === "true"
 
-if(!enabled){
-showTopBanner("Kamera o‘chirilgan", "error")
-return
+  if(!enabled){
+    showTopBanner("Kamera o‘chirilgan", "error")
+    return
   }
 
-  document.getElementById("cameraScanner").classList.remove("hidden")
+  // call REAL scanner from sales.js
+  if(window.startCameraScanner){
+    window.startCameraScanner()
+  }
+}if(scanner){
 
-}
 function navigate(pageId){
 
   // hide all pages
