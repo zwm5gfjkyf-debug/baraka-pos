@@ -125,12 +125,9 @@ const p = doc.data()
 // ❗ skip deleted manually
 if(p.deleted === true) return
                 const div = document.createElement("div");
+div.className = "stock-card";
 
-                div.className = "stock-item";
-
-            div.innerHTML = `
-<div class="stock-card">
-
+div.innerHTML = `
 <div class="stock-header">
 <b>${p.name}</b>
 <span class="barcode">${p.barcode || ""}</span>
@@ -164,8 +161,6 @@ Tahrirlash
 <button onclick="deleteProduct('${doc.id}')" class="danger-btn">
 O'chirish
 </button>
-
-</div>
 
 </div>
 `
