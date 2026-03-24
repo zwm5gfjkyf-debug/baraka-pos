@@ -598,8 +598,7 @@ input.focus()
 let lastCameraScan = 0
 let isScannerRunning = false
 
-function startCameraScanner(){
-
+function startRealCameraScanner(){
   const container = document.getElementById("cameraScanner")
   if(container) container.classList.remove("hidden")
 
