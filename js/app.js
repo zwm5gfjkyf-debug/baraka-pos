@@ -327,8 +327,9 @@ function updateCamera(){
 
   const toggle = document.getElementById("cameraToggle")
   const cameraBtn = document.getElementById("cameraSaleButton")
-const currentPageId = document.querySelector(".page:not(.hidden)")?.id
-// TOGGLE UI
+  const currentPageId = document.querySelector(".page:not(.hidden)")?.id
+
+  // toggle UI
   if(toggle){
     if(enabled){
       toggle.classList.add("active")
@@ -337,22 +338,24 @@ const currentPageId = document.querySelector(".page:not(.hidden)")?.id
     }
   }
 
-  // SHOW ONLY IN SALE PAGE
-if(cameraBtn){
+  // show only in sale page
+  if(cameraBtn){
 
-  if(enabled && currentPageId === "salePage"){
-    cameraBtn.style.display = "block"
-  }else{
-    cameraBtn.style.display = "none"
+    if(enabled && currentPageId === "salePage"){
+      cameraBtn.style.display = "block"
+    }else{
+      cameraBtn.style.display = "none"
 
-    const scanner = document.getElementById("cameraScanner")
-    if(scanner){
-      scanner.classList.add("hidden")
+      const scanner = document.getElementById("cameraScanner")
+      if(scanner){
+        scanner.classList.add("hidden")
 
-      if(typeof stopCameraScanner === "function"){
-        stopCameraScanner()
+        if(typeof stopCameraScanner === "function"){
+          stopCameraScanner()
+        }
       }
     }
+
   }
 
 }
