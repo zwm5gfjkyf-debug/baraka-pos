@@ -623,8 +623,8 @@ function startCameraScanner(){
       }
     },
     decoder:{
-      readers:["ean_reader","code_128_reader","upc_reader"]
-    },
+readers:["ean_reader","code_128_reader","upc_reader","ean_8_reader"]
+  },
     locate: true // better detection
   }, function(err){
 
@@ -637,17 +637,23 @@ function startCameraScanner(){
     Quagga.start()
   })
 
-  Quagga.onDetected(function(data){
+ Quagga.onDetected(function(data){
 
-    const code = data.codeResult.code
-    const now = Date.now()
-if(!data || !data.codeResult || !data.codeResult.code) return
-    // prevent duplicate scans
-    if(now - lastCameraScan < 500) return
-    lastCameraScan = now
+  // ✅ FIRST check (VERY IMPORTANT)
+  if(!data || !data.codeResult || !data.codeResult.code){
+    return
+  }
 
-    handleBarcodeScan(code)
-  })
+  const code = data.codeResult.code
+  const now = Date.now()
+
+  // prevent duplicate scans
+  if(now - lastCameraScan < 500) return
+  lastCameraScan = now
+
+  handleBarcodeScan(code)
+
+})
 
 }
 
