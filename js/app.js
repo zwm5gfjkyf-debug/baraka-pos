@@ -37,6 +37,7 @@ window.currentShopId = user.uid
 
 loadProducts()
 loadDashboard()
+loadCurrentStock() // 🔥 ADD THIS
 
 setTimeout(()=>{
     if(typeof loadLowStock === "function"){
