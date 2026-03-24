@@ -369,12 +369,11 @@ function startCameraScanner(){
     return
   }
 
-  // call REAL scanner from sales.js
-  if(window.startCameraScanner){
+  // ✅ call scanner from sales.js WITHOUT recursion
+  if(typeof window.startCameraScanner === "function"){
     window.startCameraScanner()
   }
 }
-
 function navigate(pageId){
 
   // hide all pages
