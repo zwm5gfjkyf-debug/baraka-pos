@@ -340,24 +340,22 @@ const currentPageId = document.querySelector(".page:not(.hidden)")?.id
   // SHOW ONLY IN SALE PAGE
 if(cameraBtn){
 
-if(enabled && currentPageId === "salePage")
-cameraBtn.style.display = "block"
+  if(enabled && currentPageId === "salePage"){
+    cameraBtn.style.display = "block"
   }else{
     cameraBtn.style.display = "none"
 
-    // 🔥 ADD THIS (important)
     const scanner = document.getElementById("cameraScanner")
-   if(scanner){
-  scanner.classList.add("hidden")
+    if(scanner){
+      scanner.classList.add("hidden")
 
-  if(typeof stopCameraScanner === "function"){
-    stopCameraScanner()
-  }
-}
+      if(typeof stopCameraScanner === "function"){
+        stopCameraScanner()
+      }
+    }
   }
 
 }
-} // ✅ THIS WAS MISSING
 // run on load
 
 function startCameraScanner(){
