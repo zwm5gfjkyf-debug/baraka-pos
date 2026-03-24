@@ -326,8 +326,8 @@ function updateCamera(){
   const enabled = localStorage.getItem("camera") === "true"
 
   const toggle = document.getElementById("cameraToggle")
-  const cameraBtn = document.getElementById("cameraSaleButton")
-  const currentPageId = document.querySelector(".page:not(.hidden)")?.id
+const cameraBtn = document.getElementById("cameraSection")
+const currentPageId = document.querySelector(".page:not(.hidden)")?.id
 
   // toggle UI
   if(toggle){
@@ -338,24 +338,33 @@ function updateCamera(){
     }
   }
 
-  // show only in sale page
-  if(cameraBtn){
+// show only in sale page
+if(cameraBtn){
 
-    if(enabled && currentPageId === "salePage"){
-      cameraBtn.style.display = "block"
-    }else{
-      cameraBtn.style.display = "none"
+  if(enabled && currentPageId === "salePage"){
+    cameraBtn.style.display = "block"
 
-      const scanner = document.getElementById("cameraScanner")
-      if(scanner){
-        scanner.classList.add("hidden")
+  }else{
+    cameraBtn.style.display = "none"
 
-        if(typeof stopCameraScanner === "function"){
-          stopCameraScanner()
-        }
-      }
+    // 🔥 FORCE CLOSE CAMERA
+    const scanner = document.getElementById("cameraScanner")
+    const btn = document.getElementById("cameraToggleBtn")
+
+    if(scanner){
+      scanner.classList.add("hidden")
     }
 
+    if(btn){
+      btn.innerText = "📷 Kamera orqali sotuv"
+    }
+
+    if(typeof stopCameraScanner === "function"){
+      stopCameraScanner()
+    }
+
+    // 🔥 RESET STATE
+    cameraOpen = false
   }
 
 }
@@ -413,8 +422,25 @@ function navigate(pageId){
     document.querySelector(".bottom-nav button:nth-child(4)").classList.add("active")
   }
 
-  updateCamera()
- const backBtn = document.getElementById("backBtn")
+updateCamera()
+
+// 🔥 CLOSE CAMERA WHEN CHANGING PAGE
+const scanner = document.getElementById("cameraScanner")
+const btn = document.getElementById("cameraToggleBtn")
+
+if(scanner){
+  scanner.classList.add("hidden")
+}
+
+if(btn){
+  btn.innerText = "📷 Kamera orqali sotuv"
+}
+
+if(typeof stopCameraScanner === "function"){
+  stopCameraScanner()
+}
+
+cameraOpen = false const backBtn = document.getElementById("backBtn")
 
 if(backBtn){
 
@@ -448,4 +474,37 @@ function formatNumberInput(input){
   value = value.replace(/\B(?=(\d{3})+(?!\d))/g, " ")
 
   input.value = value
+}
+let cameraOpen = false
+
+function toggleCameraScanner(){
+
+  const scanner = document.getElementById("cameraScanner")
+  const btn = document.getElementById("cameraToggleBtn")
+
+  if(!scanner || !btn) return
+
+  // prevent fast double click
+  if(window.cameraBusy) return
+  window.cameraBusy = true
+  setTimeout(()=> window.cameraBusy = false, 300)
+
+  cameraOpen = !cameraOpen
+
+  if(cameraOpen){
+    scanner.classList.remove("hidden")
+    btn.innerText = "❌ Kamerani yopish"
+
+    if(typeof startRealCameraScanner === "function"){
+      startRealCameraScanner()
+    }
+
+  }else{
+    scanner.classList.add("hidden")
+    btn.innerText = "📷 Kamera orqali sotuv"
+
+    if(typeof stopCameraScanner === "function"){
+      stopCameraScanner()
+    }
+  }
 }
