@@ -21,7 +21,6 @@
 
 </head>
 <body>
-  <input id="hiddenScannerInput" autofocus style="position:absolute; opacity:0; pointer-events:none;">
 <input 
   id="hiddenScannerInput" 
   type="text" 
@@ -268,7 +267,26 @@ autocomplete="off">
 <button id="completeSaleBtn" class="btn-primary complete-sale-btn" onclick="completeSale()">
 Sotuvni yakunlash
 </button>
+<div id="cameraSection" style="margin-top:12px; display:none;">
 
+  <div id="cameraScanner" class="hidden">
+    <div id="scannerViewport" style="
+      width:100%;
+      height:220px;
+      border-radius:12px;
+      overflow:hidden;
+      margin-bottom:10px;
+    "></div>
+  </div>
+
+  <button id="cameraToggleBtn"
+    class="btn-secondary"
+    style="width:100%; margin-top:8px;"
+    onclick="toggleCameraScanner()">
+    📷 Kamera orqali sotuv
+  </button>
+
+</div>
 </div>
 
 </div>
@@ -519,18 +537,6 @@ Faqat saqlash
 
 
 <!-- CAMERA BUTTON -->
-<div id="cameraSection" class="camera-fixed" style="display:none;">
-
-  <!-- CAMERA VIEW -->
-  <div id="cameraScanner" class="hidden">
-    <div id="scannerViewport" style="
-      width:100%;
-      height:220px;
-      border-radius:12px;
-      overflow:hidden;
-      margin-bottom:10px;
-    "></div>
-  </div>
 
   <!-- TOGGLE BUTTON -->
   <button id="cameraToggleBtn"
