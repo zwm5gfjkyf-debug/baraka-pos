@@ -326,9 +326,11 @@ function updateCamera(){
   const enabled = localStorage.getItem("camera") === "true"
 
   const toggle = document.getElementById("cameraToggle")
-const cameraBtn = document.getElementById("cameraSaleButton")
-const currentPageId = document.querySelector(".page:not(.hidden)")?.id
-
+const cameraBtn = document.getElementById("cameraSection")
+const currentPageId =
+  !document.getElementById("salePage").classList.contains("hidden")
+    ? "salePage"
+    : null
   // toggle UI
   if(toggle){
     if(enabled){
@@ -363,6 +365,10 @@ const currentPageId = document.querySelector(".page:not(.hidden)")?.id
       }
 
       cameraOpen = false
+        const cameraSection = document.getElementById("cameraSection")
+if(cameraSection){
+  cameraSection.style.display = "none"
+}
     }
 
   }
