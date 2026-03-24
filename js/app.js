@@ -326,8 +326,8 @@ function updateCamera(){
   const enabled = localStorage.getItem("camera") === "true"
 
   const toggle = document.getElementById("cameraToggle")
-const cameraBtn = document.getElementById("cameraSection")
-const currentPageId = document.querySelector(".page:not(.hidden)")?.id
+  const cameraBtn = document.getElementById("cameraSection")
+  const currentPageId = document.querySelector(".page:not(.hidden)")?.id
 
   // toggle UI
   if(toggle){
@@ -338,33 +338,33 @@ const currentPageId = document.querySelector(".page:not(.hidden)")?.id
     }
   }
 
-// show only in sale page
-if(cameraBtn){
+  // show only in sale page
+  if(cameraBtn){
 
-  if(enabled && currentPageId === "salePage"){
-    cameraBtn.style.display = "block"
+    if(enabled && currentPageId === "salePage"){
+      cameraBtn.style.display = "block"
 
-  }else{
-    cameraBtn.style.display = "none"
+    }else{
+      cameraBtn.style.display = "none"
 
-    // 🔥 FORCE CLOSE CAMERA
-    const scanner = document.getElementById("cameraScanner")
-    const btn = document.getElementById("cameraToggleBtn")
+      const scanner = document.getElementById("cameraScanner")
+      const btn = document.getElementById("cameraToggleBtn")
 
-    if(scanner){
-      scanner.classList.add("hidden")
+      if(scanner){
+        scanner.classList.add("hidden")
+      }
+
+      if(btn){
+        btn.innerText = "📷 Kamera orqali sotuv"
+      }
+
+      if(typeof stopCameraScanner === "function"){
+        stopCameraScanner()
+      }
+
+      cameraOpen = false
     }
 
-    if(btn){
-      btn.innerText = "📷 Kamera orqali sotuv"
-    }
-
-    if(typeof stopCameraScanner === "function"){
-      stopCameraScanner()
-    }
-
-    // 🔥 RESET STATE
-    cameraOpen = false
   }
 
 }
