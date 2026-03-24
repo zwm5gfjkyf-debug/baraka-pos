@@ -161,7 +161,7 @@ BARAKA
 
 <!-- HEADER -->
 
-<header class="app-header glass fixed-header">
+<header class="app-header glass fixed-header small-header">
 <button id="backBtn" onclick="goBack()" class="back-btn hidden">
 ←
 </button>
@@ -234,23 +234,22 @@ Hammasini o'chirish
 <!-- SALE -->
 <div id="salePage" class="page hidden">
 
-<h2 class="page-title">Naqd sotuv</h2>
 
-<div class="glass search-box">
 <input
-id="saleSearch"
-type="text"
-placeholder="🔍 Mahsulot qidirish..."
-oninput="searchProducts(this.value)"
-autocomplete="off">
+  id="saleSearch"
+  class="search-input"
+  type="text"
+  placeholder="🔍 Mahsulot qidirish..."
+  oninput="searchProducts(this.value)"
+  autocomplete="off">
 </div>
 
 <div id="searchResults"></div>
 
 
 
-<div class="glass dashboard-card">
-<h3>🧾 Savat</h3>
+<div class="glass dashboard-card small-card">
+<h3 style="font-size:16px;">🧾 Savat</h3>
 <div id="cartList"></div>
 </div>
 
@@ -268,8 +267,26 @@ autocomplete="off">
 Sotuvni yakunlash
 </button>
 
-</div>
+<div id="cameraSection" style="margin-top:10px; display:none;">
 
+  <div id="cameraScanner" class="hidden">
+    <div id="scannerViewport" style="
+      width:100%;
+      height:200px;
+      border-radius:12px;
+      overflow:hidden;
+      margin-bottom:10px;
+    "></div>
+  </div>
+
+  <button id="cameraToggleBtn"
+    class="btn-secondary"
+    style="width:100%;"
+    onclick="toggleCameraScanner()">
+    📷 Kamera orqali sotuv
+  </button>
+</div>
+</div>
 <!-- INVENTORY -->
 <div id="stockPage" class="page hidden">
 
@@ -515,28 +532,7 @@ Faqat saqlash
 </main>
 
 
-<div id="cameraSection" style="position:fixed; bottom:70px; left:0; width:100%; padding:10px; display:none;">
 
-  <!-- CAMERA VIEW -->
-  <div id="cameraScanner" class="hidden">
-    <div id="scannerViewport" style="
-      width:100%;
-      height:220px;
-      border-radius:12px;
-      overflow:hidden;
-      margin-bottom:10px;
-    "></div>
-  </div>
-
-  <!-- BUTTON -->
-  <button id="cameraToggleBtn"
-    class="btn-secondary"
-    style="width:100%;"
-    onclick="toggleCameraScanner()">
-    📷 Kamera orqali sotuv
-  </button>
-
-</div>
 <!-- NAVIGATION -->
 
 <nav class="bottom-nav glass">
