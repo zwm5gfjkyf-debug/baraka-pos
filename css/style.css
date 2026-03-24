@@ -1537,12 +1537,11 @@ padding-bottom:8px;
 /* DARK MODE STOCK CARD */
 
 .stock-card{
-padding:18px;
-border-radius:16px;
-margin-bottom:16px;
-background:linear-gradient(145deg,#0f172a,#020617);
-border:1px solid rgba(255,255,255,0.05);
-box-shadow:0 10px 30px rgba(0,0,0,0.6);
+  padding: 20px;
+  border-radius: 18px;
+  margin-bottom: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
 }
 .stock-card strong{
 color:#e5e7eb;
