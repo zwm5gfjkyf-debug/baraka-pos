@@ -326,8 +326,8 @@ function updateCamera(){
   const enabled = localStorage.getItem("camera") === "true"
 
   const toggle = document.getElementById("cameraToggle")
-  const cameraBtn = document.getElementById("cameraSection")
-  const currentPageId = document.querySelector(".page:not(.hidden)")?.id
+const cameraBtn = document.getElementById("cameraSaleButton")
+const currentPageId = document.querySelector(".page:not(.hidden)")?.id
 
   // toggle UI
   if(toggle){
@@ -440,8 +440,9 @@ if(typeof stopCameraScanner === "function"){
   stopCameraScanner()
 }
 
-cameraOpen = false const backBtn = document.getElementById("backBtn")
+cameraOpen = false
 
+const backBtn = document.getElementById("backBtn")
 if(backBtn){
 
  if(
