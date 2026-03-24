@@ -634,7 +634,8 @@ readers:["ean_reader","code_128_reader","upc_reader","ean_8_reader"]
       return
     }
 
-    Quagga.start()
+   Quagga.start()
+isScannerRunning = true
   })
 
  Quagga.onDetected(function(data){
@@ -670,12 +671,14 @@ function stopCameraScanner(){
     container.classList.add("hidden")
   }
 
-  if(window.Quagga){
+ if(window.Quagga && isScannerRunning){
+  try{
     Quagga.stop()
-    if(Quagga.offDetected){
-      Quagga.offDetected()
-    }
+    Quagga.offDetected()
+  }catch(e){
+    console.warn("Quagga stop error:", e)
   }
+}
 
   isScannerRunning = false
 }
