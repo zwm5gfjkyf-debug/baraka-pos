@@ -113,6 +113,17 @@ padding:10px;
 padding-bottom:110px;
 width:100%;
 }
+.stock-card {
+  padding: 12px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #0f172a, #020617);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  margin-bottom: 10px;
+}
+.stock-card:hover {
+  transform: translateY(-2px);
+  transition: 0.2s;
+}
 /* =========================================
 GRID SYSTEM
 ========================================= */
