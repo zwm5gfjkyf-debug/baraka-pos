@@ -4,7 +4,7 @@
 
 let productsListener = null;
 
-
+let currentStockFilter = "all"; // all | low | empty
 // ===============================
 // ADD PRODUCT
 // ===============================
@@ -100,7 +100,19 @@ stockProcessing = false
 // ===============================
 // LOAD PRODUCTS (REALTIME)
 // ===============================
+function setStockFilter(type){
+  currentStockFilter = type;
 
+  // active UI
+  document.querySelectorAll(".stock-tab").forEach(el=>{
+    el.classList.remove("active");
+  });
+
+  const active = document.getElementById("tab-" + type);
+  if(active) active.classList.add("active");
+
+  loadCurrentStock();
+}
 function loadCurrentStock(){
 
     if(productsListener) productsListener();
@@ -122,23 +134,22 @@ snapshot.forEach(doc => {
 
 const p = doc.data()
 
-if(p.deleted === true) return
+if(p.deleted === true) return;
 
+// FILTER
+if(currentStockFilter === "low" && p.stock > 10) return;
+if(currentStockFilter === "empty" && p.stock > 0) return;
 const div = document.createElement("div")
 
-div.innerHTML = `
-<div style="
-  padding:12px;
-  border-bottom:1px solid #1e293b;
-">
+div.className = "stock-row-item";
 
-  <!-- TOP -->
-  <div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:8px;
-  ">
+div.innerHTML = `
+
+<!-- MOBILE -->
+<div class="mobile-view">
+
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    
     <div>
       <div style="font-size:16px; font-weight:600;">
         ${p.name}
@@ -149,29 +160,50 @@ div.innerHTML = `
     </div>
 
     ${getStockBadge(p.stock)}
+
   </div>
 
-  <!-- GRID -->
+  <!-- SAFE GRID -->
   <div style="
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:8px;
+    gap:10px;
+    margin-top:10px;
   ">
-<!-- DESKTOP ROW -->
-<div style="
-  display:none;
-  margin-top:8px;
-"
-class="desktop-row">
 
-  <div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-  ">
+    <div>
+      <div style="font-size:11px; color:#64748b;">Kirim</div>
+      <div style="font-family:monospace;">
+        ${formatMoney(p.cost || 0)}&nbsp;so'm
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:11px; color:#64748b;">Sotuv</div>
+      <div style="font-family:monospace;">
+        ${formatMoney(p.price || 0)}&nbsp;so'm
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:11px; color:#64748b;">Foyda</div>
+      <div style="font-family:monospace; color:#22c55e;">
+        +${formatMoney((p.price||0)-(p.cost||0))}&nbsp;so'm
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- DESKTOP -->
+<div class="desktop-row">
+
+  <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
 
     <div style="flex:2;">
-      ${p.name}
+      <div style="font-weight:600;">${p.name}</div>
+      <div style="font-size:12px; color:#64748b;">${p.barcode || ""}</div>
     </div>
 
     <div style="flex:1; text-align:right; font-family:monospace;">
@@ -183,38 +215,17 @@ class="desktop-row">
     </div>
 
     <div style="flex:1; text-align:right; color:#22c55e; font-family:monospace;">
-      +${formatMoney((p.price || 0) - (p.cost || 0))}
+      +${formatMoney((p.price||0)-(p.cost||0))}
+    </div>
+
+    <div style="margin-left:10px;">
+      ${getStockBadge(p.stock)}
     </div>
 
   </div>
 
 </div>
-    <div>
-      <div style="font-size:11px; color:#64748b;">Kirim</div>
-      <div style="font-family:monospace;">
-        ${formatMoney(p.cost || 0)} &nbsp;so'm
-      </div>
-    </div>
-
-    <div>
-      <div style="font-size:11px; color:#64748b;">Sotuv</div>
-      <div style="font-family:monospace;">
-        ${formatMoney(p.price || 0)} &nbsp;so'm
-      </div>
-    </div>
-
-    <div>
-      <div style="font-size:11px; color:#64748b;">Foyda</div>
-      <div style="font-family:monospace; color:#22c55e;">
-        +${formatMoney((p.price || 0) - (p.cost || 0))} &nbsp;so'm
-      </div>
-    </div>
-
-  </div>
-
-</div>
-`
-
+`;
 container.appendChild(div)
 
 })
