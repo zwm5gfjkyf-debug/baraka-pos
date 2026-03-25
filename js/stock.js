@@ -131,67 +131,53 @@ div.innerHTML = `
 
 <div style="
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin-bottom:6px;
-">
-  <b style="font-size:15px; letter-spacing:0.3px;">${p.name}</b>
-
-  <button onclick="openEditModal('${doc.id}')" style="
-    background:rgba(255,255,255,0.05);
-    border:none;
-    border-radius:8px;
-    padding:6px;
-    font-size:14px;
-    cursor:pointer;
-  ">✏️</button>
-</div>
-
-<!-- STATS -->
-<div style="
-  display:flex;
   justify-content:space-between;
-  text-align:center;
-  margin-top:6px;
+  padding:10px 12px;
+  border-bottom:1px solid #1e293b;
 ">
 
-  <div style="flex:1;">
-    <div style="font-size:11px; opacity:0.6;">Miqdor</div>
-    <div style="font-size:15px; font-weight:600;">${p.stock || 0}</div>
-  </div>
-
-  <div style="flex:1;">
-    <div style="font-size:11px; opacity:0.6;">Kelgan</div>
-    <div style="font-size:14px; font-weight:500;">
-      ${formatMoney(p.cost || 0)}
+  <!-- LEFT: NAME + BARCODE -->
+  <div style="flex:2;">
+    <div style="font-size:18px; font-weight:600; color:white;">
+      ${p.name}
+    </div>
+    <div style="font-size:12px; color:#64748b;">
+      ${p.barcode || ""}
     </div>
   </div>
 
-  <div style="flex:1;">
-    <div style="font-size:11px; opacity:0.6;">Sotish</div>
-    <div style="font-size:14px; font-weight:500;">
-      ${formatMoney(p.price || 0)}
-    </div>
+  <!-- STOCK BADGE -->
+  <div style="flex:1; text-align:center;">
+    ${getStockBadge(p.stock)}
   </div>
 
-</div>
+  <!-- KIRIM -->
+  <div style="flex:1; text-align:right; font-family:monospace;">
+    ${formatMoney(p.cost || 0)}
+  </div>
 
-<!-- DIVIDER -->
-<div style="
-  height:1px;
-  background:rgba(255,255,255,0.08);
-  margin:10px 0 6px 0;
-"></div>
+  <!-- SOTUV -->
+  <div style="flex:1; text-align:right; font-family:monospace;">
+    ${formatMoney(p.price || 0)}
+  </div>
 
-<!-- BARCODE NUMBER -->
-<div style="
-  text-align:center;
-  font-family:monospace;
-  letter-spacing:3px;
-  font-size:13px;
-  opacity:0.8;
-">
-  ${p.barcode || ""}
+  <!-- FOYDA -->
+  <div style="flex:1; text-align:right; font-family:monospace; color:#22c55e;">
+    +${formatMoney((p.price || 0) - (p.cost || 0))}
+  </div>
+
+  <!-- ACTION -->
+  <div style="flex:0.5; text-align:right;">
+    <button onclick="openEditModal('${doc.id}')" style="
+      background:none;
+      border:none;
+      color:#94a3b8;
+      font-size:18px;
+      cursor:pointer;
+    ">⋮</button>
+  </div>
+
 </div>
 
 `
@@ -470,4 +456,36 @@ el.style.color = "#94a3b8"
 }else{
 el.innerText = ""
 }
+}
+function getStockBadge(stock){
+
+if(stock <= 0){
+  return `<span style="
+    background:#ef4444;
+    color:white;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:12px;
+    animation:pulse 1s infinite;
+  ">0</span>`
+}
+
+if(stock <= 10){
+  return `<span style="
+    background:#f59e0b;
+    color:black;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:12px;
+  ">${stock}</span>`
+}
+
+return `<span style="
+  background:#22c55e;
+  color:black;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:12px;
+">${stock}</span>`
+
 }
