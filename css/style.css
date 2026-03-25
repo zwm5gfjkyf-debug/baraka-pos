@@ -2507,3 +2507,32 @@ NO OVERFLOW BUGS
 *{
   max-width:100%;
 }
+/* =====================================================
+FIX — REMOVE SIDE SPACES ON LAPTOP
+KEEP MOBILE PERFECT
+===================================================== */
+
+@media (min-width:768px){
+
+  .main-content{
+    max-width:100% !important;
+    width:100% !important;
+
+    margin:0 !important;
+
+    padding-left:24px;
+    padding-right:24px;
+  }
+
+}
+
+/* OPTIONAL — FULL EDGE MODE (if you want ZERO space) */
+/*
+@media (min-width:768px){
+.main-content{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+}
+*/
