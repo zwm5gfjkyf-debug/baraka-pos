@@ -11,9 +11,8 @@ const firebaseConfig = {
   appId: "1:3915833554:web:36144e4699aaf4249e0d0b",
   measurementId: "G-0MQEE5DWLK"
 };
-const storage = firebase.storage(firebase.app()) // ✅ FIXED
 const storageRef = storage.ref() // ✅ ADDED
-
+const storage = firebase.storage()
 db.settings({
   experimentalAutoDetectLongPolling: true // ✅ FIXED
 })
