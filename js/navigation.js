@@ -15,15 +15,11 @@ function navigate(pageId){
 
     // 🔥 FIX: show/hide bottom buttons (ONLY HERE)
     setTimeout(() => {
-      const actions = document.getElementById("addProductActions")
+     const actions = document.getElementById("addProductActions");
 
-      if(actions){
-        if(pageId === "addProductPage"){
-          actions.style.display = "flex"
-        } else {
-          actions.style.display = "none"
-        }
-      }
+if(actions){
+  actions.style.display = (pageId === "addProductPage") ? "flex" : "none";
+}
     }, 50)
   }
 
