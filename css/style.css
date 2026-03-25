@@ -438,7 +438,9 @@ font-size:13px;
 color:var(--text-soft);
 
 }
-
+.main-content {
+  padding-bottom: 100px;
+}
 
 /* =========================================
 BUTTON SYSTEM
