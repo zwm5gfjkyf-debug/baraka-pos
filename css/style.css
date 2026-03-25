@@ -18,19 +18,18 @@ overflow-x:hidden;
 }
 :root{
 
+/* DARK MODE (DEFAULT) */
+
 --bg-main:#020617;
 --bg-secondary:#0f172a;
 
 --glass:rgba(255,255,255,0.05);
 --glass-strong:rgba(255,255,255,0.08);
 
---accent:#22c55e;
+/* ✅ DARK = GREEN */
+--accent:var(--accent)
 --accent-dark:#16a34a;
 --accent-soft:rgba(34,197,94,0.15);
-
---blue:#3b82f6;
---orange:#f59e0b;
---danger:#ef4444;
 
 --text-main:#f8fafc;
 --text-soft:#94a3b8;
@@ -320,11 +319,8 @@ box-sizing:border-box;
 }
 
 input:focus{
-
-outline:none;
-
-box-shadow:0 0 0 2px var(--accent);
-
+border-color:var(--accent);
+box-shadow:0 0 0 2px var(--accent-soft);
 }
 
 /* =========================================
@@ -477,7 +473,7 @@ var(--accent-dark)
 color:white;
 
 box-shadow:
-0 6px 20px rgba(34,197,94,0.35);
+0 6px 20px var(--accent-soft);
 
 }
 
@@ -1360,7 +1356,7 @@ border:none;
 
 border-radius:12px;
 
-background:linear-gradient(135deg,#22c55e,#16a34a);
+background:linear-gradient(135deg,var(--accent),#16a34a);
 
 color:white;
 font-weight:600;
@@ -1437,7 +1433,7 @@ margin-top:10px;
 margin-top:10px;
 padding:10px 14px;
 border-radius:8px;
-background:#22c55e;
+background:var(--accent)
 color:white;
 border:none;
 font-weight:600;
@@ -1451,7 +1447,7 @@ margin-top:20px;
 margin-top:10px;
 padding:10px 14px;
 border-radius:8px;
-background:#22c55e;
+background:var(--accent)
 color:white;
 border:none;
 cursor:pointer;
@@ -1473,7 +1469,7 @@ font-weight:600;
 }
 
 .tab-btn.active{
-background:#22c55e;
+background:var(--accent)
 color:black;
 }
 /* ======================
@@ -1724,7 +1720,7 @@ font-size:13px;
 
 
 .profit-buttons button:hover{
-background:#22c55e;
+background:var(--accent)
 color:white;
 }
 .profit-buttons{
@@ -1746,7 +1742,7 @@ font-size:13px;
 }
 
 .profit-buttons button:hover{
-background:#22c55e;
+background:var(--accent)
 }
 
 .app-container{
@@ -1827,7 +1823,7 @@ background:#3a4055;
 }
 
 .sale-type-btn.active{
-background:#22c55e;
+background:var(--accent) 
 color:white;
 box-shadow:0 0 10px rgba(34,197,94,0.6);
 }
@@ -1900,7 +1896,7 @@ justify-content:center;
 font-size:14px;
 font-weight:bold;
 background:white;
-color:#22c55e;
+color:var(--accent)
 }
 #topBanner.error .banner-icon{
 color:#ef4444;
@@ -1968,7 +1964,7 @@ top:20px;
 }
 
 #topBanner.success{
-background:linear-gradient(135deg,#22c55e,#16a34a);
+background:linear-gradient(135deg,var(--accent),#16a34a);
 }
 
 #topBanner.error{
@@ -2035,14 +2031,13 @@ BLUE PREMIUM THEME
 
 body.light-mode{
 
---accent:#2563eb;
+/* ✅ LIGHT = BLUE */
+--accent:var(--accent)
 --accent-dark:#1d4ed8;
 --accent-soft:rgba(37,99,235,0.15);
 
 --bg-main:#f4f7fb;
 --bg-secondary:#eef2f7;
-
---card-bg:#ffffff;
 
 --text-main:#0f172a;
 --text-soft:#64748b;
@@ -2184,7 +2179,7 @@ body.light-mode .btn-primary{
 background:
 linear-gradient(
 135deg,
-#2563eb,
+var(--accent),
 #1d4ed8
 );
 
@@ -2441,7 +2436,7 @@ CHART TITLE
 
 body.light-mode .chart-title{
 
-color:#2563eb;
+color:var(--accent)
 
 font-weight:600;
 
@@ -2527,7 +2522,7 @@ color:#64748b;
 
 body.light-mode .info-card strong{
 
-color:#2563eb;
+color:var(--accent);
 
 font-weight:700;
 
@@ -2539,7 +2534,7 @@ PROFIT COLORS
 
 body.light-mode .profit-positive{
 
-color:#2563eb;
+color:var(--accent);
 
 font-weight:700;
 
@@ -2628,7 +2623,7 @@ background:#e2e8f0;
 
 body.light-mode .tab-btn.active{
 
-background:#2563eb;
+background:var(--accent);
 
 color:white;
 
@@ -2642,7 +2637,7 @@ body.light-mode .badge{
 
 background:#e0ecff;
 
-color:#2563eb;
+color:var(--accent);
 
 }
 
@@ -2677,7 +2672,7 @@ color:#64748b;
 
 body.light-mode .stats-card strong{
 
-color:#2563eb;
+color:var(--accent);
 
 font-weight:700;
 
@@ -2709,7 +2704,7 @@ CHART VALUE TEXT
 
 body.light-mode .chart-value{
 
-fill:#2563eb;
+fill:var(--accent);
 
 font-weight:600;
 
@@ -2836,7 +2831,7 @@ font-size:13px;
 
 body.light-mode .stock-stat strong{
 
-color:#2563eb;
+color:var(--accent);
 
 font-size:18px;
 font-weight:700;
@@ -2967,7 +2962,7 @@ color:#0f172a;
 
 body.light-mode .cart-price{
 
-color:#2563eb;
+color:var(--accent);
 font-weight:700;
 
 }
@@ -3004,7 +2999,7 @@ border:1px solid #e5e7eb;
 
 body.light-mode .qty-btn{
 
-background:#2563eb;
+background:var(--accent);
 
 color:white;
 
@@ -3030,7 +3025,7 @@ border:1px solid #e5e7eb;
 
 body.light-mode .total-amount{
 
-color:#2563eb;
+color:var(--accent);
 
 font-weight:700;
 
@@ -3052,7 +3047,7 @@ color:#475569;
 
 body.light-mode .sale-type-btn.active{
 
-background:#2563eb;
+background:var(--accent);
 
 color:white;
 
@@ -3088,7 +3083,7 @@ color:#334155;
 
 body.light-mode .profit-buttons button:hover{
 
-background:#2563eb;
+background:var(--accent);
 
 color:white;
 
@@ -3176,7 +3171,7 @@ MENU BUTTON
 
 body.light-mode .menu-btn{
 
-color:#2563eb;
+color:var(--accent);
 
 }
 
@@ -3186,7 +3181,7 @@ THEME BUTTON
 
 body.light-mode .theme-btn{
 
-color:#2563eb;
+color:var(--accent);
 
 }
 
@@ -3196,7 +3191,7 @@ TOP SUCCESS BANNER
 
 body.light-mode #topBanner{
 
-background:#2563eb;
+background:var(--accent);
 
 color:white;
 
@@ -3207,7 +3202,7 @@ box-shadow:
 
 body.light-mode #topBanner.success{
 
-background:#2563eb;
+background:var(--accent);
 
 }
 
@@ -3223,7 +3218,7 @@ BANNER CHECK ICON
 
 body.light-mode .banner-icon{
 background:white;
-color:#2563eb;
+color:var(--accent);
 }
 
 /* =====================================================
@@ -3244,7 +3239,7 @@ body.light-mode .success-card{
 
 background:linear-gradient(
 135deg,
-#2563eb,
+var(--accent),
 #1d4ed8
 );
 
@@ -3291,7 +3286,7 @@ body.light-mode .camera-btn{
 
 background:linear-gradient(
 135deg,
-#2563eb,
+var(--accent),
 #1d4ed8
 );
 
@@ -3342,7 +3337,7 @@ body.light-mode .add-product-btn{
 
 background:linear-gradient(
 135deg,
-#2563eb,
+var(--accent),
 #1d4ed8
 );
 
@@ -3359,7 +3354,7 @@ MODAL BUTTONS
 
 body.light-mode .modal-buttons .btn-primary{
 
-background:#2563eb;
+background:var(--accent);
 
 }
 
@@ -3421,7 +3416,7 @@ body.light-mode .loader{
 
 border:4px solid #e5e7eb;
 
-border-top:4px solid #2563eb;
+border-top:4px solid var(--accent);
 
 }
 
@@ -3509,7 +3504,7 @@ height:100%;
 
 background:linear-gradient(
 180deg,
-#2563eb,
+var(--accent),
 #1d4ed8
 );
 
@@ -3540,7 +3535,7 @@ font-weight:700;
 
 letter-spacing:0.3px;
 
-color:#2563eb;
+color:var(--accent);
 
 }
 
@@ -3579,7 +3574,7 @@ STATS NUMBERS
 
 body.light-mode .stats-card strong{
 
-color:#2563eb;
+color:var(--accent);
 
 font-weight:700;
 
@@ -3591,7 +3586,7 @@ TABLE NUMBERS
 
 body.light-mode .sales-table td strong{
 
-color:#2563eb;
+color:var(--accent);
 
 }
 
@@ -3626,7 +3621,7 @@ font-size:15px;
 
 font-weight:600;
 
-color:#2563eb;
+color:var(--accent);
 
 }
 
@@ -3638,7 +3633,7 @@ body.light-mode .badge{
 
 background:#e0ecff;
 
-color:#2563eb;
+color:var(--accent);
 
 font-weight:600;
 
@@ -3650,7 +3645,7 @@ PROFIT POSITIVE
 
 body.light-mode .profit-positive{
 
-color:#2563eb;
+color:var(--accent);
 
 font-weight:700;
 
@@ -3694,7 +3689,7 @@ MODAL INPUT FOCUS
 
 body.light-mode .modal-card input:focus{
 
-border-color:#2563eb;
+border-color:var(--accent);
 
 box-shadow:
 0 0 0 3px rgba(37,99,235,0.15);
@@ -3879,14 +3874,8 @@ opacity:1;
 
 /* ON STATE (LIGHT MODE = BLUE) */
 .toggle.active{
-  background:#3b82f6;
+  background:var(--accent);
 }
-
-/* ON STATE (DARK MODE = GREEN) */
-body:not(.light-mode) .toggle.active{
-background:#22c55e;
-}
-
 /* MOVE CIRCLE */
 .toggle.active::after{
   transform:translateX(20px);
@@ -4070,7 +4059,7 @@ NEW STOCK UI (ZAXIRA PAGE CLEAN DESIGN)
 }
 
 .stock-tab.active{
-  background:#2563eb;
+  background:var(--accent);
   color:white;
 }
 
@@ -4079,7 +4068,7 @@ NEW STOCK UI (ZAXIRA PAGE CLEAN DESIGN)
   width:44px;
   height:44px;
   border-radius:12px;
-  background:#2563eb;
+  background:var(--accent);
   color:white;
   border:none;
   font-size:22px;
@@ -4238,7 +4227,7 @@ body.light-mode .stock-row-item:hover{
 /* PRICE */
 .stock-price{
   font-size:14px;
-  color:#2563eb;
+  color:var(--accent);
   font-weight:600;
   margin-top:2px;
 }
@@ -4280,4 +4269,28 @@ body.light-mode .stock-row-item:hover{
   gap: 10px;
   box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
   z-index: 10000; /* 🔥 ABOVE EVERYTHING */
+}
+/* ======================
+RESPONSIVE SYSTEM
+====================== */
+
+@media (min-width: 768px){
+
+  .main-content{
+    max-width:900px;
+    margin:auto;
+  }
+
+  .dashboard-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+}
+
+@media (min-width: 1200px){
+
+  .dashboard-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+
 }
