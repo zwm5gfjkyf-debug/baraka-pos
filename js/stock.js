@@ -26,13 +26,15 @@ const unit = document.getElementById("stockUnit")?.value.trim() || "dona"
 const qty = 0 // ❗ we don’t use qty in new UI
 
 let cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
-const currency = document.getElementById("currencySelect")?.value || "UZS"
-
+const currencyEl = document.getElementById("currencySelect")
+const currency = currencyEl ? currencyEl.value : "UZS"
 const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
   // 🔥 IMAGE UPLOAD
 let imageUrl = ""
 
 if(selectedImageFile){
+
+try{
 
 const fileName = Date.now() + "_" + selectedImageFile.name
 
@@ -44,6 +46,11 @@ await ref.put(selectedImageFile)
 
 imageUrl = await ref.getDownloadURL()
 
+}catch(e){
+
+console.log("Image upload error:", e)
+
+}
 }
   // 💱 USD → UZS conversion (simple fast rate)
 if(currency === "USD"){
@@ -616,4 +623,11 @@ reader.readAsDataURL(file)
 }
 
 input.click()
+}
+async function saveAndGoBack(){
+
+await addStock()
+
+navigate('stockPage')
+
 }
