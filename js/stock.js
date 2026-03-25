@@ -165,21 +165,18 @@ div.innerHTML = `
 
 </div>
 
-<!-- BARCODE -->
-<div style="margin-top:10px; text-align:center;">
-  <svg id="barcode-${doc.id}"></svg>
+<div style="
+  margin-top:10px;
+  text-align:center;
+  font-size:13px;
+  opacity:0.8;
+">
+  ${p.barcode || ""}
 </div>
 
 `
                 container.appendChild(div);
-if(p.barcode){
-  JsBarcode(`#barcode-${doc.id}`, p.barcode, {
-    format: "CODE128",
-    width: 1.5,
-    height: 40,
-    displayValue: false
-  });
-}
+
             });
 
         });
