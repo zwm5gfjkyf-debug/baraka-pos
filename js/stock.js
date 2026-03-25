@@ -144,13 +144,7 @@ const div = document.createElement("div")
 div.className = "stock-row-item";
 
 div.innerHTML = `
-<div style="
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:12px 0;
-  border-bottom:1px solid #e5e7eb;
-">
+
 
   <!-- LEFT IMAGE -->
   <div style="
@@ -225,7 +219,6 @@ ${p.stock || 0} dona • ${p.barcode || "-"}
 
   </div>
 
-</div>
 `;
 container.appendChild(div)
 
