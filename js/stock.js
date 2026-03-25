@@ -20,9 +20,20 @@ try{
 const name = document.getElementById("stockName").value.trim()
 const nameKey = name.toLowerCase()
 const barcode = document.getElementById("stockBarcode")?.value.trim() || ""
-const qty = Number(document.getElementById("stockQty")?.value || 0)
-const cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
+const artikul = document.getElementById("stockArtikul")?.value.trim() || ""
+const unit = document.getElementById("stockUnit")?.value.trim() || "dona"
+
+const qty = 0 // ❗ we don’t use qty in new UI
+
+let cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
+const currency = document.getElementById("currencySelect")?.value || "UZS"
+
 const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
+  // 💱 USD → UZS conversion (simple fast rate)
+if(currency === "USD"){
+  const rate = 12500 // later we can make dynamic
+  cost = Math.round(cost * rate)
+}
 if(!name || price <= 0){
 showTopBanner("Mahsulot nomi va narx kerak","error")
 stockProcessing = false
@@ -46,10 +57,15 @@ if(existing.empty){
 await productsRef.add({
 name: name,
 nameKey: nameKey,
-barcode: barcode || "",
-stock: Math.max(0, qty || 0),
+barcode: barcode,
+artikul: artikul,
+unit: unit,
+
+stock: 0,
+
 cost: cost || 0,
 price: price,
+
 created: Date.now()
 })
 
@@ -68,7 +84,10 @@ const newStock = Math.max(0, (freshData.stock || 0) + (qty || 0))
 t.update(doc.ref, {
 stock: newStock,
 cost: cost || freshData.cost,
-price: price
+price: price,
+barcode: barcode || freshData.barcode,
+artikul: artikul || freshData.artikul,
+unit: unit || freshData.unit
 })
 
 })
@@ -84,7 +103,8 @@ showTopBanner("Xatolik yuz berdi", "error")
 
 document.getElementById("stockName").value = ""
 document.getElementById("stockBarcode").value = ""
-document.getElementById("stockQty").value = ""
+document.getElementById("stockArtikul").value = ""
+document.getElementById("stockUnit").value = ""
 document.getElementById("stockCost").value = ""
 document.getElementById("stockSellingPrice").value = ""
 const preview = document.getElementById("profitPreview")
@@ -192,7 +212,7 @@ div.innerHTML = `
       color:#64748b;
       margin-top:2px;
     ">
-${p.stock || 0} dona • ${p.barcode || "-"}
+${p.unit || "dona"} • ${p.barcode || "-"}
 </div>
 
   </div>
@@ -515,4 +535,34 @@ return `
   ${stock} dona
 </span>
 `
+}
+function generateArtikul(){
+
+const random = Math.floor(100000 + Math.random() * 900000)
+
+const artikul = "ART-" + random
+
+const input = document.getElementById("stockArtikul")
+
+if(input){
+input.value = artikul
+}
+
+}
+function selectProductImage(){
+
+const input = document.createElement("input")
+input.type = "file"
+input.accept = "image/*"
+
+input.onchange = (e) => {
+  const file = e.target.files[0]
+  if(!file) return
+
+  // later we upload to firebase
+  console.log("Selected image:", file)
+}
+
+input.click()
+
 }
