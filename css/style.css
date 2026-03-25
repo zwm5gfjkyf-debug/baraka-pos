@@ -109,7 +109,7 @@ CONTAINER
 ========================================= */
 
 .main-content{
-padding:10px;
+padding:6px;
 padding-bottom:110px;
 width:100%;
 }
@@ -662,9 +662,7 @@ cursor:pointer;
 font-size:16px;
 
 }
-.stock-row-item{
-  padding:0 4px;
-}
+
 
 body:not(.light-mode) .stock-row-item{
   border-bottom:1px solid #1e293b;
@@ -4095,10 +4093,7 @@ NEW STOCK UI (ZAXIRA PAGE CLEAN DESIGN)
 }
 
 /* LIST ITEM DIVIDER STYLE */
-.stock-row-item{
-  padding:12px 0;
-  border-bottom:1px solid #e5e7eb;
-}
+
 
 /* DARK MODE FIX */
 body:not(.light-mode) .stock-tab{
@@ -4125,4 +4120,70 @@ body:not(.light-mode) #stockSearch{
   background:#0f172a !important;
   border:1px solid #1e293b !important;
   color:white !important;
+}
+/* ===== FINAL CLEAN STOCK LIST ===== */
+
+#currentStockList{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  margin:0;
+  padding:0;
+}
+
+/* ONE TRUE STYLE */
+.stock-row-item{
+  padding:10px 0;
+  margin:0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+/* remove top space */
+.stock-row-item:first-child{
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+
+/* remove extra spacing inside */
+.stock-row-item *{
+  margin:0;
+}
+
+/* LIGHT MODE */
+body.light-mode .stock-row-item{
+  border-bottom:1px solid #e5e7eb;
+}
+
+body.light-mode .stock-row-item:first-child{
+  border-top:1px solid #e5e7eb;
+}
+.stock-row-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  padding:12px 6px;
+
+  transition:background 0.2s;
+}
+
+/* subtle hover */
+.stock-row-item:hover{
+  background:rgba(255,255,255,0.03);
+}
+
+/* light mode hover */
+body.light-mode .stock-row-item:hover{
+  background:#f8fafc;
+}
+.product-img{
+  width:44px; 
+  height:44px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.08);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:18px;
 }
