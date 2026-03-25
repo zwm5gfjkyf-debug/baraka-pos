@@ -1099,3 +1099,1411 @@ LOADING STATE
   50%{opacity:0.4;}
   100%{opacity:1;}
 }
+/* =====================================================
+PART 5 — SALE PAGE (FAST POS UX)
+Search + Cart + Checkout
+===================================================== */
+
+/* ======================
+SEARCH INPUT
+====================== */
+
+.search-input{
+  width:100%;
+  height:50px;
+
+  padding:0 16px;
+
+  border-radius:14px;
+
+  border:1px solid var(--border);
+
+  background:white;
+
+  font-size:15px;
+
+  margin-bottom:10px;
+}
+
+/* ======================
+SEARCH RESULTS LIST
+====================== */
+
+#searchResults{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+
+  margin-bottom:12px;
+}
+
+/* SEARCH ITEM */
+.search-item{
+  background:white;
+
+  border:1px solid var(--border);
+
+  border-radius:14px;
+
+  padding:14px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  cursor:pointer;
+
+  transition:all 0.15s ease;
+}
+
+/* HOVER */
+.search-item:hover{
+  background:#f8fafc;
+  transform:translateY(-1px);
+}
+
+/* PRODUCT NAME */
+.search-name{
+  font-size:14px;
+  font-weight:500;
+}
+
+/* PRICE (BLUE) */
+.search-price{
+  color:var(--blue);
+  font-weight:600;
+}
+
+/* ======================
+CART CONTAINER
+====================== */
+
+#cartList{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+
+  margin-bottom:12px;
+}
+
+/* CART ITEM */
+.cart-item{
+  background:white;
+
+  border:1px solid var(--border);
+
+  border-radius:14px;
+
+  padding:12px;
+
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* ROW */
+.cart-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* PRODUCT NAME */
+.cart-name{
+  font-size:14px;
+  font-weight:500;
+}
+
+/* PRICE */
+.cart-price{
+  color:var(--blue);
+  font-weight:600;
+}
+
+/* ======================
+QUANTITY CONTROLS
+====================== */
+
+.quantity-controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  background:#f1f5f9;
+
+  border-radius:999px;
+
+  padding:4px 6px;
+}
+
+/* BUTTON */
+.qty-btn{
+  width:28px;
+  height:28px;
+
+  border-radius:50%;
+
+  background:var(--blue);
+
+  color:white;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size:16px;
+  cursor:pointer;
+}
+/* NUMBER */
+.qty-number{
+  min-width:20px;
+  text-align:center;
+  font-weight:600;
+}
+/* ======================
+TOTAL BLOCK
+====================== */
+.dashboard-card h3{
+  font-size:16px;
+}
+/* TOTAL NUMBER */
+#saleTotal{
+  color:var(--blue);
+  font-weight:700;
+  font-size:18px;
+}
+
+/* ======================
+SALE TYPE (CASH / DEBT)
+====================== */
+
+.sale-type{
+  display:flex;
+  gap:10px;
+
+  margin-top:8px;
+}
+
+/* BUTTON */
+.sale-type-btn{
+  flex:1;
+
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#f1f5f9;
+  color:#475569;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.15s ease;
+}
+
+/* ACTIVE */
+.sale-type-btn.active{
+  background:var(--blue);
+  color:white;
+  border:none;
+}
+/* ======================
+DEBT INPUT
+====================== */
+.debt-input{
+  margin-top:8px;
+  height:44px;
+  padding:0 12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+}
+/* ======================
+COMPLETE SALE BUTTON
+====================== */
+.complete-sale-btn{
+  margin-top:10px;
+  height:48px;
+
+  border-radius:14px;
+
+  font-size:15px;
+
+  font-weight:600;
+
+  background:linear-gradient(
+    135deg,
+    var(--blue),
+    #1d4ed8
+  );
+
+  color:white;
+
+  box-shadow:0 8px 20px rgba(37,99,235,0.25);
+}
+
+/* ======================
+FAST TAP FEEDBACK
+====================== */
+
+.search-item:active,
+.qty-btn:active,
+.complete-sale-btn:active{
+  transform:scale(0.96);
+}
+
+/* ======================
+EMPTY CART STATE
+====================== */
+
+.empty-cart{
+  text-align:center;
+  color:var(--text-soft);
+  padding:20px;
+}
+
+/* ======================
+MOBILE OPTIMIZATION
+====================== */
+
+@media (max-width:600px){
+
+  .search-input{
+    height:48px;
+  }
+
+  .complete-sale-btn{
+    height:50px;
+  }
+
+}
+
+/* ======================
+DESKTOP IMPROVEMENTS
+====================== */
+
+@media (min-width:768px){
+
+  #searchResults{
+    max-height:300px;
+    overflow-y:auto;
+  }
+
+}
+/* =====================================================
+PART 6 — STOCK / INVENTORY PAGE
+Clean iPhone-style Product List
+===================================================== */
+
+/* ======================
+PAGE TITLE
+====================== */
+
+#stockPage h2{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+/* ======================
+TOP BAR (SEARCH + ADD)
+====================== */
+
+.stock-top{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+/* ADD BUTTON */
+.add-btn{
+  width:48px;
+  height:48px;
+
+  border-radius:12px;
+
+  background:var(--blue);
+
+  color:white;
+
+  font-size:22px;
+  font-weight:600;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  box-shadow:0 8px 18px rgba(37,99,235,0.25);
+}
+
+/* ======================
+STOCK TABS
+====================== */
+
+.stock-tab{
+  padding:8px 14px;
+
+  border-radius:999px;
+
+  background:#f1f5f9;
+
+  border:1px solid var(--border);
+
+  font-size:13px;
+
+  color:#475569;
+
+  white-space:nowrap;
+
+  transition:all 0.15s ease;
+}
+
+/* ACTIVE TAB */
+.stock-tab.active{
+  background:var(--blue);
+  color:white;
+  border:none;
+}
+
+/* ======================
+LIST CONTAINER
+====================== */
+
+#currentStockList{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+/* ======================
+ROW ITEM
+====================== */
+
+.stock-row-item{
+  display:flex;
+  align-items:center;
+
+  gap:12px;
+
+  padding:12px 6px;
+
+  border-bottom:1px solid var(--border);
+
+  transition:background 0.15s ease;
+}
+
+/* HOVER */
+.stock-row-item:hover{
+  background:#f8fafc;
+}
+
+/* ======================
+PRODUCT IMAGE
+====================== */
+
+.product-img{
+  width:44px;
+  height:44px;
+
+  border-radius:10px;
+
+  background:#f1f5f9;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:18px;
+
+  flex-shrink:0;
+}
+
+/* ======================
+INFO BLOCK
+====================== */
+
+.stock-info{
+  flex:1;
+  min-width:0;
+}
+
+/* NAME */
+.stock-name{
+  font-size:15px;
+  font-weight:600;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* PRICE (BLUE 🔥) */
+.stock-price{
+  font-size:14px;
+  color:var(--blue);
+  font-weight:600;
+
+  margin-top:2px;
+}
+
+/* META */
+.stock-meta{
+  font-size:12px;
+  color:var(--text-soft);
+
+  margin-top:2px;
+}
+
+/* ======================
+RIGHT SIDE MENU BUTTON
+====================== */
+
+.stock-menu-btn{
+  background:none;
+  border:none;
+
+  font-size:20px;
+
+  color:#94a3b8;
+
+  cursor:pointer;
+}
+
+/* ======================
+DIVIDER CLEAN
+====================== */
+
+.stock-row-item:first-child{
+  border-top:1px solid var(--border);
+}
+
+/* ======================
+EMPTY STATE
+====================== */
+
+.empty-stock{
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  margin-top:80px;
+
+  text-align:center;
+
+  color:var(--text-soft);
+
+  gap:10px;
+}
+
+/* ======================
+COUNT TEXT
+====================== */
+
+.stock-count{
+  font-size:13px;
+  color:var(--text-soft);
+
+  margin-bottom:8px;
+}
+
+/* ======================
+EDIT MODAL
+====================== */
+
+.modal{
+  position:fixed;
+  inset:0;
+
+  background:rgba(0,0,0,0.4);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  z-index:1000;
+}
+
+/* CARD */
+.modal-card{
+  width:320px;
+
+  background:white;
+
+  border-radius:16px;
+
+  padding:20px;
+
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* INPUT */
+.modal-card input{
+  height:44px;
+
+  padding:0 12px;
+
+  border-radius:10px;
+
+  border:1px solid var(--border);
+}
+
+/* BUTTONS */
+.modal-buttons{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+/* ======================
+PROFIT BUTTONS
+====================== */
+
+.profit-buttons{
+  display:flex;
+  gap:8px;
+  margin-top:4px;
+}
+
+/* BUTTON */
+.profit-buttons button{
+  flex:1;
+
+  padding:8px;
+
+  border-radius:8px;
+
+  background:#f1f5f9;
+
+  border:1px solid var(--border);
+
+  font-size:13px;
+
+  cursor:pointer;
+}
+
+/* HOVER */
+.profit-buttons button:hover{
+  background:var(--blue);
+  color:white;
+}
+
+/* ======================
+SCROLL SMOOTH
+====================== */
+
+#currentStockList{
+  scroll-behavior:smooth;
+}
+
+/* ======================
+MOBILE OPTIMIZATION
+====================== */
+
+@media (max-width:600px){
+
+  .stock-name{
+    font-size:14px;
+  }
+
+  .stock-price{
+    font-size:13px;
+  }
+
+}
+
+/* ======================
+DESKTOP IMPROVEMENT
+====================== */
+
+@media (min-width:768px){
+
+  #currentStockList{
+    gap:4px;
+  }
+
+  .stock-row-item{
+    border-radius:12px;
+    padding:14px;
+  }
+}
+/* ======================
+HOVER ANIMATION
+====================== */
+.stock-row-item{
+  transition:
+    background 0.15s,
+    transform 0.1s;
+}
+.stock-row-item:active{
+  transform:scale(0.98);
+}
+
+/* ======================
+IMAGE PLACEHOLDER ICON
+====================== */
+
+.product-img::after{
+  content:"📦";
+}
+/* ======================
+ADVANCED GRID (OPTIONAL FUTURE)
+====================== */
+@media (min-width:1024px){
+  #currentStockList{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+  .stock-row-item{
+    border:1px solid var(--border);
+  }
+}
+/* =====================================================
+PART 7 — ANALYTICS + TABLE + BUSINESS UI
+SaaS Dashboard System
+===================================================== */
+
+/* ======================
+ANALYTICS TABS
+====================== */
+
+.analytics-tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+/* TAB BUTTON */
+.tab-btn{
+  flex:1;
+
+  padding:10px;
+
+  border-radius:10px;
+
+  background:#f1f5f9;
+
+  border:1px solid var(--border);
+
+  font-weight:600;
+
+  color:#475569;
+
+  cursor:pointer;
+
+  transition:all 0.15s ease;
+}
+
+/* ACTIVE TAB */
+.tab-btn.active{
+  background:var(--blue);
+  color:white;
+  border:none;
+}
+
+/* ======================
+ANALYTICS GRID
+====================== */
+
+.analytics-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+/* DESKTOP */
+@media (min-width:768px){
+  .analytics-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+/* ======================
+INFO CARDS
+====================== */
+
+.info-card{
+  background:white;
+
+  border-radius:16px;
+
+  border:1px solid var(--border);
+
+  padding:14px;
+
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+
+  transition:all 0.2s ease;
+}
+
+/* HOVER */
+.info-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* LABEL */
+.info-card span{
+  font-size:12px;
+  color:var(--text-soft);
+}
+
+/* VALUE (BLUE 🔥) */
+.info-card strong{
+  font-size:20px;
+  font-weight:700;
+  color:var(--blue);
+}
+
+/* ======================
+CHART CONTAINER (SAFE)
+====================== */
+
+.analytics-chart{
+  background:white;
+
+  border-radius:18px;
+
+  border:1px solid var(--border);
+
+  padding:14px;
+
+  margin-top:12px;
+
+  height:260px;
+  max-height:260px;
+
+  overflow:hidden;
+}
+
+/* CANVAS */
+.analytics-chart canvas{
+  height:200px !important;
+  max-height:200px !important;
+}
+
+/* ======================
+SALES TABLE
+====================== */
+
+.sales-table{
+  width:100%;
+  border-collapse:collapse;
+
+  margin-top:12px;
+
+  background:white;
+
+  border-radius:14px;
+
+  overflow:hidden;
+
+  border:1px solid var(--border);
+}
+
+/* HEADER */
+.sales-table th{
+  text-align:left;
+
+  font-size:12px;
+
+  padding:12px;
+
+  background:#f8fafc;
+
+  color:#64748b;
+
+  border-bottom:1px solid var(--border);
+}
+
+/* CELLS */
+.sales-table td{
+  padding:12px;
+
+  font-size:13px;
+
+  border-bottom:1px solid #f1f5f9;
+}
+
+/* ROW HOVER */
+.sales-table tr:hover{
+  background:#f9fafb;
+}
+
+/* ======================
+TABLE VALUE COLORS
+====================== */
+
+/* PRODUCT NAME */
+.sales-table td:first-child{
+  font-weight:500;
+}
+
+/* PROFIT (BLUE) */
+.sales-table td:nth-child(4){
+  color:var(--blue);
+  font-weight:600;
+}
+
+/* PERCENT */
+.sales-table td:nth-child(5){
+  font-weight:600;
+}
+
+/* ======================
+TABLE WRAPPER (SCROLL)
+====================== */
+
+.table-wrapper{
+  width:100%;
+  overflow-x:auto;
+}
+
+/* ======================
+SEARCH INPUT (TABLE)
+====================== */
+
+#salesSearch{
+  margin-top:10px;
+}
+
+/* ======================
+DEBT ANALYTICS
+====================== */
+
+#debtAnalyticsList{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* ITEM */
+.debt-item{
+  background:white;
+
+  border:1px solid var(--border);
+
+  border-radius:14px;
+
+  padding:12px;
+
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+/* NAME */
+.debt-name{
+  font-weight:600;
+}
+
+/* AMOUNT (BLUE) */
+.debt-amount{
+  color:var(--blue);
+  font-weight:700;
+}
+
+/* ======================
+SHOP ANALYTICS CARDS
+====================== */
+
+#shopAnalyticsPage .dashboard-card{
+  margin-bottom:10px;
+}
+
+/* ======================
+PROFIT COLORS
+====================== */
+
+.profit-positive{
+  color:var(--blue);
+  font-weight:700;
+}
+
+.profit-negative{
+  color:#ef4444;
+}
+
+/* ======================
+SMALL BADGES
+====================== */
+
+.badge{
+  display:inline-block;
+
+  padding:4px 8px;
+
+  border-radius:8px;
+
+  font-size:11px;
+
+  background:#e0ecff;
+  color:var(--blue);
+}
+
+/* ======================
+EMPTY STATE
+====================== */
+
+.empty-analytics{
+  text-align:center;
+
+  color:var(--text-soft);
+
+  padding:20px;
+}
+
+/* ======================
+LOADING STATE
+====================== */
+
+.analytics-loading{
+  animation:pulse 1s infinite;
+}
+
+/* ======================
+RESPONSIVE TABLE
+====================== */
+
+@media (max-width:600px){
+
+  .sales-table th,
+  .sales-table td{
+    font-size:11px;
+    padding:8px;
+  }
+
+}
+
+/* ======================
+DESKTOP ENHANCEMENT
+====================== */
+
+@media (min-width:1024px){
+
+  .sales-table{
+    font-size:14px;
+  }
+
+  .sales-table td{
+    padding:14px;
+  }
+
+}
+
+/* ======================
+INTERACTION POLISH
+====================== */
+
+.tab-btn:active,
+.info-card:active{
+  transform:scale(0.97);
+}
+
+/* ======================
+CHART SAFETY FIX (IMPORTANT)
+====================== */
+
+/* prevent chart stretch bug */
+canvas{
+  max-width:100% !important;
+  display:block;
+}
+/* =====================================================
+PART 8 — FINAL UI (MODALS + SIDEBAR + EFFECTS)
+Complete POS Experience
+===================================================== */
+
+/* ======================
+SIDEBAR
+====================== */
+
+.sidebar{
+  position:fixed;
+  top:0;
+  left:-260px;
+
+  width:260px;
+  height:100%;
+
+  background:white;
+
+  border-right:1px solid var(--border);
+
+  padding:18px;
+
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+
+  transition:left 0.25s ease;
+
+  z-index:1000;
+}
+
+/* OPEN */
+.sidebar.open{
+  left:0;
+}
+
+/* HEADER */
+.sidebar-header{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+/* BUTTON */
+.sidebar button{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  padding:12px;
+
+  border-radius:10px;
+
+  background:transparent;
+
+  font-size:14px;
+
+  color:#334155;
+
+  cursor:pointer;
+
+  transition:all 0.15s ease;
+}
+
+/* HOVER */
+.sidebar button:hover{
+  background:#f1f5f9;
+}
+
+/* ======================
+OVERLAY
+====================== */
+
+.sidebar-overlay{
+  position:fixed;
+  inset:0;
+
+  background:rgba(0,0,0,0.25);
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:opacity 0.2s;
+
+  z-index:999;
+}
+
+.sidebar-overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* ======================
+PROFILE MENU
+====================== */
+
+.profile-menu{
+  position:absolute;
+
+  top:60px;
+  right:12px;
+
+  width:180px;
+
+  background:white;
+
+  border-radius:14px;
+
+  border:1px solid var(--border);
+
+  padding:10px;
+
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+
+  z-index:200;
+}
+
+/* ======================
+MODAL BASE
+====================== */
+
+.modal{
+  position:fixed;
+  inset:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:rgba(0,0,0,0.35);
+
+  z-index:2000;
+
+  animation:fadeIn 0.2s ease;
+}
+
+/* CARD */
+.modal-card{
+  width:320px;
+
+  background:white;
+
+  border-radius:16px;
+
+  padding:18px;
+
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+
+  animation:scaleIn 0.2s ease;
+}
+
+/* ======================
+CONFIRM MODAL
+====================== */
+
+.confirm-box{
+  width:300px;
+  padding:20px;
+
+  text-align:center;
+
+  border-radius:16px;
+
+  background:white;
+
+  border:1px solid var(--border);
+}
+
+/* TEXT */
+.confirm-text{
+  font-size:15px;
+  margin-bottom:16px;
+}
+
+/* BUTTONS */
+.confirm-buttons{
+  display:flex;
+  gap:10px;
+}
+
+/* ======================
+TOP BANNER (NOTIFICATION)
+====================== */
+
+.top-banner{
+  position:fixed;
+
+  top:10px;
+  left:50%;
+
+  transform:translateX(-50%) translateY(-20px);
+
+  width:calc(100% - 40px);
+  max-width:420px;
+
+  padding:14px;
+
+  border-radius:14px;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  opacity:0;
+  pointer-events:none;
+
+  transition:all 0.25s ease;
+
+  z-index:3000;
+}
+
+/* SHOW */
+.top-banner.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* SUCCESS */
+.top-banner.success{
+  background:var(--blue);
+  color:white;
+}
+
+/* ERROR */
+.top-banner.error{
+  background:#ef4444;
+  color:white;
+}
+
+/* CONTENT */
+.banner-content{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  font-size:14px;
+}
+
+/* ======================
+CAMERA SECTION
+====================== */
+
+#cameraSection{
+  position:fixed;
+
+  bottom:80px;
+  left:0;
+
+  width:100%;
+
+  padding:12px;
+
+  z-index:900;
+}
+
+/* BUTTON */
+#cameraToggleBtn{
+  width:100%;
+
+  height:50px;
+
+  border-radius:999px;
+
+  background:var(--blue);
+
+  color:white;
+
+  font-weight:600;
+
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* CAMERA VIEW */
+#cameraScanner{
+  margin-top:10px;
+}
+
+/* VIEWPORT */
+#scannerViewport{
+  width:100%;
+  height:200px;
+
+  border-radius:12px;
+
+  overflow:hidden;
+
+  background:black;
+}
+
+/* ======================
+ADD PRODUCT ACTION BAR
+====================== */
+
+#addProductActions{
+  position:fixed;
+
+  bottom:70px;
+  left:0;
+
+  width:100%;
+
+  padding:12px;
+
+  display:none;
+  gap:10px;
+
+  background:white;
+
+  border-top:1px solid var(--border);
+
+  box-shadow:0 -5px 20px rgba(0,0,0,0.1);
+
+  z-index:1500;
+}
+
+/* ======================
+ANIMATIONS
+====================== */
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes scaleIn{
+  from{
+    transform:scale(0.9);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}
+
+/* ======================
+BUTTON PRESS EFFECT
+====================== */
+
+button:active{
+  transform:scale(0.96);
+}
+
+/* ======================
+SMOOTH SCROLL
+====================== */
+
+html{
+  scroll-behavior:smooth;
+}
+
+/* ======================
+SAFE AREA (iPhone)
+====================== */
+
+.bottom-nav{
+  padding-bottom:calc(6px + env(safe-area-inset-bottom));
+}
+
+#addProductActions{
+  padding-bottom:calc(12px + env(safe-area-inset-bottom));
+}
+
+/* ======================
+SCROLLBAR CLEAN
+====================== */
+
+::-webkit-scrollbar{
+  width:6px;
+}
+
+::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:10px;
+}
+
+/* ======================
+FINAL TOUCH
+====================== */
+
+body{
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ======================
+NO OVERFLOW BUGS
+====================== */
+
+*{
+  max-width:100%;
+}
