@@ -116,66 +116,86 @@ function loadCurrentStock(){
            const container = document.getElementById("currentStockList");
 if(!container) return
 
-container.innerHTML = ""
-
-snapshot.forEach(doc => {
-
-const p = doc.data()
-
-// ❗ skip deleted manually
-if(p.deleted === true) return
-                const div = document.createElement("div");
-div.className = "stock-card";
-
 div.innerHTML = `
 
 <div style="
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 12px;
+  padding:12px;
   border-bottom:1px solid #1e293b;
 ">
 
-  <!-- LEFT: NAME + BARCODE -->
-  <div style="flex:2;">
-    <div style="font-size:18px; font-weight:600; color:white;">
-      ${p.name}
-    </div>
-    <div style="font-size:12px; color:#64748b;">
-      ${p.barcode || ""}
-    </div>
-  </div>
+  <!-- TOP: NAME + STOCK -->
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:8px;
+  ">
 
-  <!-- STOCK BADGE -->
-  <div style="flex:1; text-align:center;">
+    <div>
+      <div style="font-size:16px; font-weight:600;">
+        ${p.name}
+      </div>
+      <div style="font-size:12px; color:#64748b;">
+        ${p.barcode || ""}
+      </div>
+    </div>
+
     ${getStockBadge(p.stock)}
+
   </div>
 
-  <!-- KIRIM -->
-  <div style="flex:1; text-align:right; font-family:monospace;">
-    ${formatMoney(p.cost || 0)}
+  <!-- MOBILE VIEW -->
+  <div style="
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  ">
+
+    <div>
+      <div style="font-size:11px; color:#64748b;">Kirim</div>
+      <div style="font-family:monospace;">
+        ${formatMoney(p.cost || 0)} so'm
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:11px; color:#64748b;">Sotuv</div>
+      <div style="font-family:monospace;">
+        ${formatMoney(p.price || 0)} so'm
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:11px; color:#64748b;">Foyda</div>
+      <div style="font-family:monospace; color:#22c55e;">
+        +${formatMoney((p.price || 0) - (p.cost || 0))} so'm
+      </div>
+    </div>
+
   </div>
 
-  <!-- SOTUV -->
-  <div style="flex:1; text-align:right; font-family:monospace;">
-    ${formatMoney(p.price || 0)}
-  </div>
+  <!-- DESKTOP ROW -->
+  <div class="desktop-row" style="
+    display:none;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:8px;
+  ">
 
-  <!-- FOYDA -->
-  <div style="flex:1; text-align:right; font-family:monospace; color:#22c55e;">
-    +${formatMoney((p.price || 0) - (p.cost || 0))}
-  </div>
+    <div style="flex:2;">${p.name}</div>
 
-  <!-- ACTION -->
-  <div style="flex:0.5; text-align:right;">
-    <button onclick="openEditModal('${doc.id}')" style="
-      background:none;
-      border:none;
-      color:#94a3b8;
-      font-size:18px;
-      cursor:pointer;
-    ">⋮</button>
+    <div style="flex:1; text-align:right; font-family:monospace;">
+      ${formatMoney(p.cost || 0)}
+    </div>
+
+    <div style="flex:1; text-align:right; font-family:monospace;">
+      ${formatMoney(p.price || 0)}
+    </div>
+
+    <div style="flex:1; text-align:right; color:#22c55e; font-family:monospace;">
+      +${formatMoney((p.price || 0) - (p.cost || 0))}
+    </div>
+
   </div>
 
 </div>
@@ -459,33 +479,21 @@ el.innerText = ""
 }
 function getStockBadge(stock){
 
-if(stock <= 0){
-  return `<span style="
-    background:#ef4444;
-    color:white;
-    padding:4px 8px;
-    border-radius:999px;
-    font-size:12px;
-    animation:pulse 1s infinite;
-  ">0</span>`
-}
+let color = "#22c55e"
 
-if(stock <= 10){
-  return `<span style="
-    background:#f59e0b;
-    color:black;
-    padding:4px 8px;
-    border-radius:999px;
-    font-size:12px;
-  ">${stock}</span>`
-}
+if(stock <= 0) color = "#ef4444"
+else if(stock <= 10) color = "#f59e0b"
 
-return `<span style="
-  background:#22c55e;
+return `
+<span style="
+  background:${color};
   color:black;
-  padding:4px 8px;
+  padding:4px 10px;
   border-radius:999px;
   font-size:12px;
-">${stock}</span>`
-
+  font-weight:500;
+">
+  ${stock} dona
+</span>
+`
 }
