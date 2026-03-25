@@ -157,25 +157,56 @@ div.innerHTML = `
     grid-template-columns:1fr 1fr;
     gap:8px;
   ">
+<!-- DESKTOP ROW -->
+<div style="
+  display:none;
+  margin-top:8px;
+"
+class="desktop-row">
 
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  ">
+
+    <div style="flex:2;">
+      ${p.name}
+    </div>
+
+    <div style="flex:1; text-align:right; font-family:monospace;">
+      ${formatMoney(p.cost || 0)}
+    </div>
+
+    <div style="flex:1; text-align:right; font-family:monospace;">
+      ${formatMoney(p.price || 0)}
+    </div>
+
+    <div style="flex:1; text-align:right; color:#22c55e; font-family:monospace;">
+      +${formatMoney((p.price || 0) - (p.cost || 0))}
+    </div>
+
+  </div>
+
+</div>
     <div>
       <div style="font-size:11px; color:#64748b;">Kirim</div>
       <div style="font-family:monospace;">
-        ${formatMoney(p.cost || 0)} so'm
+        ${formatMoney(p.cost || 0)} &nbsp;so'm
       </div>
     </div>
 
     <div>
       <div style="font-size:11px; color:#64748b;">Sotuv</div>
       <div style="font-family:monospace;">
-        ${formatMoney(p.price || 0)} so'm
+        ${formatMoney(p.price || 0)} &nbsp;so'm
       </div>
     </div>
 
     <div>
       <div style="font-size:11px; color:#64748b;">Foyda</div>
       <div style="font-family:monospace; color:#22c55e;">
-        +${formatMoney((p.price || 0) - (p.cost || 0))} so'm
+        +${formatMoney((p.price || 0) - (p.cost || 0))} &nbsp;so'm
       </div>
     </div>
 
@@ -189,6 +220,8 @@ container.appendChild(div)
 })
 
 });
+} // ✅ CLOSE loadCurrentStock FUNCTION
+
 let editingProductId = null
 
 async function openEditModal(id){
@@ -402,7 +435,7 @@ return
 
 document.getElementById("previewName").innerText = name
 document.getElementById("previewPrice").innerText =
-Number(price).toLocaleString("ru-RU") + " so'm"
+Number(price).toLocaleString("ru-RU") + " &nbsp;so'm"
 
 document.getElementById("previewBarcodeNumber").innerText = barcode
 
