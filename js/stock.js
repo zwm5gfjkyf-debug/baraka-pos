@@ -585,51 +585,58 @@ let selectedImageFile = null
 
 function selectProductImage(){
 
-const input = document.createElement("input")
-input.type = "file"
-input.accept = "image/*"
+  // 🔥 ASK USER
+  const useCamera = confirm("Kamera orqali rasm olasizmi?\nOK = Kamera\nCancel = Galereya")
 
-input.onchange = (e) => {
+  const input = document.createElement("input")
+  input.type = "file"
+  input.accept = "image/*"
 
-const file = e.target.files[0]
-if(!file) return
+  // 📷 CAMERA
+  if(useCamera){
+    input.setAttribute("capture", "environment")
+  }
 
-selectedImageFile = file
+  input.onchange = (e) => {
 
-// 🔥 PREVIEW IMAGE
-const reader = new FileReader()
+    const file = e.target.files[0]
+    if(!file) return
 
-reader.onload = function(ev){
+    selectedImageFile = file
 
-const block = document.querySelector("[onclick='selectProductImage()']")
+    // 🔥 PREVIEW IMAGE
+    const reader = new FileReader()
 
-if(block){
+    reader.onload = function(ev){
 
-block.innerHTML = `
-<img src="${ev.target.result}" style="
-width:50px;
-height:50px;
-border-radius:12px;
-object-fit:cover;
-">
+      const block = document.querySelector("[onclick='selectProductImage()']")
 
-<div>
-<div style="font-weight:600;">Rasm tanlandi</div>
-<div style="font-size:12px;color:#64748b;">
-O'zgartirish uchun bosing
-</div>
-</div>
-`
+      if(block){
 
-}
+        block.innerHTML = `
+        <img src="${ev.target.result}" style="
+        width:50px;
+        height:50px;
+        border-radius:12px;
+        object-fit:cover;
+        ">
 
-}
+        <div>
+          <div style="font-weight:600;">Rasm tanlandi</div>
+          <div style="font-size:12px;color:#64748b;">
+          O'zgartirish uchun bosing
+          </div>
+        </div>
+        `
+      }
 
-reader.readAsDataURL(file)
+    }
 
-}
+    reader.readAsDataURL(file)
 
-input.click()
+  }
+
+  input.click()
 }
 async function saveAndGoBack(){
   await addStock()
