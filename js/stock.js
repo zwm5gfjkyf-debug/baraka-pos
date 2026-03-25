@@ -203,52 +203,46 @@ function loadCurrentStock(){
        const div = document.createElement("div")
 div.className = "stock-row-item"
 
-// ✅ safer values
-const image = p.image 
-  ? `<img src="${p.image}" class="product-img-tag">`
-  : `<div class="product-placeholder">📦</div>`
-
-const name = p.name || "Noma'lum"
-const price = formatMoney(p.price || 0)
-const unit = p.unit || "dona"
-const barcode = p.barcode || "-"
-
 div.innerHTML = `
-  <div class="stock-card">
+  <!-- LEFT IMAGE -->
+  <div class="product-img">
+    ${p.image 
+      ? `<img src="${p.image}" class="product-img-tag">`
+      : `<div class="product-placeholder">📦</div>`
+    }
+  </div>
 
-    <!-- IMAGE -->
-    <div class="product-img">
-      ${image}
+  <!-- CENTER INFO -->
+  <div class="stock-info">
+
+    <div class="stock-name">
+      ${p.name || "Noma'lum"}
     </div>
 
-    <!-- INFO -->
-    <div class="stock-info">
-
-      <div class="stock-name">${name}</div>
-
-      <div class="stock-price">
-        ${price} so'm
-      </div>
-
-      <div class="stock-meta">
-        ${unit} • ${barcode}
-      </div>
-
-      <div class="stock-badge">
-        ${getStockBadge(p.stock || 0)}
-      </div>
-
+    <div class="stock-price">
+      ${formatMoney(p.price || 0)} UZS
     </div>
 
-    <!-- ACTIONS -->
-    <div class="stock-actions">
-      <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
-        ⋮
-      </button>
+    <div class="stock-meta">
+      ${p.unit || "dona"} / ${p.artikul || "-"} / ${p.barcode || "-"}
     </div>
 
   </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="stock-right">
+
+    <div class="stock-qty">
+      ${p.stock || 0} dona
+    </div>
+
+    <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
+      ⋮
+    </button>
+
+  </div>
 `
+
 
 // ✅ FAST append
 fragment.appendChild(div)
