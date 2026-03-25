@@ -50,3 +50,12 @@ if(pageId === "analyticsPage"){
 }
 
 }
+const actions = document.getElementById("addProductActions")
+
+if(actions){
+  if(pageId === "addProductPage"){
+    actions.style.display = "flex"
+  } else {
+    actions.style.display = "none"
+  }
+}
