@@ -1206,14 +1206,10 @@ SUBTLE PULSE (OPTIONAL)
 
 
 #currentStockList{
-
 display:flex;
 flex-direction:column;
-
-gap:12px;
-
+gap:0;
 margin-top:10px;
-
 }
 
 .stock-title{
@@ -1596,20 +1592,10 @@ align-items:center;
 #stockSearch{
 flex:1;
 min-width:180px;
-
 padding:12px 14px;
-
 border-radius:12px;
-
-background:rgba(255,255,255,0.06);
-
-border:1px solid rgba(255,255,255,0.1);
-
-color:white;
-
 font-size:14px;
 }
-
 .modal{
 position:fixed;
 top:0;
@@ -4042,4 +4028,69 @@ input[type=number]::-webkit-outer-spin-button{
 
 input[type=number]{
   -moz-appearance: textfield;
+}
+/* =========================================
+NEW STOCK UI (ZAXIRA PAGE CLEAN DESIGN)
+========================================= */
+
+/* TABS */
+.stock-tab{
+  padding:6px 14px;
+  border-radius:999px;
+  background:#e2e8f0;
+  border:none;
+  font-size:13px;
+  color:#334155;
+  white-space:nowrap;
+  transition:0.2s;
+}
+
+.stock-tab.active{
+  background:#2563eb;
+  color:white;
+}
+
+/* ADD BUTTON */
+.add-btn{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:#2563eb;
+  color:white;
+  border:none;
+  font-size:22px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* SEARCH INPUT (override old messy styles) */
+#stockSearch{
+  background:#ffffff !important;
+  border:1px solid #e5e7eb !important;
+  color:#0f172a !important;
+}
+
+/* LIST ITEM DIVIDER STYLE */
+.stock-row-item{
+  padding:12px 0;
+  border-bottom:1px solid #e5e7eb;
+}
+
+/* DARK MODE FIX */
+body:not(.light-mode) .stock-tab{
+  background:#1e293b;
+  color:#cbd5f5;
+}
+
+body:not(.light-mode) .stock-tab.active{
+  background:#3b82f6;
+  color:white;
+}
+
+body:not(.light-mode) #stockSearch{
+  background:#0f172a !important;
+  border:1px solid #1e293b !important;
+  color:white !important;
 }
