@@ -48,7 +48,12 @@ imageUrl = await ref.getDownloadURL()
 
 }catch(e){
 
-console.log("Image upload error:", e)
+console.error("IMAGE UPLOAD ERROR:", e)
+
+// 🔥 IMPORTANT: DON'T STOP PRODUCT SAVE
+imageUrl = ""
+
+}
 
 }
 }
@@ -117,7 +122,7 @@ unit: unit || freshData.unit
 }
 
 showTopBanner("Zaxira yangilandi", "success")
-
+loadCurrentStock()
 }catch(e){
 
 showTopBanner("Xatolik yuz berdi", "error")
