@@ -2738,8 +2738,7 @@ body.light-mode #currentStockList{
 
 display:flex;
 flex-direction:column;
-gap:14px;
-
+gap:0;
 }
 
 /* =====================================================
@@ -4111,7 +4110,17 @@ body:not(.light-mode) .stock-tab.active{
   background:#3b82f6;
   color:white;
 }
+.stock-row-item{
+  padding:12px 0;
+  border-bottom:1px solid rgba(0,0,0,0.05);
+}
 
+body:not(.light-mode) .stock-row-item{
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.stock-row-item:first-child{
+  border-top:1px solid rgba(0,0,0,0.05);
+}
 body:not(.light-mode) #stockSearch{
   background:#0f172a !important;
   border:1px solid #1e293b !important;
