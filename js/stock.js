@@ -129,45 +129,65 @@ div.className = "stock-card";
 
 div.innerHTML = `
 
-<div class="stock-header" style="display:flex; justify-content:space-between; align-items:center;">
-  <b style="font-size:15px;">${p.name}</b>
+<div style="
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+">
+  <b style="font-size:15px; letter-spacing:0.3px;">${p.name}</b>
 
   <button onclick="openEditModal('${doc.id}')" style="
-    background:none;
+    background:rgba(255,255,255,0.05);
     border:none;
-    font-size:18px;
+    border-radius:8px;
+    padding:6px;
+    font-size:14px;
     cursor:pointer;
   ">✏️</button>
 </div>
 
-<!-- STATS SIDE BY SIDE -->
+<!-- STATS -->
 <div style="
   display:flex;
   justify-content:space-between;
-  margin-top:8px;
-  font-size:13px;
+  text-align:center;
+  margin-top:6px;
 ">
 
-  <div style="text-align:center;">
-    <div style="opacity:0.7;">Miqdor</div>
-    <strong>${p.stock || 0}</strong>
+  <div style="flex:1;">
+    <div style="font-size:11px; opacity:0.6;">Miqdor</div>
+    <div style="font-size:15px; font-weight:600;">${p.stock || 0}</div>
   </div>
 
-  <div style="text-align:center;">
-    <div style="opacity:0.7;">Kelgan</div>
-    <strong>${formatMoney(p.cost || 0)}</strong>
+  <div style="flex:1;">
+    <div style="font-size:11px; opacity:0.6;">Kelgan</div>
+    <div style="font-size:14px; font-weight:500;">
+      ${formatMoney(p.cost || 0)}
+    </div>
   </div>
 
-  <div style="text-align:center;">
-    <div style="opacity:0.7;">Sotish</div>
-    <strong>${formatMoney(p.price || 0)}</strong>
+  <div style="flex:1;">
+    <div style="font-size:11px; opacity:0.6;">Sotish</div>
+    <div style="font-size:14px; font-weight:500;">
+      ${formatMoney(p.price || 0)}
+    </div>
   </div>
 
 </div>
 
+<!-- DIVIDER -->
 <div style="
-  margin-top:10px;
+  height:1px;
+  background:rgba(255,255,255,0.08);
+  margin:10px 0 6px 0;
+"></div>
+
+<!-- BARCODE NUMBER -->
+<div style="
   text-align:center;
+  font-family:monospace;
+  letter-spacing:3px;
   font-size:13px;
   opacity:0.8;
 ">
