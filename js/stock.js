@@ -128,44 +128,58 @@ if(p.deleted === true) return
 div.className = "stock-card";
 
 div.innerHTML = `
-<div class="stock-header">
-<b>${p.name}</b>
-<span class="barcode">${p.barcode || ""}</span>
+
+<div class="stock-header" style="display:flex; justify-content:space-between; align-items:center;">
+  <b style="font-size:15px;">${p.name}</b>
+
+  <button onclick="openEditModal('${doc.id}')" style="
+    background:none;
+    border:none;
+    font-size:18px;
+    cursor:pointer;
+  ">✏️</button>
 </div>
 
-<div class="stock-stats">
+<!-- STATS SIDE BY SIDE -->
+<div style="
+  display:flex;
+  justify-content:space-between;
+  margin-top:8px;
+  font-size:13px;
+">
 
-<div class="stock-stat">
-<span>Miqdor</span>
-<strong>${p.stock || 0}</strong>
-</div>
+  <div style="text-align:center;">
+    <div style="opacity:0.7;">Miqdor</div>
+    <strong>${p.stock || 0}</strong>
+  </div>
 
-<div class="stock-stat">
-<span>Kelgan</span>
-<strong>${formatMoney(p.cost || 0)}</strong>
-</div>
+  <div style="text-align:center;">
+    <div style="opacity:0.7;">Kelgan</div>
+    <strong>${formatMoney(p.cost || 0)}</strong>
+  </div>
 
-<div class="stock-stat">
-<span>Sotish</span>
-<strong>${formatMoney(p.price || 0)}</strong>
-</div>
-
-</div>
-
-<div class="stock-actions">
-
-<button onclick="openEditModal('${doc.id}')">
-Tahrirlash
-</button>
-
-<button onclick="deleteProduct('${doc.id}')" class="danger-btn">
-O'chirish
-</button>
+  <div style="text-align:center;">
+    <div style="opacity:0.7;">Sotish</div>
+    <strong>${formatMoney(p.price || 0)}</strong>
+  </div>
 
 </div>
+
+<!-- BARCODE -->
+<div style="margin-top:10px; text-align:center;">
+  <svg id="barcode-${doc.id}"></svg>
+</div>
+
 `
                 container.appendChild(div);
-
+if(p.barcode){
+  JsBarcode(`#barcode-${doc.id}`, p.barcode, {
+    format: "CODE128",
+    width: 1.5,
+    height: 40,
+    displayValue: false
+  });
+}
             });
 
         });
