@@ -3,7 +3,7 @@
 // ===============================
 
 let productsListener = null;
-
+let stockContainer = null;
 let currentStockFilter = "all"; // all | low | empty
 // ===============================
 // ADD PRODUCT
@@ -165,119 +165,90 @@ function setStockFilter(type){
 }
 function loadCurrentStock(){
 
-    if(productsListener) productsListener();
+  // ✅ SAFE listener cleanup
+  if(typeof productsListener === "function"){
+    productsListener()
+  }
 
-   productsListener = db
-.collection("shops")
-.doc(currentShopId)
-.collection("products")
-.orderBy("created","desc")
-.limit(30)
-.onSnapshot(snapshot => {
+  productsListener = db
+    .collection("shops")
+    .doc(currentShopId)
+    .collection("products")
+    .orderBy("created","desc")
+    .onSnapshot(snapshot => {
 
-const container = document.getElementById("currentStockList");
-if(!container) return
+      // ✅ cache container
+      if(!stockContainer){
+        stockContainer = document.getElementById("currentStockList")
+      }
 
-container.innerHTML = ""   // 🔥 CLEAR OLD ITEMS
+      const container = stockContainer
+      if(!container) return
 
-snapshot.forEach(doc => {
+      // ✅ clear old
+      container.innerHTML = ""
 
-const p = doc.data()
+      // ✅ FAST RENDER (IMPORTANT)
+      const fragment = document.createDocumentFragment()
 
-if(p.deleted === true) return;
+      snapshot.forEach(doc => {
 
-// FILTER
-if(currentStockFilter === "low" && p.stock > 10) return;
-if(currentStockFilter === "empty" && p.stock > 0) return;
-const div = document.createElement("div")
+        const p = doc.data()
+        if(p.deleted === true) return
 
-div.className = "stock-row-item";
+        // ✅ FILTERS
+        if(currentStockFilter === "low" && p.stock > 10) return
+        if(currentStockFilter === "empty" && p.stock > 0) return
 
-div.innerHTML = `
+        const div = document.createElement("div")
+        div.className = "stock-row-item"
 
+        div.innerHTML = `
+          <!-- IMAGE -->
+          <div class="product-img">
+            ${p.image 
+              ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`
+              : "📦"}
+          </div>
 
-  <!-- LEFT IMAGE -->
-  <div style="
-    width:48px;
-    height:48px;
-    border-radius:12px;
-    background:#f1f5f9;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin-right:10px;
-    flex-shrink:0;
-  ">
-    ${p.image 
-? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`
-: "📦"}
-  </div>
+          <!-- INFO -->
+          <div class="stock-info">
+            
+            <div class="stock-name">
+              ${p.name}
+            </div>
 
-  <!-- CENTER INFO -->
-  <div style="flex:1; min-width:0;">
+            <div class="stock-price">
+              ${formatMoney(p.price || 0)} so'm
+            </div>
 
-    <!-- NAME -->
-    <div style="
-      font-weight:600;
-      font-size:15px;
-      color:#0f172a;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    ">
-      ${p.name}
-    </div>
+            <div class="stock-meta">
+              ${p.unit || "dona"} • ${p.barcode || "-"}
+            </div>
 
-    <!-- PRICE -->
-    <div style="
-      font-size:14px;
-      color:#2563eb;
-      font-weight:600;
-      margin-top:2px;
-    ">
-      ${formatMoney(p.price || 0)} so'm
-    </div>
+            ${getStockBadge(p.stock || 0)}
 
-    <!-- SMALL INFO -->
-    <div style="
-      font-size:12px;
-      color:#64748b;
-      margin-top:2px;
-    ">
-${p.unit || "dona"} • ${p.barcode || "-"}
-</div>
+          </div>
 
-  </div>
+          <!-- ACTIONS -->
+          <div class="stock-actions">
+            <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
+              ⋮
+            </button>
+          </div>
+        `
 
-  <!-- RIGHT SIDE -->
-  <div style="
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-left:10px;
-  ">
+        // ✅ append to fragment (FAST)
+        fragment.appendChild(div)
 
+      })
 
-    <!-- 3 DOTS -->
-    <button onclick="openEditModal('${doc.id}')" style="
-      background:none;
-      border:none;
-      font-size:20px;
-      color:#64748b;
-      cursor:pointer;
-    ">
-      ⋮
-    </button>
+      // ✅ render once (VERY FAST)
+      container.appendChild(fragment)
 
-  </div>
+    })
 
-`;
-container.appendChild(div)
-
-})
-
-});
-} // ✅ CLOSE loadCurrentStock FUNCTION
+}
 
 let editingProductId = null
 
@@ -415,7 +386,7 @@ text = text.toLowerCase()
 const cards = Array.from(document.getElementById("currentStockList").children)
 cards.forEach(card => {
 
-const name = card.innerText.toLowerCase()
+const name = card.querySelector(".stock-name")?.innerText.toLowerCase() || ""
 if(name.includes(text)){
 card.style.display = "block"
 }else{
