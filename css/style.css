@@ -662,6 +662,13 @@ cursor:pointer;
 font-size:16px;
 
 }
+.stock-row-item{
+  padding:0 4px;
+}
+
+body:not(.light-mode) .stock-row-item{
+  border-bottom:1px solid #1e293b;
+}
 .qty-number{
 
 min-width:20px;
