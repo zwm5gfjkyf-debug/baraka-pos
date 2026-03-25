@@ -479,20 +479,7 @@ style="margin:15px 0;width:100%">
 <!-- ADD PRODUCT PAGE (FINAL PREMIUM) -->
 <div id="addProductPage" class="page hidden">
 
-<!-- HEADER -->
-<div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:16px;
-">
 
-<button onclick="goBack()" class="btn-secondary">Yopish</button>
-
-<h2 style="font-size:18px; font-weight:600;">Yangi mahsulot</h2>
-
-<button onclick="saveAndGoBack()" class="btn-primary">Saqlash</button>
-</div>
 
 <!-- IMAGE UPLOAD -->
 <div onclick="selectProductImage()" style="
@@ -526,7 +513,7 @@ flex-shrink:0;
 Mahsulot fotosuratini yuklang
 </div>
 <div style="font-size:12px; color:#64748b;">
-JPG yoki PNG
+Format: JPG yoki PNG
 </div>
 </div>
 
@@ -555,24 +542,24 @@ Asosiy parametrlar
     style="padding-right:90px;"
   >
   
-  <button 
-    onclick="generateArtikul()" 
-    style="
-    position:absolute;
-    right:6px;
-    top:50%;
-    transform:translateY(-50%);
-    border:none;
-    background:#e0edff;
-    color:#2563eb;
-    padding:6px 10px;
-    border-radius:8px;
-    font-size:12px;
-    font-weight:600;
-    cursor:pointer;
-    ">
-    Yaratish
-  </button>
+ <button 
+  onclick="generateArtikul()" 
+  style="
+  position:absolute;
+  right:8px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:transparent;
+  color:#2563eb;
+  padding:8px 12px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  ">
+  Yaratish
+</button>
 </div>
 
 <!-- BARCODE -->
@@ -666,8 +653,48 @@ color:#22c55e;
 "></div>
 
 </div>
+<!-- ✅ PASTE HERE -->
+<div style="
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:white;
+padding:12px;
+display:flex;
+gap:10px;
+box-shadow:0 -5px 20px rgba(0,0,0,0.08);
+z-index:50;
+">
+
+<button onclick="goBack()" style="
+flex:1;
+padding:14px;
+border-radius:12px;
+border:none;
+background:#f1f5f9;
+font-weight:600;
+">
+Yopish
+</button>
+
+<button onclick="saveAndGoBack()" style="
+flex:1;
+padding:14px;
+border-radius:12px;
+border:none;
+background:#2563eb;
+color:white;
+font-weight:600;
+">
+Saqlash
+</button>
 
 </div>
+
+</div> <!-- addProductPage END -->
+</div>
+  
 </main>
 
 <!-- TEZKOR QIDIRUV BUTTON -->
