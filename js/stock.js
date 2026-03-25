@@ -198,8 +198,8 @@ div.innerHTML = `
       color:#64748b;
       margin-top:2px;
     ">
-      ${p.stock || 0} dona / ${p.barcode || "-"}
-    </div>
+${p.stock || 0} dona • ${p.barcode || "-"}
+</div>
 
   </div>
 
@@ -211,8 +211,6 @@ div.innerHTML = `
     margin-left:10px;
   ">
 
-    <!-- STOCK BADGE -->
-    ${getStockBadge(p.stock)}
 
     <!-- 3 DOTS -->
     <button onclick="openEditModal('${doc.id}')" style="
