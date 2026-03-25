@@ -180,7 +180,14 @@ backdrop-filter:blur(12px);
 border-bottom:1px solid var(--border);
 
 }
+/* DESKTOP MODE */
+@media (min-width: 768px){
 
+  .desktop-row{
+    display:flex !important;
+  }
+
+}
 /* =========================================
 SHOP TITLE
 ========================================= */
