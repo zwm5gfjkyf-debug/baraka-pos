@@ -29,44 +29,41 @@ let cost = Number((document.getElementById("stockCost")?.value || "0").replace(/
 const currencyEl = document.getElementById("currencySelect")
 const currency = currencyEl ? currencyEl.value : "UZS"
 const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
-  // 🔥 IMAGE UPLOAD
+
+if(!name || price <= 0){
+  showTopBanner("Mahsulot nomi va narx kerak","error")
+  stockProcessing = false
+  return
+}
 let imageUrl = ""
 
 if(selectedImageFile){
+  try{
 
-try{
+    const fileName = Date.now() + "_" + selectedImageFile.name
 
-const fileName = Date.now() + "_" + selectedImageFile.name
+    const ref = storage
+      .ref()
+      .child("products/" + currentShopId + "/" + fileName)
 
-const ref = storage
-.ref()
-.child("products/" + currentShopId + "/" + fileName)
+    await ref.put(selectedImageFile)
 
-await ref.put(selectedImageFile)
+    imageUrl = await ref.getDownloadURL()
 
-imageUrl = await ref.getDownloadURL()
+  }catch(e){
 
-}catch(e){
+    console.error("IMAGE UPLOAD ERROR:", e)
+    imageUrl = ""
 
-console.error("IMAGE UPLOAD ERROR:", e)
-
-// 🔥 IMPORTANT: DON'T STOP PRODUCT SAVE
-imageUrl = ""
-
+  }
 }
 
-}
-}
   // 💱 USD → UZS conversion (simple fast rate)
 if(currency === "USD"){
   const rate = 12500 // later we can make dynamic
   cost = Math.round(cost * rate)
 }
-if(!name || price <= 0){
-showTopBanner("Mahsulot nomi va narx kerak","error")
-stockProcessing = false
-return
-}
+
 
 const productsRef = db
 .collection("shops")
@@ -121,12 +118,12 @@ unit: unit || freshData.unit
 })
 }
 
-showTopBanner("Zaxira yangilandi", "success")
+showTopBanner("Zaxira yangilandi", "success") 
 loadCurrentStock()
 }catch(e){
 
+console.error("SAVE ERROR:", e)
 showTopBanner("Xatolik yuz berdi", "error")
-
 }
 
 document.getElementById("stockName").value = ""
@@ -137,6 +134,7 @@ document.getElementById("stockCost").value = ""
 document.getElementById("stockSellingPrice").value = ""
 const preview = document.getElementById("profitPreview")
 if(preview) preview.innerText = ""
+  selectedImageFile = null
 }
 finally{
 
