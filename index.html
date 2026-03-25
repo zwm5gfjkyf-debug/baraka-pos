@@ -302,7 +302,7 @@ margin-bottom:10px;
 <input
 id="stockSearch"
 placeholder="🔍 Mahsulot qidirish..."
-oninput="filterStock(this.value)"
+oninput="filterStock(this.value)" 
 style="flex:1;"
 class="search-input"
 >
@@ -698,7 +698,7 @@ z-index: 20;
 
 <!-- NAVIGATION -->
 
-<nav class="bottom-nav glass" style="display:none;">
+<nav class="bottom-nav glass">
 <button onclick="navigate('dashboardPage')" class="active">
 Asosiy
 </button>
@@ -719,7 +719,7 @@ Tahlil
 </nav>
 <div id="addProductActions" style="
 position:fixed;
-bottom:0;
+bottom:70px;
 left:0;
 width:100%;
 background:white;
@@ -729,7 +729,6 @@ gap:10px;
 box-shadow:0 -5px 20px rgba(0,0,0,0.08);
 z-index:9999;
 ">
-
 <button onclick="goBack()" style="
 flex:1;
 padding:14px;
