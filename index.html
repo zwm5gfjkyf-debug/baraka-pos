@@ -983,3 +983,14 @@ document.addEventListener("visibilitychange", () => {
   }
 })
 </script>
+<script>
+setTimeout(() => {
+  const actions = document.getElementById("addProductActions");
+  if(actions){
+    actions.style.display = "flex";
+    console.log("✅ ACTIONS FORCED VISIBLE");
+  } else {
+    console.log("❌ NOT FOUND");
+  }
+}, 1000);
+</script>
