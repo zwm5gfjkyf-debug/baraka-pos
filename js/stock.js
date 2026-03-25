@@ -625,9 +625,10 @@ reader.readAsDataURL(file)
 input.click()
 }
 async function saveAndGoBack(){
-
-await addStock()
-
-navigate('stockPage')
-
+  await addStock()
+  goBack()
+}
+async function confirmSaveWithLabel(){
+  await addStock()
+  closeLabelPreview()
 }
