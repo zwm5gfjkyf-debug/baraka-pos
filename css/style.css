@@ -110,7 +110,7 @@ CONTAINER
 
 .main-content{
 padding:6px;
-padding-bottom:110px;
+padding-bottom:180px; /* 🔥 MORE SPACE */
 width:100%;
 }
 .stock-card {
@@ -4268,4 +4268,16 @@ body.light-mode .stock-row-item:hover{
 
 body.light-mode .stock-row-item:hover{
   background:#f8fafc;
+}
+#addProductActions{
+  position: fixed;
+  bottom: 70px; /* 🔥 THIS IS THE FIX */
+  left: 0;
+  width: 100%;
+  background: white;
+  padding: 12px; 
+  display: none;
+  gap: 10px;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+  z-index: 10000; /* 🔥 ABOVE EVERYTHING */
 }
