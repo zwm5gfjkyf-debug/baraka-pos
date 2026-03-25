@@ -38,26 +38,30 @@ if(!name || price <= 0){
 let imageUrl = ""
 
 if(selectedImageFile){
+
   try{
 
-    const fileName = Date.now() + "_" + selectedImageFile.name
+    const formData = new FormData()
+    formData.append("file", selectedImageFile)
+    formData.append("upload_preset", "unsigned_upload")
 
-    const ref = storage
-      .ref()
-      .child("products/" + currentShopId + "/" + fileName)
+    const res = await fetch("https://api.cloudinary.com/v1_1/dii93l98n/image/upload", {
+      method: "POST",
+      body: formData
+    })
 
-    await ref.put(selectedImageFile)
+    const data = await res.json()
 
-    imageUrl = await ref.getDownloadURL()
+    imageUrl = data.secure_url
 
   }catch(e){
 
-    console.error("IMAGE UPLOAD ERROR:", e)
+    console.error("CLOUDINARY ERROR:", e)
     imageUrl = ""
 
   }
-}
 
+}
   // 💱 USD → UZS conversion (simple fast rate)
 if(currency === "USD"){
   const rate = 12500 // later we can make dynamic
