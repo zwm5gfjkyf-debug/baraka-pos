@@ -584,17 +584,23 @@ input.value = artikul
 let selectedImageFile = null
 
 function selectProductImage(){
+  document.getElementById("imagePickerModal").classList.remove("hidden")
+}
 
-  // 🔥 ASK USER
-  const useCamera = confirm("Kamera orqali rasm olasizmi?\nOK = Kamera\nCancel = Galereya")
+function closeImagePicker(){
+  document.getElementById("imagePickerModal").classList.add("hidden")
+}
+
+function pickImage(type){
+
+  closeImagePicker()
 
   const input = document.createElement("input")
   input.type = "file"
   input.accept = "image/*"
 
-  // 📷 CAMERA
-  if(useCamera){
-    input.setAttribute("capture", "environment")
+  if(type === "camera"){
+    input.setAttribute("capture","environment")
   }
 
   input.onchange = (e) => {
@@ -604,7 +610,6 @@ function selectProductImage(){
 
     selectedImageFile = file
 
-    // 🔥 PREVIEW IMAGE
     const reader = new FileReader()
 
     reader.onload = function(ev){
