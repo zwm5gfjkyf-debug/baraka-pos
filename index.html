@@ -476,69 +476,152 @@ style="margin:15px 0;width:100%">
 </div>
 
 </div>
-<!-- ADD PRODUCT FULL PAGE -->
+<!-- ADD PRODUCT PAGE (FINAL PREMIUM) -->
 <div id="addProductPage" class="page hidden">
 
-<h2 class="page-title">Yangi mahsulot qo'shish</h2>
+<!-- HEADER -->
+<div style="
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:16px;
+">
 
-<div class="dashboard-card glass form-container">
+<button onclick="goBack()" class="btn-secondary">Yopish</button>
+
+<h2 style="font-size:18px; font-weight:600;">Yangi mahsulot</h2>
+
+<button onclick="addStock(); goBack()" class="btn-primary">Saqlash</button>
+
+</div>
+
+<!-- IMAGE UPLOAD -->
+<div onclick="selectProductImage()" style="
+background:#f1f5f9;
+border-radius:16px;
+padding:16px;
+display:flex;
+align-items:center;
+gap:14px;
+margin-bottom:16px;
+cursor:pointer;
+">
+
+<div style="
+width:50px;
+height:50px;
+border-radius:12px;
+background:#e2e8f0;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+color:#2563eb;
+flex-shrink:0;
+">
++
+</div>
+
+<div>
+<div style="font-weight:600; color:#2563eb;">
+Mahsulot fotosuratini yuklang
+</div>
+<div style="font-size:12px; color:#64748b;">
+JPG yoki PNG
+</div>
+</div>
+
+</div>
+
+<!-- ASOSIY PARAMETRLAR -->
+<div style="
+background:white;
+border-radius:16px;
+padding:16px;
+margin-bottom:16px;
+">
+
+<div style="font-weight:600; margin-bottom:12px;">
+Asosiy parametrlar
+</div>
 
 <!-- NAME -->
-<div class="form-group">
-<label>Mahsulot nomi</label>
-<input id="stockName">
+<input id="stockName" placeholder="Tovar nomi" style="margin-bottom:10px;">
+
+<!-- ARTIKUL -->
+<div style="display:flex; gap:8px; margin-bottom:10px;">
+<input id="stockArtikul" placeholder="Artikul">
+<button onclick="generateArtikul()" class="btn-secondary">Yaratish</button>
 </div>
 
 <!-- BARCODE -->
-<div class="form-group">
-<label>Barcode</label>
-
-<div class="input-row">
-<input id="stockBarcode">
-<button onclick="generateBarcode()" class="barcode-btn">+</button>
-</div>
+<div style="display:flex; gap:8px; margin-bottom:10px;">
+<input id="stockBarcode" placeholder="Barkod">
+<button onclick="generateBarcode()" class="btn-secondary">Yaratish</button>
 </div>
 
-<!-- QTY -->
-<div class="form-group">
-<label>Miqdor</label>
-<input id="stockQty" type="number">
+<!-- UNIT -->
+<input id="stockUnit" placeholder="O'lchov birligi (dona, kg, metr...)">
+
 </div>
 
-<!-- COST -->
-<div class="form-group">
-<label>Kelgan narx</label>
-<input id="stockCost" oninput="formatNumberInput(this); updateProfitPreview()" placeholder="Kelgan narx">
+<!-- NARXLAR -->
+<div style="
+background:white;
+border-radius:16px;
+padding:16px;
+">
+
+<div style="font-weight:600; margin-bottom:12px;">
+Narxlari
+</div>
+
+<!-- COST + CURRENCY -->
+<div style="display:flex; gap:8px; margin-bottom:10px;">
+<input 
+  id="stockCost" 
+  placeholder="Kelish narxi"
+  oninput="updateProfitPreview()"
+>
+
+<select id="currencySelect" style="
+width:90px;
+border-radius:12px;
+border:1px solid #e5e7eb;
+padding:0 8px;
+">
+<option value="UZS">UZS</option>
+<option value="USD">USD</option>
+</select>
 </div>
 
 <!-- PROFIT BUTTONS -->
-<div class="profit-buttons">
-<button onclick="setProfit(10)">10%</button>
-<button onclick="setProfit(15)">15%</button>
-<button onclick="setProfit(20)">20%</button>
-<button onclick="setProfit(25)">25%</button>
-<button onclick="setProfit(30)">30%</button>
-</div>
-<!-- SELLING PRICE -->
-<div class="form-group">
-<label>Sotish narxi</label>
-<input id="stockSellingPrice" oninput="formatNumberInput(this); updateProfitPreview()" placeholder="Sotish narxi">
-<!-- 🔥 AUTO PROFIT % -->
-<div id="profitPreview" class="profit-preview"></div>
+<div style="
+display:flex;
+gap:6px;
+margin-bottom:10px;
+flex-wrap:wrap;
+">
+<button onclick="setProfit(10)" class="btn-secondary">10%</button>
+<button onclick="setProfit(15)" class="btn-secondary">15%</button>
+<button onclick="setProfit(20)" class="btn-secondary">20%</button>
+<button onclick="setProfit(25)" class="btn-secondary">25%</button>
+<button onclick="setProfit(30)" class="btn-secondary">30%</button>
 </div>
 
-<!-- BUTTONS -->
-<div class="form-actions">
+<!-- SELL PRICE -->
+<input 
+  id="stockSellingPrice" 
+  placeholder="Sotuv narxi"
+  oninput="updateProfitPreview()"
+>
 
-<button onclick="openLabelPreview()" class="btn-primary">
-Saqlash va Chop Etish
-</button>
-
-<button onclick="addStock(); navigate('stockPage')" class="btn-secondary">
-Faqat saqlash
-</button>
-
-</div>
+<!-- PROFIT PREVIEW -->
+<div id="profitPreview" style="
+font-size:12px;
+margin-top:4px;
+color:#22c55e;
+"></div>
 
 </div>
 
