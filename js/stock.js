@@ -549,6 +549,8 @@ input.value = artikul
 }
 
 }
+let selectedImageFile = null
+
 function selectProductImage(){
 
 const input = document.createElement("input")
@@ -556,13 +558,44 @@ input.type = "file"
 input.accept = "image/*"
 
 input.onchange = (e) => {
-  const file = e.target.files[0]
-  if(!file) return
 
-  // later we upload to firebase
-  console.log("Selected image:", file)
+const file = e.target.files[0]
+if(!file) return
+
+selectedImageFile = file
+
+// 🔥 PREVIEW IMAGE
+const reader = new FileReader()
+
+reader.onload = function(ev){
+
+const block = document.querySelector("[onclick='selectProductImage()']")
+
+if(block){
+
+block.innerHTML = `
+<img src="${ev.target.result}" style="
+width:50px;
+height:50px;
+border-radius:12px;
+object-fit:cover;
+">
+
+<div>
+<div style="font-weight:600;">Rasm tanlandi</div>
+<div style="font-size:12px;color:#64748b;">
+O'zgartirish uchun bosing
+</div>
+</div>
+`
+
+}
+
+}
+
+reader.readAsDataURL(file)
+
 }
 
 input.click()
-
 }
