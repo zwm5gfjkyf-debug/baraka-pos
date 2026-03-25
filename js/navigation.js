@@ -11,8 +11,21 @@ function navigate(pageId){
   const page = document.getElementById(pageId);
 
   if(page){
-    page.classList.remove("hidden");
-  }
+  page.classList.remove("hidden");
+
+  // 🔥 FORCE FIX (NO MORE BUGS)
+  setTimeout(() => {
+    const actions = document.getElementById("addProductActions")
+
+    if(actions){
+      if(pageId === "addProductPage"){
+        actions.style.display = "flex"
+      } else {
+        actions.style.display = "none"
+      }
+    }
+  }, 50)
+}
 // CAMERA BUTTON CONTROL
 const cameraBtn = document.getElementById("cameraSaleButton")
 
