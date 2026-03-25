@@ -29,6 +29,22 @@ let cost = Number((document.getElementById("stockCost")?.value || "0").replace(/
 const currency = document.getElementById("currencySelect")?.value || "UZS"
 
 const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
+  // 🔥 IMAGE UPLOAD
+let imageUrl = ""
+
+if(selectedImageFile){
+
+const fileName = Date.now() + "_" + selectedImageFile.name
+
+const ref = storage
+.ref()
+.child("products/" + currentShopId + "/" + fileName)
+
+await ref.put(selectedImageFile)
+
+imageUrl = await ref.getDownloadURL()
+
+}
   // 💱 USD → UZS conversion (simple fast rate)
 if(currency === "USD"){
   const rate = 12500 // later we can make dynamic
@@ -65,7 +81,7 @@ stock: 0,
 
 cost: cost || 0,
 price: price,
-
+image: imageUrl || "",
 created: Date.now()
 })
 
@@ -178,7 +194,9 @@ div.innerHTML = `
     margin-right:10px;
     flex-shrink:0;
   ">
-    📦
+    ${p.image 
+? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`
+: "📦"}
   </div>
 
   <!-- CENTER INFO -->
