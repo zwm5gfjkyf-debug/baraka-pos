@@ -200,47 +200,58 @@ function loadCurrentStock(){
         if(currentStockFilter === "low" && p.stock > 10) return
         if(currentStockFilter === "empty" && p.stock > 0) return
 
-        const div = document.createElement("div")
-        div.className = "stock-row-item"
+       const div = document.createElement("div")
+div.className = "stock-row-item"
 
-        div.innerHTML = `
-          <!-- IMAGE -->
-          <div class="product-img">
-            ${p.image 
-              ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`
-              : "📦"}
-          </div>
+// ✅ safer values
+const image = p.image 
+  ? `<img src="${p.image}" class="product-img-tag">`
+  : `<div class="product-placeholder">📦</div>`
 
-          <!-- INFO -->
-          <div class="stock-info">
-            
-            <div class="stock-name">
-              ${p.name}
-            </div>
+const name = p.name || "Noma'lum"
+const price = formatMoney(p.price || 0)
+const unit = p.unit || "dona"
+const barcode = p.barcode || "-"
 
-            <div class="stock-price">
-              ${formatMoney(p.price || 0)} so'm
-            </div>
+div.innerHTML = `
+  <div class="stock-card">
 
-            <div class="stock-meta">
-              ${p.unit || "dona"} • ${p.barcode || "-"}
-            </div>
+    <!-- IMAGE -->
+    <div class="product-img">
+      ${image}
+    </div>
 
-            ${getStockBadge(p.stock || 0)}
+    <!-- INFO -->
+    <div class="stock-info">
 
-          </div>
+      <div class="stock-name">${name}</div>
 
-          <!-- ACTIONS -->
-          <div class="stock-actions">
-            <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
-              ⋮
-            </button>
-          </div>
-        `
+      <div class="stock-price">
+        ${price} so'm
+      </div>
 
-        // ✅ append to fragment (FAST)
-        fragment.appendChild(div)
+      <div class="stock-meta">
+        ${unit} • ${barcode}
+      </div>
 
+      <div class="stock-badge">
+        ${getStockBadge(p.stock || 0)}
+      </div>
+
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="stock-actions">
+      <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
+        ⋮
+      </button>
+    </div>
+
+  </div>
+`
+
+// ✅ FAST append
+fragment.appendChild(div)
       })
 
       // ✅ render once (VERY FAST)
