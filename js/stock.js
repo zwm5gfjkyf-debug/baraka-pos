@@ -144,83 +144,86 @@ const div = document.createElement("div")
 div.className = "stock-row-item";
 
 div.innerHTML = `
+<div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 0;
+  border-bottom:1px solid #e5e7eb;
+">
 
-<!-- MOBILE -->
-<div class="mobile-view">
+  <!-- LEFT IMAGE -->
+  <div style="
+    width:48px;
+    height:48px;
+    border-radius:12px;
+    background:#f1f5f9;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-right:10px;
+    flex-shrink:0;
+  ">
+    📦
+  </div>
 
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-    
-    <div>
-      <div style="font-size:16px; font-weight:600;">
-        ${p.name}
-      </div>
-      <div style="font-size:12px; color:#64748b;">
-        ${p.barcode || ""}
-      </div>
+  <!-- CENTER INFO -->
+  <div style="flex:1; min-width:0;">
+
+    <!-- NAME -->
+    <div style="
+      font-weight:600;
+      font-size:15px;
+      color:#0f172a;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    ">
+      ${p.name}
     </div>
 
-    ${getStockBadge(p.stock)}
+    <!-- PRICE -->
+    <div style="
+      font-size:14px;
+      color:#2563eb;
+      font-weight:600;
+      margin-top:2px;
+    ">
+      ${formatMoney(p.price || 0)} so'm
+    </div>
+
+    <!-- SMALL INFO -->
+    <div style="
+      font-size:12px;
+      color:#64748b;
+      margin-top:2px;
+    ">
+      ${p.stock || 0} dona / ${p.barcode || "-"}
+    </div>
 
   </div>
 
-  <!-- SAFE GRID -->
+  <!-- RIGHT SIDE -->
   <div style="
-    display:grid;
-    grid-template-columns:1fr 1fr;
+    display:flex;
+    align-items:center;
     gap:10px;
-    margin-top:10px;
+    margin-left:10px;
   ">
 
-    <div>
-      <div style="font-size:11px; color:#64748b;">Kirim</div>
-      <div style="font-family:monospace;">
-        ${formatMoney(p.cost || 0)}&nbsp;so'm
-      </div>
-    </div>
+    <!-- STOCK BADGE -->
+    ${getStockBadge(p.stock)}
 
-    <div>
-      <div style="font-size:11px; color:#64748b;">Sotuv</div>
-      <div style="font-family:monospace;">
-        ${formatMoney(p.price || 0)}&nbsp;so'm
-      </div>
-    </div>
-
-    <div>
-      <div style="font-size:11px; color:#64748b;">Foyda</div>
-      <div style="font-family:monospace; color:#22c55e;">
-        +${formatMoney((p.price||0)-(p.cost||0))}&nbsp;so'm
-      </div>
-    </div>
-
-  </div>
-
-</div>
-
-<!-- DESKTOP -->
-<div class="desktop-row">
-
-  <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-
-    <div style="flex:2;">
-      <div style="font-weight:600;">${p.name}</div>
-      <div style="font-size:12px; color:#64748b;">${p.barcode || ""}</div>
-    </div>
-
-    <div style="flex:1; text-align:right; font-family:monospace;">
-      ${formatMoney(p.cost || 0)}
-    </div>
-
-    <div style="flex:1; text-align:right; font-family:monospace;">
-      ${formatMoney(p.price || 0)}
-    </div>
-
-    <div style="flex:1; text-align:right; color:#22c55e; font-family:monospace;">
-      +${formatMoney((p.price||0)-(p.cost||0))}
-    </div>
-
-    <div style="margin-left:10px;">
-      ${getStockBadge(p.stock)}
-    </div>
+    <!-- 3 DOTS -->
+    <button onclick="openEditModal('${doc.id}')" style="
+      background:none;
+      border:none;
+      font-size:20px;
+      color:#64748b;
+      cursor:pointer;
+    ">
+      ⋮
+    </button>
 
   </div>
 
@@ -369,7 +372,7 @@ text = text.toLowerCase()
 const cards = Array.from(document.getElementById("currentStockList").children)
 cards.forEach(card => {
 
-const name = card.querySelector("b").innerText.toLowerCase()
+const name = card.innerText.toLowerCase()
 if(name.includes(text)){
 card.style.display = "block"
 }else{
@@ -512,11 +515,11 @@ else if(stock <= 10) color = "#f59e0b"
 return `
 <span style="
   background:${color};
-  color:black;
+  color:white;
   padding:4px 10px;
   border-radius:999px;
   font-size:12px;
-  font-weight:500;
+  font-weight:600;
 ">
   ${stock} dona
 </span>
