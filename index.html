@@ -548,24 +548,68 @@ Asosiy parametrlar
 <input id="stockName" placeholder="Tovar nomi" style="margin-bottom:10px;">
 
 <!-- ARTIKUL -->
-<div style="display:flex; gap:8px; margin-bottom:10px;">
-<input id="stockArtikul" placeholder="Artikul">
-<button onclick="generateArtikul()" class="btn-secondary">Yaratish</button>
+<div style="position:relative; margin-bottom:10px;">
+  <input 
+    id="stockArtikul" 
+    placeholder="Artikul"
+    style="padding-right:90px;"
+  >
+  
+  <button 
+    onclick="generateArtikul()" 
+    style="
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+    border:none;
+    background:#e0edff;
+    color:#2563eb;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    ">
+    Yaratish
+  </button>
 </div>
 
 <!-- BARCODE -->
-<div style="display:flex; gap:8px; margin-bottom:10px;">
-<input id="stockBarcode" placeholder="Barkod">
-<button onclick="generateBarcode()" class="btn-secondary">Yaratish</button>
+<div style="position:relative; margin-bottom:10px;">
+  <input 
+    id="stockBarcode" 
+    placeholder="Barkod"
+    style="padding-right:90px;"
+  >
+  
+  <button 
+    onclick="generateBarcode()" 
+    style="
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+    border:none;
+    background:#e0edff;
+    color:#2563eb;
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    ">
+    Yaratish
+  </button>
 </div>
 
 <!-- UNIT -->
-<input id="stockUnit" placeholder="O'lchov birligi (dona, kg, metr...)">
+<input id="stockUnit" placeholder="O'lchov birligi (dona, kg, metr...)" style="margin-top:6px;">
 
 </div>
 
 <!-- NARXLAR -->
-<div style="
+<div style=" 
 background:white;
 border-radius:16px;
 padding:16px;
@@ -574,7 +618,6 @@ padding:16px;
 <div style="font-weight:600; margin-bottom:12px;">
 Narxlari
 </div>
-
 <!-- COST + CURRENCY -->
 <div style="display:flex; gap:8px; margin-bottom:10px;">
 <input 
