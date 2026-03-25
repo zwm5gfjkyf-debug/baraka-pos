@@ -113,24 +113,32 @@ function loadCurrentStock(){
 .limit(30)
 .onSnapshot(snapshot => {
 
-           const container = document.getElementById("currentStockList");
+const container = document.getElementById("currentStockList");
 if(!container) return
 
-div.innerHTML = `
+container.innerHTML = ""   // 🔥 CLEAR OLD ITEMS
 
+snapshot.forEach(doc => {
+
+const p = doc.data()
+
+if(p.deleted === true) return
+
+const div = document.createElement("div")
+
+div.innerHTML = `
 <div style="
   padding:12px;
   border-bottom:1px solid #1e293b;
 ">
 
-  <!-- TOP: NAME + STOCK -->
+  <!-- TOP -->
   <div style="
     display:flex;
     justify-content:space-between;
     align-items:center;
     margin-bottom:8px;
   ">
-
     <div>
       <div style="font-size:16px; font-weight:600;">
         ${p.name}
@@ -141,10 +149,9 @@ div.innerHTML = `
     </div>
 
     ${getStockBadge(p.stock)}
-
   </div>
 
-  <!-- MOBILE VIEW -->
+  <!-- GRID -->
   <div style="
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -174,40 +181,14 @@ div.innerHTML = `
 
   </div>
 
-  <!-- DESKTOP ROW -->
-  <div class="desktop-row" style="
-    display:none;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:8px;
-  ">
-
-    <div style="flex:2;">${p.name}</div>
-
-    <div style="flex:1; text-align:right; font-family:monospace;">
-      ${formatMoney(p.cost || 0)}
-    </div>
-
-    <div style="flex:1; text-align:right; font-family:monospace;">
-      ${formatMoney(p.price || 0)}
-    </div>
-
-    <div style="flex:1; text-align:right; color:#22c55e; font-family:monospace;">
-      +${formatMoney((p.price || 0) - (p.cost || 0))}
-    </div>
-
-  </div>
-
 </div>
-
 `
-                container.appendChild(div);
 
-            });
+container.appendChild(div)
 
-        });
+})
 
-}
+});
 let editingProductId = null
 
 async function openEditModal(id){
