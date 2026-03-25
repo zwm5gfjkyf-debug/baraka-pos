@@ -11,35 +11,38 @@ function navigate(pageId){
   const page = document.getElementById(pageId);
 
   if(page){
-  page.classList.remove("hidden");
+    page.classList.remove("hidden");
 
-  // 🔥 FORCE FIX (NO MORE BUGS)
-  setTimeout(() => {
-    const actions = document.getElementById("addProductActions")
+    // 🔥 FIX: show/hide bottom buttons (ONLY HERE)
+    setTimeout(() => {
+      const actions = document.getElementById("addProductActions")
 
-    if(actions){
-      if(pageId === "addProductPage"){
-        actions.style.display = "flex"
-      } else {
-        actions.style.display = "none"
+      if(actions){
+        if(pageId === "addProductPage"){
+          actions.style.display = "flex"
+        } else {
+          actions.style.display = "none"
+        }
       }
-    }
-  }, 50)
-}
-// CAMERA BUTTON CONTROL
-const cameraBtn = document.getElementById("cameraSaleButton")
+    }, 50)
+  }
 
-if(typeof updateCamera === "function"){
-  updateCamera()
-}
-const navButtons = document.querySelectorAll(".bottom-nav button");
+  // CAMERA BUTTON CONTROL
+  const cameraBtn = document.getElementById("cameraSaleButton")
 
-navButtons.forEach(btn => btn.classList.remove("active"));
+  if(typeof updateCamera === "function"){
+    updateCamera()
+  }
 
-if(pageId === "dashboardPage") navButtons[0].classList.add("active");
-if(pageId === "salePage") navButtons[1].classList.add("active");
-if(pageId === "stockPage") navButtons[2].classList.add("active");
-if(pageId === "analyticsPage") navButtons[3].classList.add("active");
+  const navButtons = document.querySelectorAll(".bottom-nav button");
+
+  navButtons.forEach(btn => btn.classList.remove("active"));
+
+  if(pageId === "dashboardPage") navButtons[0].classList.add("active");
+  if(pageId === "salePage") navButtons[1].classList.add("active");
+  if(pageId === "stockPage") navButtons[2].classList.add("active");
+  if(pageId === "analyticsPage") navButtons[3].classList.add("active");
+
   if(pageId === "dashboardPage" && typeof loadDashboard === "function"){
     loadDashboard();
   }
@@ -56,19 +59,10 @@ if(pageId === "analyticsPage") navButtons[3].classList.add("active");
     loadCurrentStock();
   }
 
-if(pageId === "analyticsPage"){
-  if(typeof showAnalyticsTab === "function"){
-    showAnalyticsTab("weekly") // default tab
+  if(pageId === "analyticsPage"){
+    if(typeof showAnalyticsTab === "function"){
+      showAnalyticsTab("weekly") // default tab
+    }
   }
-}
-// 🔥 ADD PRODUCT BUTTON CONTROL
-const actions = document.getElementById("addProductActions")
 
-if(actions){
-  if(pageId === "addProductPage"){
-    actions.style.display = "flex"
-  } else {
-    actions.style.display = "none"
-  }
-}
 }
