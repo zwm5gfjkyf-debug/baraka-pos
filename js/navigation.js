@@ -48,8 +48,7 @@ if(pageId === "analyticsPage"){
     showAnalyticsTab("weekly") // default tab
   }
 }
-
-}
+// 🔥 ADD PRODUCT BUTTON CONTROL
 const actions = document.getElementById("addProductActions")
 
 if(actions){
@@ -58,4 +57,5 @@ if(actions){
   } else {
     actions.style.display = "none"
   }
+}
 }
