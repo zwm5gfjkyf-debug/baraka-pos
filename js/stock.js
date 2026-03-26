@@ -63,7 +63,7 @@ if(selectedImageFile){
 }
   // 💱 USD → UZS conversion (simple fast rate)
 if(currency === "USD"){
-  const rate = 12500 // later we can make dynamic
+  const rate = window.usdRate || 12500
   cost = Math.round(cost * rate)
 }
 
@@ -229,8 +229,8 @@ div.innerHTML = `
   <div class="stock-right">
 
     <div class="stock-qty">
-      ${p.stock || 0} dona
-    </div>
+  ${p.stock || 0} ${p.unit || "dona"}
+</div>
 
     <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
       ⋮
