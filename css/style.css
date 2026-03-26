@@ -2749,24 +2749,8 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 }
 /* PAGE SPACING */
 #addProductPage{
-  padding:14px;
+  padding:0;
   padding-bottom:90px;
-}
-#addProductPage > div{
-  border-radius:0 !important; /* remove side rounding */
-  margin-bottom:12px;
-}
-
-/* keep first block rounded top */
-#addProductPage > div:first-child{
-  border-top-left-radius:16px;
-  border-top-right-radius:16px;
-}
-
-/* keep last block rounded bottom */
-#addProductPage > div:last-child{
-  border-bottom-left-radius:16px;
-  border-bottom-right-radius:16px;
 }
 
 /* SECTION CARD */
@@ -2776,7 +2760,17 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
   padding:14px;
   margin-bottom:16px;
 }
-
+#addProductPage > div{
+  background:#f1f5f9;
+  padding:14px;
+  margin-bottom:10px;
+}
+#addProductPage .inner-card{
+  background:#ffffff;
+  border-radius:14px;
+  padding:12px;
+  border:1px solid var(--border);
+}
 /* WHITE CARD (PRICE) */
 .add-card-white{
   background:#ffffff;
@@ -2939,9 +2933,9 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 /* MOBILE PERFECT */
 @media (max-width:600px){
 
-  #addProductPage input{
-  height:52px;
-  border-radius:14px;
+ #addProductPage input{
+  height:50px;
+  border-radius:10px;
   font-size:15px;
   padding:0 14px;
   margin-bottom:10px;
@@ -2965,4 +2959,26 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
   justify-content:space-between;
   margin-bottom:10px;
   border:1px solid var(--border);
+}
+.currency-switch{
+  position:absolute;
+  right:6px;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  background:#f1f5f9;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.currency-switch button{
+  padding:6px 10px;
+  font-size:12px;
+  border:none;
+  background:transparent;
+}
+
+.currency-switch .active{
+  background:var(--blue);
+  color:white;
 }
