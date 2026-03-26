@@ -20,13 +20,8 @@ function navigate(pageId){
     page.classList.remove("hidden");
   }
 
-  /* ================================
-     ADD PRODUCT ACTION BAR
-  ================================ */
-  const actions = document.getElementById("addProductActions");
-  if(actions){
-    actions.style.display = (pageId === "addProductPage") ? "flex" : "none";
-  }
+
+handleAddProductActions();
 
   /* ================================
      CAMERA BUTTON CONTROL
@@ -83,9 +78,12 @@ function navigate(pageId){
     }
   }
 
-  if(pageId === "stockPage" && typeof loadCurrentStock === "function"){
+ if(pageId === "stockPage" && typeof loadCurrentStock === "function"){
+  if(typeof stockLoaded === "undefined" || !stockLoaded){
     loadCurrentStock();
+    stockLoaded = true;
   }
+}
 
   if(pageId === "analyticsPage"){
     if(typeof showAnalyticsTab === "function"){
