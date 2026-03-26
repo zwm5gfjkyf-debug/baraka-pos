@@ -469,13 +469,15 @@ select{
 
   background:white;
 
-  padding:0 12px;
+  padding:0 10px;
 
-  font-size:14px;
+  font-size:13px;
 
   cursor:pointer;
 
   appearance:none;
+
+  transition:0.2s;
 
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2364748b' d='M5.5 7l4.5 4 4.5-4'/%3E%3C/svg%3E");
   background-repeat:no-repeat;
@@ -486,7 +488,7 @@ select{
 #addProductPage > div{
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:8px;
 }
 /* 🔥 QUANTITY INPUT CLEAN */
 #stockQty{
@@ -592,20 +594,22 @@ PROFIT BUTTONS (SMALL)
 .profit-buttons{
   display:flex;
   gap:6px;
+  flex-wrap:nowrap;
 }
 
 .profit-buttons button{
   flex:1;
 
-  height:34px;
+  height:32px;
 
-  font-size:13px;
+  font-size:12px;
+
+  border-radius:10px;
 
   background:var(--bg-secondary);
 
   border:1px solid var(--border);
 }
-
 .profit-buttons button:hover{
   background:var(--blue);
   color:white;
@@ -1066,11 +1070,12 @@ INFO CARD (ANALYTICS)
   flex-direction:column;
   gap:6px;
 }
-/* 🔥 ADD PRODUCT INPUT SPACING FIX */
+
+/* 🔥 PERFECT COMPACT FORM SPACING */
 #addProductPage input,
 #addProductPage select{
-  margin-bottom:12px;
-} 
+  margin-bottom:8px !important;
+}
 .info-card span{
   font-size:12px;
   color:var(--text-soft);
@@ -2719,12 +2724,12 @@ KEEP MOBILE PERFECT
 }
 .form-actions{
   position: fixed;
-  bottom: 70px; /* ABOVE bottom nav */
+  bottom: 70px;
   left: 0;
   width: 100%;
   display: flex;
   gap: 10px;
-  padding: 12px;
+  padding: 10px;
   background: #ffffff;
   border-top: 1px solid #e5e7eb;
   z-index: 100;
@@ -2748,4 +2753,20 @@ KEEP MOBILE PERFECT
   color: white;
   font-weight: 600;
 }
+/* 🔥 MOBILE PERFECT FIX */
+@media (max-width:600px){
 
+  #addProductPage{
+    padding-bottom:90px;
+  }
+
+  .profit-buttons button{
+    height:30px;
+    font-size:11px;
+  }
+
+  input{
+    height:44px;
+  }
+
+}
