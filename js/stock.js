@@ -678,7 +678,7 @@ function selectUnit(unit){
   goBack();
 }
 function goBack(){
-  navigate("addProductPage")
+  navigate("stockPage")
 }
 document.addEventListener("DOMContentLoaded", () => {
   const defaultCheck = document.getElementById("check-dona")
