@@ -116,7 +116,7 @@ BARAKA
 🏠 Asosiy
 </button>
 
-<button onclick="menuClick(() => navigate('salePage'))">
+<button onclick="menuClick(() => navigate(''))">
 🛒 Sotuv
 </button>
 
@@ -234,41 +234,48 @@ Hammasini o'chirish
 <!-- SALE -->
 <div id="salePage" class="page hidden">
 
+  <!-- HEADER -->
+  <div class="sale-header">
+    <h2>Savatcha</h2>
+    <div id="cartCount" class="cart-count">0</div>
+  </div>
 
-<input
-  id="saleSearch"
-  class="search-input"
-  type="text"
-  placeholder="🔍 Mahsulot qidirish..."
-  oninput="searchProducts(this.value)"
-  autocomplete="off">
+  <!-- SEARCH -->
+  <input
+    id="saleSearch"
+    class="sale-search"
+    type="text"
+    placeholder="Artikul, shtrix-kod, ism"
+    oninput="searchProducts(this.value)"
+    autocomplete="off"
+  >
 
-<div id="searchResults"></div>
+  <div id="searchResults"></div>
 
+  <!-- EMPTY STATE -->
+  <div id="emptyCart" class="empty-cart-box">
 
+    <div class="barcode-icon"></div>
 
-<div class="glass dashboard-card small-card">
-<h3 style="font-size:16px;">🧾 Savat</h3>
-<div id="cartList"></div>
+    <div class="empty-title">
+      Savatchada hech narsa yo‘q
+    </div>
+
+    <div class="empty-sub">
+      Mahsulot shtrix kodini skanerlang yoki uni qidirish maydoni orqali qo‘shing
+    </div>
+
+  </div>
+
+  <!-- CART (hidden by default later) -->
+  <div id="cartList" class="hidden"></div>
+
+  <!-- SCANNER BUTTON -->
+  <button class="scanner-btn" onclick="toggleCameraScanner()">
+    🔳 Skaner
+  </button>
+
 </div>
-
-<div class="glass dashboard-card">
-<h3>Jami: <span id="saleTotal">0</span> so'm</h3>
-
-<div id="saleTypeContainer" class="sale-type hidden">
-<button id="cashBtn" class="sale-type-btn active" onclick="setSaleType('cash')">Naqd</button>
-<button id="debtBtn" class="sale-type-btn" onclick="setSaleType('debt')">Nasiya</button>
-</div>
-
-<input id="debtCustomer" placeholder="Mijoz ismi" class="hidden debt-input">
-
-<button id="completeSaleBtn" class="btn-primary complete-sale-btn" onclick="completeSale()">
-Sotuvni yakunlash
-</button>
-
-
-</div>
-  </div>  <!-- ✅ THIS closes salePage -->
 <!-- INVENTORY -->
 <div id="stockPage" class="page hidden">
 
