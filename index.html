@@ -15,8 +15,8 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -655,7 +655,8 @@ color:#22c55e;
 
 </div> <!-- addProductPage END -->
 
-<div id="addProductActions" style="
+<div id="addProductActions" class="hidden"
+style="
 position:fixed;
 bottom:90px;
 left:0;
@@ -982,7 +983,15 @@ document.addEventListener("visibilitychange", () => {
   }
 })
 </script>
-<div class="form-actions">
-  <button class="btn-cancel" onclick="goBack()">Yopish</button>
-  <button class="btn-save" onclick="saveAndGoBack()">Saqlash</button>
-</div>
+<script>
+function handleAddProductActions(){
+  const actions = document.getElementById("addProductActions")
+  if(!actions) return
+
+  if(currentPage === "addProductPage"){
+    actions.classList.remove("hidden")
+  }else{
+    actions.classList.add("hidden")
+  }
+}
+</script>
