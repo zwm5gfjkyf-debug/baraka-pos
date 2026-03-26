@@ -665,34 +665,57 @@ padding:14px;
 Narxlari
 </div>
 
-<!-- COST + CURRENCY -->
+<!-- COST + CURRENCY TOGGLE -->
 <div style="position:relative; margin-bottom:8px;">
 
 <input 
 id="stockCost"
 placeholder="Kelish narxi"
 oninput="updateProfitPreview()"
-style="padding-right:65px;"
+style="padding-right:110px;"
 >
 
-<select 
-id="currencySelect"
-onchange="handleCurrencyChange()"
-style="
+<!-- 🔥 CURRENCY TOGGLE -->
+<div style="
 position:absolute;
 right:6px;
 top:50%;
 transform:translateY(-50%);
+display:flex;
+background:#e5e7eb;
+border-radius:999px;
+overflow:hidden;
+font-size:12px;
+font-weight:600;
+">
+
+<button 
+id="btnUZS"
+onclick="selectCurrency('UZS')"
+style="
+padding:6px 10px;
+border:none;
+background:#2563eb;
+color:white;
+cursor:pointer;
+">
+UZS
+</button>
+
+<button 
+id="btnUSD"
+onclick="selectCurrency('USD')"
+style="
+padding:6px 10px;
 border:none;
 background:transparent;
-font-weight:600;
-font-size:12px;
-padding-right:16px;
-"
->
-<option value="UZS">UZS</option>
-<option value="USD">USD</option>
-</select>
+color:#111;
+cursor:pointer;
+">
+USD
+</button>
+
+</div>
 
 </div>
 
