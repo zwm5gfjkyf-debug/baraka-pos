@@ -203,11 +203,13 @@ div.className = "stock-row-item"
 
 const image = p.image
   ? `<img src="${p.image}" class="product-img-tag">`
-  : `<div class="product-placeholder">📦</div>`
-
+  : `<div style="font-size:22px;">📦</div>`
 div.innerHTML = `
   <div class="product-img">
-    ${image}
+    ${p.image 
+      ? `<img src="${p.image}" class="product-img-tag">`
+      : `📦`
+    }
   </div>
 
   <div class="stock-info">
