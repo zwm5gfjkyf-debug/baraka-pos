@@ -2702,3 +2702,37 @@ KEEP MOBILE PERFECT
   color: #6b7280;
   cursor: pointer;
 }
+.form-actions{
+  position: fixed;
+  bottom: 70px; /* ABOVE bottom nav */
+  left: 0;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  z-index: 100;
+}
+
+.btn-cancel{
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #e5e7eb;
+  font-weight: 600;
+}
+
+.btn-save{
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+}
+body{
+  padding-bottom: 140px;
+}
