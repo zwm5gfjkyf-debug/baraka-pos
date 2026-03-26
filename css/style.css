@@ -469,11 +469,28 @@ select{
 
   background:white;
 
-  padding:0 10px;
+  padding:0 12px;
 
   font-size:14px;
 
   cursor:pointer;
+
+  appearance:none;
+
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2364748b' d='M5.5 7l4.5 4 4.5-4'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 10px center;
+  background-size:14px;
+}
+/* 🔥 ADD PRODUCT CARD FIX */
+#addProductPage > div{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+/* 🔥 QUANTITY INPUT CLEAN */
+#stockQty{
+  text-align:left;
 }
 
 /* ======================
@@ -512,7 +529,7 @@ FORM CARD (AUTH / ADD PRODUCT)
 .form-container{
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:14px;
 
   background:var(--card-bg);
 
@@ -1049,7 +1066,11 @@ INFO CARD (ANALYTICS)
   flex-direction:column;
   gap:6px;
 }
-
+/* 🔥 ADD PRODUCT INPUT SPACING FIX */
+#addProductPage input,
+#addProductPage select{
+  margin-bottom:12px;
+} 
 .info-card span{
   font-size:12px;
   color:var(--text-soft);
@@ -2727,6 +2748,4 @@ KEEP MOBILE PERFECT
   color: white;
   font-weight: 600;
 }
-body{
-  padding-bottom: 140px;
-}
+
