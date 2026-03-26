@@ -277,18 +277,30 @@ Sotuvni yakunlash
 Zaxira
 </h2>
 
-<!-- TABS -->
+<!-- TABS (BILLZ STYLE) -->
 <div style="
 display:flex;
 gap:8px;
 margin-bottom:12px;
 overflow-x:auto;
+padding-bottom:2px;
 ">
 
-<button class="stock-tab active">Barchasi</button>
-<button class="stock-tab">Faol</button>
-<button class="stock-tab">Faol emas</button>
-<button class="stock-tab">Kam qoldiq</button>
+<button id="tab-all" onclick="setStockFilter('all')" class="stock-tab active">
+Barchasi (<span id="count-all">0</span>)
+</button>
+
+<button id="tab-active" onclick="setStockFilter('active')" class="stock-tab">
+Faol (<span id="count-active">0</span>)
+</button>
+
+<button id="tab-inactive" onclick="setStockFilter('inactive')" class="stock-tab">
+Faol emas (<span id="count-inactive">0</span>)
+</button>
+
+<button id="tab-low" onclick="setStockFilter('low')" class="stock-tab">
+Kam qoldiq (<span id="count-low">0</span>)
+</button>
 
 </div>
 
@@ -315,27 +327,33 @@ class="search-input"
 
 <!-- LIST -->
 <div id="currentStockList"></div>
-<!-- TEZKOR QIDIRUV BUTTON -->
+
+<!-- TEZKOR QIDIRUV BUTTON (BILLZ STYLE SMALL) -->
 <div id="cameraSection" style="
 position: fixed;
 bottom: 80px;
 left: 0;
 width: 100%;
-padding: 12px;
+display:flex;
+justify-content:center;
 z-index: 20;
+pointer-events:none;
 ">
 
 <button id="cameraToggleBtn"
   style="
-  width:100%;
+  pointer-events:auto;
   background:#3b82f6;
   color:white;
   border:none;
-  padding:14px;
+  padding:12px 22px;
   border-radius:999px;
-  font-size:16px;
+  font-size:14px;
   font-weight:600;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  box-shadow:0 6px 20px rgba(0,0,0,0.2);
+  display:flex;
+  align-items:center;
+  gap:6px;
   "
   onclick="toggleCameraScanner()">
   🔍 Tezkor qidiruv
@@ -349,7 +367,6 @@ z-index: 20;
     border-radius:12px;
     overflow:hidden;
   "></div>
-</div>
 </div>
 
 </div>
