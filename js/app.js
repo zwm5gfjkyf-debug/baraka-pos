@@ -427,11 +427,10 @@ btn.innerText = "🔍 Tezkor qidiruv"
     }
   }
 }
-let currentCurrency = "UZS"
+window.currentCurrency = "UZS"
 function selectCurrency(type){
 
-  currentCurrency = type
-
+window.currentCurrency = type
   const btnUZS = document.getElementById("btnUZS")
   const btnUSD = document.getElementById("btnUSD")
 
