@@ -2355,22 +2355,18 @@ CAMERA SECTION
 
 #cameraSection{
   position:fixed;
-
   bottom:80px;
-  left:0;
 
-  width:100%;
-
-  padding:12px;
+  left:50%;
+  transform:translateX(-50%);
 
   z-index:900;
 }
-
 /* BUTTON */
 #cameraToggleBtn{
-  width:100%;
+  height:42px;
 
-  height:50px;
+  padding:0 18px;
 
   border-radius:999px;
 
@@ -2379,10 +2375,12 @@ CAMERA SECTION
   color:white;
 
   font-weight:600;
+  font-size:13px;
 
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  box-shadow:0 6px 16px rgba(0,0,0,0.15);
+
+  width:auto; /* 🔥 IMPORTANT */
 }
-
 /* CAMERA VIEW */
 #cameraScanner{
   margin-top:10px;
