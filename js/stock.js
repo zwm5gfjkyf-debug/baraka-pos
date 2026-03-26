@@ -23,8 +23,7 @@ const barcode = document.getElementById("stockBarcode")?.value.trim() || ""
 const artikul = document.getElementById("stockArtikul")?.value.trim() || ""
 const unit = document.getElementById("stockUnit")?.value.trim() || "dona"
 
-const qty = 0 // ❗ we don’t use qty in new UI
-
+const qty = Number(document.getElementById("stockQty")?.value || 0)
 let cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
 const currencyEl = document.getElementById("currencySelect")
 const currency = currencyEl ? currencyEl.value : "UZS"
@@ -90,8 +89,7 @@ barcode: barcode,
 artikul: artikul,
 unit: unit,
 
-stock: 0,
-
+stock: qty,
 cost: cost || 0,
 price: price,
 image: imageUrl || "",
@@ -135,6 +133,7 @@ document.getElementById("stockArtikul").value = ""
 document.getElementById("stockUnit").value = ""
 document.getElementById("stockCost").value = ""
 document.getElementById("stockSellingPrice").value = ""
+document.getElementById("stockQty").value = ""
 const preview = document.getElementById("profitPreview")
 if(preview) preview.innerText = ""
   selectedImageFile = null
