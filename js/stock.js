@@ -4,7 +4,7 @@
 
 let productsListener = null;
 let stockContainer = null;
-let currentStockFilter = "all"; // all | low | empty
+let currentStockFilter = "all"; // all | active | inactive | low
 // ===============================
 // ADD PRODUCT
 // ===============================
@@ -24,7 +24,7 @@ const artikul = document.getElementById("stockArtikul")?.value.trim() || ""
 const unit = document.getElementById("selectedUnit")?.innerText.toLowerCase() || "dona"
 const qty = Number(document.getElementById("stockQty")?.value || 0)
 let cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
-const currency = window.currentCurrency || "UZS"
+const currency = currentCurrency || "UZS"
 const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
 
 if(!name || price <= 0){
@@ -188,15 +188,27 @@ function loadCurrentStock(){
       // ✅ FAST RENDER (IMPORTANT)
       const fragment = document.createDocumentFragment()
 
-      snapshot.forEach(doc => {
+let countAll = 0
+let countActive = 0
+let countInactive = 0
+let countLow = 0
 
-        const p = doc.data()
-        if(p.deleted === true) return
+snapshot.forEach(doc => {
 
-        // ✅ FILTERS
-        if(currentStockFilter === "low" && p.stock > 10) return
-        if(currentStockFilter === "empty" && p.stock > 0) return
+  const p = doc.data()
+  if(p.deleted === true) return
 
+  // COUNTING
+  countAll++
+
+  if(p.stock > 0) countActive++
+  if(p.stock <= 0) countInactive++
+  if(p.stock <= 10) countLow++
+
+  // FILTERS
+  if(currentStockFilter === "active" && p.stock <= 0) return
+  if(currentStockFilter === "inactive" && p.stock > 0) return
+  if(currentStockFilter === "low" && p.stock > 10) return
       const div = document.createElement("div")
 div.className = "stock-row-item"
 
@@ -244,7 +256,16 @@ fragment.appendChild(div)
 
       // ✅ render once (VERY FAST)
       container.appendChild(fragment)
+// ✅ UPDATE COUNTS UI
+const elAll = document.getElementById("count-all")
+const elActive = document.getElementById("count-active")
+const elInactive = document.getElementById("count-inactive")
+const elLow = document.getElementById("count-low")
 
+if(elAll) elAll.innerText = countAll
+if(elActive) elActive.innerText = countActive
+if(elInactive) elInactive.innerText = countInactive
+if(elLow) elLow.innerText = countLow
     })
 
 }
