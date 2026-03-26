@@ -161,7 +161,6 @@ function setStockFilter(type){
   const active = document.getElementById("tab-" + type);
   if(active) active.classList.add("active");
 
-  loadCurrentStock();
 }
 function loadCurrentStock(){
 
@@ -206,38 +205,33 @@ div.className = "stock-row-item"
 // ✅ FIX: ONLY ONE IMAGE OR ONE ICON
 const image = p.image
   ? `<img src="${p.image}" class="product-img-tag">`
-  : `<div class="product-placeholder">📦</div>`
-
+: `<div class="product-placeholder"></div>`
 div.innerHTML = `
-  <!-- IMAGE -->
   <div class="product-img">
-    ${image}
+    ${p.image 
+      ? `<img src="${p.image}" class="product-img-tag">`
+      : `<div class="product-placeholder"></div>`
+    }
   </div>
 
-  <!-- INFO -->
   <div class="stock-info">
 
-    <!-- NAME -->
     <div class="stock-name">
       ${p.name || "Noma'lum"}
     </div>
 
-    <!-- PRICE -->
     <div class="stock-price">
       ${formatMoney(p.price || 0)} so'm
     </div>
 
-    <!-- ONLY ARTIKUL + BARCODE -->
     <div class="stock-meta">
       ${p.artikul || "-"} / ${p.barcode || "-"}
     </div>
 
   </div>
 
-  <!-- RIGHT SIDE -->
   <div class="stock-right">
 
-    <!-- ONLY QUANTITY -->
     <div class="stock-qty">
       ${p.stock || 0} dona
     </div>
