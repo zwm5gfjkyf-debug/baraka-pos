@@ -30,8 +30,8 @@ handleAddProductActions();
 
   if(cameraSection){
     // show ONLY on sale page
-    cameraSection.style.display = (pageId === "salePage") ? "block" : "none";
-  }
+cameraSection.style.display = (pageId === "stockPage") ? "block" : "none";
+}
 
   if(typeof updateCamera === "function"){
     updateCamera();
@@ -93,5 +93,15 @@ handleAddProductActions();
 
   if(pageId === "debtAnalyticsPage" && typeof loadDebtCustomers === "function"){
     loadDebtCustomers();
+  }
+}
+/* ================================
+   UNIT PAGE FIX
+================================ */
+
+if(pageId === "unitPage"){
+  const bottomNav = document.querySelector(".bottom-nav");
+  if(bottomNav){
+    bottomNav.style.display = "none";
   }
 }
