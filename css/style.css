@@ -2956,20 +2956,17 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 }
 .currency-switch{
   position:absolute;
-  right:8px;
+  right:10px;
   top:50%;
   transform:translateY(-50%);
-
+  height:34px;
+}
+.currency-switch button{
+  height:30px;
   display:flex;
   align-items:center;
-
-  background:#f1f5f9;
-  border-radius:999px;
-
-  padding:2px;
-  gap:2px;
+  justify-content:center;
 }
-
 .currency-switch button{
   padding:6px 12px;
   font-size:12px;
