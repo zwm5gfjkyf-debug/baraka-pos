@@ -2736,8 +2736,24 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 
 /* PAGE SPACING */
 #addProductPage{
-  padding:12px;
-  padding-bottom:100px;
+  padding:0; /* 🔥 remove side space */
+  padding-bottom:70px; /* less bottom gap */
+}
+#addProductPage > div{
+  border-radius:0 !important; /* remove side rounding */
+  margin-bottom:12px;
+}
+
+/* keep first block rounded top */
+#addProductPage > div:first-child{
+  border-top-left-radius:16px;
+  border-top-right-radius:16px;
+}
+
+/* keep last block rounded bottom */
+#addProductPage > div:last-child{
+  border-bottom-left-radius:16px;
+  border-bottom-right-radius:16px;
 }
 
 /* SECTION CARD */
@@ -2850,11 +2866,27 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 
 .profit-buttons button{
   flex:1;
-  height:32px;
-  font-size:12px;
-  border-radius:10px;
-  background:#f1f5f9;
-  border:1px solid var(--border);
+
+  height:28px; /* 🔥 smaller */
+  font-size:11px;
+
+  border-radius:999px; /* 🔥 pill style */
+
+  background:#f3f4f6;
+  border:none;
+
+  font-weight:500;
+}
+.profit-buttons{
+  gap:4px;
+  margin:6px 0;
+}
+#addProductPage > div:last-child{
+  margin-bottom:0; /* 🔥 remove bottom gap */
+}
+#addProductPage button{
+  height:44px;
+  border-radius:12px;
 }
 
 .profit-buttons button:hover{
