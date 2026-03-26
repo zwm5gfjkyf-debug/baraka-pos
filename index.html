@@ -671,7 +671,7 @@ Narxlari
 <input 
 id="stockCost"
 placeholder="Kelish narxi"
-oninput="updateProfitPreview()"
+oninput="handleCostInput()"
 style="padding-right:110px;"
 >
 
@@ -719,6 +719,12 @@ USD
 
 </div>
 
+<!-- 🔥 USD → UZS PREVIEW -->
+<div id="currencyPreview" style="
+font-size:13px;
+color:#64748b;
+margin-bottom:8px;
+"></div>
 <!-- PROFIT BUTTONS -->
 <div style="
 display:flex;
