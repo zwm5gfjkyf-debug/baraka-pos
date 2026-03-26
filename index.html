@@ -479,176 +479,174 @@ style="margin:15px 0;width:100%">
 <!-- ADD PRODUCT PAGE (FINAL PREMIUM) -->
 <div id="addProductPage" class="page hidden">
 
-
-
 <!-- IMAGE UPLOAD -->
 <div onclick="selectProductImage()" style="
 background:#f1f5f9;
 border-radius:16px;
-padding:16px;
+padding:12px;
 display:flex;
 align-items:center;
-justify-content:flex-start;
-gap:12px;
-margin-bottom:16px;
+gap:10px;
+margin-bottom:12px;
 cursor:pointer;
 ">
 
 <div style="
-width:50px;
-height:50px;
+width:48px;
+height:48px;
 border-radius:12px;
 background:#e2e8f0;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:24px;
+font-size:22px;
 color:#2563eb;
 flex-shrink:0;
 ">
 +
 </div>
 
-<div>
-<div style="font-weight:600; color:#2563eb;">
+<div style="line-height:1.2;">
+<div style="font-weight:600; color:#2563eb; font-size:14px;">
 Mahsulot fotosuratini yuklang
 </div>
-<div style="font-size:12px; color:#64748b;">
+<div style="font-size:11px; color:#64748b;">
 Format: JPG yoki PNG
 </div>
 </div>
 
 </div>
-
 <!-- ASOSIY PARAMETRLAR -->
 <div style="
 background:var(--bg-secondary);
 border-radius:16px;
-padding:16px;
-margin-bottom:16px;
+padding:14px;
+margin-bottom:14px;
 ">
 
-<div style="font-weight:600; margin-bottom:12px;">
+<div style="font-weight:600; margin-bottom:10px;">
 Asosiy parametrlar
 </div>
 
 <!-- NAME -->
 <input id="stockName" placeholder="Tovar nomi" style="margin-bottom:8px;">
+
 <!-- ARTIKUL -->
-<div style="position:relative; margin-bottom:12px;">
+<div style="position:relative; margin-bottom:10px;">
 <input 
-    id="stockArtikul" 
-    placeholder="Artikul"
-    style="padding-right:90px;"
-  >
-  
- <button 
-  onclick="generateArtikul()" 
-  style="
-  position:absolute;
-  right:8px;
-  top:50%;
-  transform:translateY(-50%);
-  border:none;
-  background:transparent;
-  color:#2563eb;
-  padding:8px 12px;
-  border-radius:8px;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  ">
-  Yaratish
+  id="stockArtikul" 
+  placeholder="Artikul"
+  style="padding-right:80px;"
+>
+<button 
+onclick="generateArtikul()" 
+style="
+position:absolute;
+right:6px;
+top:50%;
+transform:translateY(-50%);
+border:none;
+background:transparent;
+color:#2563eb;
+padding:6px 10px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+">
+Yaratish
 </button>
 </div>
 
 <!-- BARCODE -->
-<div style="position:relative; margin-bottom:12px;">
-  <input 
-    id="stockBarcode" 
-    placeholder="Barkod"
-    style="padding-right:90px;"
-  >
-  
-  <button 
-    onclick="generateBarcode()" 
-    style="
-    position:absolute;
-    right:8px;
-    top:50%;
-    transform:translateY(-50%);
-    border:none;
-    background:transparent;
-    color:#2563eb;
-    padding:8px 12px;
-    font-size:13px;
-    font-weight:600;
-    cursor:pointer;
-    ">
-    Yaratish
-  </button>
+<div style="position:relative; margin-bottom:10px;">
+<input 
+  id="stockBarcode" 
+  placeholder="Barkod"
+  style="padding-right:80px;"
+>
+<button 
+onclick="generateBarcode()" 
+style="
+position:absolute;
+right:6px;
+top:50%;
+transform:translateY(-50%);
+border:none;
+background:transparent;
+color:#2563eb;
+padding:6px 10px;
+font-size:12px;
+font-weight:600;
+cursor:pointer;
+">
+Yaratish
+</button>
 </div>
 
 <!-- UNIT -->
 <select id="stockUnit" style="
-margin-top:8px;
-height:48px;
+margin-top:6px;
+height:44px;
 border-radius:12px;
 padding:0 12px;
+font-size:14px;
 ">
-  <option value="dona">Dona</option>
-  <option value="kg">Kg</option>
-  <option value="litr">Litr</option>
-  <option value="metr">Metr</option>
+<option value="dona">Dona</option>
+<option value="kg">Kg</option>
+<option value="litr">Litr</option>
+<option value="metr">Metr</option>
 </select>
-  <input 
-  id="stockQty" 
-  type="number" 
-  min="0"
-  placeholder="Miqdori" 
-  style="margin-top:10px;"
+
+<!-- QTY -->
+<input 
+id="stockQty" 
+type="number" 
+min="0"
+placeholder="Miqdori" 
+style="margin-top:8px;"
 >
+
 </div>
 
 <!-- NARXLAR -->
 <div style=" 
 background:white;
 border-radius:16px;
-padding:16px;
+padding:14px;
 ">
 
-<div style="font-weight:600; margin-bottom:12px;">
+<div style="font-weight:600; margin-bottom:10px;">
 Narxlari
 </div>
+
 <!-- COST + CURRENCY -->
-<div style="position:relative; margin-bottom:10px;">
+<div style="position:relative; margin-bottom:8px;">
 
-  <input 
-    id="stockCost"
-    placeholder="Kelish narxi"
-    oninput="updateProfitPreview()"
-    style="padding-right:70px;"
-  >
+<input 
+id="stockCost"
+placeholder="Kelish narxi"
+oninput="updateProfitPreview()"
+style="padding-right:65px;"
+>
 
-  <select 
-    id="currencySelect"
-    onchange="handleCurrencyChange()"
-    style="
-      position:absolute;
-      right:6px;
-      top:50%;
-      transform:translateY(-50%);
-      border:none;
-      background:transparent;
-      font-weight:600;
-      font-size:13px;
-      width:auto;
-      padding-right:18px;
-    "
-  >
-    <option value="UZS">UZS</option>
-    <option value="USD">USD</option>
-  </select>
+<select 
+id="currencySelect"
+onchange="handleCurrencyChange()"
+style="
+position:absolute;
+right:6px;
+top:50%;
+transform:translateY(-50%);
+border:none;
+background:transparent;
+font-weight:600;
+font-size:12px;
+padding-right:16px;
+"
+>
+<option value="UZS">UZS</option>
+<option value="USD">USD</option>
+</select>
 
 </div>
 
@@ -656,20 +654,22 @@ Narxlari
 <div style="
 display:flex;
 gap:6px;
-margin-bottom:10px;
+margin-bottom:8px;
 ">
-<button onclick="setProfit(10)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">10%</button>
-<button onclick="setProfit(15)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">15%</button>
-<button onclick="setProfit(20)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">20%</button>
-<button onclick="setProfit(25)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">25%</button>
-<button onclick="setProfit(30)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">30%</button>
+
+<button onclick="setProfit(10)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">10%</button>
+<button onclick="setProfit(15)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">15%</button>
+<button onclick="setProfit(20)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">20%</button>
+<button onclick="setProfit(25)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">25%</button>
+<button onclick="setProfit(30)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">30%</button>
+
 </div>
 
 <!-- SELL PRICE -->
 <input 
-  id="stockSellingPrice" 
-  placeholder="Sotuv narxi"
-  oninput="updateProfitPreview()"
+id="stockSellingPrice" 
+placeholder="Sotuv narxi"
+oninput="updateProfitPreview()"
 >
 
 <!-- PROFIT PREVIEW -->
@@ -680,41 +680,43 @@ color:#22c55e;
 "></div>
 
 </div>
-  <!-- ACTION BUTTONS -->
+
+<!-- ACTION BUTTONS -->
 <div style="
 display:flex;
-gap:10px;
-margin-top:14px;
+gap:8px;
+margin-top:12px;
 ">
 
 <button onclick="goBack()" style="
 flex:1;
-height:48px;
+height:46px;
 border-radius:12px;
 border:none;
 background:#e5e7eb;
 font-weight:600;
+font-size:14px;
 ">
 Yopish
 </button>
 
 <button onclick="goToLabelPreview()" style="
 flex:1;
-height:48px;
+height:46px;
 border-radius:12px;
 border:none;
 background:#2563eb;
 color:white;
 font-weight:600;
+font-size:14px;
 ">
 Keyingisi
 </button>
 
 </div>
-
-
-</div> <!-- addProductPage END -->
-
+  
+</div>
+  
 </main>
 
 <!-- TEZKOR QIDIRUV BUTTON -->
