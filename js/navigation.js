@@ -21,17 +21,17 @@ function navigate(pageId){
   }
 
 
-handleAddProductActions();
-
+if(typeof handleAddProductActions === "function"){
+  handleAddProductActions();
+}
   /* ================================
      CAMERA BUTTON CONTROL
   ================================ */
   const cameraSection = document.getElementById("cameraSection");
 
   if(cameraSection){
-    // show ONLY on sale page
-cameraSection.style.display = (pageId === "stockPage") ? "block" : "none";
-}
+// show ONLY on stock page
+cameraSection.style.display = (pageId === "stockPage") ? "block" : "none";}
 
   if(typeof updateCamera === "function"){
     updateCamera();
@@ -42,10 +42,11 @@ cameraSection.style.display = (pageId === "stockPage") ? "block" : "none";
   ================================ */
   const bottomNav = document.querySelector(".bottom-nav");
 
-  if(bottomNav){
-    // hide on add product page (clean UI)
-    bottomNav.style.display = (pageId === "addProductPage") ? "none" : "flex";
-  }
+if(bottomNav){
+  bottomNav.style.display = (
+    pageId === "addProductPage" || pageId === "unitPage"
+  ) ? "none" : "flex";
+}
 
   /* ================================
      ACTIVE NAV BUTTON
@@ -93,15 +94,5 @@ cameraSection.style.display = (pageId === "stockPage") ? "block" : "none";
 
   if(pageId === "debtAnalyticsPage" && typeof loadDebtCustomers === "function"){
     loadDebtCustomers();
-  }
-}
-/* ================================
-   UNIT PAGE FIX
-================================ */
-
-if(pageId === "unitPage"){
-  const bottomNav = document.querySelector(".bottom-nav");
-  if(bottomNav){
-    bottomNav.style.display = "none";
   }
 }
