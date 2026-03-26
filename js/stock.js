@@ -21,8 +21,7 @@ const name = document.getElementById("stockName").value.trim()
 const nameKey = name.toLowerCase()
 const barcode = document.getElementById("stockBarcode")?.value.trim() || ""
 const artikul = document.getElementById("stockArtikul")?.value.trim() || ""
-const unit = document.getElementById("stockUnit")?.value.trim() || "dona"
-
+const unit = document.getElementById("selectedUnit")?.innerText.toLowerCase() || "dona"
 const qty = Number(document.getElementById("stockQty")?.value || 0)
 let cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
 const currencyEl = document.getElementById("currencySelect")
@@ -130,13 +129,15 @@ showTopBanner("Xatolik yuz berdi", "error")
 document.getElementById("stockName").value = ""
 document.getElementById("stockBarcode").value = ""
 document.getElementById("stockArtikul").value = ""
-document.getElementById("stockUnit").value = ""
 document.getElementById("stockCost").value = ""
 document.getElementById("stockSellingPrice").value = ""
 document.getElementById("stockQty").value = ""
 const preview = document.getElementById("profitPreview")
 if(preview) preview.innerText = ""
   selectedImageFile = null
+  // ✅ ADD THIS HERE
+const unitEl = document.getElementById("selectedUnit")
+if(unitEl) unitEl.innerText = "Dona"
 }
 finally{
 
@@ -397,7 +398,7 @@ card.style.display = "none"
 }
 function setProfit(percent){
 
-const cost = Number(document.getElementById("stockCost").value.replace(/\s/g,""))
+const cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
 if(!cost) return
 
 const price = Math.round(cost + (cost * percent / 100))
@@ -614,7 +615,7 @@ function pickImage(type){
 }
 async function saveAndGoBack(){
   await addStock()
-  goBack()
+  navigate("stockPage")
 }
 async function confirmSaveWithLabel(){
   await addStock()
@@ -624,8 +625,7 @@ async function confirmSaveWithLabel(){
 function goToLabelPreview(){
 
   const name = document.getElementById("stockName").value.trim()
-  const price = Number(document.getElementById("stockSellingPrice").value)
-
+const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
   if(!name || price <= 0){
     showTopBanner("Mahsulot nomi va narx kerak","error")
     return
@@ -654,3 +654,10 @@ function selectUnit(unit){
 
   goBack();
 }
+function goBack(){
+  navigate("addProductPage")
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const defaultCheck = document.getElementById("check-dona")
+  if(defaultCheck) defaultCheck.classList.remove("hidden")
+})
