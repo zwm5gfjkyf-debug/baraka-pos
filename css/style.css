@@ -3098,3 +3098,25 @@ SALE PAGE — NEW CLEAN IOS DESIGN
 .scanner-btn:hover{
   background:#e2e8f0;
 }
+/* FIX SCANNER POSITION */
+.scanner-btn{
+  position:fixed;
+
+  bottom:80px; /* above bottom nav */
+  left:12px;
+  right:12px;
+
+  width:auto;
+
+  z-index:1000;
+
+  height:52px;
+
+  border-radius:16px;
+
+  background:#f1f5f9;
+
+  font-weight:600;
+
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+}
