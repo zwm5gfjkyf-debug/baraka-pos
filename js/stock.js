@@ -200,31 +200,36 @@ function loadCurrentStock(){
         if(currentStockFilter === "low" && p.stock > 10) return
         if(currentStockFilter === "empty" && p.stock > 0) return
 
-       const div = document.createElement("div")
+      const div = document.createElement("div")
 div.className = "stock-row-item"
 
+// ✅ FIX: ONLY ONE IMAGE OR ONE ICON
+const image = p.image
+  ? `<img src="${p.image}" class="product-img-tag">`
+  : `<div class="product-placeholder">📦</div>`
+
 div.innerHTML = `
-  <!-- LEFT IMAGE -->
+  <!-- IMAGE -->
   <div class="product-img">
-    ${p.image 
-      ? `<img src="${p.image}" class="product-img-tag">`
-      : `<div class="product-placeholder">📦</div>`
-    }
+    ${image}
   </div>
 
-  <!-- CENTER INFO -->
+  <!-- INFO -->
   <div class="stock-info">
 
+    <!-- NAME -->
     <div class="stock-name">
       ${p.name || "Noma'lum"}
     </div>
 
+    <!-- PRICE -->
     <div class="stock-price">
-      ${formatMoney(p.price || 0)} UZS
+      ${formatMoney(p.price || 0)} so'm
     </div>
 
+    <!-- ONLY ARTIKUL + BARCODE -->
     <div class="stock-meta">
-      ${p.unit || "dona"} / ${p.artikul || "-"} / ${p.barcode || "-"}
+      ${p.artikul || "-"} / ${p.barcode || "-"}
     </div>
 
   </div>
@@ -232,6 +237,7 @@ div.innerHTML = `
   <!-- RIGHT SIDE -->
   <div class="stock-right">
 
+    <!-- ONLY QUANTITY -->
     <div class="stock-qty">
       ${p.stock || 0} dona
     </div>
@@ -242,8 +248,6 @@ div.innerHTML = `
 
   </div>
 `
-
-
 // ✅ FAST append
 fragment.appendChild(div)
       })
