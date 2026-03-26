@@ -201,14 +201,13 @@ function loadCurrentStock(){
       const div = document.createElement("div")
 div.className = "stock-row-item"
 
-const image = p.image
-  ? `<img src="${p.image}" class="product-img-tag">`
-  : `<div style="font-size:22px;">📦</div>`
+
 div.innerHTML = `
   <div class="product-img">
-    ${p.image 
-      ? `<img src="${p.image}" class="product-img-tag">`
-      : `📦`
+    ${
+      p.image && p.image.trim() !== ""
+        ? `<img src="${p.image}" class="product-img-tag">`
+        : `<div class="product-placeholder">📦</div>`
     }
   </div>
 
