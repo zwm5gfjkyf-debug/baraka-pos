@@ -506,3 +506,22 @@ function toggleCameraScanner(){
     }
   }
 }
+let currentCurrency = "UZS"
+let usdRate = 0
+
+async function loadUsdRate(){
+  try{
+    const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD")
+    const data = await res.json()
+    usdRate = data.rates.UZS
+  }catch(e){
+    console.log("USD rate error", e)
+    usdRate = 12500 // fallback
+  }
+}
+
+function handleCurrencyChange(){
+  const select = document.getElementById("currencySelect")
+  currentCurrency = select.value
+  updateProfitPreview()
+}
