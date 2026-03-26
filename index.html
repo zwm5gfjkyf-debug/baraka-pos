@@ -532,11 +532,10 @@ Asosiy parametrlar
 </div>
 
 <!-- NAME -->
-<input id="stockName" placeholder="Tovar nomi" style="margin-bottom:10px;">
-
+<input id="stockName" placeholder="Tovar nomi" style="margin-bottom:12px;">
 <!-- ARTIKUL -->
-<div style="position:relative; margin-bottom:10px;">
-  <input 
+<div style="position:relative; margin-bottom:12px;">
+<input 
     id="stockArtikul" 
     placeholder="Artikul"
     style="padding-right:90px;"
@@ -563,7 +562,7 @@ Asosiy parametrlar
 </div>
 
 <!-- BARCODE -->
-<div style="position:relative; margin-bottom:10px;">
+<div style="position:relative; margin-bottom:12px;">
   <input 
     id="stockBarcode" 
     placeholder="Barkod"
@@ -590,14 +589,18 @@ Asosiy parametrlar
 </div>
 
 <!-- UNIT -->
-<input id="stockUnit" placeholder="O'lchov birligi (dona, kg, metr...)" style="margin-top:6px;">
-<input 
+<select id="stockUnit" style="margin-top:10px;">
+  <option value="dona">Dona</option>
+  <option value="kg">Kg</option>
+  <option value="litr">Litr</option>
+  <option value="metr">Metr</option>
+</select>
+  <input 
   id="stockQty" 
   type="number" 
-  value="1"
-  min="1"
+  min="0"
   placeholder="Miqdori" 
-  style="margin-top:6px;"
+  style="margin-top:10px;"
 >
 </div>
 
