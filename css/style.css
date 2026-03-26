@@ -741,7 +741,7 @@ PAGE ANIMATION
 ====================== */
 
 .page{
-  animation:fadePage 0.18s ease;
+  animation:none;
 }
 
 @keyframes fadePage{
@@ -3135,4 +3135,14 @@ SALE PAGE — NEW CLEAN IOS DESIGN
 
 #appScreen.loaded{
   visibility:visible;
+}
+/* 🔥 FORCE FIXED ELEMENTS TO RENDER CORRECTLY */
+#salePage,
+#stockPage{
+  position:relative;
+}
+/* PREVENT MID POSITION BUG */
+.scanner-container,
+#cameraSection{
+  transform:translateZ(0);
 }
