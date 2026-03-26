@@ -486,7 +486,11 @@ function updateProfitPreview(){
 const costRaw = document.getElementById("stockCost")?.value || "0"
 const priceRaw = document.getElementById("stockSellingPrice")?.value || "0"
 
-const cost = Number(costRaw.replace(/\s/g,""))
+let cost = Number(costRaw.replace(/\s/g,""))
+
+if(currentCurrency === "USD"){
+  cost = cost * (window.usdRate || 12500)
+}
 const price = Number(priceRaw.replace(/\s/g,""))
 
 const el = document.getElementById("profitPreview")
