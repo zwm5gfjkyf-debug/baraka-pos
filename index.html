@@ -623,28 +623,32 @@ Narxlari
 <!-- COST + CURRENCY -->
 <div style="position:relative; margin-bottom:10px;">
 
-<input 
-  id="stockCost" 
-  placeholder="Kelish narxi"
-  oninput="updateProfitPreview()"
-  style="padding-right:70px;"
->
+  <input 
+    id="stockCost"
+    placeholder="Kelish narxi"
+    oninput="updateProfitPreview()"
+    style="padding-right:70px;"
+  >
 
-<select id="currencySelect" style="
-position:absolute;
-right:8px;
-top:50%;
-transform:translateY(-50%);
-height:34px;
-border:none;
-background:#f1f5f9;
-border-radius:8px;
-padding:0 6px;
-font-size:12px;
-">
-<option value="UZS">UZS</option>
-<option value="USD">USD</option>
-</select>
+  <select 
+    id="currencySelect"
+    onchange="handleCurrencyChange()"
+    style="
+      position:absolute;
+      right:6px;
+      top:50%;
+      transform:translateY(-50%);
+      border:none;
+      background:transparent;
+      font-weight:600;
+      font-size:13px;
+      width:auto;
+      padding-right:18px;
+    "
+  >
+    <option value="UZS">UZS</option>
+    <option value="USD">USD</option>
+  </select>
 
 </div>
 
