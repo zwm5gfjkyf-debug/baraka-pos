@@ -1678,28 +1678,10 @@ EDIT MODAL
 PROFIT BUTTONS
 ====================== */
 
-.profit-buttons{
-  display:flex;
-  gap:8px;
-  margin-top:4px;
-}
+
 
 /* BUTTON */
-.profit-buttons button{
-  flex:1;
 
-  padding:8px;
-
-  border-radius:8px;
-
-  background:#f1f5f9;
-
-  border:1px solid var(--border);
-
-  font-size:13px;
-
-  cursor:pointer;
-}
 
 /* HOVER */
 .profit-buttons button:hover{
