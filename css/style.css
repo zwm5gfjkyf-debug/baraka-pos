@@ -714,7 +714,15 @@ HEADER (TOP BAR)
 
   font-size:18px;
 }
+#addProductPage > div:last-child{
+  background:transparent !important;
+  padding:0 !important;
+}
 
+#addProductPage > div:last-child button{
+  height:50px;
+  border-radius:14px;
+}
 /* ======================
 MAIN CONTENT
 ====================== */
@@ -2733,11 +2741,16 @@ KEEP MOBILE PERFECT
 /* =====================================================
 ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 ===================================================== */
-
+#addProductPage > div{
+  background:#f1f5f9;
+  border-radius:20px;
+  padding:16px;
+  margin-bottom:14px;
+}
 /* PAGE SPACING */
 #addProductPage{
-  padding:0; /* 🔥 remove side space */
-  padding-bottom:70px; /* less bottom gap */
+  padding:14px;
+  padding-bottom:90px;
 }
 #addProductPage > div{
   border-radius:0 !important; /* remove side rounding */
@@ -2927,7 +2940,29 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 @media (max-width:600px){
 
   #addProductPage input{
-    height:42px;
-  }
+  height:52px;
+  border-radius:14px;
+  font-size:15px;
+  padding:0 14px;
+  margin-bottom:10px;
+}
 
+}
+#addProductPage h2{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:12px;
+}
+
+#addProductPage .unit-row,
+#addProductPage div[onclick*="navigate"]{
+  height:52px;
+  border-radius:14px;
+  background:#ffffff;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+  border:1px solid var(--border);
 }
