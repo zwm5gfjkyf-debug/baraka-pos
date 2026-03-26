@@ -28,11 +28,14 @@ if(typeof handleAddProductActions === "function"){
      CAMERA BUTTON CONTROL
   ================================ */
   const cameraSection = document.getElementById("cameraSection");
+const scannerContainer = document.getElementById("scannerContainer");
+ if(cameraSection){
+  cameraSection.style.display = (pageId === "stockPage") ? "flex" : "none";
+}
 
-  if(cameraSection){
-// show ONLY on stock page
-cameraSection.style.display = (pageId === "stockPage") ? "block" : "none";}
-
+if(scannerContainer){
+  scannerContainer.style.display = (pageId === "salePage") ? "block" : "none";
+}
   if(typeof updateCamera === "function"){
     updateCamera();
   }
