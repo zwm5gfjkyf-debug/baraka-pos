@@ -3143,3 +3143,21 @@ FINAL — CLEAN BUTTON SYSTEM (NO BUGS)
 
   box-shadow:0 6px 16px rgba(0,0,0,0.15);
 }
+/* 🔥 FORCE FIX POSITION (FINAL FIX) */
+#cameraSection{
+  position: fixed !important;
+  bottom: 90px !important;
+  left: 0;
+  width: 100%;
+  display: flex !important;
+  justify-content: center;
+  z-index: 9999;
+}
+#scannerContainer{
+  position: fixed !important;
+  bottom: 90px !important;
+  left: 0;
+  width: 100%;
+  padding: 0 12px;
+  z-index: 9999;
+}
