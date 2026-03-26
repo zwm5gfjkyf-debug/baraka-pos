@@ -428,6 +428,32 @@ btn.innerText = "🔍 Tezkor qidiruv"
   }
 }
 let currentCurrency = "UZS"
+function selectCurrency(type){
+
+  currentCurrency = type
+
+  const btnUZS = document.getElementById("btnUZS")
+  const btnUSD = document.getElementById("btnUSD")
+
+  if(btnUZS && btnUSD){
+
+    if(type === "UZS"){
+      btnUZS.style.background = "#2563eb"
+      btnUZS.style.color = "white"
+
+      btnUSD.style.background = "transparent"
+      btnUSD.style.color = "#111"
+    }
+
+    if(type === "USD"){
+      btnUSD.style.background = "#2563eb"
+      btnUSD.style.color = "white"
+
+      btnUZS.style.background = "transparent"
+      btnUZS.style.color = "#111"
+    }
+  }
+}
 window.usdRate = 0
 async function loadUsdRate(){
   try{
@@ -440,11 +466,8 @@ window.usdRate = 12500
   }
 }
 
-function handleCurrencyChange(){
-  const select = document.getElementById("currencySelect")
-  currentCurrency = select.value
-  updateProfitPreview()
-}
+
 document.addEventListener("DOMContentLoaded", () => {
   updateCamera()
+  selectCurrency("UZS")
 })
