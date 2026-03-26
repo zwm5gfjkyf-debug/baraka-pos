@@ -633,3 +633,25 @@ function goToLabelPreview(){
 
   openLabelPreview()
 }
+function selectUnit(unit){
+
+  const map = {
+    dona: "Dona",
+    kg: "Kg",
+    litr: "Litr"
+  };
+
+  document.getElementById("selectedUnit").innerText = map[unit];
+
+  // reset checks
+  ["dona","kg","litr"].forEach(u=>{
+    const el = document.getElementById("check-"+u);
+    if(el) el.classList.add("hidden");
+  });
+
+  // show selected
+  const active = document.getElementById("check-"+unit);
+  if(active) active.classList.remove("hidden");
+
+  goBack();
+}
