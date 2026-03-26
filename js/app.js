@@ -4,6 +4,7 @@
 let salesCache = null
 let analyticsLoaded = false
 let currentShopId = null
+window.currentShopId = null
 let dashboardSalesCache = []
 let dashboardListener = null
 // =============================
@@ -328,8 +329,8 @@ function updateCamera(){
   const toggle = document.getElementById("cameraToggle")
 const cameraBtn = document.getElementById("cameraSection")
 const currentPageId =
-  !document.getElementById("salePage").classList.contains("hidden")
-    ? "salePage"
+  !document.getElementById("stockPage").classList.contains("hidden")
+    ? "stockPage"
     : null
   // toggle UI
   if(toggle){
@@ -343,8 +344,8 @@ const currentPageId =
   // show only in sale page
   if(cameraBtn){
 
-    if(enabled && currentPageId === "salePage"){
-      cameraBtn.style.display = "block"
+if(enabled && currentPageId === "stockPage"){
+cameraBtn.style.display = "block"
 
     }else{
       cameraBtn.style.display = "none"
@@ -357,8 +358,7 @@ const currentPageId =
       }
 
       if(btn){
-        btn.innerText = "📷 Kamera orqali sotuv"
-      }
+btn.innerText = "🔍 Tezkor qidiruv"      }
 
       if(typeof stopCameraScanner === "function"){
         stopCameraScanner()
@@ -377,85 +377,7 @@ if(cameraSection){
 // run on load
 
 
-function navigate(pageId){
 
-  // hide all pages
-  document.querySelectorAll(".page").forEach(p=>{
-    p.classList.add("hidden")
-  })
-
-  // show selected page
-  const page = document.getElementById(pageId)
-  if(page) page.classList.remove("hidden")
-
-  // reset nav
-  document.querySelectorAll(".bottom-nav button").forEach(btn=>{
-    btn.classList.remove("active")
-  })
-
-  // match navigation
-  if(pageId === "dashboardPage"){
-    document.querySelector(".bottom-nav button:nth-child(1)").classList.add("active")
-  }
-
-  if(pageId === "salePage"){
-    document.querySelector(".bottom-nav button:nth-child(2)").classList.add("active")
-  }
-
-  if(pageId === "stockPage"){
-    document.querySelector(".bottom-nav button:nth-child(3)").classList.add("active")
-  }
-
-  // 🔥 FIX: ALL analytics-related pages
-  if(
-    pageId === "analyticsPage" ||
-    pageId === "salesAnalyticsPage" ||
-    pageId === "debtAnalyticsPage" ||
-    pageId === "shopAnalyticsPage"
-  ){
-    document.querySelector(".bottom-nav button:nth-child(4)").classList.add("active")
-  }
-
-updateCamera()
-
-// 🔥 CLOSE CAMERA WHEN CHANGING PAGE
-const scanner = document.getElementById("cameraScanner")
-const btn = document.getElementById("cameraToggleBtn")
-
-if(scanner){
-  scanner.classList.add("hidden")
-}
-
-if(btn){
-  btn.innerText = "📷 Kamera orqali sotuv"
-}
-
-if(typeof stopCameraScanner === "function"){
-  stopCameraScanner()
-}
-
-cameraOpen = false
-
-const backBtn = document.getElementById("backBtn")
-if(backBtn){
-
- if(
-  pageId === "salesAnalyticsPage" ||
-  pageId === "debtAnalyticsPage" ||
-  pageId === "shopAnalyticsPage" ||
-  pageId === "addProductPage"
-){
-    backBtn.classList.remove("hidden")
-  }else{
-    backBtn.classList.add("hidden")
-  }
-
-}
-}
-
-function goBack(){
-  navigate("stockPage")
-}
 function formatNumberInput(input){
 
   let value = input.value.replace(/\s/g, '') // remove spaces
@@ -499,24 +421,22 @@ function toggleCameraScanner(){
     scanner.classList.add("hidden")
 
     // RESET BUTTON TEXT
-    btn.innerText = "📷 Kamera orqali sotuv"
-
+btn.innerText = "🔍 Tezkor qidiruv"
     if(typeof stopCameraScanner === "function"){
       stopCameraScanner()
     }
   }
 }
 let currentCurrency = "UZS"
-let usdRate = 0
-
+window.usdRate = 0
 async function loadUsdRate(){
   try{
     const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD")
     const data = await res.json()
-    usdRate = data.rates.UZS
+window.usdRate = data.rates.UZS
   }catch(e){
     console.log("USD rate error", e)
-    usdRate = 12500 // fallback
+window.usdRate = 12500
   }
 }
 
@@ -525,3 +445,6 @@ function handleCurrencyChange(){
   currentCurrency = select.value
   updateProfitPreview()
 }
+document.addEventListener("DOMContentLoaded", () => {
+  updateCamera()
+})
