@@ -683,33 +683,35 @@ Narxlari
 id="stockCost"
 placeholder="Kelish narxi"
 oninput="handleCostInput()"
-style="padding-right:110px;"
+style="padding-right:90px;"
 >
 
 <!-- 🔥 CURRENCY TOGGLE -->
 <div style="
 position:absolute;
-right:6px;
+right:8px;
 top:50%;
 transform:translateY(-50%);
 display:flex;
-background:#e5e7eb;
-border-radius:999px;
+background:#f1f5f9;
+border-radius:10px;
 overflow:hidden;
 font-size:12px;
 font-weight:600;
+border:1px solid #e5e7eb;
 ">
 
 <button 
 id="btnUZS"
 onclick="selectCurrency('UZS')"
 style="
-padding:6px 10px;
+padding:5px 10px;
 border:none;
 background:#2563eb;
 color:white;
 cursor:pointer;
-">
+border-radius:8px;
+"
 UZS
 </button>
 
@@ -717,12 +719,12 @@ UZS
 id="btnUSD"
 onclick="selectCurrency('USD')"
 style="
-padding:6px 10px;
+padding:5px 10px;
 border:none;
 background:transparent;
-color:#111;
+color:#64748b;
 cursor:pointer;
-">
+"
 USD
 </button>
 
@@ -740,15 +742,66 @@ margin-bottom:8px;
 <div style="
 display:flex;
 gap:6px;
-margin-bottom:8px;
+margin:6px 0;
+padding:4px;
+background:#f8fafc;
+border-radius:12px;
 ">
 
-<button onclick="setProfit(10)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">10%</button>
-<button onclick="setProfit(15)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">15%</button>
-<button onclick="setProfit(20)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">20%</button>
-<button onclick="setProfit(25)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">25%</button>
-<button onclick="setProfit(30)" class="btn-secondary" style="flex:1;height:32px;font-size:11px;">30%</button>
+<button onclick="setProfit(10)" style="
+flex:1;
+height:28px;
+font-size:11px;
+border-radius:8px;
+border:none;
+background:#e5e7eb;
+color:#111827;
+font-weight:500;
+">10%</button>
 
+<button onclick="setProfit(15)" style="
+flex:1;
+height:28px;
+font-size:11px;
+border-radius:8px;
+border:none;
+background:#e5e7eb;
+color:#111827;
+font-weight:500;
+">15%</button>
+
+<button onclick="setProfit(20)" style="
+flex:1;
+height:28px;
+font-size:11px;
+border-radius:8px;
+border:none;
+background:#e5e7eb;
+color:#111827;
+font-weight:500;
+">20%</button>
+
+<button onclick="setProfit(25)" style="
+flex:1;
+height:28px;
+font-size:11px;
+border-radius:8px;
+border:none;
+background:#e5e7eb;
+color:#111827;
+font-weight:500;
+">25%</button>
+
+<button onclick="setProfit(30)" style="
+flex:1;
+height:28px;
+font-size:11px;
+border-radius:8px;
+border:none;
+background:#e5e7eb;
+color:#111827;
+font-weight:500;
+">30%</button>
 </div>
 
 <!-- SELL PRICE -->
