@@ -514,3 +514,6 @@ function handleCostInput(){
 
   updateProfitPreview()
 }
+window.addEventListener("load", () => {
+  document.getElementById("appScreen").classList.add("loaded")
+})
