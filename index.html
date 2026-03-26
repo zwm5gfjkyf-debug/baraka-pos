@@ -488,7 +488,8 @@ border-radius:16px;
 padding:16px;
 display:flex;
 align-items:center;
-gap:14px;
+justify-content:flex-start;
+gap:12px;
 margin-bottom:16px;
 cursor:pointer;
 ">
@@ -532,7 +533,7 @@ Asosiy parametrlar
 </div>
 
 <!-- NAME -->
-<input id="stockName" placeholder="Tovar nomi" style="margin-bottom:12px;">
+<input id="stockName" placeholder="Tovar nomi" style="margin-bottom:8px;">
 <!-- ARTIKUL -->
 <div style="position:relative; margin-bottom:12px;">
 <input 
@@ -589,7 +590,12 @@ Asosiy parametrlar
 </div>
 
 <!-- UNIT -->
-<select id="stockUnit" style="margin-top:10px;">
+<select id="stockUnit" style="
+margin-top:8px;
+height:48px;
+border-radius:12px;
+padding:0 12px;
+">
   <option value="dona">Dona</option>
   <option value="kg">Kg</option>
   <option value="litr">Litr</option>
@@ -615,22 +621,31 @@ padding:16px;
 Narxlari
 </div>
 <!-- COST + CURRENCY -->
-<div style="display:flex; gap:8px; margin-bottom:10px;">
+<div style="position:relative; margin-bottom:10px;">
+
 <input 
   id="stockCost" 
   placeholder="Kelish narxi"
   oninput="updateProfitPreview()"
+  style="padding-right:70px;"
 >
 
 <select id="currencySelect" style="
-width:90px;
-border-radius:12px;
-border:1px solid #e5e7eb;
-padding:0 8px;
+position:absolute;
+right:8px;
+top:50%;
+transform:translateY(-50%);
+height:34px;
+border:none;
+background:#f1f5f9;
+border-radius:8px;
+padding:0 6px;
+font-size:12px;
 ">
 <option value="UZS">UZS</option>
 <option value="USD">USD</option>
 </select>
+
 </div>
 
 <!-- PROFIT BUTTONS -->
@@ -638,13 +653,12 @@ padding:0 8px;
 display:flex;
 gap:6px;
 margin-bottom:10px;
-flex-wrap:wrap;
 ">
-<button onclick="setProfit(10)" class="btn-secondary">10%</button>
-<button onclick="setProfit(15)" class="btn-secondary">15%</button>
-<button onclick="setProfit(20)" class="btn-secondary">20%</button>
-<button onclick="setProfit(25)" class="btn-secondary">25%</button>
-<button onclick="setProfit(30)" class="btn-secondary">30%</button>
+<button onclick="setProfit(10)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">10%</button>
+<button onclick="setProfit(15)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">15%</button>
+<button onclick="setProfit(20)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">20%</button>
+<button onclick="setProfit(25)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">25%</button>
+<button onclick="setProfit(30)" class="btn-secondary" style="flex:1;height:34px;font-size:12px;">30%</button>
 </div>
 
 <!-- SELL PRICE -->
@@ -666,31 +680,31 @@ color:#22c55e;
 <div style="
 display:flex;
 gap:10px;
-margin-top:20px;
+margin-top:14px;
 ">
 
-  <button onclick="goBack()" style="
-  flex:1;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  background:#e5e7eb;
-  font-weight:600;
-  ">
-  Yopish
-  </button>
+<button onclick="goBack()" style="
+flex:1;
+height:48px;
+border-radius:12px;
+border:none;
+background:#e5e7eb;
+font-weight:600;
+">
+Yopish
+</button>
 
-  <button onclick="goToLabelPreview()" style="
-  flex:1;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  background:#2563eb;
-  color:white;
-  font-weight:600;
-  ">
-  Keyingisi
-  </button>
+<button onclick="goToLabelPreview()" style="
+flex:1;
+height:48px;
+border-radius:12px;
+border:none;
+background:#2563eb;
+color:white;
+font-weight:600;
+">
+Keyingisi
+</button>
 
 </div>
 
