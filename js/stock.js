@@ -453,7 +453,6 @@ const nameInput = document.getElementById("stockName")
 const name = nameInput ? nameInput.value.trim() : ""
 const price = Number(document.getElementById("stockSellingPrice").value.replace(/\s/g,""))
 const barcode = document.getElementById("stockBarcode").value
-const qty = document.getElementById("stockQty").value
 
 if(!name || price <= 0){
 showTopBanner("Mahsulot nomi va narx kerak","error")
@@ -466,7 +465,7 @@ Number(price).toLocaleString("ru-RU") + " &nbsp;so'm"
 
 document.getElementById("previewBarcodeNumber").innerText = barcode
 
-document.getElementById("labelQty").value = Number(qty) > 0 ? qty : 1
+document.getElementById("labelQty").value = 1
 JsBarcode("#previewBarcode", barcode, {
 format: "CODE128",
 width: 2,
