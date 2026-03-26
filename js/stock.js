@@ -217,8 +217,8 @@ div.innerHTML = `
     </div>
 
     <div class="stock-price">
-      ${formatMoney(p.price || 0)} so'm
-    </div>
+  ${formatMoney(p.price || 0)}
+</div>
 
     <div class="stock-meta">
       ${p.artikul || "-"} / ${p.barcode || "-"}
