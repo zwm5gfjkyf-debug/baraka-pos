@@ -123,7 +123,6 @@ unit: unit || freshData.unit
 }
 
 showTopBanner("Zaxira yangilandi", "success") 
-loadCurrentStock()
 }catch(e){
 
 console.error("SAVE ERROR:", e)
@@ -202,16 +201,13 @@ function loadCurrentStock(){
       const div = document.createElement("div")
 div.className = "stock-row-item"
 
-// ✅ FIX: ONLY ONE IMAGE OR ONE ICON
 const image = p.image
   ? `<img src="${p.image}" class="product-img-tag">`
-: `<div class="product-placeholder"></div>`
+  : `<div class="product-placeholder">📦</div>`
+
 div.innerHTML = `
   <div class="product-img">
-    ${p.image 
-      ? `<img src="${p.image}" class="product-img-tag">`
-      : `<div class="product-placeholder"></div>`
-    }
+    ${image}
   </div>
 
   <div class="stock-info">
@@ -624,4 +620,17 @@ async function saveAndGoBack(){
 async function confirmSaveWithLabel(){
   await addStock()
   closeLabelPreview()
+  navigate("stockPage")
+}
+function goToLabelPreview(){
+
+  const name = document.getElementById("stockName").value.trim()
+  const price = Number(document.getElementById("stockSellingPrice").value)
+
+  if(!name || price <= 0){
+    showTopBanner("Mahsulot nomi va narx kerak","error")
+    return
+  }
+
+  openLabelPreview()
 }
