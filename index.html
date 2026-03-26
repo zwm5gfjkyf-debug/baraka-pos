@@ -620,18 +620,28 @@ Yaratish
 </div>
 
 <!-- UNIT -->
-<select id="stockUnit" style="
+<!-- UNIT (IOS STYLE) -->
+<div onclick="navigate('unitPage')" style="
 margin-top:6px;
 height:44px;
 border-radius:12px;
+background:white;
+border:1px solid var(--border);
+display:flex;
+align-items:center;
+justify-content:space-between;
 padding:0 12px;
-font-size:14px;
+cursor:pointer;
 ">
-<option value="dona">Dona</option>
-<option value="kg">Kg</option>
-<option value="litr">Litr</option>
-<option value="metr">Metr</option>
-</select>
+
+<span style="color:#64748b;">O'lchov birligi</span>
+
+<div style="display:flex;align-items:center;gap:6px;">
+  <span id="selectedUnit" style="font-weight:500;">Dona</span>
+  <span style="color:#94a3b8;">›</span>
+</div>
+
+</div>
 
 <!-- QTY -->
 <input 
@@ -752,7 +762,46 @@ Keyingisi
 </div>
   
 </div>
-  
+ <!-- UNIT PAGE -->
+<div id="unitPage" class="page hidden">
+
+<div style="padding:16px;">
+
+<!-- BACK -->
+<div onclick="goBack()" style="
+color:#2563eb;
+font-weight:600;
+margin-bottom:14px;
+cursor:pointer;
+">
+← Orqaga
+</div>
+
+<h2 style="margin-bottom:12px;">O'lchov birligi</h2>
+
+<div onclick="selectUnit('dona')" class="unit-item">
+Dona
+<span id="check-dona">✔</span>
+</div>
+
+<div onclick="selectUnit('kg')" class="unit-item">
+Kg
+<span id="check-kg" class="hidden">✔</span>
+</div>
+
+<div onclick="selectUnit('litr')" class="unit-item">
+Litr
+<span id="check-litr" class="hidden">✔</span>
+</div>
+
+<div onclick="selectUnit('metr')" class="unit-item">
+Metr
+<span id="check-metr" class="hidden">✔</span>
+</div>
+
+</div>
+
+</div> 
 </main>
 
 
