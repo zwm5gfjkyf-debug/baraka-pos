@@ -119,3 +119,30 @@ return
 input.value = number.toLocaleString("ru-RU")
 
 }
+/* ===============================
+USD RATE (LIVE)
+=============================== */
+
+let usdRate = 12500 // fallback
+
+async function loadUsdRate(){
+  try{
+    const res = await fetch("https://api.exchangerate-api.com/v4/latest/USD")
+    const data = await res.json()
+
+    if(data && data.rates && data.rates.UZS){
+      usdRate = data.rates.UZS
+      console.log("USD RATE:", usdRate)
+    }
+
+  }catch(e){
+    console.warn("USD rate failed, using fallback:", usdRate)
+  }
+}
+/* ===============================
+CONVERT USD → UZS
+=============================== */
+
+function convertUsdToUzs(amount){
+  return Math.round(amount * usdRate)
+}
