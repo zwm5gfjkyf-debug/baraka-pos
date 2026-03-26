@@ -151,7 +151,6 @@ stockProcessing = false
 function setStockFilter(type){
   currentStockFilter = type;
 
-  // active UI
   document.querySelectorAll(".stock-tab").forEach(el=>{
     el.classList.remove("active");
   });
@@ -159,13 +158,13 @@ function setStockFilter(type){
   const active = document.getElementById("tab-" + type);
   if(active) active.classList.add("active");
 
+  // 🔥 THIS LINE FIXES EVERYTHING
+  loadCurrentStock();
 }
 function loadCurrentStock(){
 
   // ✅ SAFE listener cleanup
-  if(typeof productsListener === "function"){
-    productsListener()
-  }
+  
 
   productsListener = db
     .collection("shops")
