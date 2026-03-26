@@ -24,8 +24,7 @@ const artikul = document.getElementById("stockArtikul")?.value.trim() || ""
 const unit = document.getElementById("selectedUnit")?.innerText.toLowerCase() || "dona"
 const qty = Number(document.getElementById("stockQty")?.value || 0)
 let cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
-const currencyEl = document.getElementById("currencySelect")
-const currency = currencyEl ? currencyEl.value : "UZS"
+const currency = window.currentCurrency || "UZS"
 const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
 
 if(!name || price <= 0){
