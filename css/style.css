@@ -582,11 +582,7 @@ AUTH SCREEN (LOGIN UI)
 PROFIT BUTTONS (SMALL)
 ====================== */
 
-.profit-buttons{
-  display:flex;
-  gap:6px;
-  flex-wrap:nowrap;
-}
+
 
 .profit-buttons button{
   flex:1;
@@ -2868,26 +2864,23 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 .profit-buttons{
   display:flex;
   gap:6px;
-  margin-top:8px;
+  margin:8px 0;
 }
 
 .profit-buttons button{
   flex:1;
 
-  height:28px; /* 🔥 smaller */
+  height:30px;
   font-size:11px;
 
-  border-radius:999px; /* 🔥 pill style */
+  border-radius:10px;
 
-  background:#f3f4f6;
-  border:none;
+  background:#f1f5f9;
+  border:1px solid var(--border);
 
   font-weight:500;
 }
-.profit-buttons{
-  gap:4px;
-  margin:6px 0;
-}
+
 #addProductPage > div:last-child{
   margin-bottom:0; /* 🔥 remove bottom gap */
 }
@@ -2899,6 +2892,7 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 .profit-buttons button:hover{
   background:var(--blue);
   color:white;
+  border:none;
 }
 
 /* CURRENCY LABEL */
@@ -2962,23 +2956,36 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 }
 .currency-switch{
   position:absolute;
-  right:6px;
+  right:8px;
   top:50%;
   transform:translateY(-50%);
+
   display:flex;
+  align-items:center;
+
   background:#f1f5f9;
-  border-radius:10px;
-  overflow:hidden;
+  border-radius:999px;
+
+  padding:2px;
+  gap:2px;
 }
 
 .currency-switch button{
-  padding:6px 10px;
+  padding:6px 12px;
   font-size:12px;
+
   border:none;
+  border-radius:999px;
+
   background:transparent;
+  color:#111;
+
+  font-weight:500;
 }
 
 .currency-switch .active{
   background:var(--blue);
   color:white;
+
+  box-shadow:0 2px 6px rgba(0,0,0,0.15);
 }
