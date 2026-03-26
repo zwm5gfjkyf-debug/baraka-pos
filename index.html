@@ -270,11 +270,11 @@ Hammasini o'chirish
   <div id="cartList" class="hidden"></div>
 
   <!-- 🔥 FIXED BOTTOM SCANNER -->
-  <div class="scanner-container">
-    <button class="scanner-btn" onclick="toggleCameraScanner()">
-      🔳 Skaner
-    </button>
-  </div>
+  <div class="scanner-container" id="scannerContainer">
+  <button class="scanner-btn" onclick="toggleCameraScanner()">
+    🔳 Skaner
+  </button>
+</div>
 
 </div>
 <!-- INVENTORY -->
@@ -339,22 +339,7 @@ class="search-input"
 <!-- TEZKOR QIDIRUV BUTTON (BILLZ STYLE SMALL) -->
 <div id="cameraSection">
 
-<button id="cameraToggleBtn"
-  style="
-  background:#3b82f6;
-  color:white;
-  border:none;
-  padding:10px 18px;
-  border-radius:999px;
-  font-size:13px;
-  font-weight:600;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
-  display:flex;
-  align-items:center;
-  gap:6px;
-  white-space:nowrap;
-  "
-  onclick="toggleCameraScanner()">
+<button id="cameraToggleBtn" onclick="toggleCameraScanner()">
   🔍 Tezkor qidiruv
 </button>
 
