@@ -332,28 +332,25 @@ class="search-input"
 <div id="cameraSection" style="
 position: fixed;
 bottom: 80px;
-left: 0;
-width: 100%;
-display:flex;
-justify-content:center;
+left: 50%;
+transform: translateX(-50%);
 z-index: 20;
-pointer-events:none;
 ">
 
 <button id="cameraToggleBtn"
   style="
-  pointer-events:auto;
   background:#3b82f6;
   color:white;
   border:none;
-  padding:12px 22px;
+  padding:10px 18px;
   border-radius:999px;
-  font-size:14px;
+  font-size:13px;
   font-weight:600;
-  box-shadow:0 6px 20px rgba(0,0,0,0.2);
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
   display:flex;
   align-items:center;
   gap:6px;
+  white-space:nowrap;
   "
   onclick="toggleCameraScanner()">
   🔍 Tezkor qidiruv
