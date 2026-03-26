@@ -687,47 +687,19 @@ style="padding-right:90px;"
 >
 
 <!-- 🔥 CURRENCY TOGGLE -->
-<div style="
-position:absolute;
-right:8px;
-top:50%;
-transform:translateY(-50%);
-display:flex;
-background:#f1f5f9;
-border-radius:10px;
-overflow:hidden;
-font-size:12px;
-font-weight:600;
-border:1px solid #e5e7eb;
-">
+<div class="currency-switch">
 
 <button 
 id="btnUZS"
-onclick="selectCurrency('UZS')"
-style="
-padding:5px 10px;
-border:none;
-background:#2563eb;
-color:white;
-cursor:pointer;
-border-radius:8px;
-"
+class="active"
+onclick="selectCurrency('UZS')">
 UZS
 </button>
-
 <button 
 id="btnUSD"
-onclick="selectCurrency('USD')"
-style="
-padding:5px 10px;
-border:none;
-background:transparent;
-color:#64748b;
-cursor:pointer;
-"
+onclick="selectCurrency('USD')">
 USD
 </button>
-
 </div>
 
 </div>
