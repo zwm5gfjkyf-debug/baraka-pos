@@ -22,12 +22,12 @@ function navigate(pageId){
 requestAnimationFrame(() => {
 
   if(cameraSection){
-    cameraSection.style.display = (pageId === "stockPage") ? "block" : "none";
-  }
+  cameraSection.style.display = (pageId === "stockPage") ? "flex" : "none";
+}
 
-  if(scannerContainer){
-    scannerContainer.style.display = (pageId === "salePage") ? "block" : "none";
-  }
+if(scannerContainer){
+  scannerContainer.style.display = (pageId === "salePage") ? "flex" : "none";
+}
 
 });
 
