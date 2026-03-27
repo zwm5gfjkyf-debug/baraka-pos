@@ -225,39 +225,10 @@ function addToCart(product){
 // =======================================
 
 function updateCartUI(){
-
   const countEl = document.getElementById("cartCount")
-  const emptyCart = document.getElementById("emptyCart")
-
   const totalItems = cart.reduce((sum, i) => sum + i.qty, 0)
-
-  if(countEl){
-    countEl.innerText = totalItems
-  }
-
-  if(emptyCart){
-   if(cart.length === 0){
-
-  list.classList.add("hidden")
-
-  if(emptyCart){
-    emptyCart.classList.remove("hidden")
-  }
-
-  if(totalEl){
-    totalEl.innerText = ""
-    totalEl.classList.add("hidden")
-  }
-
-  // 🔥 FORCE HIDE NEXT BUTTON
-  if(nextBtn){
-    nextBtn.classList.add("hidden")
-  }
-
-  updateCartUI()
-  return
+  if(countEl) countEl.innerText = totalItems
 }
-
 
 // =======================================
 // RENDER CART (FINAL CLEAN)
