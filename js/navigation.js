@@ -102,4 +102,16 @@ if(pageId === "salePage" && typeof updateSaleButtons === "function"){
   if(pageId === "debtAnalyticsPage" && typeof loadDebtCustomers === "function"){
     loadDebtCustomers();
   }
+   if(pageId === "debtAnalyticsPage" && typeof loadDebtCustomers === "function"){
+  loadDebtCustomers();
+}
+
+/* 🔥 ADD THIS HERE (VERY END OF navigate) */
+if(pageId === "salePage"){
+  const actions = document.getElementById("saleActions")
+  if(actions){
+    actions.classList.remove("split")
+    actions.classList.add("center")
+  }
+}
 }
