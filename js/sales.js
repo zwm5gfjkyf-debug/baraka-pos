@@ -236,12 +236,26 @@ function updateCartUI(){
   }
 
   if(emptyCart){
-    if(cart.length === 0){
-      emptyCart.classList.remove("hidden")
-    }else{
-      emptyCart.classList.add("hidden")
-    }
+   if(cart.length === 0){
+
+  list.classList.add("hidden")
+
+  if(emptyCart){
+    emptyCart.classList.remove("hidden")
   }
+
+  if(totalEl){
+    totalEl.innerText = ""
+    totalEl.classList.add("hidden")
+  }
+
+  // 🔥 FORCE HIDE NEXT BUTTON
+  if(nextBtn){
+    nextBtn.classList.add("hidden")
+  }
+
+  updateCartUI()
+  return
 }
 
 
@@ -308,16 +322,17 @@ if(nextBtn){
       if(debt) debt.classList.remove("active")
 
       updateCartUI()
+      // 🔥 SHOW NEXT BUTTON ONLY AFTER RENDER COMPLETE
+if(nextBtn){
+  nextBtn.classList.remove("hidden")
+}
       return
     }
 
     // ===================================
     // 🔥 CART VISIBLE
     // ===================================
-    // 🔥 SHOW NEXT BUTTON
-if(nextBtn){
-  nextBtn.classList.remove("hidden")
-}
+  
     list.classList.remove("hidden")
     if(emptyCart) emptyCart.classList.add("hidden")
 
