@@ -155,7 +155,7 @@ div.className = ""
 
   addToCart(p)
 
-  document.getElementById("saleSearch").value = ""
+  clearSearch()
 
   renderSelectedProduct(p)
 }
@@ -255,8 +255,7 @@ function renderCart(){
     const debtInput = document.getElementById("debtCustomer")
     const emptyCart = document.getElementById("emptyCart")
 
-    if(!saleTypeBox) return
-
+if(saleTypeBox){
     // ===================================
     // 🔥 SHOW / HIDE UI CORRECTLY
     // ===================================
@@ -857,23 +856,11 @@ function clearCart(){
     cartMap = {}
 
     renderCart()
-    updateCartUI()
+
+    document.getElementById("searchResults").innerHTML = ""
+
+    const input = document.getElementById("saleSearch")
+    if(input) input.value = ""
 
   })
-}
-function clearCart(){
-
-  cart = []
-  cartMap = {}
-
-  renderCart()
-
-  document.getElementById("searchResults").innerHTML = ""
-
-  const emptyCart = document.getElementById("emptyCart")
-  if(emptyCart){
-    emptyCart.classList.remove("hidden")
-  }
-
-  document.getElementById("saleSearch").value = ""
 }
