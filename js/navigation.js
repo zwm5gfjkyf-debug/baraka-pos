@@ -6,33 +6,24 @@ let currentPage = null;
 
 function navigate(pageId){
 
-  // prevent unnecessary reload
-  if(currentPage === pageId) return;
-  currentPage = pageId;
-
   // hide all pages
-  document.querySelectorAll(".page")
-    .forEach(p => p.classList.add("hidden"));
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'))
 
-  const page = document.getElementById(pageId);
+  // show current
+  const page = document.getElementById(pageId)
+  if(page) page.classList.remove('hidden')
 
-  if(page){
-    page.classList.remove("hidden");
+  // 🔥 FIX: RESET SCANNER POSITIONS
+  const scanner = document.getElementById("scannerContainer")
+  const camera = document.getElementById("cameraSection")
+
+  if(scanner){
+    scanner.style.display = (pageId === "salePage") ? "block" : "none"
   }
-requestAnimationFrame(() => {
 
-  if(cameraSection){
-  cameraSection.style.display = (pageId === "stockPage") ? "flex" : "none";
-}
-
-if(scannerContainer){
-  scannerContainer.style.display = (pageId === "salePage") ? "flex" : "none";
-}
-
-});
-
-if(typeof handleAddProductActions === "function"){
-  handleAddProductActions();
+  if(camera){
+    camera.style.display = (pageId === "stockPage") ? "flex" : "none"
+  }
 }
   /* ================================
      CAMERA BUTTON CONTROL
