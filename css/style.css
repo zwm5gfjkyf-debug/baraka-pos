@@ -3297,7 +3297,7 @@ SALE HEADER ACTIONS (NEW)
 }
 .sale-actions{
   position: fixed;
-  bottom: calc(70px + 10px); /* 🔥 always above nav */
+  bottom: calc(70px + 12px); /* 🔥 always above nav */
   left: 0;
   width: 100%;
 
@@ -3310,7 +3310,7 @@ SALE HEADER ACTIONS (NEW)
 
   background: white;
 
-  z-index: 2000;
+ z-index: 9999;
 
   box-shadow: 0 -8px 25px rgba(0,0,0,0.06);
 }
