@@ -3297,22 +3297,31 @@ SALE HEADER ACTIONS (NEW)
 }
 .sale-actions{
   position: fixed;
-  bottom: calc(70px + 12px); /* 🔥 always above nav */
-  left: 0;
-  width: 100%;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%);
 
   display: flex;
-  justify-content: center; /* 🔥 center by default */
-  align-items: center;
   gap: 10px;
 
+  padding: 10px;
+
+  background: transparent; /* 🔥 IMPORTANT */
+
+  z-index: 2000;
+}
+/* 🔥 CENTER MODE (ONLY SCANNER) */
+.sale-actions.center{
+  width: auto;
+  justify-content: center;
+}
+
+/* 🔥 SPLIT MODE (SCANNER + NEXT) */
+.sale-actions.split{
+  width: 100%;
+  left: 0;
+  transform: none;
   padding: 10px 12px;
-
-  background: white;
-
- z-index: 9999;
-
-  box-shadow: 0 -8px 25px rgba(0,0,0,0.06);
 }
 /* 🔥 DEFAULT (ONLY SCANNER → CENTER) */
 .sale-actions.center{
@@ -3335,11 +3344,20 @@ SALE HEADER ACTIONS (NEW)
   width:auto;
 }
 .scanner-btn{
-  flex:1;
-  max-width:400px;
+  height:50px;
+  padding:0 22px;
+  border-radius:14px;
+  background:#e5e7eb;
+  font-weight:600;
+  white-space:nowrap;
 }
 
 .next-btn{
-  flex:1;
-  max-width:400px;
+  height:50px;
+  padding:0 22px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  color:white;
+  font-weight:600;
+  white-space:nowrap;
 }
