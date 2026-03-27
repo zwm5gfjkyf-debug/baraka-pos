@@ -137,7 +137,17 @@ h3{ font-size:16px; }
 
 
 
+.modal-buttons{
+  display: flex;
+  justify-content: center;   /* ✅ CENTER HORIZONTALLY */
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
 
+.modal-buttons button{
+  min-width: 140px;
+}
 
 
 
