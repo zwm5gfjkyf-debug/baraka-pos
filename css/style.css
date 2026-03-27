@@ -3157,11 +3157,15 @@ FINAL — CLEAN BUTTON SYSTEM (NO BUGS)
 /* 🔍 CAMERA BUTTON (GLOBAL) */
 #stockPage #cameraSection{
   position: fixed;
-  bottom: 85px;
+
+  bottom: calc(70px + 15px); /* 🔥 NAV HEIGHT + GAP */
   left: 50%;
-  transform: translateX(-50%); /* 🔥 CENTER FIX */
-  width: auto; /* 🔥 IMPORTANT */
-  z-index: 1000;
+  transform: translateX(-50%);
+
+  z-index: 2000; /* 🔥 important */
+}
+#stockPage{
+  min-height: 100vh; /* 🔥 PREVENT JUMP */
 }
 
 #cameraToggleBtn{
