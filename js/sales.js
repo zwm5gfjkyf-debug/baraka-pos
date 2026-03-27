@@ -186,30 +186,26 @@ function searchProducts(text){
 
 function updateSaleButtons(){
 
- const actions = document.getElementById("saleActions")
+  const actions = document.getElementById("saleActions")
+  const nextBtn = document.getElementById("nextBtn")
 
-if(cart.length === 0){
+  if(!actions || !nextBtn) return
 
-  if(nextBtn){
+  if(cart.length === 0){
+
     nextBtn.classList.add("hidden")
-  }
 
-  if(actions){
     actions.classList.remove("split")
     actions.classList.add("center")
-  }
 
-}else{
+  }else{
 
-  if(nextBtn){
     nextBtn.classList.remove("hidden")
-  }
 
-  if(actions){
     actions.classList.remove("center")
     actions.classList.add("split")
-  }
 
+  }
 }
 // =======================================
 // CART SYSTEM (FINAL CLEAN VERSION)
@@ -519,8 +515,7 @@ return
 }
 
 }
-const btn = document.getElementById("completeSaleBtn")
-
+const btn = document.getElementById("nextBtn")
 // prevent double click
 if(btn.disabled) return
 
@@ -738,6 +733,7 @@ function handleBarcodeScan(barcode){
 
     if(product){
       addToCart(product)
+      updateSaleButtons()
     }else{
       showConfirm("Mahsulot topilmadi. Yangi mahsulot qo'shilsinmi?", () => {
         openAddProductModal()
@@ -879,9 +875,7 @@ function stopCameraScanner(){
 document.addEventListener("DOMContentLoaded", () => {
   initScannerInput()
 
-  setTimeout(()=>{
-    updateSaleButtons()
-  }, 100)
+ 
 })
 function clearCart(){
 
