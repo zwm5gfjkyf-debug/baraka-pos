@@ -151,45 +151,14 @@ div.className = ""
 </div>
 `
 
-  div.onclick = () => {
+ div.onclick = () => {
 
   addToCart(p)
+
   document.getElementById("saleSearch").value = ""
 
-  // 🔥 SHOW ONLY SELECTED PRODUCT (NOT CLEAR ALL)
-  const resultsBox = document.getElementById("searchResults")
-
-  resultsBox.innerHTML = `
-    <div class="stock-row-item">
-
-      <div class="product-img">
-        ${
-          p.image 
-          ? `<img src="${p.image}" class="product-img-tag">`
-          : `<div class="product-placeholder">📦</div>`
-        }
-      </div>
-
-      <div class="stock-info">
-        <div class="stock-name">${p.name}</div>
-        <div class="stock-price">${formatMoney(p.price)} so'm</div>
-      </div>
-
-      <div class="stock-right">
-
-        <div class="qty-control">
-          <button class="qty-btn minus" onclick="decreaseQty('${p.id}')">−</button>
-          <span class="qty-value">${cartMap[p.id]?.qty || 1}</span>
-          <button class="qty-btn plus" onclick="increaseQty('${p.id}')">+</button>
-        </div>
-
-      </div>
-
-    </div>
-  `
-
+  renderSelectedProduct(p)
 }
-
   resultsBox.appendChild(div)
 
 })
@@ -356,6 +325,59 @@ function clearSearch(){
   document.getElementById("searchResults").innerHTML = ""
 
   if(noResults) noResults.classList.add("hidden")
+}
+
+function renderSelectedProduct(p){
+
+  const resultsBox = document.getElementById("searchResults")
+
+  const qty = cartMap[p.id]?.qty || 0
+
+  resultsBox.innerHTML = `
+    <div class="stock-row-item">
+
+      <div class="product-img">
+        ${
+          p.image 
+          ? `<img src="${p.image}" class="product-img-tag">`
+          : `<div class="product-placeholder">📦</div>`
+        }
+      </div>
+
+      <div class="stock-info">
+        <div class="stock-name">${p.name}</div>
+        <div class="stock-price">${formatMoney(p.price)} so'm</div>
+      </div>
+
+      <div class="stock-right">
+
+        <div class="qty-control">
+          <button class="qty-btn minus" onclick="handleMinus('${p.id}')">−</button>
+          <span class="qty-value">${qty}</span>
+          <button class="qty-btn plus" onclick="handlePlus('${p.id}')">+</button>
+        </div>
+
+      </div>
+
+    </div>
+  `
+}
+function handlePlus(id){
+  increaseQty(id)
+
+  const product = productById[id]
+  if(product){
+    renderSelectedProduct(product)
+  }
+}
+
+function handleMinus(id){
+  decreaseQty(id)
+
+  const product = productById[id]
+  if(product){
+    renderSelectedProduct(product)
+  }
 }
 // =======================================
 // QUANTITY CONTROL
