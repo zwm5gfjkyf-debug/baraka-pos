@@ -156,7 +156,7 @@ results.slice(0,20).forEach(p => {
 
   clearSearch()
 
-  renderSelectedProduct(p)
+  
 }
   resultsBox.appendChild(div)
 
