@@ -18,16 +18,19 @@ function navigate(pageId){
   ================================ */
   const page = document.getElementById(pageId);
   if(page) page.classList.remove('hidden');
-
+// 🔥 RESET SALE BUTTON STATES
+if(pageId === "salePage"){
+  const actions = document.getElementById("saleActions")
+  if(actions){
+    actions.classList.remove("center","split")
+  }
+}
   /* ================================
      SCANNER CONTROL (🔥 FIX)
   ================================ */
-  const scanner = document.getElementById("scannerContainer");
   const camera = document.getElementById("cameraSection");
 
-  if(scanner){
-    scanner.style.display = (pageId === "salePage") ? "block" : "none";
-  }
+ 
 
   if(camera){
     camera.style.display = (pageId === "stockPage") ? "flex" : "none";
@@ -76,11 +79,12 @@ function navigate(pageId){
     loadDashboard();
   }
 
-  if(pageId === "salePage" && typeof loadProducts === "function"){
-    if(typeof productCache === "undefined" || productCache.length === 0){
-      loadProducts();
-    }
-  }
+  // 🔥 FIX SALE BUTTONS ON PAGE OPEN
+if(pageId === "salePage" && typeof updateSaleButtons === "function"){
+  setTimeout(()=>{
+    updateSaleButtons()
+  }, 50)
+}
 
   if(pageId === "stockPage" && typeof loadCurrentStock === "function"){
     if(typeof stockLoaded === "undefined" || !stockLoaded){
