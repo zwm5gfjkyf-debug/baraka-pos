@@ -3316,3 +3316,35 @@ SALE HEADER ACTIONS (NEW)
 @keyframes spin{
   to{ transform: rotate(360deg); }
 }
+.sale-actions{
+  position: fixed;
+  bottom: 70px; /* above navbar */
+  left: 0;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: white;
+  border-top: 1px solid #eee;
+  z-index: 100;
+}
+
+.scanner-btn{
+  flex:1;
+  height:50px;
+  border:none;
+  border-radius:14px;
+  background:#e5e7eb;
+  font-weight:600;
+}
+
+.next-btn{
+  flex:1.5;
+  height:50px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  color:white;
+  font-weight:600;
+  font-size:16px;
+}
