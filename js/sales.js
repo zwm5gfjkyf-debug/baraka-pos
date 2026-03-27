@@ -255,47 +255,44 @@ function renderCart(){
     const debtInput = document.getElementById("debtCustomer")
     const emptyCart = document.getElementById("emptyCart")
 
-if(saleTypeBox){
-    // ===================================
-    // 🔥 SHOW / HIDE UI CORRECTLY
-    // ===================================
-    if(cart.length > 0){
+    // ===============================
+    // 🔥 SAFE SALE TYPE BOX
+    // ===============================
+    if(saleTypeBox){
+      if(cart.length > 0){
+        saleTypeBox.classList.remove("hidden")
+      }else{
+        saleTypeBox.classList.add("hidden")
 
-      saleTypeBox.classList.remove("hidden")
+        saleType = "cash"
 
-      // ✅ SHOW CART
-      list.classList.remove("hidden")
+        if(debtInput){
+          debtInput.value = ""
+          debtInput.classList.add("hidden")
+        }
 
-      // ❌ HIDE EMPTY MESSAGE
-      if(emptyCart) emptyCart.classList.add("hidden")
+        const cash = document.getElementById("cashBtn")
+        const debt = document.getElementById("debtBtn")
 
-    }else{
-
-      saleTypeBox.classList.add("hidden")
-
-      // ❌ HIDE CART
-      list.classList.add("hidden")
-
-      // ✅ SHOW EMPTY MESSAGE
-      if(emptyCart) emptyCart.classList.remove("hidden")
-
-      saleType = "cash"
-
-      if(debtInput){
-        debtInput.value = ""
-        debtInput.classList.add("hidden")
+        if(cash) cash.classList.add("active")
+        if(debt) debt.classList.remove("active")
       }
-
-      const cash = document.getElementById("cashBtn")
-      const debt = document.getElementById("debtBtn")
-
-      if(cash) cash.classList.add("active")
-      if(debt) debt.classList.remove("active")
     }
 
-    // ===================================
-    // 🔥 RENDER ITEMS
-    // ===================================
+    // ===============================
+    // 🔥 EMPTY / CART VISIBILITY
+    // ===============================
+    if(cart.length > 0){
+      list.classList.remove("hidden")
+      if(emptyCart) emptyCart.classList.add("hidden")
+    }else{
+      list.classList.add("hidden")
+      if(emptyCart) emptyCart.classList.remove("hidden")
+    }
+
+    // ===============================
+    // 🔥 RENDER ITEMS (ALWAYS RUN)
+    // ===============================
     let total = 0
 
     cart.forEach(item => {
@@ -330,24 +327,20 @@ if(saleTypeBox){
       list.appendChild(div)
     })
 
-    // ===================================
-    // 🔥 TOTAL SAFE UPDATE
-    // ===================================
+    // ===============================
+    // 🔥 TOTAL
+    // ===============================
     const totalEl = document.getElementById("saleTotal")
     if(totalEl){
       totalEl.innerText = formatMoney(total)
     }
 
-    // ===================================
-    // 🔥 CART COUNT UPDATE
-    // ===================================
+    // ===============================
+    // 🔥 COUNT
+    // ===============================
     const countEl = document.getElementById("cartCount")
-
-    let totalItems = 0
-    cart.forEach(i => totalItems += i.qty)
-
     if(countEl){
-      countEl.innerText = totalItems
+      countEl.innerText = cart.reduce((sum,i)=>sum+i.qty,0)
     }
 
   })
