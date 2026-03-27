@@ -116,7 +116,7 @@ BARAKA
 🏠 Asosiy
 </button>
 
-<button onclick="menuClick(() => navigate(''))">
+<button onclick="menuClick(() => navigate('salePage'))">
 🛒 Sotuv
 </button>
 
@@ -296,10 +296,16 @@ Hammasini o'chirish
 
   <!-- CART -->
   <div id="cartList" class="hidden"></div>
+  <div id="saleTotal" style="
+  margin-top:10px;
+  font-weight:600;
+  font-size:18px;
+">
+  0
+</div>
 </div> <!-- ✅ CLOSE salePage -->
   <!-- 🔥 FIXED BOTTOM SCANNER -->
 
-</div>
 <!-- INVENTORY -->
 <div id="stockPage" class="page hidden">
 
@@ -884,7 +890,7 @@ Metr
   </button>
 </div>
 
-<div id="cameraSection" style="display:none;">
+<div id="cameraSectionGlobal" style="display:none;">
   <button id="cameraToggleBtn" onclick="toggleCameraScanner()">
     🔍 Tezkor qidiruv
   </button>
