@@ -18,13 +18,7 @@ function navigate(pageId){
   ================================ */
   const page = document.getElementById(pageId);
   if(page) page.classList.remove('hidden');
-// 🔥 RESET SALE BUTTON STATES
-if(pageId === "salePage"){
-  const actions = document.getElementById("saleActions")
-  if(actions){
-    actions.classList.remove("center","split")
-  }
-}
+
   /* ================================
      SCANNER CONTROL (🔥 FIX)
   ================================ */
@@ -107,11 +101,17 @@ if(pageId === "salePage" && typeof updateSaleButtons === "function"){
 }
 
 /* 🔥 ADD THIS HERE (VERY END OF navigate) */
-if(pageId === "salePage"){
-  const actions = document.getElementById("saleActions")
-  if(actions){
+const actions = document.getElementById("saleActions")
+
+if(actions){
+
+  if(pageId === "salePage"){
+    actions.classList.remove("hidden")
     actions.classList.remove("split")
     actions.classList.add("center")
+  }else{
+    actions.classList.add("hidden")
   }
+
 }
 }
