@@ -231,23 +231,31 @@ Hammasini o'chirish
 </div>
 
 <!-- SALE -->
-<div id="salePage" class="page hidden">
+<div class="sale-header">
 
-  <!-- HEADER -->
-  <div class="sale-header">
   <h2>Savatcha</h2>
 
-  <div class="sale-actions">
+  <div style="display:flex; align-items:center; gap:8px;">
 
-    <div class="cart-info">
-      🧺 <span id="cartCount">0</span>
-    </div>
+    <!-- 🛒 COUNT -->
+    <div id="cartCount" class="cart-count">0</div>
 
-<button class="clear-cart-btn" onclick="clearCart()">
+    <!-- 🗑 CLEAR -->
+    <button onclick="clearCart()" style="
+      width:32px;
+      height:32px;
+      border-radius:10px;
+      border:none;
+      background:#fee2e2;
+      color:#ef4444;
+      font-size:14px;
+      cursor:pointer;
+    ">
       🗑
     </button>
 
   </div>
+
 </div>
 
   <!-- SEARCH -->
