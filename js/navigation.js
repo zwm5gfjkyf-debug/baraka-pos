@@ -1,36 +1,41 @@
 /* =========================================
-   PAGE NAVIGATION (OPTIMIZED + CLEAN)
+   PAGE NAVIGATION (FINAL FIXED VERSION)
 ========================================= */
 
 let currentPage = null;
 
 function navigate(pageId){
 
-  // hide all pages
-  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'))
+  currentPage = pageId;
 
-  // show current
-  const page = document.getElementById(pageId)
-  if(page) page.classList.remove('hidden')
+  /* ================================
+     HIDE ALL PAGES
+  ================================ */
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
 
-  // 🔥 FIX: RESET SCANNER POSITIONS
-  const scanner = document.getElementById("scannerContainer")
-  const camera = document.getElementById("cameraSection")
+  /* ================================
+     SHOW CURRENT PAGE
+  ================================ */
+  const page = document.getElementById(pageId);
+  if(page) page.classList.remove('hidden');
+
+  /* ================================
+     SCANNER CONTROL (🔥 FIX)
+  ================================ */
+  const scanner = document.getElementById("scannerContainer");
+  const camera = document.getElementById("cameraSection");
 
   if(scanner){
-    scanner.style.display = (pageId === "salePage") ? "block" : "none"
+    scanner.style.display = (pageId === "salePage") ? "block" : "none";
   }
 
   if(camera){
-    camera.style.display = (pageId === "stockPage") ? "flex" : "none"
+    camera.style.display = (pageId === "stockPage") ? "flex" : "none";
   }
-}
-  /* ================================
-     CAMERA BUTTON CONTROL
-  ================================ */
-  const cameraSection = document.getElementById("cameraSection");
-const scannerContainer = document.getElementById("scannerContainer");
 
+  /* ================================
+     CAMERA SYSTEM UPDATE
+  ================================ */
   if(typeof updateCamera === "function"){
     updateCamera();
   }
@@ -40,11 +45,11 @@ const scannerContainer = document.getElementById("scannerContainer");
   ================================ */
   const bottomNav = document.querySelector(".bottom-nav");
 
-if(bottomNav){
-  bottomNav.style.display = (
-    pageId === "addProductPage" || pageId === "unitPage"
-  ) ? "none" : "flex";
-}
+  if(bottomNav){
+    bottomNav.style.display = (
+      pageId === "addProductPage" || pageId === "unitPage"
+    ) ? "none" : "flex";
+  }
 
   /* ================================
      ACTIVE NAV BUTTON
@@ -77,12 +82,12 @@ if(bottomNav){
     }
   }
 
- if(pageId === "stockPage" && typeof loadCurrentStock === "function"){
-  if(typeof stockLoaded === "undefined" || !stockLoaded){
-    loadCurrentStock();
-    stockLoaded = true;
+  if(pageId === "stockPage" && typeof loadCurrentStock === "function"){
+    if(typeof stockLoaded === "undefined" || !stockLoaded){
+      loadCurrentStock();
+      stockLoaded = true;
+    }
   }
-}
 
   if(pageId === "analyticsPage"){
     if(typeof showAnalyticsTab === "function"){
