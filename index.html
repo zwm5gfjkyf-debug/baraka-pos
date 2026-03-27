@@ -317,19 +317,6 @@ Hammasini o'chirish
   font-size:18px;
 ">0</div>
 
-<!-- 🔥 NEW BOTTOM BAR -->
-<div id="saleActions" class="sale-actions center">
-  <!-- LEFT BUTTON -->
-  <button id="scannerBtn" class="scanner-btn" onclick="toggleCameraScanner()">
-    🔳 Skaner
-  </button>
-
-  <!-- RIGHT BUTTON -->
-  <button id="nextBtn" class="next-btn hidden" onclick="completeSale()">
-    Keyingisi →
-  </button>
-
-</div>
 
 </div> <!-- ✅ CLOSE salePage -->
   <!-- 🔥 FIXED BOTTOM SCANNER -->
@@ -901,7 +888,28 @@ Metr
 
 </div> 
 </main>
+<!-- ✅ FIXED SALE ACTIONS -->
+<div id="saleActions" class="sale-actions center">
 
+  <button id="scannerBtn" class="scanner-btn" onclick="toggleCameraScanner()">
+    🔳 Skaner
+  </button>
+
+  <button id="nextBtn" class="next-btn hidden" onclick="completeSale()">
+    Keyingisi →
+  </button>
+
+</div>
+
+<!-- ✅ CAMERA (ONLY ONE!) -->
+<div id="cameraScanner" class="hidden" style="margin-top:10px;">
+  <div id="scannerViewport" style="
+    width:100%;
+    height:200px;
+    border-radius:12px;
+    overflow:hidden;
+  "></div>
+</div>
 
 
 
