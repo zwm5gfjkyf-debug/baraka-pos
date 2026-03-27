@@ -1295,41 +1295,52 @@ CART CONTAINER
 QUANTITY CONTROLS
 ====================== */
 
-.quantity-controls{
+/* ======================
+NEW iOS STYLE QUANTITY
+====================== */
+
+.qty-control{
   display:flex;
   align-items:center;
-  gap:8px;
-
   background:#f1f5f9;
-
   border-radius:999px;
-
-  padding:4px 6px;
+  overflow:hidden;
 }
 
-/* BUTTON */
+/* BUTTONS */
 .qty-btn{
-  width:28px;
-  height:28px;
-
-  border-radius:50%;
-
-  background:var(--blue);
-
-  color:white;
+  width:36px;
+  height:36px;
 
   display:flex;
   align-items:center;
   justify-content:center;
+
+  font-size:18px;
   font-weight:700;
-  font-size:16px;
+
+  border:none;
   cursor:pointer;
 }
+
+/* MINUS */
+.qty-btn.minus{
+  background:#e5e7eb;
+  color:#111827;
+}
+
+/* PLUS */
+.qty-btn.plus{
+  background:var(--blue);
+  color:white;
+}
+
 /* NUMBER */
-.qty-number{
-  min-width:20px;
+.qty-value{
+  min-width:36px;
   text-align:center;
   font-weight:600;
+  font-size:15px;
 }
 /* ======================
 TOTAL BLOCK
