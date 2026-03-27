@@ -3179,3 +3179,11 @@ FINAL — CLEAN BUTTON SYSTEM (NO BUGS)
   gap: 6px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
+#cameraScanner{
+  position: fixed;
+  bottom: 150px; /* ABOVE BUTTON */
+  left: 0;
+  width: 100%;
+  padding: 0 12px;
+  z-index: 1500;
+}
