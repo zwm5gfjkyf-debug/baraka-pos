@@ -123,12 +123,28 @@ if(results.length === 0 && query.trim() !== ""){
 results.slice(0,20).forEach(p => {
 
   const div = document.createElement("div")
-  div.className = "search-item"
+div.className = ""
+ div.innerHTML = `
+<div class="stock-row-item">
 
-  div.innerHTML = `
-    <span>${p.name}</span>
-    <strong>${formatMoney(p.price)}</strong>
-  `
+  <div class="product-img">
+    <div class="product-placeholder">📦</div>
+  </div>
+
+  <div class="stock-info">
+    <div class="stock-name">${p.name}</div>
+    <div class="stock-price">${formatMoney(p.price)} so'm</div>
+    <div class="stock-meta">
+      ART-${p.id.slice(0,6)} / ${p.barcode || "-"}
+    </div>
+  </div>
+
+  <div class="stock-right">
+    <div class="stock-qty">${p.stock} dona</div>
+  </div>
+
+</div>
+`
 
   div.onclick = () => {
     addToCart(p)
