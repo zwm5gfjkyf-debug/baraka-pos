@@ -517,3 +517,16 @@ function handleCostInput(){
 window.addEventListener("load", () => {
   document.getElementById("appScreen").classList.add("loaded")
 })
+window.addEventListener("load", () => {
+
+  setTimeout(() => {
+
+    const loading = document.getElementById("loadingScreen")
+    if(loading) loading.style.display = "none"
+
+    const auth = document.getElementById("authScreen")
+    if(auth) auth.classList.remove("hidden")
+
+  }, 800)
+
+})
