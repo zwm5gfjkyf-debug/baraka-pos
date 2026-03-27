@@ -36,12 +36,13 @@ const data = doc.data()
 
 if(data.deleted === true) return
 const product = {
-id: doc.id,
-name: data.name || "",
-barcode: data.barcode || "",
-price: data.price || 0,
-cost: data.cost || 0,
-stock: data.stock || 0
+  id: doc.id,
+  name: data.name || "",
+  barcode: data.barcode || "",
+  price: data.price || 0,
+  cost: data.cost || 0,
+  stock: data.stock || 0,
+  image: data.image || ""   // 🔥 ADD THIS
 }
 
 productCache.push(product)
@@ -127,9 +128,13 @@ div.className = ""
  div.innerHTML = `
 <div class="stock-row-item">
 
-  <div class="product-img">
-    <div class="product-placeholder">📦</div>
-  </div>
+ <div class="product-img">
+  ${
+    p.image 
+    ? `<img src="${p.image}" class="product-img-tag">`
+    : `<div class="product-placeholder">📦</div>`
+  }
+</div>
 
   <div class="stock-info">
     <div class="stock-name">${p.name}</div>
