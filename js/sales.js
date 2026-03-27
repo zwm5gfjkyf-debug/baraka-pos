@@ -85,8 +85,19 @@ function searchProducts(text){
 const resultsBox = document.getElementById("searchResults")
 resultsBox.innerHTML = ""
 
-if(!text) return
+const emptyCart = document.getElementById("emptyCart")
+const noResults = document.getElementById("noResults")
 
+if(!text){
+  resultsBox.innerHTML = ""
+
+  if(noResults) noResults.classList.add("hidden")
+  if(emptyCart && cart.length === 0){
+    emptyCart.classList.remove("hidden")
+  }
+
+  return
+}
 const query = text.toLowerCase()
 
 let results = []   // ✅ THIS WAS MISSING
@@ -102,12 +113,14 @@ if(results.length >= 20) break
 }
 
 }
-const noResults = document.getElementById("noResults");
+const noResults = document.getElementById("noResults")
+const emptyCart = document.getElementById("emptyCart")
 
 if(results.length === 0 && query.trim() !== ""){
-  noResults.classList.remove("hidden");
+  if(noResults) noResults.classList.remove("hidden")
+  if(emptyCart) emptyCart.classList.add("hidden")
 }else{
-  noResults.classList.add("hidden");
+  if(noResults) noResults.classList.add("hidden")
 }
 results.slice(0,20).forEach(p => {
 
@@ -253,14 +266,21 @@ document.getElementById("saleTotal").innerText = formatMoney(total)
 }
 function clearSearch(){
 
-const input = document.getElementById("saleSearch")
+  const input = document.getElementById("saleSearch")
+  const emptyCart = document.getElementById("emptyCart")
+  const noResults = document.getElementById("noResults")
 
-if(input){
-input.value = ""
-}
+  if(input){
+    input.value = ""
+  }
 
-document.getElementById("searchResults").innerHTML = ""
+  document.getElementById("searchResults").innerHTML = ""
 
+  if(noResults) noResults.classList.add("hidden")
+
+  if(emptyCart && cart.length === 0){
+    emptyCart.classList.remove("hidden")
+  }
 }
 // =======================================
 // QUANTITY CONTROL
