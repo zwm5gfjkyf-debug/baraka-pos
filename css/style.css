@@ -216,9 +216,7 @@ MAIN APP CONTAINER
 ====================== */
 
 .main-content{
-  width:100%;
-  padding:var(--space-md);
-  padding-bottom:120px; /* for bottom nav */
+  padding-bottom:160px; /* 🔥 space for floating buttons */
 }
 
 /* ======================
@@ -3212,7 +3210,7 @@ FINAL — CLEAN BUTTON SYSTEM (NO BUGS)
 }
 #cameraScanner{
   position: fixed;
-  bottom: 150px; /* ABOVE BUTTON */
+  bottom: 140px;
   left: 0;
   width: 100%;
   padding: 0 12px;
@@ -3246,11 +3244,7 @@ FINAL — CLEAN BUTTON SYSTEM (NO BUGS)
 SALE HEADER ACTIONS (NEW)
 ====================== */
 
-.sale-actions{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+
 
 /* CART INFO (ICON + COUNT) */
 .cart-info{
@@ -3303,40 +3297,49 @@ SALE HEADER ACTIONS (NEW)
 }
 .sale-actions{
   position: fixed;
-  bottom: 75px; /* 🔥 slightly higher than nav */
-  left: 0; 
+  bottom: calc(70px + 10px); /* 🔥 always above nav */
+  left: 0;
   width: 100%;
 
   display: flex;
-  gap: 10px; 
+  justify-content: center; /* 🔥 center by default */
+  align-items: center;
+  gap: 10px;
 
   padding: 10px 12px;
 
   background: white;
 
-  border-top: 1px solid #eee;
+  z-index: 2000;
 
-  z-index: 2000; /* 🔥 VERY IMPORTANT */
-
-  box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+  box-shadow: 0 -8px 25px rgba(0,0,0,0.06);
+}
+/* 🔥 DEFAULT (ONLY SCANNER → CENTER) */
+.sale-actions.center{
+  justify-content: center;
 }
 
+.sale-actions.center .scanner-btn{
+  flex:none;
+  width:70%;
+}
+
+/* 🔥 WHEN CART HAS ITEMS (SPLIT MODE) */
+.sale-actions.split{
+  justify-content: space-between;
+}
+
+.sale-actions.split .scanner-btn,
+.sale-actions.split .next-btn{
+  flex:1;
+  width:auto;
+}
 .scanner-btn{
   flex:1;
-  height:50px;
-  border:none;
-  border-radius:14px;
-  background:#e5e7eb;
-  font-weight:600;
+  max-width:400px;
 }
 
 .next-btn{
-  flex:1.5;
-  height:50px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(135deg,#3b82f6,#2563eb);
-  color:white;
-  font-weight:600;
-  font-size:16px;
+  flex:1;
+  max-width:400px;
 }
