@@ -88,7 +88,13 @@ resultsBox.innerHTML = ""
 
 const emptyCart = document.getElementById("emptyCart")
 const noResults = document.getElementById("noResults")
+const totalEl = document.getElementById("saleTotal")
 
+// 🔥 HIDE TOTAL WHEN SEARCHING
+if(totalEl){
+  totalEl.innerText = ""
+  totalEl.classList.add("hidden")
+}
 if(!text){
   resultsBox.innerHTML = ""
 
@@ -254,7 +260,17 @@ function renderCart(){
 
     const list = document.getElementById("cartList")
     if(!list) return
+const totalEl = document.getElementById("saleTotal")
 
+if(totalEl){
+  if(cart.length > 0){
+    totalEl.innerText = "Jami: " + formatMoney(total)
+    totalEl.classList.remove("hidden")
+  }else{
+    totalEl.innerText = ""
+    totalEl.classList.add("hidden")
+  }
+}
     list.innerHTML = ""
 
     const saleTypeBox = document.getElementById("saleTypeContainer")
@@ -331,9 +347,7 @@ function renderCart(){
             <button class="qty-btn plus" onclick="increaseQty('${item.id}')">+</button>
           </div>
 
-          <div style="font-weight:600; margin-top:4px;">
-            ${formatMoney(itemTotal)}
-          </div>
+        
 
         </div>
       `
