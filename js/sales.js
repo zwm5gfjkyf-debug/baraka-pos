@@ -124,7 +124,6 @@ if(results.length === 0 && query.trim() !== ""){
 results.slice(0,20).forEach(p => {
 
   const div = document.createElement("div")
-div.className = ""
  div.innerHTML = `
 <div class="stock-row-item">
 
