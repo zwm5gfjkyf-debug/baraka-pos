@@ -500,7 +500,10 @@ function openLabelPreview(){
   document.getElementById("previewBarcodeNumber").innerText = barcode
 
   // ✅ QTY RESET
-  document.getElementById("labelQty").value = 1
+  const qtyInput = document.getElementById("stockQty")
+const qty = qtyInput ? Number(qtyInput.value) : 1
+
+document.getElementById("labelQty").value = qty > 0 ? qty : 1
 
   // ✅ BARCODE (BETTER SIZE)
   JsBarcode("#previewBarcode", barcode, {
