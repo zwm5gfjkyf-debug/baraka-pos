@@ -3155,14 +3155,13 @@ FINAL — CLEAN BUTTON SYSTEM (NO BUGS)
 }
 
 /* 🔍 CAMERA BUTTON (GLOBAL) */
-#cameraSection{
+#stockPage #cameraSection{
   position: fixed;
-  bottom: 85px; /* SAME LEVEL */
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  z-index: 2000;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%); /* 🔥 CENTER FIX */
+  width: auto; /* 🔥 IMPORTANT */
+  z-index: 1000;
 }
 
 #cameraToggleBtn{
@@ -3174,9 +3173,12 @@ FINAL — CLEAN BUTTON SYSTEM (NO BUGS)
   color: white;
   font-weight: 600;
   font-size: 13px;
-  display: flex;
+
+  display: inline-flex; /* 🔥 FIX */
   align-items: center;
+  justify-content: center;
   gap: 6px;
+
   box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
 #cameraScanner{
