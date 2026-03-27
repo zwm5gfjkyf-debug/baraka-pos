@@ -233,94 +233,125 @@ function updateCartUI(){
   }
 }
 // =======================================
-// RENDER CART
+// RENDER CART (FIXED VERSION)
 // =======================================
 let cartRenderScheduled = false
 
 function renderCart(){
 
-if(cartRenderScheduled) return
-cartRenderScheduled = true
+  if(cartRenderScheduled) return
+  cartRenderScheduled = true
 
-requestAnimationFrame(()=>{
+  requestAnimationFrame(()=>{
 
-cartRenderScheduled = false
+    cartRenderScheduled = false
 
-const list = document.getElementById("cartList")
-if(!list) return
+    const list = document.getElementById("cartList")
+    if(!list) return
 
-list.innerHTML = ""
+    list.innerHTML = ""
 
-const saleTypeBox = document.getElementById("saleTypeContainer")
-const debtInput = document.getElementById("debtCustomer")
+    const saleTypeBox = document.getElementById("saleTypeContainer")
+    const debtInput = document.getElementById("debtCustomer")
+    const emptyCart = document.getElementById("emptyCart")
 
-if(!saleTypeBox) return
+    if(!saleTypeBox) return
 
-if(cart.length > 0){
-  saleTypeBox.classList.remove("hidden")
-}else{
-  saleTypeBox.classList.add("hidden")
+    // ===================================
+    // 🔥 SHOW / HIDE UI CORRECTLY
+    // ===================================
+    if(cart.length > 0){
 
-  saleType = "cash"
+      saleTypeBox.classList.remove("hidden")
 
-  if(debtInput){
-    debtInput.value = ""
-    debtInput.classList.add("hidden")
-  }
+      // ✅ SHOW CART
+      list.classList.remove("hidden")
 
-  const cash = document.getElementById("cashBtn")
-  const debt = document.getElementById("debtBtn")
+      // ❌ HIDE EMPTY MESSAGE
+      if(emptyCart) emptyCart.classList.add("hidden")
 
-  if(cash) cash.classList.add("active")
-  if(debt) debt.classList.remove("active")
-}
+    }else{
 
-let total = 0
+      saleTypeBox.classList.add("hidden")
 
-cart.forEach(item => {
+      // ❌ HIDE CART
+      list.classList.add("hidden")
 
-  const itemTotal = item.price * item.qty
-  total += itemTotal
+      // ✅ SHOW EMPTY MESSAGE
+      if(emptyCart) emptyCart.classList.remove("hidden")
 
-  const div = document.createElement("div")
-  div.className = "cart-item"
+      saleType = "cash"
 
-  div.innerHTML = `
-    <div class="cart-row">
-      <span class="cart-name">${item.name}</span>
+      if(debtInput){
+        debtInput.value = ""
+        debtInput.classList.add("hidden")
+      }
 
-      <div class="qty-control">
-  <button class="qty-btn minus" onclick="decreaseQty('${item.id}')">−</button>
-  <span class="qty-value">${item.qty}</span>
-  <button class="qty-btn plus" onclick="increaseQty('${item.id}')">+</button>
-</div>
-    </div>
+      const cash = document.getElementById("cashBtn")
+      const debt = document.getElementById("debtBtn")
 
-    <input
-      type="number"
-      value="${item.price}"
-      class="price-input"
-      onchange="changePrice('${item.id}', this.value)"
-    >
+      if(cash) cash.classList.add("active")
+      if(debt) debt.classList.remove("active")
+    }
 
-    <strong>${formatMoney(itemTotal)} so'm</strong>
-  `
+    // ===================================
+    // 🔥 RENDER ITEMS
+    // ===================================
+    let total = 0
 
-  list.appendChild(div)
-})
+    cart.forEach(item => {
 
-document.getElementById("saleTotal").innerText = formatMoney(total)
-  // 🔥 UPDATE CART COUNT
-const countEl = document.getElementById("cartCount")
+      const itemTotal = item.price * item.qty
+      total += itemTotal
 
-let totalItems = 0
-cart.forEach(i => totalItems += i.qty)
+      const div = document.createElement("div")
+      div.className = "cart-item"
 
-if(countEl){
-  countEl.innerText = totalItems
-}
-updateCartUI()
-})
+      div.innerHTML = `
+        <div class="cart-row">
+          <span class="cart-name">${item.name}</span>
+
+          <div class="qty-control">
+            <button class="qty-btn minus" onclick="decreaseQty('${item.id}')">−</button>
+            <span class="qty-value">${item.qty}</span>
+            <button class="qty-btn plus" onclick="increaseQty('${item.id}')">+</button>
+          </div>
+        </div>
+
+        <input
+          type="number"
+          value="${item.price}"
+          class="price-input"
+          onchange="changePrice('${item.id}', this.value)"
+        >
+
+        <strong>${formatMoney(itemTotal)} so'm</strong>
+      `
+
+      list.appendChild(div)
+    })
+
+    // ===================================
+    // 🔥 TOTAL SAFE UPDATE
+    // ===================================
+    const totalEl = document.getElementById("saleTotal")
+    if(totalEl){
+      totalEl.innerText = formatMoney(total)
+    }
+
+    // ===================================
+    // 🔥 CART COUNT UPDATE
+    // ===================================
+    const countEl = document.getElementById("cartCount")
+
+    let totalItems = 0
+    cart.forEach(i => totalItems += i.qty)
+
+    if(countEl){
+      countEl.innerText = totalItems
+    }
+
+  })
 }
 function clearSearch(){
 
