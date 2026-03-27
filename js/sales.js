@@ -202,7 +202,36 @@ renderCart()
 }
 
 
+function updateCartUI(){
 
+  const countEl = document.getElementById("cartCount")
+  const list = document.getElementById("cartList")
+  const emptyCart = document.getElementById("emptyCart")
+
+  const totalItems = cart.reduce((sum, i) => sum + i.qty, 0)
+
+  // update count
+  if(countEl){
+    countEl.innerText = totalItems
+  }
+
+  // toggle empty / cart
+  if(list){
+    if(cart.length > 0){
+      list.classList.remove("hidden")
+    }else{
+      list.classList.add("hidden")
+    }
+  }
+
+  if(emptyCart){
+    if(cart.length === 0){
+      emptyCart.classList.remove("hidden")
+    }else{
+      emptyCart.classList.add("hidden")
+    }
+  }
+}
 // =======================================
 // RENDER CART
 // =======================================
@@ -281,14 +310,13 @@ cart.forEach(item => {
 })
 
 document.getElementById("saleTotal").innerText = formatMoney(total)
-
+updateCartUI()
 })
 }
 function clearSearch(){
 
   const input = document.getElementById("saleSearch")
- 
- 
+  const noResults = document.getElementById("noResults")
 
   if(input){
     input.value = ""
@@ -297,10 +325,6 @@ function clearSearch(){
   document.getElementById("searchResults").innerHTML = ""
 
   if(noResults) noResults.classList.add("hidden")
-
-  if(emptyCart && cart.length === 0){
-    emptyCart.classList.remove("hidden")
-  }
 }
 // =======================================
 // QUANTITY CONTROL
@@ -730,3 +754,17 @@ function stopCameraScanner(){
 document.addEventListener("DOMContentLoaded", () => {
   initScannerInput()
 })
+function clearCart(){
+
+  if(cart.length === 0) return
+
+  showConfirm("Savatchani tozalaysizmi?", () => {
+
+    cart = []
+    cartMap = {}
+
+    renderCart()
+    updateCartUI()
+
+  })
+}
