@@ -183,6 +183,29 @@ function searchProducts(text){
     resultsBox.appendChild(div)
   })
 }
+
+function updateSaleButtons(){
+
+  const actions = document.getElementById("saleActions")
+  const nextBtn = document.getElementById("nextBtn")
+
+  if(!actions || !nextBtn) return
+
+  if(cart.length === 0){
+    // ✅ CENTER MODE
+    actions.classList.remove("split")
+    actions.classList.add("center")
+
+    nextBtn.classList.add("hidden")
+
+  }else{
+    // ✅ SPLIT MODE
+    actions.classList.remove("center")
+    actions.classList.add("split")
+
+    nextBtn.classList.remove("hidden")
+  }
+}
 // =======================================
 // CART SYSTEM (FINAL CLEAN VERSION)
 // =======================================
@@ -261,9 +284,7 @@ function renderCart(){
     // ===================================
     if(cart.length === 0){
 // 🔥 HIDE NEXT BUTTON
-if(nextBtn){
-  nextBtn.classList.add("hidden")
-}
+
       list.classList.add("hidden")
 
       if(emptyCart){
@@ -293,10 +314,7 @@ if(nextBtn){
       if(debt) debt.classList.remove("active")
 
       updateCartUI()
-      // 🔥 SHOW NEXT BUTTON ONLY AFTER RENDER COMPLETE
-if(nextBtn){
-  nextBtn.classList.remove("hidden")
-}
+updateSaleButtons()
       return
     }
 
@@ -855,6 +873,10 @@ function stopCameraScanner(){
 }
 document.addEventListener("DOMContentLoaded", () => {
   initScannerInput()
+
+  setTimeout(()=>{
+    updateSaleButtons()
+  }, 100)
 })
 function clearCart(){
 
