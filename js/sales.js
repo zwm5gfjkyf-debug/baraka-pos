@@ -102,7 +102,13 @@ if(results.length >= 20) break
 }
 
 }
+const noResults = document.getElementById("noResults");
 
+if(results.length === 0 && query.trim() !== ""){
+  noResults.classList.remove("hidden");
+}else{
+  noResults.classList.add("hidden");
+}
 results.slice(0,20).forEach(p => {
 
 const div = document.createElement("div")
