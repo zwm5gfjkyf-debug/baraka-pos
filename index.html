@@ -848,18 +848,26 @@ Metr
 </div> 
 </main>
 
-<div class="scanner-container" id="scannerContainer">
-<button class="scanner-btn" onclick="toggleCameraScanner()">
+<!-- 🔥 GLOBAL FIXED BUTTONS (MOVED OUTSIDE PAGES) -->
+
+<div class="scanner-container" id="scannerContainer" style="display:none;">
+  <button class="scanner-btn" onclick="toggleCameraScanner()">
     🔳 Skaner
   </button>
 </div>
-<div id="cameraSection">
+
+<div id="cameraSection" style="display:none;">
   <button id="cameraToggleBtn" onclick="toggleCameraScanner()">
     🔍 Tezkor qidiruv
   </button>
 
   <div id="cameraScanner" class="hidden" style="margin-top:10px;">
-    <div id="scannerViewport"></div>
+    <div id="scannerViewport" style="
+      width:100%;
+      height:200px;
+      border-radius:12px;
+      overflow:hidden;
+    "></div>
   </div>
 </div>
 <!-- NAVIGATION -->
