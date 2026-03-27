@@ -255,7 +255,7 @@ function renderCart(){
     const emptyCart = document.getElementById("emptyCart")
 
     // ===============================
-    // 🔥 SAFE SALE TYPE BOX
+    // 🔥 SALE TYPE BOX
     // ===============================
     if(saleTypeBox){
       if(cart.length > 0){
@@ -279,7 +279,7 @@ function renderCart(){
     }
 
     // ===============================
-    // 🔥 EMPTY / CART VISIBILITY
+    // 🔥 EMPTY / CART
     // ===============================
     if(cart.length > 0){
       list.classList.remove("hidden")
@@ -290,7 +290,7 @@ function renderCart(){
     }
 
     // ===============================
-    // 🔥 RENDER ITEMS (ALWAYS RUN)
+    // 🔥 RENDER CLEAN PRODUCT UI
     // ===============================
     let total = 0
 
@@ -300,38 +300,46 @@ function renderCart(){
       total += itemTotal
 
       const div = document.createElement("div")
-      div.className = "cart-item"
+      div.className = "stock-row-item"   // ✅ SAME STYLE AS SEARCH
 
       div.innerHTML = `
-        <div class="cart-row">
-          <span class="cart-name">${item.name}</span>
+        <div class="product-img">
+          ${
+            item.image
+            ? `<img src="${item.image}" class="product-img-tag">`
+            : `<div class="product-placeholder">📦</div>`
+          }
+        </div>
+
+        <div class="stock-info">
+          <div class="stock-name">${item.name}</div>
+          <div class="stock-price">${formatMoney(item.price)} so'm</div>
+        </div>
+
+        <div class="stock-right">
 
           <div class="qty-control">
             <button class="qty-btn minus" onclick="decreaseQty('${item.id}')">−</button>
             <span class="qty-value">${item.qty}</span>
             <button class="qty-btn plus" onclick="increaseQty('${item.id}')">+</button>
           </div>
+
+          <div style="font-weight:600; margin-top:4px;">
+            ${formatMoney(itemTotal)} so'm
+          </div>
+
         </div>
-
-        <input
-          type="number"
-          value="${item.price}"
-          class="price-input"
-          onchange="changePrice('${item.id}', this.value)"
-        >
-
-        <strong>${formatMoney(itemTotal)} so'm</strong>
       `
 
       list.appendChild(div)
     })
 
     // ===============================
-    // 🔥 TOTAL
+    // 🔥 TOTAL (FIXED TEXT)
     // ===============================
     const totalEl = document.getElementById("saleTotal")
     if(totalEl){
-      totalEl.innerText = formatMoney(total)
+      totalEl.innerText = "Jami: " + formatMoney(total) + " so'm"
     }
 
     // ===============================
