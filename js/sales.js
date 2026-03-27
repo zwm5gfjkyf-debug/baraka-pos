@@ -93,11 +93,18 @@ if(!text){
   resultsBox.innerHTML = ""
 
   if(noResults) noResults.classList.add("hidden")
+
+  // ✅ ONLY show emptyCart if truly empty AND not searching
   if(emptyCart && cart.length === 0){
     emptyCart.classList.remove("hidden")
   }
 
   return
+}
+
+// ✅ 🔥 HIDE EMPTY STATE WHEN USER STARTS TYPING
+if(emptyCart){
+  emptyCart.classList.add("hidden")
 }
 
 const query = text.toLowerCase()
@@ -137,8 +144,8 @@ results.slice(0,20).forEach(p => {
 
   <div class="stock-info">
     <div class="stock-name">${p.name}</div>
-    <div class="stock-price">${formatMoney(p.price)} so'm</div>
-    <div class="stock-meta">
+<div class="stock-price">${formatMoney(p.price)}</div>
+<div class="stock-meta">
       ART-${p.id.slice(0,6)} / ${p.barcode || "-"}
     </div>
   </div>
@@ -313,7 +320,7 @@ function renderCart(){
 
         <div class="stock-info">
           <div class="stock-name">${item.name}</div>
-          <div class="stock-price">${formatMoney(item.price)} so'm</div>
+          <div class="stock-price">${formatMoney(item.price)}</div>
         </div>
 
         <div class="stock-right">
@@ -325,7 +332,7 @@ function renderCart(){
           </div>
 
           <div style="font-weight:600; margin-top:4px;">
-            ${formatMoney(itemTotal)} so'm
+            ${formatMoney(itemTotal)}
           </div>
 
         </div>
@@ -338,9 +345,16 @@ function renderCart(){
     // 🔥 TOTAL (FIXED TEXT)
     // ===============================
     const totalEl = document.getElementById("saleTotal")
-    if(totalEl){
-      totalEl.innerText = "Jami: " + formatMoney(total) + " so'm"
-    }
+
+if(totalEl){
+  if(cart.length > 0){
+    totalEl.innerText = "Jami: " + formatMoney(total)
+    totalEl.classList.remove("hidden")
+  }else{
+    totalEl.innerText = ""
+    totalEl.classList.add("hidden")   // ✅ hides that ugly 0
+  }
+}
 
     // ===============================
     // 🔥 COUNT
