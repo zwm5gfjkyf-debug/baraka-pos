@@ -186,25 +186,30 @@ function searchProducts(text){
 
 function updateSaleButtons(){
 
-  const actions = document.getElementById("saleActions")
-  const nextBtn = document.getElementById("nextBtn")
+ const actions = document.getElementById("saleActions")
 
-  if(!actions || !nextBtn) return
+if(cart.length === 0){
 
-  if(cart.length === 0){
-    // ✅ CENTER MODE
+  if(nextBtn){
+    nextBtn.classList.add("hidden")
+  }
+
+  if(actions){
     actions.classList.remove("split")
     actions.classList.add("center")
+  }
 
-    nextBtn.classList.add("hidden")
+}else{
 
-  }else{
-    // ✅ SPLIT MODE
-    actions.classList.remove("center")
-    actions.classList.add("split")
-
+  if(nextBtn){
     nextBtn.classList.remove("hidden")
   }
+
+  if(actions){
+    actions.classList.remove("center")
+    actions.classList.add("split")
+  }
+
 }
 // =======================================
 // CART SYSTEM (FINAL CLEAN VERSION)
