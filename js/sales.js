@@ -260,11 +260,11 @@ cart.forEach(item => {
     <div class="cart-row">
       <span class="cart-name">${item.name}</span>
 
-      <div class="quantity-controls">
-        <button class="qty-btn" onclick="decreaseQty('${item.id}')">-</button>
-        <span class="qty-number">${item.qty}</span>
-        <button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
-      </div>
+      <div class="qty-control">
+  <button class="qty-btn minus" onclick="decreaseQty('${item.id}')">−</button>
+  <span class="qty-value">${item.qty}</span>
+  <button class="qty-btn plus" onclick="increaseQty('${item.id}')">+</button>
+</div>
     </div>
 
     <input
