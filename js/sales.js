@@ -98,23 +98,20 @@ if(!text){
 
   return
 }
+
 const query = text.toLowerCase()
 
-let results = []   // ✅ THIS WAS MISSING
+let results = []
 
-const keys = productKeys.slice(0, 300) // limit search
+const keys = productKeys.slice(0, 300)
 for(let i=0;i<keys.length;i++){
-const key = keys[i]
+  const key = keys[i]
 
-if(key.includes(query)){
-results.push(...productIndex[key])
-if(results.length >= 20) break
-
+  if(key.includes(query)){
+    results.push(...productIndex[key])
+    if(results.length >= 20) break
+  }
 }
-
-}
-const noResults = document.getElementById("noResults")
-const emptyCart = document.getElementById("emptyCart")
 
 if(results.length === 0 && query.trim() !== ""){
   if(noResults) noResults.classList.remove("hidden")
@@ -122,24 +119,26 @@ if(results.length === 0 && query.trim() !== ""){
 }else{
   if(noResults) noResults.classList.add("hidden")
 }
+
 results.slice(0,20).forEach(p => {
 
-const div = document.createElement("div")
-div.className = "search-item"
+  const div = document.createElement("div")
+  div.className = "search-item"
 
-div.innerHTML = `
-<span>${p.name}</span>
-<strong>${formatMoney(p.price)}</strong>
-`
+  div.innerHTML = `
+    <span>${p.name}</span>
+    <strong>${formatMoney(p.price)}</strong>
+  `
 
-div.onclick = () => {
-addToCart(p)
-clearSearch()
+  div.onclick = () => {
+    addToCart(p)
+    clearSearch()
 
-const input = document.getElementById("saleSearch")
-if(input) input.focus()
-}
-resultsBox.appendChild(div)
+    const input = document.getElementById("saleSearch")
+    if(input) input.focus()
+  }
+
+  resultsBox.appendChild(div)
 
 })
 
@@ -267,8 +266,8 @@ document.getElementById("saleTotal").innerText = formatMoney(total)
 function clearSearch(){
 
   const input = document.getElementById("saleSearch")
-  const emptyCart = document.getElementById("emptyCart")
-  const noResults = document.getElementById("noResults")
+ 
+ 
 
   if(input){
     input.value = ""
