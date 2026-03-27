@@ -130,7 +130,13 @@ h3{ font-size:16px; }
 
 
 
-
+.center-screen{
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(180deg,#f8fafc,#eef2ff);
+}
 
 
 
