@@ -261,6 +261,7 @@ function renderCart(){
     cartRenderScheduled = false
 
     const list = document.getElementById("cartList")
+    const nextBtn = document.getElementById("nextBtn")
     const totalEl = document.getElementById("saleTotal")
     const emptyCart = document.getElementById("emptyCart")
     const saleTypeBox = document.getElementById("saleTypeContainer")
@@ -274,7 +275,10 @@ function renderCart(){
     // 🔥 EMPTY STATE (FIRST LOAD FIX)
     // ===================================
     if(cart.length === 0){
-
+// 🔥 HIDE NEXT BUTTON
+if(nextBtn){
+  nextBtn.classList.add("hidden")
+}
       list.classList.add("hidden")
 
       if(emptyCart){
@@ -310,6 +314,10 @@ function renderCart(){
     // ===================================
     // 🔥 CART VISIBLE
     // ===================================
+    // 🔥 SHOW NEXT BUTTON
+if(nextBtn){
+  nextBtn.classList.remove("hidden")
+}
     list.classList.remove("hidden")
     if(emptyCart) emptyCart.classList.add("hidden")
 
