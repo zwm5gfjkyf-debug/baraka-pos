@@ -260,19 +260,15 @@ function renderCart(){
 
     const list = document.getElementById("cartList")
     if(!list) return
+
+    list.innerHTML = ""
 const totalEl = document.getElementById("saleTotal")
 
-if(totalEl){
-  if(cart.length > 0){
-    totalEl.innerText = "Jami: " + formatMoney(total)
-    totalEl.classList.remove("hidden")
-  }else{
-    totalEl.innerText = ""
-    totalEl.classList.add("hidden")
-  }
+// 🔥 HARD FIX: hide total immediately if cart empty
+if(cart.length === 0 && totalEl){
+  totalEl.innerText = ""
+  totalEl.classList.add("hidden")
 }
-    list.innerHTML = ""
-
     const saleTypeBox = document.getElementById("saleTypeContainer")
     const debtInput = document.getElementById("debtCustomer")
     const emptyCart = document.getElementById("emptyCart")
@@ -413,8 +409,8 @@ function renderSelectedProduct(p){
 
       <div class="stock-info">
         <div class="stock-name">${p.name}</div>
-        <div class="stock-price">${formatMoney(p.price)} so'm</div>
-      </div>
+<div class="stock-price">${formatMoney(p.price)}</div>
+</div>
 
       <div class="stock-right">
 
