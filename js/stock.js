@@ -469,36 +469,55 @@ db.collection("shops")
 }
 function openLabelPreview(){
 
-const nameInput = document.getElementById("stockName")
-const name = nameInput ? nameInput.value.trim() : ""
-const price = Number(document.getElementById("stockSellingPrice").value.replace(/\s/g,""))
-const barcode = document.getElementById("stockBarcode").value
+  const nameInput = document.getElementById("stockName")
+  const name = nameInput ? nameInput.value.trim() : ""
 
-if(!name || price <= 0){
-showTopBanner("Mahsulot nomi va narx kerak","error")
-return
+  const priceRaw = document.getElementById("stockSellingPrice").value
+  const price = Number(priceRaw.replace(/\s/g,""))
+
+  const barcode = document.getElementById("stockBarcode").value
+
+  if(!name || price <= 0){
+    showTopBanner("Mahsulot nomi va narx kerak","error")
+    return
+  }
+
+  // ✅ NAME
+  document.getElementById("previewName").innerText = name
+
+  // ✅ PRICE (FIXED — no &nbsp bug)
+  document.getElementById("previewPrice").innerText =
+    price.toLocaleString("ru-RU") + " so'm"
+
+  // ✅ SMALL CODE (NEW 🔥)
+  const shortCode = barcode.slice(-4)   // last 4 digits
+  const codeEl = document.getElementById("previewCode")
+  if(codeEl){
+    codeEl.innerText = shortCode
+  }
+
+  // ✅ BARCODE NUMBER
+  document.getElementById("previewBarcodeNumber").innerText = barcode
+
+  // ✅ QTY RESET
+  document.getElementById("labelQty").value = 1
+
+  // ✅ BARCODE (BETTER SIZE)
+  JsBarcode("#previewBarcode", barcode, {
+    format: "CODE128",
+    width: 1.5,
+    height: 50,
+    margin: 0,
+    displayValue: false
+  })
+
+  // ✅ OPEN MODAL
+  document.getElementById("labelPreviewModal").classList.remove("hidden")
 }
 
-document.getElementById("previewName").innerText = name
-document.getElementById("previewPrice").innerText =
-Number(price).toLocaleString("ru-RU") + " &nbsp;so'm"
 
-document.getElementById("previewBarcodeNumber").innerText = barcode
-
-document.getElementById("labelQty").value = 1
-JsBarcode("#previewBarcode", barcode, {
-format: "CODE128",
-width: 2,
-height: 40,
-margin: 0,
-displayValue: false
-})
-
-document.getElementById("labelPreviewModal").classList.remove("hidden")
-
-}
 function closeLabelPreview(){
-document.getElementById("labelPreviewModal").classList.add("hidden")
+  document.getElementById("labelPreviewModal").classList.add("hidden")
 }
 function updateProfitPreview(){
 
