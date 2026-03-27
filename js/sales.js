@@ -78,162 +78,161 @@ return null
 
 }
 // =======================================
-// ULTRA FAST SEARCH
+// ULTRA FAST SEARCH (FINAL CLEAN VERSION)
 // =======================================
 
 function searchProducts(text){
 
-const resultsBox = document.getElementById("searchResults")
-resultsBox.innerHTML = ""
+  const resultsBox = document.getElementById("searchResults")
+  const emptyCart = document.getElementById("emptyCart")
+  const noResults = document.getElementById("noResults")
+  const totalEl = document.getElementById("saleTotal")
 
-const emptyCart = document.getElementById("emptyCart")
-const noResults = document.getElementById("noResults")
-const totalEl = document.getElementById("saleTotal")
+  // 🔥 ALWAYS CLEAR RESULTS FIRST
+  if(resultsBox) resultsBox.innerHTML = ""
 
-// 🔥 HIDE TOTAL WHEN SEARCHING
-if(totalEl){
-  totalEl.innerText = ""
-  totalEl.classList.add("hidden")
-}
-if(!text){
-  resultsBox.innerHTML = ""
-
-  if(noResults) noResults.classList.add("hidden")
-
-  // ✅ ONLY show emptyCart if truly empty AND not searching
-  if(emptyCart && cart.length === 0){
-    emptyCart.classList.remove("hidden")
+  // 🔥 ALWAYS HIDE TOTAL DURING SEARCH
+  if(totalEl){
+    totalEl.innerText = ""
+    totalEl.classList.add("hidden")
   }
 
-  return
-}
+  // ===================================
+  // 🔥 IF INPUT EMPTY
+  // ===================================
+  if(!text || text.trim() === ""){
 
-// ✅ 🔥 HIDE EMPTY STATE WHEN USER STARTS TYPING
-if(emptyCart){
-  emptyCart.classList.add("hidden")
-}
+    if(noResults) noResults.classList.add("hidden")
 
-const query = text.toLowerCase()
+    // show empty ONLY if cart empty
+    if(emptyCart && cart.length === 0){
+      emptyCart.classList.remove("hidden")
+    }
 
-let results = []
-
-const keys = productKeys.slice(0, 300)
-for(let i=0;i<keys.length;i++){
-  const key = keys[i]
-
-  if(key.includes(query)){
-    results.push(...productIndex[key])
-    if(results.length >= 20) break
+    return
   }
-}
 
-if(results.length === 0 && query.trim() !== ""){
-  if(noResults) noResults.classList.remove("hidden")
-  if(emptyCart) emptyCart.classList.add("hidden")
-}else{
-  if(noResults) noResults.classList.add("hidden")
-}
-
-results.slice(0,20).forEach(p => {
-
-  const div = document.createElement("div")
- div.innerHTML = `
-<div class="stock-row-item">
-
- <div class="product-img">
-  ${
-    p.image 
-    ? `<img src="${p.image}" class="product-img-tag">`
-    : `<div class="product-placeholder">📦</div>`
+  // ===================================
+  // 🔥 USER IS SEARCHING
+  // ===================================
+  if(emptyCart){
+    emptyCart.classList.add("hidden")
   }
-</div>
 
-  <div class="stock-info">
-    <div class="stock-name">${p.name}</div>
-<div class="stock-price">${formatMoney(p.price)}</div>
-<div class="stock-meta">
-      ART-${p.id.slice(0,6)} / ${p.barcode || "-"}
-    </div>
-  </div>
+  const query = text.toLowerCase().trim()
+  let results = []
 
-  <div class="stock-right">
-    <div class="stock-qty">${p.stock} dona</div>
-  </div>
+  const keys = productKeys.slice(0, 300)
 
-</div>
-`
+  for(let i = 0; i < keys.length; i++){
+    const key = keys[i]
 
- div.onclick = () => {
+    if(key.includes(query)){
+      results.push(...productIndex[key])
+      if(results.length >= 20) break
+    }
+  }
 
-  addToCart(p)
+  // ===================================
+  // 🔥 NO RESULTS
+  // ===================================
+  if(results.length === 0){
+    if(noResults) noResults.classList.remove("hidden")
+  }else{
+    if(noResults) noResults.classList.add("hidden")
+  }
 
-  clearSearch()
+  // ===================================
+  // 🔥 RENDER RESULTS
+  // ===================================
+  results.slice(0,20).forEach(p => {
 
-  
-}
-  resultsBox.appendChild(div)
+    const div = document.createElement("div")
 
-})
+    div.innerHTML = `
+      <div class="stock-row-item">
 
+        <div class="product-img">
+          ${
+            p.image 
+            ? `<img src="${p.image}" class="product-img-tag">`
+            : `<div class="product-placeholder">📦</div>`
+          }
+        </div>
+
+        <div class="stock-info">
+          <div class="stock-name">${p.name}</div>
+          <div class="stock-price">${formatMoney(p.price)}</div>
+          <div class="stock-meta">
+            ART-${p.id.slice(0,6)} / ${p.barcode || "-"}
+          </div>
+        </div>
+
+        <div class="stock-right">
+          <div class="stock-qty">${p.stock} dona</div>
+        </div>
+
+      </div>
+    `
+
+    div.onclick = () => {
+      addToCart(p)
+      clearSearch()
+    }
+
+    resultsBox.appendChild(div)
+  })
 }
 // =======================================
-// CART SYSTEM
+// CART SYSTEM (FINAL CLEAN VERSION)
 // =======================================
 
 function addToCart(product){
 
-if(!product || product.stock <= 0){
-showTopBanner("Zaxirada qolmadi","error")
-return
+  if(!product || product.stock <= 0){
+    showTopBanner("Zaxirada qolmadi","error")
+    return
+  }
+
+  let existing = cartMap[product.id]
+
+  if(existing){
+
+    if(existing.qty + 1 > product.stock){
+      showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
+      return
+    }
+
+    existing.qty++
+
+  }else{
+
+    const item = {
+      ...product,
+      qty:1
+    }
+
+    cart.push(item)
+    cartMap[product.id] = item
+  }
+
+  renderCart()
 }
 
-let existing = cartMap[product.id]
 
-if(existing){
-
-if(existing.qty + 1 > product.stock){
-showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
-return
-}
-
-existing.qty++
-
-}else{
-
-const item = {
-...product,
-qty:1
-}
-cart.push(item)
-cartMap[product.id] = item
-
-}
-
-renderCart()
-
-}
-
+// =======================================
+// UPDATE UI (COUNT + EMPTY ONLY)
+// =======================================
 
 function updateCartUI(){
 
   const countEl = document.getElementById("cartCount")
-  const list = document.getElementById("cartList")
   const emptyCart = document.getElementById("emptyCart")
 
   const totalItems = cart.reduce((sum, i) => sum + i.qty, 0)
 
-  // update count
   if(countEl){
     countEl.innerText = totalItems
-  }
-
-  // toggle empty / cart
-  if(list){
-    if(cart.length > 0){
-      list.classList.remove("hidden")
-    }else{
-      list.classList.add("hidden")
-    }
   }
 
   if(emptyCart){
@@ -244,9 +243,12 @@ function updateCartUI(){
     }
   }
 }
+
+
 // =======================================
-// RENDER CART (FIXED VERSION)
+// RENDER CART (FINAL CLEAN)
 // =======================================
+
 let cartRenderScheduled = false
 
 function renderCart(){
@@ -259,58 +261,65 @@ function renderCart(){
     cartRenderScheduled = false
 
     const list = document.getElementById("cartList")
+    const totalEl = document.getElementById("saleTotal")
+    const emptyCart = document.getElementById("emptyCart")
+    const saleTypeBox = document.getElementById("saleTypeContainer")
+    const debtInput = document.getElementById("debtCustomer")
+
     if(!list) return
 
     list.innerHTML = ""
-const totalEl = document.getElementById("saleTotal")
 
-// 🔥 HARD FIX: hide total immediately if cart empty
-if(cart.length === 0 && totalEl){
-  totalEl.innerText = ""
-  totalEl.classList.add("hidden")
-}
-    const saleTypeBox = document.getElementById("saleTypeContainer")
-    const debtInput = document.getElementById("debtCustomer")
-    const emptyCart = document.getElementById("emptyCart")
+    // ===================================
+    // 🔥 EMPTY STATE (FIRST LOAD FIX)
+    // ===================================
+    if(cart.length === 0){
 
-    // ===============================
-    // 🔥 SALE TYPE BOX
-    // ===============================
-    if(saleTypeBox){
-      if(cart.length > 0){
-        saleTypeBox.classList.remove("hidden")
-      }else{
-        saleTypeBox.classList.add("hidden")
-
-        saleType = "cash"
-
-        if(debtInput){
-          debtInput.value = ""
-          debtInput.classList.add("hidden")
-        }
-
-        const cash = document.getElementById("cashBtn")
-        const debt = document.getElementById("debtBtn")
-
-        if(cash) cash.classList.add("active")
-        if(debt) debt.classList.remove("active")
-      }
-    }
-
-    // ===============================
-    // 🔥 EMPTY / CART
-    // ===============================
-    if(cart.length > 0){
-      list.classList.remove("hidden")
-      if(emptyCart) emptyCart.classList.add("hidden")
-    }else{
       list.classList.add("hidden")
-      if(emptyCart) emptyCart.classList.remove("hidden")
+
+      if(emptyCart){
+        emptyCart.classList.remove("hidden")
+      }
+
+      // ❌ REMOVE TOTAL (NO MORE "0")
+      if(totalEl){
+        totalEl.innerText = ""
+        totalEl.classList.add("hidden")
+      }
+
+      // reset sale type
+      if(saleTypeBox){
+        saleTypeBox.classList.add("hidden")
+      }
+
+      if(debtInput){
+        debtInput.value = ""
+        debtInput.classList.add("hidden")
+      }
+
+      const cash = document.getElementById("cashBtn")
+      const debt = document.getElementById("debtBtn")
+
+      if(cash) cash.classList.add("active")
+      if(debt) debt.classList.remove("active")
+
+      updateCartUI()
+      return
     }
 
-    // ===============================
-    // 🔥 RENDER CLEAN PRODUCT UI
-    // ===============================
+    // ===================================
+    // 🔥 CART VISIBLE
+    // ===================================
+    list.classList.remove("hidden")
+    if(emptyCart) emptyCart.classList.add("hidden")
+
+    if(saleTypeBox){
+      saleTypeBox.classList.remove("hidden")
+    }
+
+    // ===================================
+    // 🔥 RENDER ITEMS (CLEAN)
+    // ===================================
     let total = 0
 
     cart.forEach(item => {
@@ -319,7 +328,7 @@ if(cart.length === 0 && totalEl){
       total += itemTotal
 
       const div = document.createElement("div")
-      div.className = "stock-row-item"   // ✅ SAME STYLE AS SEARCH
+      div.className = "stock-row-item"
 
       div.innerHTML = `
         <div class="product-img">
@@ -336,43 +345,26 @@ if(cart.length === 0 && totalEl){
         </div>
 
         <div class="stock-right">
-
           <div class="qty-control">
             <button class="qty-btn minus" onclick="decreaseQty('${item.id}')">−</button>
             <span class="qty-value">${item.qty}</span>
             <button class="qty-btn plus" onclick="increaseQty('${item.id}')">+</button>
           </div>
-
-        
-
         </div>
       `
 
       list.appendChild(div)
     })
 
-    // ===============================
-    // 🔥 TOTAL (FIXED TEXT)
-    // ===============================
-    const totalEl = document.getElementById("saleTotal")
-
-if(totalEl){
-  if(cart.length > 0){
-    totalEl.innerText = "Jami: " + formatMoney(total)
-    totalEl.classList.remove("hidden")
-  }else{
-    totalEl.innerText = ""
-    totalEl.classList.add("hidden")   // ✅ hides that ugly 0
-  }
-}
-
-    // ===============================
-    // 🔥 COUNT
-    // ===============================
-    const countEl = document.getElementById("cartCount")
-    if(countEl){
-      countEl.innerText = cart.reduce((sum,i)=>sum+i.qty,0)
+    // ===================================
+    // 🔥 TOTAL (ONLY HERE, ONLY ONCE)
+    // ===================================
+    if(totalEl){
+      totalEl.innerText = "Jami: " + formatMoney(total)
+      totalEl.classList.remove("hidden")
     }
+
+    updateCartUI()
 
   })
 }
