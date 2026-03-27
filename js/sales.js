@@ -310,6 +310,15 @@ cart.forEach(item => {
 })
 
 document.getElementById("saleTotal").innerText = formatMoney(total)
+  // 🔥 UPDATE CART COUNT
+const countEl = document.getElementById("cartCount")
+
+let totalItems = 0
+cart.forEach(i => totalItems += i.qty)
+
+if(countEl){
+  countEl.innerText = totalItems
+}
 updateCartUI()
 })
 }
@@ -820,4 +829,20 @@ function clearCart(){
     updateCartUI()
 
   })
+}
+function clearCart(){
+
+  cart = []
+  cartMap = {}
+
+  renderCart()
+
+  document.getElementById("searchResults").innerHTML = ""
+
+  const emptyCart = document.getElementById("emptyCart")
+  if(emptyCart){
+    emptyCart.classList.remove("hidden")
+  }
+
+  document.getElementById("saleSearch").value = ""
 }
