@@ -3228,3 +3228,49 @@ FINAL — CLEAN BUTTON SYSTEM (NO BUGS)
   font-size:13px;
   margin-top:6px;
 }
+/* ======================
+SALE HEADER ACTIONS (NEW)
+====================== */
+
+.sale-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* CART INFO (ICON + COUNT) */
+.cart-info{
+  display:flex;
+  align-items:center;
+  gap:6px;
+
+  background:#f1f5f9;
+  padding:6px 10px;
+  border-radius:999px;
+
+  font-size:13px;
+  font-weight:600;
+}
+
+/* COUNT NUMBER */
+#cartCount{
+  color:var(--blue);
+  font-weight:700;
+}
+
+/* TRASH BUTTON */
+.clear-cart-btn{
+  width:36px;
+  height:36px;
+
+  border-radius:10px;
+
+  background:#fee2e2;
+  color:#ef4444;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:16px;
+}
