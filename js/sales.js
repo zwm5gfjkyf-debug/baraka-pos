@@ -991,7 +991,7 @@ function setDiscountType(type){
   const btnP = document.getElementById("btnPercent")
   const btnU = document.getElementById("btnUZS")
 
-  // 🔥 CLEAR ACTIVE
+  // clear active
   btnP.classList.remove("active")
   btnU.classList.remove("active")
 
@@ -1027,6 +1027,17 @@ function setDiscountType(type){
   }
 
   updateDiscountPreview()
+
+  // 🔥 KEYBOARD FIX (THIS IS THE MAIN THING)
+  setTimeout(() => {
+    if(input){
+      input.focus()
+
+      const val = input.value
+      input.value = ""
+      input.value = val
+    }
+  }, 50)
 }
 function updateDiscountPreview(){
 
