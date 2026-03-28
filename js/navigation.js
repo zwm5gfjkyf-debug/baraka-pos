@@ -88,7 +88,6 @@ if(pageId === "salePage"){
   }, 100) // ⬅️ IMPORTANT: increase delay
 
 }
-
 // ✅ FIX STOCK LOADER (SAFE)
 if(pageId === "stockPage"){
   if(typeof loadCurrent === "function"){
