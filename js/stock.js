@@ -163,9 +163,6 @@ function setFilter(type){
 }
 function loadCurrent(){
 
-  // ✅ SAFE listener cleanup
-  
-
   productsListener = db
     .collection("shops")
     .doc(currentShopId)
@@ -173,108 +170,103 @@ function loadCurrent(){
     .orderBy("created","desc")
     .onSnapshot(snapshot => {
 
-      // ✅ cache container
-      if(!Container){
-        Container = document.getElementById("currentList")
+      // ✅ FIX container naming
+      if(!stockContainer){
+        stockContainer = document.getElementById("currentStockList")
       }
 
-      const container = Container
+      const container = stockContainer
       if(!container) return
 
-      // ✅ clear old
       container.innerHTML = ""
 
-      // ✅ FAST RENDER (IMPORTANT)
       const fragment = document.createDocumentFragment()
 
-let countAll = 0
-let countActive = 0
-let countInactive = 0
-let countLow = 0
+      let countAll = 0
+      let countActive = 0
+      let countInactive = 0
+      let countLow = 0
 
-snapshot.forEach(doc => {
+      snapshot.forEach(doc => {
 
-  const p = doc.data()
-  if(p.deleted === true) return
+        const p = doc.data()
+        if(p.deleted === true) return
 
-  // COUNTING
-  countAll++
+        const stock = Number(p.stock || 0)
 
-  if(p. > 0) countActive++
-  if(p. <= 0) countInactive++
-  if(p. <= 10) countLow++
+        // ✅ COUNTING (FIXED)
+        countAll++
+        if(stock > 0) countActive++
+        if(stock <= 0) countInactive++
+        if(stock <= 10) countLow++
 
-  // FILTERS
-  if(currentFilter === "active" && p.stock <= 0) return
-  if(currentStockFilter === "inactive" && p.stock > 0) return
-  if(currentStockFilter === "low" && p.stock > 10) return
-      const div = document.createElement("div")
-div.className = "stock-row-item"
+        // ✅ FILTERS (FIXED VARIABLE)
+        if(currentStockFilter === "active" && stock <= 0) return
+        if(currentStockFilter === "inactive" && stock > 0) return
+        if(currentStockFilter === "low" && stock > 10) return
 
+        const div = document.createElement("div")
+        div.className = "stock-row-item"
 
-div.innerHTML = `
-  <div class="product-img">
-    ${
-      p.image && p.image.trim() !== ""
-        ? `<img src="${p.image}" class="product-img-tag">`
-        : `<div class="product-placeholder">📦</div>`
-    }
-  </div>
+        div.innerHTML = `
+          <div class="product-img">
+            ${
+              p.image && p.image.trim() !== ""
+                ? `<img src="${p.image}" class="product-img-tag">`
+                : `<div class="product-placeholder">📦</div>`
+            }
+          </div>
 
-  <div class="stock-info">
+          <div class="stock-info">
+            <div class="stock-name">
+              ${p.name || "Noma'lum"}
+            </div>
 
-    <div class="stock-name">
-      ${p.name || "Noma'lum"}
-    </div>
+            <div class="stock-price">
+              ${formatMoney(p.price || 0)}
+            </div>
 
-    <div class="stock-price">
-  ${formatMoney(p.price || 0)}
-</div>
+            <div class="stock-meta">
+              ${p.artikul || "-"} / ${p.barcode || "-"}
+            </div>
+          </div>
 
-    <div class="stock-meta">
-      ${p.artikul || "-"} / ${p.barcode || "-"}
-    </div>
+          <div class="stock-right">
 
-  </div>
+            <div class="stock-qty" style="
+              ${stock <= 0 ? 'color:#ef4444;font-weight:600;' : ''}
+            ">
+              ${
+                stock <= 0
+                  ? "Qolmadi"
+                  : `${stock} ${p.unit || "dona"}`
+              }
+            </div>
 
-  <div class="stock-right">
+            <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
+              ⋮
+            </button>
 
-<div class="stock-qty" style="
-  ${p.stock <= 0 ? 'color:#ef4444;font-weight:600;' : ''}
-">
-  ${
-    p.stock <= 0
-      ? "Qolmadi"
-      : `${p.stock} ${p.unit || "dona"}`
-  }
-</div>
+          </div>
+        `
 
-    <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
-      ⋮
-    </button>
-
-  </div>
-`
-// ✅ FAST append
-fragment.appendChild(div)
+        fragment.appendChild(div)
       })
 
-      // ✅ render once (VERY FAST)
       container.appendChild(fragment)
-// ✅ UPDATE COUNTS UI
-const elAll = document.getElementById("count-all")
-const elActive = document.getElementById("count-active")
-const elInactive = document.getElementById("count-inactive")
-const elLow = document.getElementById("count-low")
 
-if(elAll) elAll.innerText = countAll
-if(elActive) elActive.innerText = countActive
-if(elInactive) elInactive.innerText = countInactive
-if(elLow) elLow.innerText = countLow
+      // ✅ COUNTS UI
+      const elAll = document.getElementById("count-all")
+      const elActive = document.getElementById("count-active")
+      const elInactive = document.getElementById("count-inactive")
+      const elLow = document.getElementById("count-low")
+
+      if(elAll) elAll.innerText = countAll
+      if(elActive) elActive.innerText = countActive
+      if(elInactive) elInactive.innerText = countInactive
+      if(elLow) elLow.innerText = countLow
     })
-
 }
-
 let editingProductId = null
 
 async function openEditModal(id){
