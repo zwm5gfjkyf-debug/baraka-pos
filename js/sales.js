@@ -946,18 +946,39 @@ function openDiscountModal(){
 
   const modal = document.getElementById("discountModal")
   const input = document.getElementById("discountInput")
+  const actions = document.getElementById("saleActions")
+  const nav = document.querySelector(".bottom-nav")
 
   modal.classList.remove("hidden")
+
+  // 🔥 HIDE UI BEHIND
+  if(actions) actions.style.display = "none"
+  if(nav) nav.style.display = "none"
+
+  // 🔥 LOCK BACKGROUND
+  document.body.style.overflow = "hidden"
+
   setDiscountType("percent")
 
-  // 🔥 AUTO OPEN KEYBOARD
   setTimeout(()=>{
     if(input) input.focus()
   }, 100)
 }
 
 function closeDiscountModal(){
-  document.getElementById("discountModal").classList.add("hidden")
+
+  const modal = document.getElementById("discountModal")
+  const actions = document.getElementById("saleActions")
+  const nav = document.querySelector(".bottom-nav")
+
+  modal.classList.add("hidden")
+
+  // 🔥 RESTORE UI
+  if(actions) actions.style.display = ""
+  if(nav) nav.style.display = ""
+
+  // 🔥 UNLOCK SCROLL
+  document.body.style.overflow = ""
 }
 
 function setDiscountType(type){
