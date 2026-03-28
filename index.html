@@ -902,7 +902,8 @@ Metr
 
 </div>
 
-<!-- 🔥 DISCOUNT MODAL -->
+
+<!-- 🔥 DISCOUNT MODAL (OUTSIDE EVERYTHING) -->
 <div id="discountModal" class="discount-modal hidden">
 
   <div class="discount-overlay" onclick="closeDiscountModal()"></div>
@@ -917,7 +918,7 @@ Metr
 
       <input
         id="discountInput"
-        type="text"
+        type="number"          <!-- 🔥 better than text -->
         inputmode="numeric"
         placeholder="Chegirma foizini kiriting..."
       >
@@ -934,13 +935,19 @@ Metr
 
     <!-- ACTIONS -->
     <div class="discount-actions">
-      <button onclick="closeDiscountModal()" class="btn-secondary">Bekor qilish</button>
-      <button onclick="applyDiscount()" class="btn-primary">Saqlash</button>
+      <button onclick="closeDiscountModal()" class="btn-secondary">
+        Bekor qilish
+      </button>
+
+      <button onclick="applyDiscount()" class="btn-primary">
+        Saqlash
+      </button>
     </div>
 
   </div>
 
 </div>
+
 
 <!-- ✅ CAMERA (ONLY ONE!) -->
 <div id="cameraScanner" class="hidden" style="margin-top:10px;">
