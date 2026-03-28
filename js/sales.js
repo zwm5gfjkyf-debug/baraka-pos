@@ -289,8 +289,10 @@ function renderCart(){
     const saleTypeBox = document.getElementById("saleTypeContainer")
     const debtInput = document.getElementById("debtCustomer")
 
-    if(!list) return
-
+if(!list){
+  console.log("cartList not found")
+  return
+}
     list.innerHTML = ""
 
     // ===================================
@@ -385,11 +387,12 @@ updateSaleButtons()
     // ===================================
     // 🔥 TOTAL (ONLY HERE, ONLY ONCE)
     // ===================================
-    if(totalEl){
+if(totalEl && cart.length > 0){
 
   totalEl.innerText = "Jami: " + formatMoney(total)
 
-  totalEl.style.display = "block"   // 🔥 FORCE VISIBLE
+  totalEl.style.display = "block"
+
 }
 
     updateCartUI()
