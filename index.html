@@ -888,8 +888,7 @@ Metr
 </div>
 
 </div> 
-</main>
-<!-- ✅ FIXED SALE ACTIONS -->
+</main><!-- ✅ FIXED SALE ACTIONS -->
 <div id="saleActions" class="sale-actions center hidden">
 
   <button id="scannerBtn" class="scanner-btn" onclick="toggleCameraScanner()">
@@ -903,32 +902,44 @@ Metr
 </div>
 
 
-<!-- 🔥 DISCOUNT MODAL (OUTSIDE EVERYTHING) -->
+<!-- 🔥 DISCOUNT MODAL -->
 <div id="discountModal" class="discount-modal hidden">
 
+  <!-- overlay -->
   <div class="discount-overlay" onclick="closeDiscountModal()"></div>
 
+  <!-- sheet -->
   <div class="discount-sheet">
 
     <div class="discount-title">Qo'lda chegirma</div>
     <div class="discount-sub">Chegirma qiymatini kiriting</div>
 
-    <!-- INPUT + TOGGLE -->
-    <div class="discount-input-row">
+    <!-- 🔥 INPUT + TOGGLE ROW -->
+    <div class="discount-input-row" style="display:flex; gap:8px; align-items:center;">
 
-    <input
-  id="discountInput"
-  type="number"
-  inputmode="decimal"
-  oninput="updateDiscountPreview()"
-  placeholder="Chegirma foizini kiriting..."
->
-      <div id="discountPreview" style="
-  font-size:13px;
-  color:#2563eb;
-  margin-top:6px;
-  font-weight:500;
-"></div>
+      <!-- INPUT SIDE -->
+      <div style="flex:1;">
+
+        <input
+          id="discountInput"
+          type="number"
+          inputmode="decimal"
+          oninput="updateDiscountPreview()"
+          placeholder="Chegirma foizini kiriting..."
+          style="width:100%;"
+        >
+
+        <!-- 🔥 JAMI PREVIEW (CORRECT POSITION) -->
+        <div id="discountPreview" style="
+          font-size:12px;
+          color:#64748b;
+          margin-top:4px;
+          padding-left:2px;
+        "></div>
+
+      </div>
+
+      <!-- TOGGLE -->
       <div class="discount-toggle">
         <button id="btnPercent" class="active" onclick="setDiscountType('percent')">%</button>
         <button id="btnUZS" onclick="setDiscountType('uzs')">UZS</button>
