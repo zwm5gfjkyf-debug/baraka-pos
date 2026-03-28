@@ -92,9 +92,9 @@ function searchProducts(text){
   if(resultsBox) resultsBox.innerHTML = ""
 
   // 🔥 ALWAYS HIDE TOTAL DURING SEARCH
-  if(totalEl){
-    totalEl.innerText = ""
-  }
+ if(totalEl && cart.length === 0){
+  totalEl.innerText = ""
+}
 
   // ===================================
   // 🔥 IF INPUT EMPTY
@@ -395,7 +395,7 @@ updateSaleButtons()
 }
 
     updateCartUI()
-
+updateSaleButtons()
   })
 }
 function clearSearch(){
@@ -612,7 +612,7 @@ btn.disabled = false
 btn.innerText = "Sotuvni yakunlash"
 
 }
-cart = []
+
 cartMap = {}
 saleType = "cash"
 
@@ -901,7 +901,6 @@ function clearCart(){
   showConfirm("Savatchani tozalaysizmi?", () => {
 
     cart = []
-    cartMap = {}
 
     renderCart()
 
