@@ -200,7 +200,16 @@ h3{ font-size:16px; }
 
 
 
+.discount-modal{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
 
+/* prevent keyboard pushing layout */
+body{
+  overscroll-behavior: none;
+}
 
 
 
