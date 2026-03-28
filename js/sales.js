@@ -94,7 +94,6 @@ function searchProducts(text){
   // 🔥 ALWAYS HIDE TOTAL DURING SEARCH
   if(totalEl){
     totalEl.innerText = ""
-    totalEl.classList.add("hidden")
   }
 
   // ===================================
@@ -387,9 +386,13 @@ updateSaleButtons()
     // 🔥 TOTAL (ONLY HERE, ONLY ONCE)
     // ===================================
     if(totalEl){
-      totalEl.innerText = "Jami: " + formatMoney(total)
-      totalEl.classList.remove("hidden")
-    }
+
+  totalEl.innerText = "Jami: " + formatMoney(total)
+
+  // 🔥 FORCE SHOW
+  totalEl.classList.remove("hidden")
+
+}
 
     updateCartUI()
 
