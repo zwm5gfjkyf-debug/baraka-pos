@@ -65,53 +65,56 @@ function navigate(pageId){
     navButtons[navMap[pageId]].classList.add("active");
   }
 
-  /* ================================
-     DATA LOADERS (LAZY LOAD)
-  ================================ */
+ /* ================================
+   DATA LOADERS (LAZY LOAD)
+================================ */
 
-  if(pageId === "dashboardPage" && typeof loadDashboard === "function"){
-    loadDashboard();
-  }
+if(pageId === "dashboardPage" && typeof loadDashboard === "function"){
+  loadDashboard()
+}
 
-  // 🔥 FIX SALE BUTTONS ON PAGE OPEN
+// 🔥 FIX SALE BUTTONS ON PAGE OPEN
 if(pageId === "salePage" && typeof updateSaleButtons === "function"){
   setTimeout(()=>{
     updateSaleButtons()
   }, 50)
 }
 
-  if(pageId === "stockPage" && typeof loadCurrentStock === "function"){
+// ✅ FIX STOCK LOADER (SAFE)
+if(pageId === "stockPage"){
+  if(typeof loadCurrent === "function"){
     if(typeof stockLoaded === "undefined" || !stockLoaded){
-      loadCurrentStock();
-      stockLoaded = true;
+      loadCurrent()
+      stockLoaded = true
     }
   }
-
-  if(pageId === "analyticsPage"){
-    if(typeof showAnalyticsTab === "function"){
-      showAnalyticsTab("weekly");
-    }
-  }
-
-  if(pageId === "debtAnalyticsPage" && typeof loadDebtCustomers === "function"){
-    loadDebtCustomers();
-  }
-   if(pageId === "debtAnalyticsPage" && typeof loadDebtCustomers === "function"){
-  loadDebtCustomers();
 }
 
-/* 🔥 ADD THIS HERE (VERY END OF navigate) */
+if(pageId === "analyticsPage"){
+  if(typeof showAnalyticsTab === "function"){
+    showAnalyticsTab("weekly")
+  }
+}
+
+// ✅ FIX DUPLICATE
+if(pageId === "debtAnalyticsPage" && typeof loadDebtCustomers === "function"){
+  loadDebtCustomers()
+}
+
+/* ================================
+   SALE ACTIONS VISIBILITY (FINAL)
+================================ */
+
 const actions = document.getElementById("saleActions")
 
 if(actions){
 
   if(pageId === "salePage"){
     actions.classList.remove("hidden")
-    actions.classList.remove("split")
+    actions.classList.remove("split") 
     actions.classList.add("center")
   }else{
     actions.classList.add("hidden")
   }
 
-}
 }
