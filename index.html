@@ -916,13 +916,19 @@ Metr
     <!-- INPUT + TOGGLE -->
     <div class="discount-input-row">
 
-      <input
+    <input
   id="discountInput"
   type="number"
   inputmode="decimal"
-        placeholder="Chegirma foizini kiriting..."
-      >
-
+  oninput="updateDiscountPreview()"
+  placeholder="Chegirma foizini kiriting..."
+>
+      <div id="discountPreview" style="
+  font-size:13px;
+  color:#2563eb;
+  margin-top:6px;
+  font-weight:500;
+"></div>
       <div class="discount-toggle">
         <button id="btnPercent" class="active" onclick="setDiscountType('percent')">%</button>
         <button id="btnUZS" onclick="setDiscountType('uzs')">UZS</button>
