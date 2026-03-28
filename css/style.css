@@ -210,7 +210,13 @@ h3{ font-size:16px; }
 body{
   overscroll-behavior: none;
 }
-
+.discount-preview{
+  font-size:13px;
+  color:#2563eb;
+  margin-top:6px;
+  margin-left:4px;
+  font-weight:500;
+}
 
 
 
