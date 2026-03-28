@@ -2,7 +2,7 @@
 <html lang="uz">
 
 <head>
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#020617">
 <meta charset="UTF-8">
@@ -322,6 +322,7 @@ Hammasini o'chirish
 
 </div> <!-- ✅ CLOSE salePage -->
 
+<div id="flowPages">
 
 <!-- 🔥 NEW PAYMENT PAGE (FIXED CLEAN VERSION) -->
 <div id="paymentPage" class="page hidden">
@@ -513,6 +514,8 @@ Hammasini o'chirish
   </div>
 
 </div>
+  </div> <!-- ✅ CLOSE flowPages -->
+
 <!-- INVENTORY -->
 <div id="stockPage" class="page hidden">
 <!-- TITLE -->
@@ -1132,7 +1135,7 @@ Metr
       <!-- TOGGLE -->
       <div class="discount-toggle">
         <button id="btnPercent" class="active" onclick="setDiscountType('percent')">%</button>
-        <button id="btnUZS" onclick="setDiscountType('uzs')">UZS</button>
+        <button id="btnUZSDiscount" onclick="setDiscountType('uzs')">UZS</button>
       </div>
 
     </div>
@@ -1417,18 +1420,18 @@ window.showAnalyticsTab = showAnalyticsTab
 function focusScanner(){
   const active = document.activeElement
 
-  // ❗ DO NOT steal focus if user is typing
+  // ❗ DO NOT steal focus if typing
   if(active && (
     active.tagName === "INPUT" ||
     active.tagName === "TEXTAREA"
-  )){
-    return
-  }
+  )) return
+
+  // ❗ ONLY focus in SALE PAGE
+  const salePage = document.getElementById("salePage")
+  if(!salePage || salePage.classList.contains("hidden")) return
 
   const el = document.getElementById("hiddenScannerInput")
-  if(el){
-    el.focus()
-  }
+  if(el) el.focus()
 }
 
 // focus on load
