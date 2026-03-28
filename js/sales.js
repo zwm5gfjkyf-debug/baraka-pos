@@ -943,8 +943,17 @@ let discountType = "percent"
 let discountValue = 0
 
 function openDiscountModal(){
-  document.getElementById("discountModal").classList.remove("hidden")
+
+  const modal = document.getElementById("discountModal")
+  const input = document.getElementById("discountInput")
+
+  modal.classList.remove("hidden")
   setDiscountType("percent")
+
+  // 🔥 AUTO OPEN KEYBOARD
+  setTimeout(()=>{
+    if(input) input.focus()
+  }, 100)
 }
 
 function closeDiscountModal(){
@@ -989,11 +998,21 @@ function setDiscountType(type){
 
 function applyDiscount(){
 
-  const val = Number(document.getElementById("discountInput").value)
-  if(!val) return
+  const input = document.getElementById("discountInput")
+  const val = Number(input.value)
+
+  if(isNaN(val) || val <= 0){
+    return
+  }
+
+  // 🔥 LIMIT PERCENT
+  if(discountType === "percent" && val > 100){
+    showTopBanner("100% dan katta bo'lishi mumkin emas", "error")
+    return
+  }
 
   discountValue = val
 
   closeDiscountModal()
-  renderCart() // 🔥 update jami
+  renderCart()
 }
