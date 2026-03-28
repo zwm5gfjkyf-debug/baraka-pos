@@ -595,9 +595,13 @@ total: total,
 totalCost: totalCost,
 totalProfit: totalProfit,
 type: selectedPaymentType,
-customer: saleType === "debt"
-? document.getElementById("debtCustomer").value || "Noma'lum"
-: null,
+customer: selectedPaymentType === "debt"
+  ? window.debtCustomerName || "Noma'lum"
+  : null,
+
+phone: selectedPaymentType === "debt"
+  ? window.debtCustomerPhone || ""
+  : null,
 
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 }
@@ -1205,4 +1209,29 @@ function openDebtPage(){
 
   if(paymentPage) paymentPage.classList.add("hidden")
   if(debtPage) debtPage.classList.remove("hidden")
+}
+function closeDebtPage(){
+
+  const debtPage = document.getElementById("debtCustomerPage")
+  const paymentPage = document.getElementById("paymentPage")
+
+  if(debtPage) debtPage.classList.add("hidden")
+  if(paymentPage) paymentPage.classList.remove("hidden")
+}
+
+function saveDebtSale(){
+
+  const name = document.getElementById("debtName").value.trim()
+  const phone = document.getElementById("debtPhone").value.trim()
+
+  if(!name){
+    showTopBanner("Mijoz ismini kiriting", "error")
+    return
+  }
+
+  // save into global (for completeSale)
+  window.debtCustomerName = name
+  window.debtCustomerPhone = phone
+
+  completeSale()
 }
