@@ -109,7 +109,26 @@ h1{ font-size:24px; }
 h2{ font-size:20px; }
 h3{ font-size:16px; }
 
+.discount-modal{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
 
+.discount-overlay{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+}
+
+.discount-sheet{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 16px;
+}
 
 
 
