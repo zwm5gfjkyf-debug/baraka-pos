@@ -1092,16 +1092,23 @@ function applyDiscount(){
 }
 function openPaymentPage(){
 
-  // 🔥 HIDE SALE PAGE
   const salePage = document.getElementById("salePage")
+  const paymentPage = document.getElementById("paymentPage")
+  const actions = document.getElementById("saleActions")
+  const nav = document.querySelector(".bottom-nav")
+
+  // ✅ HIDE SALE UI
   if(salePage) salePage.classList.add("hidden")
+  if(actions) actions.style.display = "none"
+  if(nav) nav.style.display = "none"
 
-  // 🔥 SHOW PAYMENT PAGE
-  const page = document.getElementById("paymentPage")
-  if(!page) return
-  page.classList.remove("hidden")
+  // ✅ SHOW PAYMENT PAGE FULL
+  if(paymentPage){
+    paymentPage.classList.remove("hidden")
+    paymentPage.style.display = "block"
+  }
 
-  // 🔥 GENERATE TRANSACTION ID (000001, 000002...)
+  // 🔥 TRANSACTION ID
   let lastId = Number(localStorage.getItem("lastTransactionId") || 0)
   lastId++
   localStorage.setItem("lastTransactionId", lastId)
@@ -1131,19 +1138,29 @@ function openPaymentPage(){
   const oldEl = document.getElementById("paymentOldPrice")
   const finalEl = document.getElementById("paymentFinalPrice")
 
-  // 🔥 SHOW PRICE LOGIC
   if(discountValue > 0){
     if(oldEl){
       oldEl.style.display = "block"
       oldEl.innerText = formatMoney(total)
     }
-    if(finalEl){
-      finalEl.innerText = formatMoney(final)
-    }
   }else{
     if(oldEl) oldEl.style.display = "none"
-    if(finalEl){
-      finalEl.innerText = formatMoney(final)
-    }
   }
+
+  if(finalEl){
+    finalEl.innerText = formatMoney(final)
+  }
+}
+function closePaymentPage(){
+
+  const salePage = document.getElementById("salePage")
+  const paymentPage = document.getElementById("paymentPage")
+  const actions = document.getElementById("saleActions")
+  const nav = document.querySelector(".bottom-nav")
+
+  if(paymentPage) paymentPage.classList.add("hidden")
+
+  if(salePage) salePage.classList.remove("hidden")
+  if(actions) actions.style.display = ""
+  if(nav) nav.style.display = ""
 }
