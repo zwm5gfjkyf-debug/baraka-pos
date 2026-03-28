@@ -148,19 +148,23 @@ Processing = false
 // ===============================
 // LOAD PRODUCTS (REALTIME)
 // ===============================
-function setFilter(type){
-  currentFilter = type;
 
-  document.querySelectorAll(".-tab").forEach(el=>{
-    el.classList.remove("active");
-  });
+// ✅ THIS matches your HTML onclick="setStockFilter(...)"
+function setStockFilter(type){
 
-  const active = document.getElementById("tab-" + type);
-  if(active) active.classList.add("active");
+  currentStockFilter = type
 
-  // 🔥 THIS LINE FIXES EVERYTHING
-  loadCurrent();
+  document.querySelectorAll(".stock-tab").forEach(el=>{
+    el.classList.remove("active")
+  })
+
+  const active = document.getElementById("tab-" + type)
+  if(active) active.classList.add("active")
+
+  loadCurrent()
 }
+
+// ✅ MAIN LOADER
 function loadCurrent(){
 
   productsListener = db
@@ -170,7 +174,6 @@ function loadCurrent(){
     .orderBy("created","desc")
     .onSnapshot(snapshot => {
 
-      // ✅ FIX container naming
       if(!stockContainer){
         stockContainer = document.getElementById("currentStockList")
       }
@@ -194,13 +197,13 @@ function loadCurrent(){
 
         const stock = Number(p.stock || 0)
 
-        // ✅ COUNTING (FIXED)
+        // ✅ COUNTING
         countAll++
         if(stock > 0) countActive++
         if(stock <= 0) countInactive++
         if(stock <= 10) countLow++
 
-        // ✅ FILTERS (FIXED VARIABLE)
+        // ✅ FILTERS
         if(currentStockFilter === "active" && stock <= 0) return
         if(currentStockFilter === "inactive" && stock > 0) return
         if(currentStockFilter === "low" && stock > 10) return
@@ -266,6 +269,11 @@ function loadCurrent(){
       if(elInactive) elInactive.innerText = countInactive
       if(elLow) elLow.innerText = countLow
     })
+}
+
+// ✅ FIX FOR navigation.js CALL
+function loadCurrentStock(){
+  loadCurrent()
 }
 let editingProductId = null
 
