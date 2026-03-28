@@ -3361,3 +3361,94 @@ SALE HEADER ACTIONS (NEW)
   font-weight:600;
   white-space:nowrap;
 }
+.discount-modal{
+  position:fixed;
+  inset:0;
+  z-index:999;
+}
+
+.discount-overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.3);
+}
+
+.discount-sheet{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  background:white;
+  border-radius:20px 20px 0 0;
+  padding:18px;
+  animation:slideUp .25s ease;
+}
+
+@keyframes slideUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
+
+.discount-title{
+  font-size:18px;
+  font-weight:600;
+  text-align:center;
+}
+
+.discount-sub{
+  font-size:13px;
+  text-align:center;
+  color:#64748b;
+  margin-bottom:12px;
+}
+
+.discount-input-row{
+  display:flex;
+  gap:8px;
+}
+
+.discount-input-row input{
+  flex:1;
+  height:44px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  padding:0 12px;
+  font-size:14px;
+}
+
+.discount-toggle{
+  display:flex;
+  background:#f1f5f9;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+.discount-toggle button{
+  padding:0 12px;
+  border:none;
+  background:transparent;
+  font-weight:600;
+}
+
+.discount-toggle .active{
+  background:white;
+}
+
+.discount-quick{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.discount-quick button{
+  flex:1;
+  height:34px;
+  border-radius:10px;
+  border:none;
+  background:#f1f5f9;
+}
+
+.discount-actions{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
