@@ -323,12 +323,17 @@ Hammasini o'chirish
 </div> <!-- ✅ CLOSE salePage -->
 
 
-<!-- 🔥 NEW PAYMENT PAGE (STEP 1) -->
-<div id="paymentPage" class="page hidden">
+<!-- 🔥 NEW PAYMENT PAGE (FIXED CLEAN VERSION) -->
+<div id="paymentPage" class="hidden">
 
   <!-- HEADER -->
-  <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-    <button onclick="goBack()" style="
+  <div style="
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 0;
+  ">
+    <button onclick="closePaymentPage()" style="
       border:none;
       background:none;
       font-size:18px;
@@ -341,24 +346,23 @@ Hammasini o'chirish
   </div>
 
   <!-- PRICE -->
-  <div style="text-align:center; margin:20px 0;">
+  <div style="text-align:center; margin:20px 0 30px;">
 
-    <!-- OLD PRICE -->
     <div id="paymentOldPrice" style="
       text-decoration:line-through;
       color:#94a3b8;
       font-size:14px;
       display:none;
+      margin-bottom:6px;
     ">
-      120 000 UZS
+      120 000 so'm
     </div>
 
-    <!-- FINAL PRICE -->
     <div id="paymentFinalPrice" style="
-      font-size:32px;
+      font-size:34px;
       font-weight:700;
     ">
-      0 UZS
+      0 so'm
     </div>
 
   </div>
@@ -367,25 +371,27 @@ Hammasini o'chirish
   <div style="
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-top:20px;
+    gap:12px;
+    margin-bottom:100px;
   ">
 
-    <button id="payCash" class="payment-btn">Naqd</button>
-    <button id="payCard" class="payment-btn">Karta</button>
-    <button id="payDebt" class="payment-btn">Nasiya</button>
+    <button id="payCash" class="payment-card">Naqd</button>
+    <button id="payCard" class="payment-card">Karta</button>
+    <button id="payDebt" class="payment-card full">Nasiya</button>
 
   </div>
 
   <!-- ACTIONS -->
   <div style="
     position:fixed;
-    bottom:70px;
+    bottom:0;
     left:0;
     width:100%;
-    padding:10px;
+    padding:12px;
+    background:white;
     display:flex;
     gap:10px;
+    box-shadow:0 -2px 10px rgba(0,0,0,0.05);
   ">
 
     <button id="delayBtn" class="btn-secondary" style="flex:1;">
@@ -399,8 +405,6 @@ Hammasini o'chirish
   </div>
 
 </div>
-<!-- 🔥 END PAYMENT PAGE -->
-
 
 <!-- INVENTORY -->
 <div id="stockPage" class="page hidden">
