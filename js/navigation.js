@@ -75,19 +75,18 @@ if(pageId === "dashboardPage" && typeof loadDashboard === "function"){
 
 if(pageId === "salePage"){
 
-  // 🔥 re-render cart UI (VERY IMPORTANT)
-  if(typeof renderCart === "function"){
-    setTimeout(()=>{
-      renderCart()
-    }, 50)
-  }
+  setTimeout(()=>{
 
-  // keep your existing logic
-  if(typeof updateSaleButtons === "function"){
-    setTimeout(()=>{
+    if(typeof renderCart === "function"){
+      renderCart()
+    }
+
+    if(typeof updateSaleButtons === "function"){
       updateSaleButtons()
-    }, 60)
-  }
+    }
+
+  }, 100) // ⬅️ IMPORTANT: increase delay
+
 }
 
 // ✅ FIX STOCK LOADER (SAFE)
