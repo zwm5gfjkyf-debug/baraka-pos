@@ -2,6 +2,7 @@
 // BARAKA POS – ULTRA FAST SALES ENGINE
 // =======================================
 // product cache (in memory)
+let selectedPaymentType = null
 let productCache = []
 let productIndex = {}
 let productIndexBarcode = {}
@@ -1163,4 +1164,22 @@ function closePaymentPage(){
   if(salePage) salePage.classList.remove("hidden")
   if(actions) actions.style.display = ""
   if(nav) nav.style.display = ""
+}
+function selectPayment(type){
+
+  selectedPaymentType = type
+
+  const cash = document.getElementById("payCash")
+  const card = document.getElementById("payCard")
+  const debt = document.getElementById("payDebt")
+
+  // reset all
+  ;[cash, card, debt].forEach(btn=>{
+    if(btn) btn.classList.remove("active")
+  })
+
+  // activate selected
+  if(type === "cash" && cash) cash.classList.add("active")
+  if(type === "card" && card) card.classList.add("active")
+  if(type === "debt" && debt) debt.classList.add("active")
 }
