@@ -140,7 +140,7 @@ if(unitEl) unitEl.innerText = "Dona"
 }
 finally{
 
-stockProcessing = false
+Processing = false
 
 }
 
@@ -148,10 +148,10 @@ stockProcessing = false
 // ===============================
 // LOAD PRODUCTS (REALTIME)
 // ===============================
-function setStockFilter(type){
-  currentStockFilter = type;
+function setFilter(type){
+  currentFilter = type;
 
-  document.querySelectorAll(".stock-tab").forEach(el=>{
+  document.querySelectorAll(".-tab").forEach(el=>{
     el.classList.remove("active");
   });
 
@@ -159,9 +159,9 @@ function setStockFilter(type){
   if(active) active.classList.add("active");
 
   // 🔥 THIS LINE FIXES EVERYTHING
-  loadCurrentStock();
+  loadCurrent();
 }
-function loadCurrentStock(){
+function loadCurrent(){
 
   // ✅ SAFE listener cleanup
   
@@ -174,11 +174,11 @@ function loadCurrentStock(){
     .onSnapshot(snapshot => {
 
       // ✅ cache container
-      if(!stockContainer){
-        stockContainer = document.getElementById("currentStockList")
+      if(!Container){
+        Container = document.getElementById("currentList")
       }
 
-      const container = stockContainer
+      const container = Container
       if(!container) return
 
       // ✅ clear old
@@ -200,12 +200,12 @@ snapshot.forEach(doc => {
   // COUNTING
   countAll++
 
-  if(p.stock > 0) countActive++
-  if(p.stock <= 0) countInactive++
-  if(p.stock <= 10) countLow++
+  if(p. > 0) countActive++
+  if(p. <= 0) countInactive++
+  if(p. <= 10) countLow++
 
   // FILTERS
-  if(currentStockFilter === "active" && p.stock <= 0) return
+  if(currentFilter === "active" && p.stock <= 0) return
   if(currentStockFilter === "inactive" && p.stock > 0) return
   if(currentStockFilter === "low" && p.stock > 10) return
       const div = document.createElement("div")
@@ -239,8 +239,14 @@ div.innerHTML = `
 
   <div class="stock-right">
 
-    <div class="stock-qty">
-  ${p.stock || 0} ${p.unit || "dona"}
+<div class="stock-qty" style="
+  ${p.stock <= 0 ? 'color:#ef4444;font-weight:600;' : ''}
+">
+  ${
+    p.stock <= 0
+      ? "Qolmadi"
+      : `${p.stock} ${p.unit || "dona"}`
+  }
 </div>
 
     <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
