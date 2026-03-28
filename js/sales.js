@@ -68,7 +68,7 @@ productKeys = Object.keys(productIndex)
 function getCurrentPage(){
 
 const sale = document.getElementById("salePage")
-const debt = document.getElementById("debtPage")
+const debt = document.getElementById("debtCustomerPage")
 const stock = document.getElementById("stockPage")
 
 if(sale && !sale.classList.contains("hidden")) return "sale"
@@ -538,14 +538,13 @@ if(cart.length === 0){
 showTopBanner("Savat bo'sh", "error")
 return
 }// SAFETY: require customer name for debt
-if(saleType === "debt"){
+// 🔥 VALIDATE DEBT CUSTOMER (NEW SYSTEM)
+if(selectedPaymentType === "debt"){
 
-const name = document.getElementById("debtCustomer").value.trim()
-
-if(!name){
-showTopBanner("Mijoz ismini kiriting","error")
-return
-}
+  if(!window.debtCustomerName){
+    showTopBanner("Mijoz ismini kiriting","error")
+    return
+  }
 
 }
 const btn = document.getElementById("nextBtn")
@@ -642,17 +641,27 @@ btn.disabled = false
 btn.innerText = "Sotuvni yakunlash"
 
 }
+// 🔥 RESET PAYMENT STATE (PUT HERE)
+selectedPaymentType = null
+window.debtCustomerName = null
+window.debtCustomerPhone = null
 
 cartMap = {}
 saleType = "cash"
 discountValue = 0
 discountType = "percent"
-document.getElementById("debtCustomer").value = ""
-document.getElementById("debtCustomer").classList.add("hidden")
+// safe cleanup (no crash)
+const debtInput = document.getElementById("debtCustomer")
+if(debtInput){
+  debtInput.value = ""
+  debtInput.classList.add("hidden")
+}
 
-document.getElementById("cashBtn").classList.add("active")
-document.getElementById("debtBtn").classList.remove("active")
+const cashBtn = document.getElementById("cashBtn")
+const debtBtn = document.getElementById("debtBtn")
 
+if(cashBtn) cashBtn.classList.add("active")
+if(debtBtn) debtBtn.classList.remove("active")
 renderCart()
 
 
@@ -1239,9 +1248,16 @@ function openSuccessPage(){
   const payment = document.getElementById("paymentPage")
   const debt = document.getElementById("debtCustomerPage")
   const success = document.getElementById("successPage")
+  const nav = document.querySelector(".bottom-nav")
+  const actions = document.getElementById("saleActions")
 
   if(payment) payment.classList.add("hidden")
   if(debt) debt.classList.add("hidden")
+
+  // 🔥 hide UI behind
+  if(nav) nav.style.display = "none"
+  if(actions) actions.style.display = "none"
+
   if(success) success.classList.remove("hidden")
 }
 function finishSaleFlow(){
