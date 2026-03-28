@@ -347,45 +347,60 @@ updateSaleButtons()
     // ===================================
     // 🔥 RENDER ITEMS (CLEAN)
     // ===================================
-    let total = 0
+  // ===================================
+// 🔥 RENDER ITEMS (CLEAN)
+// ===================================
+let total = 0
 
-    cart.forEach(item => {
+cart.forEach(item => {
 
-      const itemTotal = item.price * item.qty
-      total += itemTotal
+  const itemTotal = item.price * item.qty
+  total += itemTotal
 
-      const div = document.createElement("div")
-      div.className = "stock-row-item"
+  const div = document.createElement("div")
+  div.className = "stock-row-item"
 
-      div.innerHTML = `
-        <div class="product-img">
-          ${
-            item.image
-            ? `<img src="${item.image}" class="product-img-tag">`
-            : `<div class="product-placeholder">📦</div>`
-          }
-        </div>
+  div.innerHTML = `
+    <div class="product-img">
+      ${
+        item.image
+        ? `<img src="${item.image}" class="product-img-tag">`
+        : `<div class="product-placeholder">📦</div>`
+      }
+    </div>
 
-        <div class="stock-info">
-          <div class="stock-name">${item.name}</div>
-          <div class="stock-price">${formatMoney(item.price)}</div>
-        </div>
+    <div class="stock-info">
+      <div class="stock-name">${item.name}</div>
+      <div class="stock-price">${formatMoney(item.price)}</div>
+    </div>
 
-        <div class="stock-right">
-          <div class="qty-control">
-            <button class="qty-btn minus" onclick="decreaseQty('${item.id}')">−</button>
-            <span class="qty-value">${item.qty}</span>
-            <button class="qty-btn plus" onclick="increaseQty('${item.id}')">+</button>
-          </div>
-        </div>
-      `
+    <div class="stock-right">
+      <div class="qty-control">
+        <button class="qty-btn minus" onclick="decreaseQty('${item.id}')">−</button>
+        <span class="qty-value">${item.qty}</span>
+        <button class="qty-btn plus" onclick="increaseQty('${item.id}')">+</button>
+      </div>
+    </div>
+  `
 
-      list.appendChild(div)
-    })
+  list.appendChild(div)
+})
 
-    // ===================================
-    // 🔥 TOTAL (ONLY HERE, ONLY ONCE)
-    // ===================================
+// 🔥 APPLY DISCOUNT (CORRECT PLACE)
+if(discountValue > 0){
+
+  if(discountType === "percent"){
+    total = total - (total * discountValue / 100)
+  }else{
+    total = total - discountValue
+  }
+
+  if(total < 0) total = 0
+}
+
+// ===================================
+// 🔥 TOTAL (ONLY HERE, ONLY ONCE)
+// ===================================
 if(totalEl && cart.length > 0){
 
   totalEl.innerText = "Jami: " + formatMoney(total)
@@ -394,7 +409,7 @@ if(totalEl && cart.length > 0){
 
 }
 
-    updateCartUI()
+updateCartUI()
 updateSaleButtons()
   })
 }
@@ -556,10 +571,22 @@ return
 
 }
 cart.forEach(i=>{
-total += i.price * i.qty
-totalCost += i.cost * i.qty
-totalProfit += (i.price - i.cost) * i.qty
+  total += i.price * i.qty
+  totalCost += i.cost * i.qty
+  totalProfit += (i.price - i.cost) * i.qty
 })
+
+// 🔥 APPLY DISCOUNT BEFORE SAVING
+if(discountValue > 0){
+
+  if(discountType === "percent"){
+    total = total - (total * discountValue / 100)
+  }else{
+    total = total - discountValue
+  }
+
+  if(total < 0) total = 0
+}
 
 const sale = {
 items: [...cart],
@@ -615,7 +642,8 @@ btn.innerText = "Sotuvni yakunlash"
 
 cartMap = {}
 saleType = "cash"
-
+discountValue = 0
+discountType = "percent"
 document.getElementById("debtCustomer").value = ""
 document.getElementById("debtCustomer").classList.add("hidden")
 
@@ -901,7 +929,7 @@ function clearCart(){
   showConfirm("Savatchani tozalaysizmi?", () => {
 
     cart = []
-
+    cartMap = {}
     renderCart()
 
     document.getElementById("searchResults").innerHTML = ""
@@ -910,4 +938,62 @@ function clearCart(){
     if(input) input.value = ""
 
   })
+}
+let discountType = "percent"
+let discountValue = 0
+
+function openDiscountModal(){
+  document.getElementById("discountModal").classList.remove("hidden")
+  setDiscountType("percent")
+}
+
+function closeDiscountModal(){
+  document.getElementById("discountModal").classList.add("hidden")
+}
+
+function setDiscountType(type){
+
+  discountType = type
+
+  const input = document.getElementById("discountInput")
+  const quick = document.getElementById("discountQuick")
+
+  document.getElementById("btnPercent").classList.remove("active")
+  document.getElementById("btnUZS").classList.remove("active")
+
+  quick.innerHTML = ""
+
+  if(type === "percent"){
+    document.getElementById("btnPercent").classList.add("active")
+    input.placeholder = "Chegirma foizini kiriting..."
+
+    ;[15,30,50,75].forEach(v=>{
+      const b = document.createElement("button")
+      b.innerText = v + "%"
+      b.onclick = () => input.value = v
+      quick.appendChild(b)
+    })
+
+  }else{
+    document.getElementById("btnUZS").classList.add("active")
+    input.placeholder = "Summani kiriting..."
+
+    ;[10000,20000,30000].forEach(v=>{
+      const b = document.createElement("button")
+      b.innerText = v.toLocaleString()
+      b.onclick = () => input.value = v
+      quick.appendChild(b)
+    })
+  }
+}
+
+function applyDiscount(){
+
+  const val = Number(document.getElementById("discountInput").value)
+  if(!val) return
+
+  discountValue = val
+
+  closeDiscountModal()
+  renderCart() // 🔥 update jami
 }
