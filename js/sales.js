@@ -169,16 +169,30 @@ function searchProducts(text){
         </div>
 
         <div class="stock-right">
-          <div class="stock-qty">${p.stock} dona</div>
+         <div class="stock-qty" style="
+  ${p.stock <= 0 ? 'color:#ef4444;font-weight:600;' : ''}
+">
+  ${
+    p.stock <= 0
+      ? "Qolmadi"
+      : `${p.stock} dona`
+  }
+</div>
         </div>
 
       </div>
     `
 
-    div.onclick = () => {
-      addToCart(p)
-      clearSearch()
-    }
+   div.onclick = () => {
+
+  if(p.stock <= 0){
+    showTopBanner("Mahsulot qolmagan", "error")
+    return
+  }
+
+  addToCart(p)
+  clearSearch()
+}
 
     resultsBox.appendChild(div)
   })
