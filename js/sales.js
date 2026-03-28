@@ -310,7 +310,6 @@ if(!list){
       // ❌ REMOVE TOTAL (NO MORE "0")
       if(totalEl){
         totalEl.innerText = ""
-        totalEl.classList.add("hidden")
       }
 
       // reset sale type
