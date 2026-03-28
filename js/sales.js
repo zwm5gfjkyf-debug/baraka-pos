@@ -389,9 +389,7 @@ updateSaleButtons()
 
   totalEl.innerText = "Jami: " + formatMoney(total)
 
-  // 🔥 FORCE SHOW
-  totalEl.classList.remove("hidden")
-
+  totalEl.style.display = "block"   // 🔥 FORCE VISIBLE
 }
 
     updateCartUI()
