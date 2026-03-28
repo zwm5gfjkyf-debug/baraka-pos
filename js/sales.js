@@ -623,8 +623,7 @@ const salesRef = db
 await salesRef.add(sale)
 
 // 🔥 SHOW SUCCESS EARLY
-showTopBanner("Sotuv yakunlandi", "success")
-
+openSuccessPage()
 await updateStockAfterSale(itemsToUpdate)
 
 }catch(e){
@@ -1234,4 +1233,30 @@ function saveDebtSale(){
   window.debtCustomerPhone = phone
 
   completeSale()
+}
+function openSuccessPage(){
+
+  const payment = document.getElementById("paymentPage")
+  const debt = document.getElementById("debtCustomerPage")
+  const success = document.getElementById("successPage")
+
+  if(payment) payment.classList.add("hidden")
+  if(debt) debt.classList.add("hidden")
+  if(success) success.classList.remove("hidden")
+}
+function finishSaleFlow(){
+
+  const success = document.getElementById("successPage")
+  const sale = document.getElementById("salePage")
+
+  if(success) success.classList.add("hidden")
+  if(sale) sale.classList.remove("hidden")
+
+  // 🔥 reset everything
+  cart = []
+  cartMap = {}
+  discountValue = 0
+  discountType = "percent"
+
+  renderCart()
 }
