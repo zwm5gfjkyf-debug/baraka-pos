@@ -148,40 +148,38 @@ Kirish
   width:100%;
 ">
 
-  <!-- LEFT: TEXT -->
-  <div>
-    <div class="shop-label">Do'kon</div>
-    <div class="shop-title">BARAKA</div>
-  </div>
-
-  <!-- RIGHT: ICON + MENU -->
+  <!-- LEFT: ICON + TEXT -->
   <div style="display:flex; align-items:center; gap:10px;">
 
-    <!-- 🔥 APP ICON -->
+    <!-- 🔥 ICON -->
     <img src="icon.png" style="
-      width:32px;
-      height:32px;
-      border-radius:10px;
+      width:28px;
+      height:28px;
+      border-radius:8px;
     ">
 
-    <!-- MENU -->
-    <button onclick="openSidebar()" style="
-      width:36px;
-      height:36px;
-      border-radius:10px;
-      border:none;
-      background:#f1f5f9;
-      cursor:pointer;
-      font-size:16px;
-    ">
-      ☰
-    </button>
+    <!-- 🔥 TEXT -->
+    <div>
+      <div class="shop-label">Do'kon</div>
+      <div class="shop-title">BARAKA</div>
+    </div>
 
   </div>
 
-</div>
+  <!-- RIGHT: MENU ONLY -->
+  <button onclick="openSidebar()" style="
+    width:36px;
+    height:36px;
+    border-radius:10px;
+    border:none;
+    background:#f1f5f9;
+    cursor:pointer;
+    font-size:16px;
+  ">
+    ☰
+  </button>
 
-<button onclick="openSidebar()">☰</button>
+</div>
 <div id="profileMenu" class="profile-menu glass hidden">
 
 <div id="profileEmail" class="profile-email"></div>
