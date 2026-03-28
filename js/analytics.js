@@ -235,73 +235,94 @@ renderMonthlyChart(labels, chartTotals)
 }
 let monthlyChart = null
 
-function renderMonthlyChart(labels, values){
+function renderMonthlyChart(sales){
 
-const ctx = document.getElementById("monthlySalesChart")
+  const ctx = document.getElementById("monthlySalesChart")
+  if(!ctx) return
 
-if(!ctx) return
+  // destroy old chart
+  if(window.monthlyChart){
+    window.monthlyChart.destroy()
+  }
 
-if(monthlyChart){
-monthlyChart.destroy()
-}
-const isLight = document.body.classList.contains("light-mode")
+  // ✅ FORCE ALL DAYS (1–31)
+  const labels = Array.from({ length: 31 }, (_, i) => i + 1)
 
-const barColor = isLight
-? "rgba(37,99,235,0.7)"
-: "rgba(34,197,94,0.7)"
-monthlyChart = new Chart(ctx,{
+  // ✅ CREATE EMPTY DATA
+  const values = new Array(31).fill(0)
 
-type:"bar",
+  // ✅ FILL DATA FROM SALES
+  sales.forEach(sale => {
+    const day = new Date(sale.date).getDate()
+    values[day - 1] += sale.total || 0
+  })
 
-data:{
-labels:labels,
+  // 🎨 COLOR
+  const isLight = document.body.classList.contains("light-mode")
 
-datasets:[{
+  const barColor = isLight
+    ? "rgba(37,99,235,0.7)"   // blue
+    : "rgba(34,197,94,0.7)"   // green
 
-data:values,
+  // 🚀 CREATE CHART
+  window.monthlyChart = new Chart(ctx, {
 
-backgroundColor: barColor,
-borderRadius:8,
+    type: "bar",
 
-barThickness:26
+    data: {
+      labels: labels,
 
-}]
+      datasets: [{
+        data: values,
 
-},
+        backgroundColor: barColor,
+        borderRadius: 6,
 
-options:{
-responsive:true,
-maintainAspectRatio:false,
+        // ✅ FIX OVERLAP
+        barPercentage: 0.6,
+        categoryPercentage: 0.7
+      }]
+    },
 
-plugins:{
-legend:{display:false}
-},
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
 
-scales:{
+      plugins: {
+        legend: { display: false }
+      },
 
-x:{
-grid:{display:false},
-ticks:{
-color:"#9aa4b2",
-font:{size:11}
-}
-},
+      scales: {
 
-y:{
-beginAtZero:true,
-grid:{color:"rgba(255,255,255,0.05)"},
-ticks:{
-color:"#9aa4b2",
-font:{size:10}
-}
-}
+        x: {
+          grid: { display: false },
 
-}
+          ticks: {
+            autoSkip: false,   // ✅ SHOW ALL DAYS
+            maxRotation: 0,
+            minRotation: 0,
+            color: "#9aa4b2",
+            font: { size: 11 }
+          }
+        },
 
-}
+        y: {
+          beginAtZero: true,
 
-})
+          grid: {
+            color: "rgba(255,255,255,0.05)"
+          },
 
+          ticks: {
+            color: "#9aa4b2",
+            font: { size: 10 }
+          }
+        }
+
+      }
+    }
+
+  })
 }
 async function loadTopProducts(){
 
