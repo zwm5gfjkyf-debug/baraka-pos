@@ -548,6 +548,8 @@ if(selectedPaymentType === "debt"){
 
 }
 const btn = document.getElementById("nextBtn")
+  if(!btn) return
+
 // prevent double click
 if(btn.disabled) return
 
@@ -619,11 +621,17 @@ const salesRef = db
 .doc(currentShopId)
 .collection("sales")
 
-await salesRef.add(sale)
-
-// 🔥 SHOW SUCCESS EARLY
+// 🔥 SHOW SUCCESS IMMEDIATELY
 openSuccessPage()
-await updateStockAfterSale(itemsToUpdate)
+
+// 🔥 SAVE IN BACKGROUND (NO WAIT)
+salesRef.add(sale).catch(e => {
+  console.error("Sale save error:", e)
+})
+
+updateStockAfterSale(itemsToUpdate).catch(e => {
+  console.error("Stock update error:", e)
+})
 
 }catch(e){
 
