@@ -594,8 +594,7 @@ items: [...cart],
 total: total,
 totalCost: totalCost,
 totalProfit: totalProfit,
-type: saleType,
-
+type: selectedPaymentType,
 customer: saleType === "debt"
 ? document.getElementById("debtCustomer").value || "Noma'lum"
 : null,
@@ -1182,4 +1181,28 @@ function selectPayment(type){
   if(type === "cash" && cash) cash.classList.add("active")
   if(type === "card" && card) card.classList.add("active")
   if(type === "debt" && debt) debt.classList.add("active")
+}
+function handlePaymentSave(){
+
+  if(!selectedPaymentType){
+    showTopBanner("To'lov turini tanlang", "error")
+    return
+  }
+
+  // 🔥 NASIYA FLOW
+  if(selectedPaymentType === "debt"){
+    openDebtPage()
+    return
+  }
+
+  // 🔥 CASH / CARD → COMPLETE SALE
+  completeSale()
+}
+function openDebtPage(){
+
+  const paymentPage = document.getElementById("paymentPage")
+  const debtPage = document.getElementById("debtCustomerPage")
+
+  if(paymentPage) paymentPage.classList.add("hidden")
+  if(debtPage) debtPage.classList.remove("hidden")
 }
