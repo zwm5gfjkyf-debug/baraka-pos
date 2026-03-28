@@ -959,7 +959,7 @@ function openDiscountModal(){
   document.body.style.overflow = "hidden"
 
   setDiscountType("percent")
-
+window.isFromDiscountFlow = true
   setTimeout(()=>{
     if(input) input.focus()
   }, 100)
@@ -1073,11 +1073,11 @@ function applyDiscount(){
   const input = document.getElementById("discountInput")
   const val = Number(input.value)
 
-  if(isNaN(val) || val <= 0){
+  if(isNaN(val) || val < 0){
     return
   }
 
-  // 🔥 LIMIT PERCENT
+  // limit %
   if(discountType === "percent" && val > 100){
     showTopBanner("100% dan katta bo'lishi mumkin emas", "error")
     return
@@ -1086,5 +1086,64 @@ function applyDiscount(){
   discountValue = val
 
   closeDiscountModal()
-  renderCart()
+
+  // 🔥 OPEN PAYMENT PAGE INSTEAD OF JUST RENDER
+  openPaymentPage()
+}
+function openPaymentPage(){
+
+  // 🔥 HIDE SALE PAGE
+  const salePage = document.getElementById("salePage")
+  if(salePage) salePage.classList.add("hidden")
+
+  // 🔥 SHOW PAYMENT PAGE
+  const page = document.getElementById("paymentPage")
+  if(!page) return
+  page.classList.remove("hidden")
+
+  // 🔥 GENERATE TRANSACTION ID (000001, 000002...)
+  let lastId = Number(localStorage.getItem("lastTransactionId") || 0)
+  lastId++
+  localStorage.setItem("lastTransactionId", lastId)
+
+  const idStr = String(lastId).padStart(6, "0")
+  const idEl = document.getElementById("paymentTransactionId")
+  if(idEl) idEl.innerText = "#" + idStr
+
+  // 🔥 CALCULATE TOTAL
+  let total = 0
+  cart.forEach(i=>{
+    total += i.price * i.qty
+  })
+
+  let final = total
+
+  if(discountValue > 0){
+    if(discountType === "percent"){
+      final = total - (total * discountValue / 100)
+    }else{
+      final = total - discountValue
+    }
+  }
+
+  if(final < 0) final = 0
+
+  const oldEl = document.getElementById("paymentOldPrice")
+  const finalEl = document.getElementById("paymentFinalPrice")
+
+  // 🔥 SHOW PRICE LOGIC
+  if(discountValue > 0){
+    if(oldEl){
+      oldEl.style.display = "block"
+      oldEl.innerText = formatMoney(total)
+    }
+    if(finalEl){
+      finalEl.innerText = formatMoney(final)
+    }
+  }else{
+    if(oldEl) oldEl.style.display = "none"
+    if(finalEl){
+      finalEl.innerText = formatMoney(final)
+    }
+  }
 }
