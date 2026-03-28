@@ -375,9 +375,11 @@ Hammasini o'chirish
     margin-bottom:100px;
   ">
 
-    <button id="payCash" class="payment-card">Naqd</button>
-    <button id="payCard" class="payment-card">Karta</button>
-    <button id="payDebt" class="payment-card full">Nasiya</button>
+<button id="payCash" class="payment-card" onclick="selectPayment('cash')">Naqd</button>
+
+<button id="payCard" class="payment-card" onclick="selectPayment('card')">Karta</button>
+
+<button id="payDebt" class="payment-card full" onclick="selectPayment('debt')">Nasiya</button>
 
   </div>
 
