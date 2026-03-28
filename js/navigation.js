@@ -73,11 +73,21 @@ if(pageId === "dashboardPage" && typeof loadDashboard === "function"){
   loadDashboard()
 }
 
-// 🔥 FIX SALE BUTTONS ON PAGE OPEN
-if(pageId === "salePage" && typeof updateSaleButtons === "function"){
-  setTimeout(()=>{
-    updateSaleButtons()
-  }, 50)
+if(pageId === "salePage"){
+
+  // 🔥 re-render cart UI (VERY IMPORTANT)
+  if(typeof renderCart === "function"){
+    setTimeout(()=>{
+      renderCart()
+    }, 50)
+  }
+
+  // keep your existing logic
+  if(typeof updateSaleButtons === "function"){
+    setTimeout(()=>{
+      updateSaleButtons()
+    }, 60)
+  }
 }
 
 // ✅ FIX STOCK LOADER (SAFE)
