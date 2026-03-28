@@ -1248,11 +1248,20 @@ function finishSaleFlow(){
 
   const success = document.getElementById("successPage")
   const sale = document.getElementById("salePage")
+  const nav = document.querySelector(".bottom-nav")
+  const actions = document.getElementById("saleActions")
 
+  // ✅ SHOW SALE PAGE
   if(success) success.classList.add("hidden")
   if(sale) sale.classList.remove("hidden")
 
-  // 🔥 reset everything
+  // ✅ RESTORE NAVIGATION
+  if(nav) nav.style.display = ""
+
+  // ✅ RESTORE SALE ACTIONS (scanner + button)
+  if(actions) actions.style.display = ""
+
+  // 🔥 RESET DATA
   cart = []
   cartMap = {}
   discountValue = 0
