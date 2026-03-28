@@ -988,35 +988,75 @@ function setDiscountType(type){
   const input = document.getElementById("discountInput")
   const quick = document.getElementById("discountQuick")
 
-  document.getElementById("btnPercent").classList.remove("active")
-  document.getElementById("btnUZS").classList.remove("active")
+  const btnP = document.getElementById("btnPercent")
+  const btnU = document.getElementById("btnUZS")
+
+  // 🔥 CLEAR ACTIVE
+  btnP.classList.remove("active")
+  btnU.classList.remove("active")
 
   quick.innerHTML = ""
 
   if(type === "percent"){
-    document.getElementById("btnPercent").classList.add("active")
+    btnP.classList.add("active")
     input.placeholder = "Chegirma foizini kiriting..."
 
     ;[15,30,50,75].forEach(v=>{
       const b = document.createElement("button")
       b.innerText = v + "%"
-      b.onclick = () => input.value = v
+      b.onclick = () => {
+        input.value = v
+        updateDiscountPreview()
+      }
       quick.appendChild(b)
     })
 
   }else{
-    document.getElementById("btnUZS").classList.add("active")
+    btnU.classList.add("active")
     input.placeholder = "Summani kiriting..."
 
     ;[10000,20000,30000].forEach(v=>{
       const b = document.createElement("button")
       b.innerText = v.toLocaleString()
-      b.onclick = () => input.value = v
+      b.onclick = () => {
+        input.value = v
+        updateDiscountPreview()
+      }
       quick.appendChild(b)
     })
   }
-}
 
+  updateDiscountPreview()
+}
+function updateDiscountPreview(){
+
+  const input = document.getElementById("discountInput")
+  const preview = document.getElementById("discountPreview")
+
+  if(!input || !preview) return
+
+  let val = Number(input.value || 0)
+
+  // 🔥 calculate original total
+  let total = 0
+  cart.forEach(i=>{
+    total += i.price * i.qty
+  })
+
+  let final = total
+
+  if(val > 0){
+    if(discountType === "percent"){
+      final = total - (total * val / 100)
+    }else{
+      final = total - val
+    }
+  }
+
+  if(final < 0) final = 0
+
+  preview.innerText = "Jami: " + formatMoney(final)
+}
 function applyDiscount(){
 
   const input = document.getElementById("discountInput")
