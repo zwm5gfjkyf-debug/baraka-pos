@@ -11,8 +11,10 @@ function navigate(pageId){
   /* ================================
      HIDE ALL PAGES
   ================================ */
-  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-
+document.querySelectorAll('.page').forEach(p => {
+  p.classList.add('hidden')
+  p.style.display = ""   // 🔥 RESET INLINE STYLES
+})
   /* ================================
      SHOW CURRENT PAGE
   ================================ */
@@ -69,8 +71,17 @@ function navigate(pageId){
    DATA LOADERS (LAZY LOAD)
 ================================ */
 
-if(pageId === "dashboardPage" && typeof loadDashboard === "function"){
-  loadDashboard()
+if(pageId === "dashboardPage"){
+
+  if(typeof loadDashboard === "function"){
+    loadDashboard()
+  }
+
+  // 🔥 FIX TODAY CHART
+  if(typeof loadTodayAnalytics === "function"){
+    loadTodayAnalytics()
+  }
+
 }
 
 if(pageId === "salePage"){
@@ -99,9 +110,20 @@ if(pageId === "stockPage"){
 }
 
 if(pageId === "analyticsPage"){
-  if(typeof showAnalyticsTab === "function"){
-    showAnalyticsTab("weekly")
-  }
+
+  setTimeout(() => {
+
+    if(typeof showAnalyticsTab === "function"){
+      showAnalyticsTab("weekly")
+    }
+
+    // 🔥 ENSURE DATA LOAD
+    if(typeof loadWeeklyAnalytics === "function"){
+      loadWeeklyAnalytics()
+    }
+
+  }, 150)
+
 }
 
 // ✅ FIX DUPLICATE
