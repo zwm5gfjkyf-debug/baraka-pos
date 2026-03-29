@@ -3542,3 +3542,65 @@ SALE HEADER ACTIONS (NEW)
   gap:10px;
   margin-top:14px;
 }
+/* NEW DASHBOARD GRID */
+.dashboard-grid-new{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-top:10px;
+}
+
+/* CARD BASE */
+.card{
+  background:white;
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.04);
+}
+
+/* BIG CARD */
+.big-card{
+  grid-column: span 1;
+  height:120px;
+}
+
+/* SMALL CARD */
+.small-card{
+  height:120px;
+}
+
+/* BLUE CARD */
+.blue-card{
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  color:white;
+}
+
+/* TEXTS */
+.card-title{
+  font-size:12px;
+  opacity:0.8;
+  margin-bottom:6px;
+}
+
+.card-value{
+  font-size:22px;
+  font-weight:700;
+}
+
+.card-sub{
+  font-size:12px;
+  margin-top:6px;
+  opacity:0.8;
+}
+
+/* COLORS */
+.green{
+  color:#16a34a;
+}
+
+.orange{
+  color:#f97316;
+}
+.big-card{
+  grid-column: span 1;
+}
