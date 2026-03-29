@@ -278,7 +278,87 @@ Hammasini o'chirish
   <canvas id="todaySalesChart"></canvas>
 
 </div>
-  </div> <!-- ✅ CLOSE dashboardPage -->
+
+<!-- 🔥 RECENT SALES -->
+<div style="margin-top:20px;">
+
+  <!-- HEADER -->
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  ">
+    <h3 style="font-size:18px; font-weight:600;">
+      So‘nggi sotuvlar
+    </h3>
+
+    <button style="
+      background:none;
+      border:none;
+      color:#2563eb;
+      font-weight:500;
+      cursor:pointer;
+    ">
+      Barchasini ko‘rish →
+    </button>
+  </div>
+
+  <!-- LIST -->
+  <div id="recentSalesList">
+
+    <!-- ITEM -->
+    <div class="sale-item">
+      <div class="sale-left">
+        <div class="sale-icon">🛒</div>
+
+        <div>
+          <div class="sale-title">Sotuv #47</div>
+          <div class="sale-sub">14:28 • 3 ta mahsulot</div>
+        </div>
+      </div>
+
+      <div class="sale-price">85 000 so‘m</div>
+    </div>
+
+    <!-- ITEM -->
+    <div class="sale-item">
+      <div class="sale-left">
+        <div class="sale-icon">🛒</div>
+
+        <div>
+          <div class="sale-title">Sotuv #46</div>
+          <div class="sale-sub">14:11 • 1 ta mahsulot</div>
+        </div>
+      </div>
+
+      <div class="sale-price">42 500 so‘m</div>
+    </div>
+
+    <!-- ITEM -->
+    <div class="sale-item">
+      <div class="sale-left">
+        <div class="sale-icon">🛒</div>
+
+        <div>
+          <div class="sale-title">Sotuv #45</div>
+          <div class="sale-sub">13:55 • 5 ta mahsulot</div>
+        </div>
+      </div>
+
+      <div class="sale-price">210 000 so‘m</div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- 🔥 FLOATING ADD BUTTON -->
+<button onclick="navigate('salePage')" id="floatingAddBtn">
+  +
+</button>
+
+</div> <!-- ✅ CLOSE dashboardPage -->
 <!-- SALE -->
 <div id="salePage" class="page hidden">
 
