@@ -89,10 +89,7 @@ renderWeeklyChart(days, chartTotals)
 
 function renderWeeklyChart(labels, values){
 
-const canvas = document.getElementById("weeklySalesChart")
-if(!canvas) return
-
-const ctx = canvas.getContext("2d")
+const ctx = document.getElementById("weeklySalesChart")
 if(!ctx) return
 
 if(weeklyChart){
@@ -285,103 +282,98 @@ renderMonthlyChart(labels, chartTotals)
 let monthlyChart = null
 
 function renderMonthlyChart(labels, values){
-const canvas = document.getElementById("monthlySalesChart")
-if(!canvas) return
 
-const ctx = canvas.getContext("2d")
-   if(!ctx) return
+  const ctx = document.getElementById("monthlySalesChart")
+  if(!ctx) return
 
   // destroy old chart
-  if(window.monthlyChart){
-    window.monthlyChart.destroy()
+  if(monthlyChart){
+    monthlyChart.destroy()
   }
 
- 
-
-  // 🎨 COLOR
+  // 🎨 THEME COLOR
   const isLight = document.body.classList.contains("light-mode")
 
   const barColor = isLight
     ? "rgba(37,99,235,0.7)"   // blue
     : "rgba(34,197,94,0.7)"   // green
 
- // 🚀 CREATE CHART
-const ctx2d = ctx.getContext("2d")
+  // 🔥 GRADIENT (SAFE)
+  const gradient = ctx.getContext("2d").createLinearGradient(0,0,0,220)
+  gradient.addColorStop(0, "rgba(37,99,235,0.35)")
+  gradient.addColorStop(1, "rgba(37,99,235,0.02)")
 
-const gradient = ctx2d.createLinearGradient(0,0,0,220)
-gradient.addColorStop(0, "rgba(37,99,235,0.35)")
-gradient.addColorStop(1, "rgba(37,99,235,0.02)")
-window.monthlyChart = new Chart(ctx, {
+  // 🚀 CREATE CHART
+  monthlyChart = new Chart(ctx, {
 
-  type: "bar",
+    type: "bar",
 
-  data: {
-    labels: labels,
+    data: {
+      labels: labels,
 
-    datasets: [{
-      data: values,
+      datasets: [{
+        data: values,
 
-      backgroundColor: "rgba(37,99,235,0.7)",
-      borderRadius: 8,
+        backgroundColor: barColor, // 🔥 use theme color
+        borderRadius: 8,
 
-      barThickness: 18,
-      maxBarThickness: 20,
+        barThickness: 18,
+        maxBarThickness: 20,
 
-      categoryPercentage: 0.7,
-      barPercentage: 0.8
-    }]
-  },
-
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-
-    plugins: {
-      legend: { display: false }
+        categoryPercentage: 0.7,
+        barPercentage: 0.8
+      }]
     },
 
-    scales: {
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
 
-      x: {
-        grid: { display: false },
-
-        ticks: {
-          autoSkip: false,
-          maxRotation: 0,
-          minRotation: 0,
-          color: "#9aa4b2",
-          font: { size: 11 }
-        }
+      plugins: {
+        legend: { display: false }
       },
 
-      y: {
-        beginAtZero: true,
+      scales: {
 
-        grid: {
-          color: "rgba(0,0,0,0.05)"
+        x: {
+          grid: { display: false },
+
+          ticks: {
+            autoSkip: false,
+            maxRotation: 0,
+            minRotation: 0,
+            color: "#9aa4b2",
+            font: { size: 11 }
+          }
         },
 
-        ticks: {
-          color: "#9aa4b2",
-          font: { size: 10 },
+        y: {
+          beginAtZero: true,
 
-          // 🔥 FIX FORMAT
-          callback: function(value){
-            if(value >= 1000000){
-              return (value / 1000000).toFixed(1) + "M"
+          grid: {
+            color: "rgba(0,0,0,0.05)"
+          },
+
+          ticks: {
+            color: "#9aa4b2",
+            font: { size: 10 },
+
+            callback: function(value){
+              if(value >= 1000000){
+                return (value / 1000000).toFixed(1) + "M"
+              }
+              if(value >= 1000){
+                return (value / 1000).toFixed(1) + "k"
+              }
+              return value
             }
-            if(value >= 1000){
-              return (value / 1000).toFixed(1) + "k"
-            }
-            return value
           }
         }
+
       }
-
     }
-  }
 
-})
+  })
 }
 async function loadTopProducts(){
 
@@ -717,10 +709,7 @@ let todayChart = null
 
 function renderTodaySalesChart(data){
 
-const canvas = document.getElementById("todaySalesChart")
-if(!canvas) return
-
-const ctx = canvas.getContext("2d")
+const ctx = document.getElementById("todaySalesChart")
 if(!ctx) return
 
   // 🔥 PERFORMANCE: update instead of destroy
