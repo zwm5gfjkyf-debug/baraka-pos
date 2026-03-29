@@ -103,16 +103,21 @@ const barColor = isLight
 
 weeklyChart = new Chart(ctx,{
 
-type:"bar",
-
+type:"line",
 data:{
 labels:labels,
 
 datasets:[{
-data:values,
-backgroundColor: barColor,
-borderRadius:8,
-barThickness:28
+  data: values,
+
+  borderColor: "#2563eb",
+  backgroundColor: "rgba(37,99,235,0.15)",
+
+  fill: true,
+  tension: 0.4,
+
+  pointRadius: 0,
+  pointHoverRadius: 5
 }]
 
 },
@@ -235,8 +240,7 @@ renderMonthlyChart(labels, chartTotals)
 }
 let monthlyChart = null
 
-function renderMonthlyChart(sales){
-
+function renderMonthlyChart(labels, values){
   const ctx = document.getElementById("monthlySalesChart")
   if(!ctx) return
 
@@ -245,17 +249,7 @@ function renderMonthlyChart(sales){
     window.monthlyChart.destroy()
   }
 
-  // ✅ FORCE ALL DAYS (1–31)
-  const labels = Array.from({ length: 31 }, (_, i) => i + 1)
-
-  // ✅ CREATE EMPTY DATA
-  const values = new Array(31).fill(0)
-
-  // ✅ FILL DATA FROM SALES
-  sales.forEach(sale => {
-    const day = new Date(sale.date).getDate()
-    values[day - 1] += sale.total || 0
-  })
+ 
 
   // 🎨 COLOR
   const isLight = document.body.classList.contains("light-mode")
@@ -264,66 +258,81 @@ function renderMonthlyChart(sales){
     ? "rgba(37,99,235,0.7)"   // blue
     : "rgba(34,197,94,0.7)"   // green
 
-  // 🚀 CREATE CHART
-  window.monthlyChart = new Chart(ctx, {
+  // 🚀 CREATE CHARTconst gradient = ctx.getContext("2d").createLinearGradient(0,0,0,220)
+gradient.addColorStop(0, "rgba(37,99,235,0.35)")
+gradient.addColorStop(1, "rgba(37,99,235,0.02)")
 
-    type: "bar",
+window.monthlyChart = new Chart(ctx, {
 
-    data: {
-      labels: labels,
+  type: "bar",
 
-      datasets: [{
-        data: values,
+  data: {
+    labels: labels,
 
-        backgroundColor: barColor,
-        borderRadius: 6,
+    datasets: [{
+      data: values,
 
-        // ✅ FIX OVERLAP
-        barPercentage: 0.6,
-        categoryPercentage: 0.7
-      }]
+      backgroundColor: "rgba(37,99,235,0.7)",
+      borderRadius: 8,
+
+      barThickness: 18,
+      maxBarThickness: 20,
+
+      categoryPercentage: 0.7,
+      barPercentage: 0.8
+    }]
+  },
+
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+
+    plugins: {
+      legend: { display: false }
     },
 
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
+    scales: {
 
-      plugins: {
-        legend: { display: false }
+      x: {
+        grid: { display: false },
+
+        ticks: {
+          autoSkip: false,
+          maxRotation: 0,
+          minRotation: 0,
+          color: "#9aa4b2",
+          font: { size: 11 }
+        }
       },
 
-      scales: {
+      y: {
+        beginAtZero: true,
 
-        x: {
-          grid: { display: false },
-
-          ticks: {
-            autoSkip: false,   // ✅ SHOW ALL DAYS
-            maxRotation: 0,
-            minRotation: 0,
-            color: "#9aa4b2",
-            font: { size: 11 }
-          }
+        grid: {
+          color: "rgba(0,0,0,0.05)"
         },
 
-        y: {
-          beginAtZero: true,
+        ticks: {
+          color: "#9aa4b2",
+          font: { size: 10 },
 
-          grid: {
-            color: "rgba(255,255,255,0.05)"
-          },
-
-          ticks: {
-            color: "#9aa4b2",
-            font: { size: 10 }
+          // 🔥 FIX FORMAT
+          callback: function(value){
+            if(value >= 1000000){
+              return (value / 1000000).toFixed(1) + "M"
+            }
+            if(value >= 1000){
+              return (value / 1000).toFixed(1) + "k"
+            }
+            return value
           }
         }
-
       }
-    }
 
-  })
-}
+    }
+  }
+
+})
 async function loadTopProducts(){
 
 const container = document.getElementById("topProductsList")
