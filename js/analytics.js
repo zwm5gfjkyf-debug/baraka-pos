@@ -1096,19 +1096,11 @@ showTopBanner("Xatolik yuz berdi", "error")
 btn.disabled = false
 
 }
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-  // wait until everything is ready
-  setTimeout(() => {
-
-    if(typeof showAnalyticsTab === "function"){
-      showAnalyticsTab("weekly")
-    }
-
-    if(typeof loadTodayAnalytics === "function"){
-      loadTodayAnalytics()
-    }
-
-  }, 300)
+  // only load dashboard chart safely
+  if(typeof loadTodayAnalytics === "function"){
+    loadTodayAnalytics()
+  }
 
 })
