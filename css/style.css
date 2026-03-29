@@ -395,11 +395,12 @@ CARD SYSTEM (CORE)
 
   border:1px solid var(--border);
 
-  box-shadow:var(--shadow-md);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.03),
+    0 6px 20px rgba(0,0,0,0.04);
 
-  transition:var(--transition-normal);
+  backdrop-filter: blur(6px);
 }
-
 .card:hover{
   box-shadow:var(--shadow-lg);
 }
@@ -471,12 +472,28 @@ button{
 
   user-select:none;
 }
-
+#floatingAddBtn{
+  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg,#22c55e,#16a34a);
+}
 /* PRESS EFFECT (iPhone feel) */
-button:active{
-  transform:scale(0.96);
+button{
+  transition:transform 0.08s ease, box-shadow 0.15s ease;
 }
 
+button:active{
+  transform:scale(0.95);
+  box-shadow:0 2px 6px rgba(0,0,0,0.15) inset;
+}
+*{
+  will-change: transform;
+}
+canvas{
+  image-rendering: auto;
+}
+.dashboard-card:hover{
+  transform:translateY(-3px) scale(1.01);
+}
 /* ======================
 PRIMARY BUTTON (BLUE)
 ====================== */
@@ -1751,7 +1768,12 @@ PRODUCT IMAGE
   align-items:center;
   justify-content:center;
 }
-
+*{
+  -webkit-touch-callout:none;
+}
+button, input, div{
+  -webkit-tap-highlight-color: transparent;
+}
 /* ======================
 INFO BLOCK
 ====================== */
@@ -2756,16 +2778,7 @@ KEEP MOBILE PERFECT
 }
 
 /* IMAGE */
-.product-img{
-  width:50px;
-  height:50px;
-  border-radius:12px;
-  overflow:hidden;
-  background:#f1f5f9;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+
 
 .product-img-tag{
   width: 100%;
@@ -2834,16 +2847,7 @@ KEEP MOBILE PERFECT
 }
 
 /* IMAGE */
-.product-img{
-  width:50px;
-  height:50px;
-  border-radius:12px;
-  overflow:hidden;
-  background:#f1f5f9;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+
 .product-placeholder{
   font-size:20px;
 }
@@ -3288,9 +3292,7 @@ SALE PAGE — NEW CLEAN IOS DESIGN
 
 
 
-.page{
-  display:block;
-}
+
 
 .page.hidden{
   display:none !important;
