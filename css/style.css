@@ -3233,18 +3233,22 @@ SALE PAGE — NEW CLEAN IOS DESIGN
 
 
 
+.page{
+  display:block;
+}
 
+.page.hidden{
+  display:none !important;
+}
 
 
 
 /* PREVENT INITIAL JUMP BUG */
 #appScreen{
-  visibility:hidden;
-}
-
-#appScreen.loaded{
   visibility:visible;
 }
+
+
 /* 🔥 FORCE FIXED ELEMENTS TO RENDER CORRECTLY */
 
 /* PREVENT MID POSITION BUG */
