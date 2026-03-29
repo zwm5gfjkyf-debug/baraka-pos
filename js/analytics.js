@@ -156,6 +156,46 @@ font:{size:10}
 })
 
 }
+async function loadTodayAnalytics(){
+
+if(!currentShopId) return
+
+const start = new Date()
+start.setHours(0,0,0,0)
+
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+.where("createdAt", ">=", start)
+.orderBy("createdAt")
+.get()
+
+const labels = []
+const values = []
+
+let total = 0
+
+snapshot.forEach(doc=>{
+  const sale = doc.data()
+
+  let date = sale.createdAt?.seconds
+    ? new Date(sale.createdAt.seconds * 1000)
+    : new Date(sale.createdAt)
+
+  const time = date.toLocaleTimeString('uz-UZ',{
+    hour:'2-digit',
+    minute:'2-digit'
+  })
+
+  total += sale.total || 0
+
+  labels.push(time)
+  values.push(total)
+})
+
+renderTodaySalesChart({labels, values})
+}
 async function loadMonthlyAnalytics(){
 
 if(!currentShopId) return
@@ -258,10 +298,12 @@ function renderMonthlyChart(labels, values){
     ? "rgba(37,99,235,0.7)"   // blue
     : "rgba(34,197,94,0.7)"   // green
 
-  // 🚀 CREATE CHARTconst gradient = ctx.getContext("2d").createLinearGradient(0,0,0,220)
+ // 🚀 CREATE CHART
+const ctx2d = ctx.getContext("2d")
+
+const gradient = ctx2d.createLinearGradient(0,0,0,220)
 gradient.addColorStop(0, "rgba(37,99,235,0.35)")
 gradient.addColorStop(1, "rgba(37,99,235,0.02)")
-
 window.monthlyChart = new Chart(ctx, {
 
   type: "bar",
@@ -333,6 +375,7 @@ window.monthlyChart = new Chart(ctx, {
   }
 
 })
+}
 async function loadTopProducts(){
 
 const container = document.getElementById("topProductsList")
@@ -1056,7 +1099,8 @@ btn.disabled = false
 }
 document.addEventListener("DOMContentLoaded", () => {
   if(typeof showAnalyticsTab === "function"){
-    showAnalyticsTab("weekly") // default load
+    showAnalyticsTab("weekly")
   }
+
+  loadTodayAnalytics() // 🔥 ADD THIS
 })
-   }
