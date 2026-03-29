@@ -1460,19 +1460,23 @@ z-index:999;
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  // load USD rate safely
+  // load USD rate
   if(typeof loadUsdRate === "function"){
     loadUsdRate()
   }
 
-  // safe analytics tab binding
+  // 🔥 SHOW FIRST PAGE (THIS FIXES EVERYTHING)
+  if(typeof navigate === "function"){
+    navigate("dashboardPage")
+  }
+
+  // analytics safe binding
   if(typeof showAnalyticsTab === "function"){
     window.showAnalyticsTab = showAnalyticsTab
   }
 
 })
 </script>
-
 <script>
 function focusScanner(){
   const active = document.activeElement
