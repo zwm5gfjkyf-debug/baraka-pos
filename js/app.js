@@ -557,15 +557,22 @@ function loadRecentSales() {
         return
       }
 
-      snapshot.forEach(doc => {
-        const sale = doc.data()
+     snapshot.forEach(doc => {
+  const sale = doc.data()
+  const id = doc.id.slice(-4) // last 4 digits (clean UI)
 
         const time = sale.createdAt?.toDate()
         const formattedTime = time
           ? time.toLocaleTimeString("uz-UZ", { hour: '2-digit', minute: '2-digit' })
           : "--:--"
 
-        const itemsCount = sale.items?.length || 0
+       let itemsCount = 0
+
+if(sale.items){
+  sale.items.forEach(item=>{
+    itemsCount += item.qty || 0
+  })
+}
         const total = sale.total || 0
 
         list.innerHTML += `
@@ -575,7 +582,7 @@ function loadRecentSales() {
               <div class="sale-icon">🛒</div>
 
               <div>
-                <div class="sale-title">Sotuv #${sale.number || "-"}</div>
+                <div class="sale-title">Sotuv #${id}</div>
                 <div class="sale-sub">
                   ${formattedTime} • ${itemsCount} ta mahsulot
                 </div>
@@ -583,8 +590,8 @@ function loadRecentSales() {
             </div>
 
             <div class="sale-price">
-              ${formatMoney(total)}
-            </div>
+${formatMoney(total)} so'm
+</div>
 
           </div>
         `
