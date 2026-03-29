@@ -8,19 +8,22 @@ function navigate(pageId){
 
   currentPage = pageId;
 
-  /* ================================
-     HIDE ALL PAGES
-  ================================ */
+/* ================================
+   HIDE ALL PAGES
+================================ */
 document.querySelectorAll('.page').forEach(p => {
   p.classList.add('hidden')
-  p.style.display = ""   // 🔥 RESET INLINE STYLES
 })
-  /* ================================
-     SHOW CURRENT PAGE
-  ================================ */
-  const page = document.getElementById(pageId);
-  if(page) page.classList.remove('hidden');
 
+/* ================================
+   SHOW CURRENT PAGE
+================================ */
+const page = document.getElementById(pageId)
+
+if(page){
+  page.classList.remove('hidden')
+  page.style.display = "block"
+}
   /* ================================
      SCANNER CONTROL (🔥 FIX)
   ================================ */
