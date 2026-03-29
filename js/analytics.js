@@ -197,6 +197,65 @@ snapshot.forEach(doc=>{
 
 renderTodaySalesChart({labels, values})
 }
+
+async function loadDashboardStats(){
+
+if(!currentShopId) return
+
+const start = new Date()
+start.setHours(0,0,0,0)
+
+const snapshot = await db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
+.where("createdAt", ">=", start)
+.get()
+
+let revenue = 0
+let profit = 0
+let items = 0
+let debt = 0
+
+snapshot.forEach(doc=>{
+
+const sale = doc.data()
+
+// 🔥 revenue
+if(sale.type !== "debt"){
+  revenue += sale.total || 0
+}
+
+// 🔥 debt
+if(sale.type === "debt"){
+  debt += sale.total || 0
+}
+
+if(!sale.items) return
+
+sale.items.forEach(item=>{
+  const qty = item.qty || 0
+  const price = item.price || 0
+  const cost = item.cost || 0
+
+  items += qty
+  profit += (price - cost) * qty
+})
+
+})
+
+// 🔥 UPDATE UI
+const r = document.getElementById("todayRevenue")
+const p = document.getElementById("todayProfit")
+const i = document.getElementById("todayItems")
+const d = document.getElementById("todayDebt")
+
+if(r) r.innerText = formatMoney(revenue) + " so'm"
+if(p) p.innerText = formatMoney(profit) + " so'm"
+if(i) i.innerText = items
+if(d) d.innerText = formatMoney(debt) + " so'm"
+
+}
 async function loadMonthlyAnalytics(){
 
 if(!currentShopId) return
@@ -1098,9 +1157,12 @@ btn.disabled = false
 }
 document.addEventListener("DOMContentLoaded", () => {
 
-  // only load dashboard chart safely
   if(typeof loadTodayAnalytics === "function"){
     loadTodayAnalytics()
+  }
+
+  if(typeof loadDashboardStats === "function"){
+    loadDashboardStats()
   }
 
 })
