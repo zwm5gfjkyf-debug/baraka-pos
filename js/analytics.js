@@ -1102,5 +1102,5 @@ document.addEventListener("DOMContentLoaded", () => {
     showAnalyticsTab("weekly")
   }
 
-  loadTodayAnalytics() // 🔥 ADD THIS
+  loadTodayAnalytics()
 })
