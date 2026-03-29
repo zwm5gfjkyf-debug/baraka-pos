@@ -1540,20 +1540,24 @@ z-index:999;
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  // load USD rate
   if(typeof loadUsdRate === "function"){
     loadUsdRate()
   }
 
-  // 🔥 SHOW FIRST PAGE (THIS FIXES EVERYTHING)
   if(typeof navigate === "function"){
     navigate("dashboardPage")
   }
 
-  // analytics safe binding
   if(typeof showAnalyticsTab === "function"){
     window.showAnalyticsTab = showAnalyticsTab
   }
+
+  // 🔥 ADD THIS
+  setTimeout(() => {
+    if (typeof loadRecentSales === "function") {
+      loadRecentSales()
+    }
+  }, 500)
 
 })
 </script>
