@@ -204,36 +204,53 @@ Hammasini o'chirish
 <!-- DASHBOARD -->
 <div id="dashboardPage" class="page">
 
-<div class="dashboard-grid">
+<div class="dashboard-grid-new">
 
-<div class="dashboard-card glass form-container">
-<div class="card-title">Bugungi tushum</div>
-<div id="todayRevenue" class="dashboard-amount">0</div>
-</div>
+  <!-- 🔵 BIG CARD -->
+  <div class="card big-card blue-card">
+    <div class="card-title">BUGUNGI TUSHUM</div>
 
-<div class="dashboard-card glass">
-<div class="card-title">Bugun sotilgan mahsulotlar</div>
-<div id="todayItems" class="dashboard-amount">0</div>
-</div>
+    <div class="card-value" id="todayRevenue">0 so'm</div>
 
-<div class="dashboard-card glass">
-<div class="card-title">Bugungi foyda</div>
-<div id="todayProfit" class="dashboard-amount">0</div>
-</div>
+    <div class="card-sub">
+      ↑ +0% kechagidan
+    </div>
+  </div>
 
-<div class="dashboard-card glass">
-<div class="card-title">Bugungi nasiya</div>
-<div id="todayDebt" class="dashboard-amount">0</div>
-</div>
+  <!-- ⚪ FOYDA -->
+  <div class="card small-card">
+    <div class="card-title">BUGUNGI FOYDA</div>
 
-<div class="chart-container glass big-chart">
-<h3 class="chart-title">Bugungi savdo grafigi</h3>
-<canvas id="todaySalesChart"></canvas>
-</div>
+    <div class="card-value green" id="todayProfit">0 so'm</div>
+
+    <div class="card-sub green">
+      ↑ Yaxshi ko‘rsatkich
+    </div>
+  </div>
+
+  <!-- 📦 SOTILGAN -->
+  <div class="card small-card">
+    <div class="card-title">SOTILGAN MAHSULOT</div>
+
+    <div class="card-value" id="todayItems">0</div>
+
+    <div class="card-sub">
+      Bugun
+    </div>
+  </div>
+
+  <!-- 🟠 NASIYA -->
+  <div class="card small-card">
+    <div class="card-title">NASIYA</div>
+
+    <div class="card-value orange" id="todayDebt">0 so'm</div>
+
+    <div class="card-sub">
+      Qarzdorlik yo‘q
+    </div>
+  </div>
 
 </div>
-</div>
-
 <!-- SALE -->
 <div id="salePage" class="page hidden">
 
