@@ -1059,3 +1059,4 @@ document.addEventListener("DOMContentLoaded", () => {
     showAnalyticsTab("weekly") // default load
   }
 })
+   }
