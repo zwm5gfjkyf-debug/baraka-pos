@@ -1439,7 +1439,14 @@ z-index:999;
   </button>
 
 </div>
+
+<!-- ✅ CHART.JS FIRST (NO DEFER) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- ✅ OTHER LIBS -->
 <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
+
+<!-- ✅ YOUR FILES (ORDER MATTERS) -->
 <script src="js/firebase.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/auth.js"></script>
@@ -1449,25 +1456,33 @@ z-index:999;
 <script src="js/analytics.js"></script>
 <script src="js/app.js"></script>
 <script src="js/ui.js"></script>
+
+<!-- ✅ INIT -->
 <script>
-loadUsdRate()
+document.addEventListener("DOMContentLoaded", () => {
+
+  // load USD rate safely
+  if(typeof loadUsdRate === "function"){
+    loadUsdRate()
+  }
+
+  // safe analytics tab binding
+  if(typeof showAnalyticsTab === "function"){
+    window.showAnalyticsTab = showAnalyticsTab
+  }
+
+})
 </script>
-<script>
-if(typeof showAnalyticsTab === "function"){
-window.showAnalyticsTab = showAnalyticsTab
-}
-</script>
+
 <script>
 function focusScanner(){
   const active = document.activeElement
 
-  // ❗ DO NOT steal focus if typing
   if(active && (
     active.tagName === "INPUT" ||
     active.tagName === "TEXTAREA"
   )) return
 
-  // ❗ ONLY focus in SALE PAGE
   const salePage = document.getElementById("salePage")
   if(!salePage || salePage.classList.contains("hidden")) return
 
@@ -1478,18 +1493,17 @@ function focusScanner(){
 // focus on load
 window.addEventListener("load", focusScanner)
 
-// focus only when clicking OUTSIDE inputs
+// click outside
 document.addEventListener("click", (e) => {
   if(e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA"){
     focusScanner()
   }
 })
 
-// fix after tab switch
+// tab switch
 document.addEventListener("visibilitychange", () => {
   if(!document.hidden){
     focusScanner()
   }
 })
 </script>
-
