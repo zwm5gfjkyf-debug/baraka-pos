@@ -530,3 +530,65 @@ window.addEventListener("load", () => {
   }, 800)
 
 })
+function loadRecentSales() {
+  const list = document.getElementById("recentSalesList")
+  if (!list) return
+
+  const user = firebase.auth().currentUser
+  if (!user) return
+
+  const db = firebase.firestore()
+
+  db.collection("shops")
+    .doc(user.uid)
+    .collection("sales")
+    .orderBy("createdAt", "desc")
+    .limit(5)
+    .onSnapshot(snapshot => {
+
+      list.innerHTML = ""
+
+      if (snapshot.empty) {
+        list.innerHTML = `
+          <div style="text-align:center;color:#64748b;">
+            Hozircha sotuvlar yo‘q
+          </div>
+        `
+        return
+      }
+
+      snapshot.forEach(doc => {
+        const sale = doc.data()
+
+        const time = sale.createdAt?.toDate()
+        const formattedTime = time
+          ? time.toLocaleTimeString("uz-UZ", { hour: '2-digit', minute: '2-digit' })
+          : "--:--"
+
+        const itemsCount = sale.items?.length || 0
+        const total = sale.total || 0
+
+        list.innerHTML += `
+          <div class="sale-item">
+
+            <div class="sale-left">
+              <div class="sale-icon">🛒</div>
+
+              <div>
+                <div class="sale-title">Sotuv #${sale.number || "-"}</div>
+                <div class="sale-sub">
+                  ${formattedTime} • ${itemsCount} ta mahsulot
+                </div>
+              </div>
+            </div>
+
+            <div class="sale-price">
+              ${formatMoney(total)}
+            </div>
+
+          </div>
+        `
+      })
+
+    })
+}
