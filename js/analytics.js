@@ -667,89 +667,96 @@ let todayChart = null
 
 function renderTodaySalesChart(data){
 
-const ctx = document.getElementById("todaySalesChart")
+  const ctx = document.getElementById("todaySalesChart")
+  if(!ctx) return
 
-const isLight = document.body.classList.contains("light-mode")
+  // 🔥 PERFORMANCE: update instead of destroy
+  if(todayChart){
+    todayChart.data.labels = data.labels
+    todayChart.data.datasets[0].data = data.values
+    todayChart.update()
+    return
+  }
 
-const lineColor = isLight ? "#2563eb" : "#22c55e"
+  // 🔥 BLUE GRADIENT
+  const gradient = ctx.getContext("2d").createLinearGradient(0,0,0,220)
+  gradient.addColorStop(0, "rgba(37,99,235,0.35)")
+  gradient.addColorStop(1, "rgba(37,99,235,0.02)")
 
-const bgColor = isLight
-? "rgba(37,99,235,0.15)"
-: "rgba(34,197,94,0.15)"
+  todayChart = new Chart(ctx,{
 
-if(!ctx) return
+    type:"line",
 
-// destroy old chart
-if(todayChart){
-todayChart.destroy()
-}
+    data:{
+      labels: data.labels,
 
-todayChart = new Chart(ctx,{
-type:"line",
+      datasets:[{
 
-data:{
-labels:data.labels,
+        data: data.values,
 
-datasets:[{
+        borderColor: "#2563eb",
+        backgroundColor: gradient,
 
-data:data.values,
+        fill: true,
+        tension: 0.4,
+        borderWidth: 3,
 
-borderColor: lineColor,
+        // 🔥 ONLY LAST POINT
+        pointRadius: (ctx)=>{
+          return ctx.dataIndex === data.values.length - 1 ? 5 : 0
+        },
 
-backgroundColor: bgColor,
+        pointBackgroundColor: "#2563eb"
+      }]
+    },
 
-fill:true,
+    options:{
 
-tension:0.4,
+      responsive: true,
+      maintainAspectRatio: false,
 
-borderWidth:3,
+      plugins:{
+        legend:{ display:false }
+      },
 
-// only first and last dots
-pointRadius:(ctx)=>{
-if(ctx.dataIndex===0) return 5
-if(ctx.dataIndex===ctx.dataset.data.length-1) return 5
-return 0
-},
+      scales:{
 
-pointBackgroundColor: lineColor
-}]
+        x:{
+          grid:{ display:false },
+          ticks:{
+            color:"#9aa4b2",
+            font:{ size:10 }
+          }
+        },
 
-},
+        y:{
+          beginAtZero:true,
 
-options:{
+          grid:{
+            color:"rgba(0,0,0,0.05)"
+          },
 
-responsive:true,
-maintainAspectRatio:false,
+          ticks:{
+            color:"#9aa4b2",
+            font:{ size:10 },
 
-plugins:{
-legend:{display:false}
-},
+            // 🔥 FORMAT NUMBERS (1.2M, 500k)
+            callback: function(value){
+              if(value >= 1000000){
+                return (value / 1000000).toFixed(1) + "M"
+              }
+              if(value >= 1000){
+                return (value / 1000).toFixed(1) + "k"
+              }
+              return value
+            }
+          }
+        }
 
-scales:{
+      }
+    }
 
-x:{
-grid:{display:false},
-ticks:{
-color:"#9aa4b2",
-font:{size:10}
-}
-},
-
-y:{
-beginAtZero:true,
-suggestedMin:0,
-grid:{color:"rgba(255,255,255,0.05)"},
-ticks:{
-color:"#9aa4b2",
-font:{size:10}
-}
-}
-
-}
-
-}
-
-})
+  })
 }
 function filterDebtAnalytics(){
 
