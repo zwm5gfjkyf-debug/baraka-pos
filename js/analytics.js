@@ -1,4 +1,6 @@
-
+if (typeof Chart === "undefined") {
+  console.warn("Chart.js not loaded yet");
+}
 // ===============================
 // BARAKA POS ANALYTICS SYSTEM
 // ===============================
@@ -87,8 +89,10 @@ renderWeeklyChart(days, chartTotals)
 
 function renderWeeklyChart(labels, values){
 
-const ctx = document.getElementById("weeklySalesChart")
+const canvas = document.getElementById("weeklySalesChart")
+if(!canvas) return
 
+const ctx = canvas.getContext("2d")
 if(!ctx) return
 
 if(weeklyChart){
@@ -281,8 +285,11 @@ renderMonthlyChart(labels, chartTotals)
 let monthlyChart = null
 
 function renderMonthlyChart(labels, values){
-  const ctx = document.getElementById("monthlySalesChart")
-  if(!ctx) return
+const canvas = document.getElementById("monthlySalesChart")
+if(!canvas) return
+
+const ctx = canvas.getContext("2d")
+   if(!ctx) return
 
   // destroy old chart
   if(window.monthlyChart){
@@ -710,8 +717,11 @@ let todayChart = null
 
 function renderTodaySalesChart(data){
 
-  const ctx = document.getElementById("todaySalesChart")
-  if(!ctx) return
+const canvas = document.getElementById("todaySalesChart")
+if(!canvas) return
+
+const ctx = canvas.getContext("2d")
+if(!ctx) return
 
   // 🔥 PERFORMANCE: update instead of destroy
   if(todayChart){
@@ -1097,10 +1107,19 @@ showTopBanner("Xatolik yuz berdi", "error")
 btn.disabled = false
 
 }
-document.addEventListener("DOMContentLoaded", () => {
-  if(typeof showAnalyticsTab === "function"){
-    showAnalyticsTab("weekly")
-  }
+window.addEventListener("load", () => {
 
-  loadTodayAnalytics()
+  // wait until everything is ready
+  setTimeout(() => {
+
+    if(typeof showAnalyticsTab === "function"){
+      showAnalyticsTab("weekly")
+    }
+
+    if(typeof loadTodayAnalytics === "function"){
+      loadTodayAnalytics()
+    }
+
+  }, 300)
+
 })
