@@ -165,7 +165,24 @@ Kirish
 
   </div>
 
-  <!-- RIGHT: MENU ONLY -->
+<!-- RIGHT: DATE + TIME + MENU -->
+<div style="display:flex; align-items:center; gap:12px;">
+
+  <!-- DATE -->
+  <div id="currentDate" style="
+    font-size:12px;
+    color:#64748b;
+    text-align:right;
+  "></div>
+
+  <!-- TIME -->
+  <div id="currentTime" style="
+    font-size:14px;
+    font-weight:600;
+    color:#2563eb;
+  "></div>
+
+  <!-- MENU -->
   <button onclick="openSidebar()" style="
     width:36px;
     height:36px;
@@ -211,9 +228,9 @@ Hammasini o'chirish
 
     <div class="card-value" id="todayRevenue">0 so'm</div>
 
-    <div class="card-sub">
-      ↑ +0% kechagidan
-    </div>
+<div class="card-sub" id="todayRevenueChange">
+  ↑ 0% kechagidan
+</div>
   </div>
 
   <!-- ⚪ FOYDA -->
@@ -222,9 +239,9 @@ Hammasini o'chirish
 
     <div class="card-value green" id="todayProfit">0 so'm</div>
 
-    <div class="card-sub green">
-      ↑ Yaxshi ko‘rsatkich
-    </div>
+<div class="card-sub green" id="profitStatusText">
+  Yaxshi ko‘rsatkich
+</div>
   </div>
 
   <!-- 📦 SOTILGAN -->
@@ -244,9 +261,9 @@ Hammasini o'chirish
 
     <div class="card-value orange" id="todayDebt">0 so'm</div>
 
-    <div class="card-sub">
-      Qarzdorlik yo‘q
-    </div>
+<div class="card-sub" id="debtStatusText">
+  Qarzdorlik yo‘q
+</div>
   </div>
 
 </div>
@@ -275,8 +292,7 @@ Hammasini o'chirish
 
   </div>
 
-  <canvas id="todaySalesChart"></canvas>
-
+<canvas id="todaySalesChart" style="height:220px;"></canvas>
 </div>
 
 <!-- 🔥 RECENT SALES -->
@@ -386,7 +402,7 @@ Hammasini o'chirish
 
 </div> <!-- ✅ CLOSE salePage -->
 
-<div id="flowPages">
+<div id="flowPages" style="display: contents;">
   <!-- 🔥 NEW PAYMENT PAGE (FIXED CLEAN VERSION) -->
 <div id="paymentPage" class="page hidden">
   <!-- HEADER -->
@@ -1544,4 +1560,27 @@ document.addEventListener("visibilitychange", () => {
     focusScanner()
   }
 })
+function updateDateTime(){
+  const now = new Date()
+
+  const date = now.toLocaleDateString("uz-UZ", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  })
+
+  const time = now.toLocaleTimeString("uz-UZ", {
+    hour: "2-digit",
+    minute: "2-digit"
+  })
+
+  const dateEl = document.getElementById("currentDate")
+  const timeEl = document.getElementById("currentTime")
+
+  if(dateEl) dateEl.textContent = date
+  if(timeEl) timeEl.textContent = time
+}
+
+updateDateTime()
+setInterval(updateDateTime, 60000)
 </script>
