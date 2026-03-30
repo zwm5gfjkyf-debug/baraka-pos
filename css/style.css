@@ -189,7 +189,7 @@ h3{ font-size:16px; }
 /* 🔥 FLOAT BUTTON */
 #floatingAddBtn {
   position:fixed;
-  bottom:80px;
+  bottom:90px;
   right:20px;
   width:60px;
   height:60px;
@@ -360,9 +360,7 @@ UTILITY CLASSES
 MAIN APP CONTAINER
 ====================== */
 
-.main-content{
-  padding-bottom:160px; /* 🔥 space for floating buttons */
-}
+
 
 /* ======================
 PAGE SYSTEM
@@ -439,9 +437,7 @@ ANIMATION BASE
 SAFE AREA (IPHONE)
 ====================== */
 
-body{
-  padding-bottom:env(safe-area-inset-bottom);
-}
+
 /* =====================================================
 PART 2 — BUTTONS + INPUTS + FORMS
 Premium iOS-like Interaction
@@ -952,8 +948,7 @@ MAIN CONTENT
 
   padding:12px;
 
-  padding-bottom:110px; /* space for nav */
-
+padding-bottom:90px;
   width:100%;
   max-width:1200px;
 
@@ -3448,7 +3443,7 @@ SALE HEADER ACTIONS (NEW)
 }
 .sale-actions{
   position: fixed;
-  bottom: 85px;
+  bottom: 80px; /* EXACT: nav height (70) + 10px gap */
   left: 50%;
   transform: translateX(-50%);
 
