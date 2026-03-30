@@ -1519,12 +1519,15 @@ document.addEventListener("DOMContentLoaded", () => {
     window.showAnalyticsTab = showAnalyticsTab
   }
 
-  // 🔥 ADD THIS
   setTimeout(() => {
     if (typeof loadRecentSales === "function") {
       loadRecentSales()
     }
   }, 500)
+
+  // 🔥 ADD THIS
+  updateDateTime()
+  setInterval(updateDateTime, 1000)
 
 })
 </script>
@@ -1582,5 +1585,5 @@ function updateDateTime(){
 }
 
 updateDateTime()
-setInterval(updateDateTime, 60000)
+setInterval(updateDateTime, 1000)
 </script>
