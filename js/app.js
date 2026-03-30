@@ -79,15 +79,6 @@ if(dashboardListener){
 dashboardListener()
 dashboardListener = null
 }
-dashboardListener = salesRef
-.orderBy("createdAt","desc")
-.limit(100)
-.onSnapshot(salesSnapshot => {
-let todayRevenue = 0
-let todayItems = 0
-let todayProfit = 0
-let todayDebt = 0
-
 const now = new Date()
 
 const todayStart = new Date(
@@ -95,6 +86,16 @@ now.getFullYear(),
 now.getMonth(),
 now.getDate()
 )
+
+dashboardListener = salesRef
+.where("createdAt", ">=", todayStart)
+.orderBy("createdAt")
+.onSnapshot(salesSnapshot => {
+let todayRevenue = 0
+let todayItems = 0
+let todayProfit = 0
+let todayDebt = 0
+
 
 const chartLabels = []
 const chartValues = []
@@ -118,8 +119,7 @@ date = new Date(sale.createdAt)
 if(date >= todayStart){
 
 // Only cash sales increase revenue
-if(sale.type === "cash"){
-
+if(sale.type === "cash" || sale.type === "card"){
 todayRevenue += sale.total || 0
 runningTotal += sale.total || 0
 
@@ -166,8 +166,7 @@ todayItems += qty
 }
 
 // Profit only from CASH sales
-if(sale.items && sale.type === "cash"){
-
+if(sale.items && (sale.type === "cash" || sale.type === "card")){
 sale.items.forEach(item=>{
 
 const qty = item.qty || 0
@@ -196,7 +195,7 @@ const items = document.getElementById("todayItems")
 const profit = document.getElementById("todayProfit")
 const debt = document.getElementById("todayDebt")
 
-if(rev) rev.innerText = formatMoney(todayRevenue)
+rev.innerText = formatMoney(todayRevenue) + " so'm"
 if(items) items.innerText = todayItems
 if(profit) profit.innerText = formatMoney(todayProfit)
 if(debt) debt.innerText = formatMoney(todayDebt)
@@ -427,32 +426,7 @@ btn.innerText = "🔍 Tezkor qidiruv"
     }
   }
 }
-window.currentCurrency = "UZS"
-function selectCurrency(type){
 
-window.currentCurrency = type
-  const btnUZS = document.getElementById("btnUZS")
-  const btnUSD = document.getElementById("btnUSD")
-
-  if(btnUZS && btnUSD){
-
-    if(type === "UZS"){
-      btnUZS.style.background = "#2563eb"
-      btnUZS.style.color = "white"
-
-      btnUSD.style.background = "transparent"
-      btnUSD.style.color = "#111"
-    }
-
-    if(type === "USD"){
-      btnUSD.style.background = "#2563eb"
-      btnUSD.style.color = "white"
-
-      btnUZS.style.background = "transparent"
-      btnUZS.style.color = "#111"
-    }
-  }
-}
 window.usdRate = 0
 async function loadUsdRate(){
   try{
@@ -536,8 +510,6 @@ function loadRecentSales() {
 
   const user = firebase.auth().currentUser
   if (!user) return
-
-  const db = firebase.firestore()
 
   db.collection("shops")
     .doc(user.uid)
