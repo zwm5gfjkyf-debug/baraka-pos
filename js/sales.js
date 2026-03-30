@@ -939,7 +939,10 @@ function stopCameraScanner(){
 }
 document.addEventListener("DOMContentLoaded", () => {
   initScannerInput()
+  loadDashboard()
 
+  // 🔥 AUTO REFRESH EVERY 10s
+  setInterval(loadDashboard, 10000)
  
 })
 function clearCart(){
@@ -1292,4 +1295,149 @@ function finishSaleFlow(){
   discountType = "percent"
 
   renderCart()
+}
+// =======================================
+// 🔥 DASHBOARD ENGINE (REAL DATA)
+// =======================================
+
+function getDateRange(dayOffset = 0){
+  const now = new Date()
+  now.setHours(0,0,0,0)
+  now.setDate(now.getDate() + dayOffset)
+
+  const start = new Date(now)
+  const end = new Date(now)
+  end.setHours(23,59,59,999)
+
+  return { start, end }
+}
+
+async function loadDashboard(){
+
+  if(!currentShopId) return
+
+  const todayRange = getDateRange(0)
+  const yesterdayRange = getDateRange(-1)
+
+  const salesRef = db
+    .collection("shops")
+    .doc(currentShopId)
+    .collection("sales")
+
+  try{
+
+    // 🔥 GET TODAY SALES
+    const todaySnap = await salesRef
+      .where("createdAt", ">=", todayRange.start)
+      .where("createdAt", "<=", todayRange.end)
+      .get()
+
+    // 🔥 GET YESTERDAY SALES
+    const yesterdaySnap = await salesRef
+      .where("createdAt", ">=", yesterdayRange.start)
+      .where("createdAt", "<=", yesterdayRange.end)
+      .get()
+
+    let todayRevenue = 0
+    let todayProfit = 0
+    let todayItems = 0
+    let todayDebt = 0
+
+    todaySnap.forEach(doc=>{
+      const s = doc.data()
+
+      todayRevenue += s.total || 0
+      todayProfit += s.totalProfit || 0
+
+      if(s.items){
+        s.items.forEach(i=>{
+          todayItems += i.qty || 0
+        })
+      }
+
+      if(s.type === "debt"){
+        todayDebt += s.total || 0
+      }
+    })
+
+    let yesterdayRevenue = 0
+
+    yesterdaySnap.forEach(doc=>{
+      const s = doc.data()
+      yesterdayRevenue += s.total || 0
+    })
+
+    // ===================================
+    // 🔥 UPDATE UI
+    // ===================================
+
+    const revEl = document.getElementById("todayRevenue")
+    const profitEl = document.getElementById("todayProfit")
+    const itemsEl = document.getElementById("todayItems")
+    const debtEl = document.getElementById("todayDebt")
+
+    if(revEl) revEl.innerText = formatMoney(todayRevenue)
+    if(profitEl) profitEl.innerText = formatMoney(todayProfit)
+    if(itemsEl) itemsEl.innerText = todayItems
+    if(debtEl) debtEl.innerText = formatMoney(todayDebt)
+
+    // ===================================
+    // 🔥 PERCENT CHANGE
+    // ===================================
+
+    const changeEl = document.getElementById("todayRevenueChange")
+
+    let percent = 0
+
+    if(yesterdayRevenue > 0){
+      percent = ((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100
+    }
+
+    percent = Math.round(percent)
+
+    if(changeEl){
+
+      if(percent >= 0){
+        changeEl.innerText = `↑ +${percent}% kechagidan`
+        changeEl.style.color = "#16a34a"
+      }else{
+        changeEl.innerText = `↓ ${percent}% kechagidan`
+        changeEl.style.color = "#ef4444"
+      }
+
+    }
+
+    // ===================================
+    // 🔥 PROFIT STATUS TEXT
+    // ===================================
+
+    const profitText = document.getElementById("profitStatusText")
+
+    if(profitText){
+      if(todayProfit > 0){
+        profitText.innerText = "Yaxshi ko‘rsatkich"
+        profitText.style.color = "#16a34a"
+      }else{
+        profitText.innerText = "Yomon ko‘rsatkich"
+        profitText.style.color = "#ef4444"
+      }
+    }
+
+    // ===================================
+    // 🔥 DEBT STATUS
+    // ===================================
+
+    const debtText = document.getElementById("debtStatusText")
+
+    if(debtText){
+      if(todayDebt > 0){
+        debtText.innerText = "Qarz mavjud"
+      }else{
+        debtText.innerText = "Qarzdorlik yo‘q"
+      }
+    }
+
+  }catch(e){
+    console.error("Dashboard error:", e)
+  }
 }
