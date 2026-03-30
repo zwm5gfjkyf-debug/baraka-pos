@@ -157,46 +157,6 @@ font:{size:10}
 })
 
 }
-async function loadTodayAnalytics(){
-
-if(!currentShopId) return
-
-const start = new Date()
-start.setHours(0,0,0,0)
-
-const snapshot = await db
-.collection("shops")
-.doc(currentShopId)
-.collection("sales")
-.where("createdAt", ">=", start)
-.orderBy("createdAt")
-.get()
-
-const labels = []
-const values = []
-
-let total = 0
-
-snapshot.forEach(doc=>{
-  const sale = doc.data()
-
-  let date = sale.createdAt?.seconds
-    ? new Date(sale.createdAt.seconds * 1000)
-    : new Date(sale.createdAt)
-
-  const time = date.toLocaleTimeString('uz-UZ',{
-    hour:'2-digit',
-    minute:'2-digit'
-  })
-
-  total += sale.total || 0
-
-  labels.push(time)
-  values.push(total)
-})
-
-renderTodaySalesChart({labels, values})
-}
 
 async function loadDashboardStats(){
 
@@ -795,8 +755,8 @@ if(!ctx) return
 
         data: data.values,
 
-        borderColor: "#2563eb",
-        backgroundColor: gradient,
+ borderColor: "#16a34a",
+backgroundColor: "rgba(34,197,94,0.15)",
 
         fill: true,
         tension: 0.4,
@@ -807,8 +767,7 @@ if(!ctx) return
           return ctx.dataIndex === data.values.length - 1 ? 5 : 0
         },
 
-        pointBackgroundColor: "#2563eb"
-      }]
+pointBackgroundColor: "#16a34a"      }]
     },
 
     options:{
@@ -1157,12 +1116,9 @@ btn.disabled = false
 }
 document.addEventListener("DOMContentLoaded", () => {
 
-  if(typeof loadTodayAnalytics === "function"){
-    loadTodayAnalytics()
-  }
+  // ❌ DISABLED (conflicts with real-time system)
 
-  if(typeof loadDashboardStats === "function"){
-    loadDashboardStats()
-  }
+  // loadTodayAnalytics()
+  // loadDashboardStats()
 
 })
