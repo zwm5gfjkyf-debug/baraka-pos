@@ -611,7 +611,7 @@ function loadRecentSales() {
               color:#2563eb;
               font-size:16px;
             ">
-              ${formatMoney(total)} so'm
+              ${formatMoney(total)}
             </div>
 
           </div>
