@@ -218,8 +218,7 @@ Hammasini o'chirish
 <main class="main-content">
 
 <!-- DASHBOARD -->
-<div id="dashboardPage" class="page">
-
+<div id="dashboardPage" class="page" style="padding-bottom:120px;">
 <div class="dashboard-grid-new">
 
   <!-- 🔵 BIG CARD -->
@@ -268,31 +267,34 @@ Hammasini o'chirish
 
 </div>
   <!-- TODAY CHART -->
-<div class="chart-container glass">
+<div class="card" style="margin-top:16px; border-radius:20px; padding:16px;">
 
   <div style="
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:8px;
+    margin-bottom:12px;
   ">
     
-    <h3 class="chart-title">Bugungi savdo grafigi</h3>
+    <h3 style="font-size:16px; font-weight:600;">
+      Bugungi savdo grafigi
+    </h3>
 
     <span style="
-      background:#e2fbe8;
+      background:#e6f4ea;
       color:#16a34a;
-      padding:4px 10px;
+      padding:6px 12px;
       border-radius:999px;
       font-size:12px;
-      font-weight:500;
+      font-weight:600;
     ">
       Jonli
     </span>
 
   </div>
 
-<canvas id="todaySalesChart" style="height:220px;"></canvas>
+  <canvas id="todaySalesChart" style="height:200px;"></canvas>
+
 </div>
 
 <!-- 🔥 RECENT SALES -->
@@ -305,23 +307,27 @@ Hammasini o'chirish
     align-items:center;
     margin-bottom:10px;
   ">
-    <h3 style="font-size:18px; font-weight:600;">
-      So‘nggi sotuvlar
+<h3 style="font-size:20px; font-weight:700;">
+  So‘nggi sotuvlar
     </h3>
 
-    <button style="
-      background:none;
-      border:none;
-      color:#2563eb;
-      font-weight:500;
-      cursor:pointer;
-    ">
+<button style="
+  background:none;
+  border:none;
+  color:#2563eb;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+">
       Barchasini ko‘rish →
     </button>
   </div>
 
-<div id="recentSalesList"></div>
-</div>
+<div id="recentSalesList" style="
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+"></div></div>
 
 </div> <!-- ✅ ADD THIS (close dashboardPage) -->
 
