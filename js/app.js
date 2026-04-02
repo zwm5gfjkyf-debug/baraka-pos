@@ -522,48 +522,97 @@ function loadRecentSales() {
 
       if (snapshot.empty) {
         list.innerHTML = `
-          <div style="text-align:center;color:#64748b;">
+          <div style="
+            text-align:center;
+            color:#94a3b8;
+            padding:20px;
+          ">
             Hozircha sotuvlar yo‘q
           </div>
         `
         return
       }
 
-     snapshot.forEach(doc => {
-  const sale = doc.data()
-  const id = doc.id.slice(-4) // last 4 digits (clean UI)
+      let colors = ["#eaf7ec", "#eaf2fb", "#fdf6e3"] // soft colors
+
+      let index = 0
+
+      snapshot.forEach(doc => {
+        const sale = doc.data()
+        const id = doc.id.slice(-4)
 
         const time = sale.createdAt?.toDate()
         const formattedTime = time
           ? time.toLocaleTimeString("uz-UZ", { hour: '2-digit', minute: '2-digit' })
           : "--:--"
 
-       let itemsCount = 0
+        let itemsCount = 0
+        if (sale.items) {
+          sale.items.forEach(item => {
+            itemsCount += item.qty || 0
+          })
+        }
 
-if(sale.items){
-  sale.items.forEach(item=>{
-    itemsCount += item.qty || 0
-  })
-}
         const total = sale.total || 0
 
+        const bg = colors[index % colors.length]
+        index++
+
         list.innerHTML += `
-          <div class="sale-item">
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:14px;
+            border-radius:18px;
+            background:white;
+            box-shadow:0 4px 12px rgba(0,0,0,0.04);
+          ">
 
-            <div class="sale-left">
-              <div class="sale-icon">🛒</div>
+            <div style="display:flex; align-items:center; gap:12px;">
 
+              <!-- ICON -->
+              <div style="
+                width:46px;
+                height:46px;
+                border-radius:14px;
+                background:${bg};
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                font-size:20px;
+              ">
+                🛒
+              </div>
+
+              <!-- TEXT -->
               <div>
-                <div class="sale-title">Sotuv #${id}</div>
-                <div class="sale-sub">
-                  ${formattedTime} • ${itemsCount} ta mahsulot
+                <div style="
+                  font-weight:600;
+                  font-size:15px;
+                ">
+                  Sotuv #${id}
+                </div>
+
+                <div style="
+                  font-size:12px;
+                  color:#94a3b8;
+                  margin-top:2px;
+                ">
+                  ${formattedTime} · ${itemsCount} ta mahsulot
                 </div>
               </div>
+
             </div>
 
-            <div class="sale-price">
-${formatMoney(total)} so'm
-</div>
+            <!-- PRICE -->
+            <div style="
+              font-weight:700;
+              color:#2563eb;
+              font-size:16px;
+            ">
+              ${formatMoney(total)} so'm
+            </div>
 
           </div>
         `
