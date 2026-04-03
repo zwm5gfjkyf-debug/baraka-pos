@@ -195,7 +195,7 @@ const items = document.getElementById("todayItems")
 const profit = document.getElementById("todayProfit")
 const debt = document.getElementById("todayDebt")
 
-rev.innerText = formatMoney(todayRevenue) + " so'm"
+rev.innerText = formatMoney(todayRevenue)
 if(items) items.innerText = todayItems
 if(profit) profit.innerText = formatMoney(todayProfit)
 if(debt) debt.innerText = formatMoney(todayDebt)
@@ -516,8 +516,7 @@ function loadRecentSales() {
     .collection("sales")
     .orderBy("createdAt", "desc")
     .limit(5)
-    .onSnapshot(snapshot => {
-
+.get().then(snapshot => {
       list.innerHTML = ""
 
       if (snapshot.empty) {
