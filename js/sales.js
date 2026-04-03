@@ -402,10 +402,8 @@ if(discountValue > 0){
 // ===================================
 // 🔥 TOTAL (ONLY HERE, ONLY ONCE)
 // ===================================
-if(totalEl && cart.length > 0){
-
-  totalEl.innerText = "Jami: " + formatMoney(total)
-
+if(totalEl){
+totalEl.innerText = "Jami: " + formatMoney(total).replace(" so'm", "")
   totalEl.style.display = "block"
 
 }
@@ -679,7 +677,7 @@ if(scanSound){
 }
 
 loadDashboard()
-
+loadRecentSales()
 }
 
 
@@ -1089,7 +1087,7 @@ function updateDiscountPreview(){
 
   if(final < 0) final = 0
 
-  preview.innerText = "Jami: " + formatMoney(final)
+preview.innerText = "Jami: " + formatMoney(final).replace(" so'm", "")
 }
 function applyDiscount(){
 
