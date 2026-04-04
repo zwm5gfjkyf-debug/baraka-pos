@@ -84,52 +84,74 @@
 <!-- AUTH -->
 
 <div id="authScreen" class="auth-container hidden">
-<div class="auth-card">
 
-<!-- 🔥 ADD THIS LOGO -->
-<img src="icon.png" style="
-  width:80px;
-  height:80px;
-  border-radius:20px;
-  margin:0 auto 10px;
-  display:block;
-">
+  <!-- 🔵 TOP BLUE AREA -->
+  <div style="
+    background:#1976D2;
+    padding:40px 20px 50px;
+    text-align:center;
+  ">
 
-<h1 class="auth-title" style="text-align:center;">BARAKA</h1>
-<p class="auth-subtitle" style="text-align:center;">
-  Biznesingiz uchun zamonaviy ilova
-</p>
-<input
-id="shopName"
-class="auth-input"
-placeholder="Do'kon nomi"
-/>
+    <img src="icon.png" style="
+      width:60px;
+      height:60px;
+      border-radius:16px;
+      margin-bottom:10px;
+    ">
 
-<input
-id="email"
-class="auth-input"
-placeholder="Email"
-/>
+    <div style="
+      color:white;
+      font-size:24px;
+      font-weight:800;
+    ">
+      BARAKA
+    </div>
 
-<input
-type="password"
-id="password"
-class="auth-input"
-placeholder="Parol"
-/>
+    <div style="
+      color:rgba(255,255,255,0.8);
+      font-size:13px;
+      margin-top:4px;
+    ">
+      Biznesingiz uchun zamonaviy ilova
+    </div>
 
-<button class="btn-primary" onclick="register()">
-Ro'yxatdan o'tish
-</button>
+  </div>
 
-<button class="btn-secondary" onclick="login()">
-Kirish
-</button>
+  <!-- ⚪ WHITE CARD -->
+  <div style="
+    background:white;
+    border-radius:24px 24px 0 0;
+    margin-top:-30px;
+    padding:20px;
+  ">
+
+    <!-- 🔘 TABS -->
+    <div style="
+      display:flex;
+      background:#F4F6FA;
+      border-radius:12px;
+      padding:4px;
+      margin-bottom:15px;
+    ">
+      <div style="flex:1; text-align:center; font-weight:600;">Ro'yxatdan o'tish</div>
+      <div style="flex:1; text-align:center; background:white; border-radius:10px; padding:6px; color:#1976D2; font-weight:600;">
+        Kirish
+      </div>
+    </div>
+
+    <!-- INPUTS -->
+    <input id="shopName" class="auth-input" placeholder="Do'kon nomi">
+    <input id="email" class="auth-input" placeholder="Email">
+    <input type="password" id="password" class="auth-input" placeholder="Parol">
+
+    <!-- BUTTON -->
+    <button class="btn-primary" onclick="login()" style="margin-top:10px;">
+      Kirish →
+    </button>
+
+  </div>
 
 </div>
-
-</div>
-
 <div id="sidebar" class="sidebar">
 
   <div class="sidebar-header">
