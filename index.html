@@ -126,28 +126,51 @@
   ">
 
     <!-- 🔘 TABS -->
-    <div style="
-      display:flex;
-      background:#F4F6FA;
-      border-radius:12px;
-      padding:4px;
-      margin-bottom:15px;
-    ">
-      <div style="flex:1; text-align:center; font-weight:600;">Ro'yxatdan o'tish</div>
-      <div style="flex:1; text-align:center; background:white; border-radius:10px; padding:6px; color:#1976D2; font-weight:600;">
-        Kirish
-      </div>
-    </div>
+  <div style="
+  display:flex;
+  background:#F4F6FA;
+  border-radius:12px;
+  padding:4px;
+  margin-bottom:15px;
+">
 
-    <!-- INPUTS -->
-    <input id="shopName" class="auth-input" placeholder="Do'kon nomi">
-    <input id="email" class="auth-input" placeholder="Email">
-    <input type="password" id="password" class="auth-input" placeholder="Parol">
+  <div id="tabRegister"
+       onclick="switchAuth('register')"
+       style="flex:1; text-align:center; font-weight:600; cursor:pointer;">
+    Ro'yxatdan o'tish
+  </div>
 
-    <!-- BUTTON -->
-    <button class="btn-primary" onclick="login()" style="margin-top:10px;">
-      Kirish →
-    </button>
+  <div id="tabLogin"
+       onclick="switchAuth('login')"
+       style="flex:1; text-align:center; border-radius:10px; padding:6px; cursor:pointer;">
+    Kirish
+  </div>
+
+</div>
+  <!-- REGISTER -->
+<div id="registerForm">
+
+  <input id="shopName" class="auth-input" placeholder="Do'kon nomi">
+  <input id="email" class="auth-input" placeholder="Email">
+  <input type="password" id="password" class="auth-input" placeholder="Parol">
+
+  <button class="btn-primary" onclick="register()" style="margin-top:10px;">
+    Ro'yxatdan o'tish →
+  </button>
+
+</div>
+
+<!-- LOGIN -->
+<div id="loginForm" style="display:none;">
+
+  <input id="emailLogin" class="auth-input" placeholder="Email">
+  <input type="password" id="passwordLogin" class="auth-input" placeholder="Parol">
+
+  <button class="btn-primary" onclick="login()" style="margin-top:10px;">
+    Kirish →
+  </button>
+
+</div>
 
   </div>
 
@@ -1625,4 +1648,36 @@ function updateDateTime(){
 
 updateDateTime()
 setInterval(updateDateTime, 1000)
+</script>
+<script>
+function switchAuth(type){
+
+  const register = document.getElementById("registerForm")
+  const login = document.getElementById("loginForm")
+
+  const tabR = document.getElementById("tabRegister")
+  const tabL = document.getElementById("tabLogin")
+
+  if(type === "register"){
+    register.style.display = "block"
+    login.style.display = "none"
+
+    tabR.style.background = "white"
+    tabR.style.color = "#1976D2"
+
+    tabL.style.background = "transparent"
+    tabL.style.color = "#64748b"
+  }
+
+  if(type === "login"){
+    register.style.display = "none"
+    login.style.display = "block"
+
+    tabL.style.background = "white"
+    tabL.style.color = "#1976D2"
+
+    tabR.style.background = "transparent"
+    tabR.style.color = "#64748b"
+  }
+}
 </script>
