@@ -95,8 +95,8 @@ async function register(){
 
 async function login(){
 
-  const email = document.getElementById("email")?.value.trim() || ""
-  const password = document.getElementById("password")?.value || ""
+const email = document.getElementById("emailLogin")?.value.trim() || ""
+const password = document.getElementById("passwordLogin")?.value || ""
 
   if(!email || !password){
     showTopBanner("Email va parolni kiriting", "error")
@@ -148,5 +148,7 @@ function logout(){
 
   if(appScreen) appScreen.classList.add("hidden")
   if(authScreen) authScreen.style.display = "flex"
-
+if(typeof switchAuth === "function"){
+  switchAuth("register")
+}
 }
