@@ -174,8 +174,12 @@ order: 2
 // 🔥 THIS WEEK
 {
 data: thisWeek,
-backgroundColor: "#2563eb",
-borderRadius: 20,
+backgroundColor: (ctx)=>{
+const i = ctx.dataIndex
+return i === ctx.dataset.data.length - 1
+? "#1d4ed8"   // darker blue (last day)
+: "#3b82f6"
+},borderRadius: 20,
 barThickness: 22,
 order: 3
 }
@@ -189,7 +193,35 @@ responsive:true,
 maintainAspectRatio:false,
 
 plugins:{
-legend:{ display:false }
+legend:{ display:false },
+
+tooltip:{ enabled:false },
+
+// 🔥 SHOW VALUES ABOVE BARS
+datalabels:{
+anchor:'end',
+align:'top',
+offset:4,
+
+formatter:(value, ctx)=>{
+// only show for THIS WEEK bars
+if(ctx.datasetIndex !== 2) return ''
+
+if(value >= 1000000){
+return (value/1000000).toFixed(2)+'m'
+}
+if(value >= 1000){
+return (value/1000).toFixed(0)+'k'
+}
+return value
+},
+
+color:'#2563eb',
+font:{
+weight:'600',
+size:11
+}
+}
 },
 
 scales:{
