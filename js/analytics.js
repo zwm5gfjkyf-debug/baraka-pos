@@ -116,7 +116,29 @@ const profit = document.getElementById("weekProfit")
 if(rev) rev.innerText = formatMoney(weekRevenue)
 if(items) items.innerText = weekItems
 if(profit) profit.innerText = formatMoney(weekProfit)
+// 🔥 TOTALS
+const thisWeekTotal = thisWeekTotals.reduce((a,b)=>a+b,0)
+const lastWeekTotal = lastWeekTotals.reduce((a,b)=>a+b,0)
 
+// 🔥 PERCENT CHANGE
+let percent = 0
+
+if(lastWeekTotal > 0){
+percent = ((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100
+}
+
+// 🔥 UPDATE UI
+const percentBox = document.getElementById("weekPercent")
+
+if(percentBox){
+
+const sign = percent >= 0 ? "+" : ""
+const color = percent >= 0 ? "#22c55e" : "#ef4444"
+
+percentBox.innerText = `${sign}${percent.toFixed(0)}%`
+percentBox.style.color = color
+
+}
 renderWeeklyChart(days, thisWeekTotals, lastWeekTotals)}
 
 function renderWeeklyChart(labels, thisWeek, lastWeek){
