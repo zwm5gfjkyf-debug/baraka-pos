@@ -1012,8 +1012,44 @@ Hammasini o'chirish
 </div>
 
 <div class="chart-container glass big-chart">
-<h3 class="chart-title">Haftalik savdo grafigi</h3>
-<canvas id="weeklySalesChart"></canvas>
+
+  <!-- 🔥 TITLE + LEGEND -->
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  ">
+    
+    <h3 class="chart-title" style="margin:0;">
+      Haftalik savdo grafigi
+    </h3>
+
+    <div class="chart-legend">
+      <div class="legend-item">
+        <span class="legend-dot gray"></span>
+        O'tgan hafta
+      </div>
+
+      <div class="legend-item">
+        <span class="legend-dot blue"></span>
+        Bu hafta
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 🔥 CHART -->
+  <div style="height:220px;">
+    <canvas id="weeklySalesChart"></canvas>
+  </div>
+
+  <!-- 🔥 PERCENT BOX -->
+  <div class="week-compare">
+    <div>📈 O'tgan haftaga nisbatan</div>
+    <div id="weekPercent">+0%</div>
+  </div>
+
 </div>
 </div>
 
@@ -1799,7 +1835,7 @@ z-index:999;
 
 <!-- ✅ CHART.JS FIRST (NO DEFER) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <!-- ✅ OTHER LIBS -->
 <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
 
