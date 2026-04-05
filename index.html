@@ -485,14 +485,52 @@ Hammasini o'chirish
 </div>
 
   <!-- SEARCH -->
+  <!-- 🔍 SEARCH WITH SCAN BUTTON -->
+<div style="position:relative; margin-bottom:10px;">
+
+  <!-- INPUT -->
   <input
     id="saleSearch"
     class="sale-search"
     type="text"
-    placeholder="Artikul, shtrix-kod, ism"
+    placeholder="Artikul, shtrix-kod, ism..."
     oninput="searchProducts(this.value)"
     autocomplete="off"
+    style="padding-right:110px;"
   >
+
+  <!-- 🔍 ICON LEFT -->
+  <span style="
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:16px;
+    opacity:0.6;
+  ">
+    🔍
+  </span>
+
+  <!-- 📷 SCAN BUTTON -->
+  <button onclick="toggleCameraScanner()" style="
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+    height:32px;
+    padding:0 12px;
+    border:none;
+    border-radius:10px;
+    background:#e0ecff;
+    color:#2563eb;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+  ">
+    📷 Skan
+  </button>
+
+</div>
 
   <div id="searchResults"></div>
 
@@ -1300,9 +1338,7 @@ Metr
 </main><!-- ✅ FIXED SALE ACTIONS -->
 <div id="saleActions" class="sale-actions center hidden">
 
-  <button id="scannerBtn" class="scanner-btn" onclick="toggleCameraScanner()">
-    🔳 Skaner
-  </button>
+
 
   <button id="nextBtn" class="next-btn hidden" onclick="openDiscountModal()">
     Keyingisi →
