@@ -312,7 +312,7 @@ h3{ font-size:16px; }
 
 /* prevent keyboard pushing layout */
 body{
-  overscroll-behavior: none;
+  overscroll-behavior: auto; /* 🔥 FIX */
 }
 .discount-preview{
   font-size:13px;
@@ -853,6 +853,7 @@ APP SCREEN WRAPPER
   display:flex;
   flex-direction:column;
   min-height:100vh;
+  overflow-y:auto; /* 🔥 ADD THIS */
 }
 
 /* ======================
@@ -996,14 +997,13 @@ BOTTOM NAVIGATION (iPhone style)
   justify-content:space-around;
   align-items:center;
 
-  background:rgba(255,255,255,0.95);
-  backdrop-filter:blur(12px);
+  background:rgba(255,255,255,0.98);
 
-  border-top:1px solid var(--border);
+  border-top:1px solid #e5e7eb;
 
-  z-index:99999; /* 🔥 VERY IMPORTANT */
+  z-index:999999; /* 🔥 VERY HIGH */
 
-  padding-bottom:calc(6px + env(safe-area-inset-bottom));
+  pointer-events:auto; /* 🔥 IMPORTANT */
 }
 /* NAV BUTTON */
 .bottom-nav button{
