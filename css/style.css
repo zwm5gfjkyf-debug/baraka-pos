@@ -312,7 +312,8 @@ h3{ font-size:16px; }
 
 /* prevent keyboard pushing layout */
 body{
-  overscroll-behavior: auto; /* 🔥 FIX */
+  overscroll-behavior: auto;
+  overflow-y: auto;
 }
 .discount-preview{
   font-size:13px;
@@ -852,8 +853,8 @@ APP SCREEN WRAPPER
 #appScreen{
   display:flex;
   flex-direction:column;
-  min-height:100vh;
-  overflow-y:auto; /* 🔥 ADD THIS */
+ height:100vh;       /* 🔥 IMPORTANT */
+overflow:hidden;    /* 🔥 IMPORTANT */
 }
 
 /* ======================
@@ -951,15 +952,13 @@ MAIN CONTENT
 
 .main-content{
   flex:1;
-
+  overflow-y:auto;     /* 🔥 THIS IS THE REAL SCROLL */
+  
   padding:12px;
+  padding-top:80px;
+  padding-bottom:100px;
 
-  padding-top:80px;   /* 🔥 ADD THIS */
-  padding-bottom:90px;
   width:100%;
-  max-width:1200px;
-
-  margin:0 auto;
 }
 
 /* ======================
@@ -986,7 +985,7 @@ BOTTOM NAVIGATION (iPhone style)
 ====================== */
 
 .bottom-nav{
-  position:fixed;
+  position:fixed !important;
   bottom:0;
   left:0;
 
@@ -997,13 +996,12 @@ BOTTOM NAVIGATION (iPhone style)
   justify-content:space-around;
   align-items:center;
 
-  background:rgba(255,255,255,0.98);
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(12px);
 
-  border-top:1px solid #e5e7eb;
+  border-top:1px solid var(--border);
 
   z-index:999999; /* 🔥 VERY HIGH */
-
-  pointer-events:auto; /* 🔥 IMPORTANT */
 }
 /* NAV BUTTON */
 .bottom-nav button{
