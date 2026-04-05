@@ -11,7 +11,6 @@ async function loadWeeklyAnalytics(){
 
 if(!currentShopId) return
 
-const now = new Date()
 
 const now = new Date()
 
@@ -29,7 +28,7 @@ const salesRef = db
 .collection("sales")
 
 const snapshot = await salesRef
-.where("createdAt", ">=", weekStart)
+.where("createdAt", ">=", lastWeekStart)
 .orderBy("createdAt")
 .get()
    
@@ -39,8 +38,12 @@ let weekProfit = 0
 
 
 const days = ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"]
-const chartTotals = [0,0,0,0,0,0,0]
+const thisWeekTotals = [0,0,0,0,0,0,0]
+const lastWeekTotals = [0,0,0,0,0,0,0]
 
+// 🔥 last week start
+const lastWeekStart = new Date(weekStart)
+lastWeekStart.setDate(lastWeekStart.getDate() - 7)
 snapshot.forEach(doc=>{
 
 const sale = doc.data()
@@ -53,17 +56,42 @@ date = new Date(sale.createdAt.seconds*1000)
 date = new Date(sale.createdAt)
 }
 
+// 🔥 THIS WEEK
 if(date >= weekStart){
 
-if(sale.type !== "debt"){
-  weekRevenue += sale.total || 0
+  if(sale.type !== "debt"){
+    weekRevenue += sale.total || 0
+  }
+
+  let dayIndex = date.getDay()
+  dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
+
+  if(sale.type !== "debt_payment"){
+    thisWeekTotals[dayIndex] += sale.total || 0
+  }
+
+  if(!sale.items) return
+
+  sale.items.forEach(item=>{
+    const qty = item.qty || 0
+    const price = item.price || 0
+    const cost = item.cost || 0
+
+    weekItems += qty
+    weekProfit += (price-cost)*qty
+  })
 }
-let dayIndex = date.getDay()
 
-// 🔥 convert to Monday-first index
-dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
+// 🔥 LAST WEEK
+if(date >= lastWeekStart && date < weekStart){
 
-chartTotals[dayIndex] += sale.total || 0
+  let dayIndex = date.getDay()
+  dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
+
+  if(sale.type !== "debt_payment"){
+    lastWeekTotals[dayIndex] += sale.total || 0
+  }
+}
 if(!sale.items) return
 
 sale.items.forEach(item=>{
@@ -89,11 +117,9 @@ if(rev) rev.innerText = formatMoney(weekRevenue)
 if(items) items.innerText = weekItems
 if(profit) profit.innerText = formatMoney(weekProfit)
 
-renderWeeklyChart(days, chartTotals)
+renderWeeklyChart(days, thisWeekTotals, lastWeekTotals)}
 
-}
-
-function renderWeeklyChart(labels, values){
+function renderWeeklyChart(labels, thisWeek, lastWeek){
 
 const ctx = document.getElementById("weeklySalesChart")
 if(!ctx) return
@@ -102,30 +128,32 @@ if(weeklyChart){
 weeklyChart.destroy()
 }
 
-const isLight = document.body.classList.contains("light-mode")
-
-const barColor = isLight
-? "rgba(37,99,235,0.7)"
-: "rgba(34,197,94,0.7)"
-
 weeklyChart = new Chart(ctx,{
 
-type:"line",
+type:"bar",
+
 data:{
-labels:labels,
+labels: labels,
 
-datasets:[{
-  data: values,
+datasets:[
 
-  borderColor: "#2563eb",
-  backgroundColor: "rgba(37,99,235,0.15)",
+{
+label: "O'tgan hafta",
+data: lastWeek,
+backgroundColor: "rgba(200,210,230,0.6)",
+borderRadius: 8,
+barThickness: 10
+},
 
-  fill: true,
-  tension: 0.4,
+{
+label: "Bu hafta",
+data: thisWeek,
+backgroundColor: "#2f6fed",
+borderRadius: 8,
+barThickness: 10
+}
 
-  pointRadius: 0,
-  pointHoverRadius: 5
-}]
+]
 
 },
 
@@ -134,7 +162,12 @@ responsive:true,
 maintainAspectRatio:false,
 
 plugins:{
-legend:{display:false}
+legend:{
+display:true,
+labels:{
+color:"#9aa4b2"
+}
+}
 },
 
 scales:{
@@ -142,17 +175,24 @@ scales:{
 x:{
 grid:{display:false},
 ticks:{
-color:"#9aa4b2",
-font:{size:11}
+color:"#9aa4b2"
 }
 },
 
 y:{
 beginAtZero:true,
-grid:{color:"rgba(255,255,255,0.05)"},
+grid:{color:"rgba(0,0,0,0.05)"},
 ticks:{
 color:"#9aa4b2",
-font:{size:10}
+callback:function(value){
+if(value >= 1000000){
+return (value/1000000).toFixed(1)+"M"
+}
+if(value >= 1000){
+return (value/1000).toFixed(1)+"k"
+}
+return value
+}
 }
 }
 
@@ -161,9 +201,7 @@ font:{size:10}
 }
 
 })
-
 }
-
 async function loadDashboardStats(){
 
 if(!currentShopId) return
