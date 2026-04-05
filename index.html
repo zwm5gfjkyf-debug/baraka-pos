@@ -800,72 +800,183 @@ Hammasini o'chirish
 </div>
   </div> <!-- ✅ CLOSE flowPages -->
 
-<!-- INVENTORY -->
+<!-- INVENTORY (NEW DESIGN) -->
 <div id="stockPage" class="page hidden">
-<!-- TITLE -->
-<h2 style="font-size:22px; font-weight:600; margin-bottom:10px;">
-Zaxira
-</h2>
 
-<!-- TABS (BILLZ STYLE) -->
-<div style="
-display:flex;
-gap:8px;
-margin-bottom:12px;
-overflow-x:auto;
-padding-bottom:2px;
-">
+  <!-- 🔵 HEADER -->
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
 
-<button id="tab-all" class="stock-tab active" onclick="setStockFilter('all')">
-  Barchasi (<span id="count-all">0</span>)
-</button>
+    <div style="display:flex; align-items:center; gap:10px;">
+      
+      <img src="icon.png" style="width:42px; height:42px; border-radius:12px;">
+      
+      <div>
+        <div style="font-size:12px; color:#64748b;">Do'kon</div>
+        <div style="font-size:20px; font-weight:700;">Zaxira</div>
+      </div>
 
-<button id="tab-active" class="stock-tab" onclick="setStockFilter('active')">
-  Faol (<span id="count-active">0</span>)
-</button>
+    </div>
 
-<button id="tab-inactive" class="stock-tab" onclick="setStockFilter('inactive')">
-  Faol emas (<span id="count-inactive">0</span>)
-</button>
+    <!-- ➕ ADD BUTTON -->
+    <button onclick="navigate('addProductPage')" style="
+      width:44px;
+      height:44px;
+      border:none;
+      border-radius:12px;
+      background:#2563eb;
+      color:white;
+      font-size:22px;
+      cursor:pointer;
+    ">
+      +
+    </button>
 
-<button id="tab-low" class="stock-tab" onclick="setStockFilter('low')">
-  Kam qoldiq (<span id="count-low">0</span>)
-</button>
+  </div>
 
-</div>
+  <!-- 📊 STATS -->
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
 
-<!-- SEARCH + ADD -->
-<div style="
-display:flex;
-gap:10px;
-margin-bottom:10px;
-">
+    <div style="
+      background:#f1f5f9;
+      border-radius:14px;
+      padding:14px;
+      text-align:center;
+    ">
+      <div id="stat-total" style="font-size:22px; font-weight:700;">0</div>
+      <div style="font-size:12px; color:#64748b;">JAMI</div>
+    </div>
 
-<input
-id="stockSearch"
-placeholder="🔍 Mahsulot qidirish..."
-oninput="filterStock(this.value)" 
-style="flex:1;"
-class="search-input"
->
+    <div style="
+      background:#fff7ed;
+      border-radius:14px;
+      padding:14px;
+      text-align:center;
+      border:1px solid #fdba74;
+    ">
+      <div id="stat-low" style="font-size:22px; font-weight:700; color:#ea580c;">0</div>
+      <div style="font-size:12px; color:#9a3412;">KAM QOLDIQ</div>
+    </div>
 
-<button onclick="navigate('addProductPage')" class="add-btn">
-+
-</button>
+    <div style="
+      background:#fef2f2;
+      border-radius:14px;
+      padding:14px;
+      text-align:center;
+      border:1px solid #fca5a5;
+    ">
+      <div id="stat-out" style="font-size:22px; font-weight:700; color:#dc2626;">0</div>
+      <div style="font-size:12px; color:#7f1d1d;">QOLMADI</div>
+    </div>
 
-</div>
+  </div>
 
-<!-- LIST -->
-<div id="currentStockList"></div>
+  <!-- ⚠️ WARNING -->
+  <div id="lowStockWarning" style="
+    display:none;
+    background:#fff7ed;
+    border:1px solid #fdba74;
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  ">
 
-<!-- TEZKOR QIDIRUV BUTTON (BILLZ STYLE SMALL) -->
-<div id="cameraSection" class="hidden">
-<button id="cameraToggleBtn" onclick="toggleCameraScanner()">
-  🔍 Tezkor qidiruv
-</button>
+    <div style="color:#c2410c; font-size:14px;">
+      ⚠️ <span id="lowStockText">0 ta mahsulot tugagan</span>
+    </div>
 
+    <button onclick="setStockFilter('low')" style="
+      background:none;
+      border:none;
+      color:#2563eb;
+      font-weight:600;
+      cursor:pointer;
+    ">
+      Ko‘rish →
+    </button>
 
-</div>
+  </div>
+
+  <!-- 🔍 SEARCH + FILTER -->
+  <div style="display:flex; gap:10px; margin-bottom:12px;">
+
+    <div style="position:relative; flex:1;">
+
+      <input
+        id="stockSearch"
+        placeholder="Mahsulot qidirish..."
+        oninput="filterStock(this.value)"
+        style="
+          width:100%;
+          height:46px;
+          border-radius:14px;
+          border:1px solid #e2e8f0;
+          padding-left:40px;
+          font-size:14px;
+          background:#f8fafc;
+        "
+      >
+
+      <!-- 🔍 ICON -->
+      <span style="
+        position:absolute;
+        left:12px;
+        top:50%;
+        transform:translateY(-50%);
+        font-size:16px;
+        opacity:0.6;
+      ">
+        🔍
+      </span>
+
+    </div>
+
+    <!-- ⚙️ FILTER BUTTON -->
+    <button style="
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      border:1px solid #e2e8f0;
+      background:#f8fafc;
+      cursor:pointer;
+      font-size:18px;
+    ">
+      ☰
+    </button>
+
+  </div>
+
+  <!-- 🧷 TABS -->
+  <div style="
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+    overflow-x:auto;
+  ">
+
+    <button id="tab-all" class="stock-tab active" onclick="setStockFilter('all')">
+      Barchasi (<span id="count-all">0</span>)
+    </button>
+
+    <button id="tab-active" class="stock-tab" onclick="setStockFilter('active')">
+      Faol (<span id="count-active">0</span>)
+    </button>
+
+    <button id="tab-inactive" class="stock-tab" onclick="setStockFilter('inactive')">
+      Faol emas (<span id="count-inactive">0</span>)
+    </button>
+
+    <button id="tab-low" class="stock-tab" onclick="setStockFilter('low')">
+      Kam qoldiq (<span id="count-low">0</span>)
+    </button>
+
+  </div>
+
+  <!-- 📦 LIST -->
+  <div id="currentStockList"></div>
+
 </div>
 <!-- ANALYTICS -->
 <div id="analyticsPage" class="page hidden">
