@@ -269,29 +269,29 @@ const percent = Math.min(100, (stock / initial) * 100)
     }
   </div>
 
-  <!-- PROGRESS BAR -->
+<!-- PROGRESS BAR -->
+<div style="
+  width:80px;
+  height:6px;
+  background:#e5e7eb;
+  border-radius:999px;
+  overflow:hidden;
+  margin-left:auto;
+">
   <div style="
-   width:${percent}%;
-    height:6px;
-    background:#e5e7eb;
+    height:100%;
+    width:${percent}%;
     border-radius:999px;
-    overflow:hidden;
-    margin-left:auto;
-  ">
-    <div style="
-      height:100%;
-      
-      border-radius:999px;
 
-      ${
-        stock <= 0
-          ? "background:#ef4444;"
-          : stock <= 10
-          ? "background:#f59e0b;"
-          : "background:#22c55e;"
-      }
-    "></div>
-  </div>
+    ${
+      stock <= 0
+        ? "background:#ef4444;"
+        : stock <= 10
+        ? "background:#f59e0b;"
+        : "background:#22c55e;"
+    }
+  "></div>
+</div>
 
   <!-- MENU -->
   <button onclick="openEditModal('${doc.id}')" style="
