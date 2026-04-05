@@ -155,7 +155,55 @@ h3{ font-size:16px; }
   border-radius:16px;
   margin-bottom:10px;
 }
+/* 🔥 WEEKLY CHART UI */
 
+.chart-legend{
+display:flex;
+gap:14px;
+align-items:center;
+font-size:13px;
+color:#94a3b8;
+}
+
+.legend-item{
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.legend-dot{
+width:10px;
+height:10px;
+border-radius:3px;
+display:inline-block;
+}
+
+.legend-dot.gray{
+background:#cbd5e1;
+}
+
+.legend-dot.blue{
+background:#2563eb;
+}
+
+/* 🔥 PERCENT BOX */
+
+.week-compare{
+margin-top:12px;
+padding:12px 14px;
+border-radius:14px;
+background:#f1f5f9;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+font-size:14px;
+}
+
+.week-compare div:last-child{
+font-weight:700;
+}
 .sale-left {
   display:flex;
   align-items:center;
