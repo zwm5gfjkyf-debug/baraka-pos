@@ -29,7 +29,7 @@ const salesRef = db
 .doc(currentShopId)
 .collection("sales")
 
-const snapshot = await 
+
 // ✅ THEN query
 const snapshot = await salesRef
 .where("createdAt", ">=", lastWeekStart)
@@ -72,8 +72,19 @@ if(date >= weekStart){
     thisWeekTotals[dayIndex] += sale.total || 0
   }
 
- 
-// 🔥 LAST WEEK
+  if(sale.items){
+    sale.items.forEach(item=>{
+      const qty = item.qty || 0
+      const price = item.price || 0
+      const cost = item.cost || 0
+
+      weekItems += qty
+      weekProfit += (price-cost)*qty
+    })
+  }
+}
+
+// 🔥 LAST WEEK (SEPARATE!)
 if(date >= lastWeekStart && date < weekStart){
 
   let dayIndex = date.getDay()
@@ -83,23 +94,8 @@ if(date >= lastWeekStart && date < weekStart){
     lastWeekTotals[dayIndex] += sale.total || 0
   }
 }
-if(!sale.items) return
-
-sale.items.forEach(item=>{
-
-const qty = item.qty || 0
-const price = item.price || 0
-const cost = item.cost || 0
-
-weekItems += qty
-weekProfit += (price-cost)*qty
 
 })
-
-}
-
-})
-
 const rev = document.getElementById("weekRevenue")
 const items = document.getElementById("weekItems")
 const profit = document.getElementById("weekProfit")
@@ -130,8 +126,8 @@ percentBox.innerText = `${sign}${percent.toFixed(0)}%`
 percentBox.style.color = color
 
 }
-renderWeeklyChart(days, thisWeekTotals, lastWeekTotals)}
-
+renderWeeklyChart(days, thisWeekTotals, lastWeekTotals)
+}
 function renderWeeklyChart(labels, thisWeek, lastWeek){
 
 const ctx = document.getElementById("weeklySalesChart")
