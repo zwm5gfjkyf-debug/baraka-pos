@@ -13,10 +13,16 @@ if(!currentShopId) return
 
 const now = new Date()
 
-const weekStart = new Date()
-weekStart.setHours(0,0,0,0)
-weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+const now = new Date()
 
+const weekStart = new Date(now)
+weekStart.setHours(0,0,0,0)
+
+// 🔥 FIX: Monday as start
+const day = weekStart.getDay() // 0=Sun,1=Mon...
+const diff = (day === 0 ? -6 : 1 - day)
+
+weekStart.setDate(weekStart.getDate() + diff)
 const salesRef = db
 .collection("shops")
 .doc(currentShopId)
@@ -32,8 +38,7 @@ let weekItems = 0
 let weekProfit = 0
 
 
-const days = ["Yak","Dush","Sesh","Chor","Pay","Jum","Shan"]
-
+const days = ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"]
 const chartTotals = [0,0,0,0,0,0,0]
 
 snapshot.forEach(doc=>{
@@ -53,11 +58,12 @@ if(date >= weekStart){
 if(sale.type !== "debt"){
   weekRevenue += sale.total || 0
 }
-const day = date.getDay()
+let dayIndex = date.getDay()
 
-if(sale.type !== "debt_payment"){
-  chartTotals[day] += sale.total || 0
-}
+// 🔥 convert to Monday-first index
+dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
+
+chartTotals[dayIndex] += sale.total || 0
 if(!sale.items) return
 
 sale.items.forEach(item=>{
