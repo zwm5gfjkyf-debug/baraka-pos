@@ -189,7 +189,7 @@ function loadCurrent(){
       let countActive = 0
       let countInactive = 0
       let countLow = 0
-
+      let countOut = 0 // 🔥 NEW (QOLMADI)
       snapshot.forEach(doc => {
 
         const p = doc.data()
@@ -198,11 +198,17 @@ function loadCurrent(){
         const stock = Number(p.stock || 0)
 
         // ✅ COUNTING
-        countAll++
-        if(stock > 0) countActive++
-        if(stock <= 0) countInactive++
-        if(stock <= 10) countLow++
+       countAll++
 
+if(stock > 0) countActive++
+if(stock <= 0){
+  countInactive++
+  countOut++ // 🔥 NEW
+}
+
+if(stock > 0 && stock <= 10){
+  countLow++
+}
         // ✅ FILTERS
         if(currentStockFilter === "active" && stock <= 0) return
         if(currentStockFilter === "inactive" && stock > 0) return
@@ -268,6 +274,24 @@ function loadCurrent(){
       if(elActive) elActive.innerText = countActive
       if(elInactive) elInactive.innerText = countInactive
       if(elLow) elLow.innerText = countLow
+      // 🔥 NEW STATS UI
+const statTotal = document.getElementById("stat-total")
+const statLow = document.getElementById("stat-low")
+const statOut = document.getElementById("stat-out")
+
+if(statTotal) statTotal.innerText = countAll
+if(statLow) statLow.innerText = countLow
+if(statOut) statOut.innerText = countOut
+      // ⚠️ LOW STOCK WARNING
+const warningBox = document.getElementById("lowStockWarning")
+const warningText = document.getElementById("lowStockText")
+
+if(countLow > 0){
+  if(warningBox) warningBox.style.display = "flex"
+  if(warningText) warningText.innerText = `${countLow} ta mahsulot tugagan`
+}else{
+  if(warningBox) warningBox.style.display = "none"
+}
     })
 }
 
