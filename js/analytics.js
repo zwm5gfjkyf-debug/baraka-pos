@@ -24,7 +24,12 @@ weekStart.setDate(weekStart.getDate() + diff)
 // ✅ MOVE HERE
 const lastWeekStart = new Date(weekStart)
 lastWeekStart.setDate(lastWeekStart.getDate() - 7)
+const salesRef = db
+.collection("shops")
+.doc(currentShopId)
+.collection("sales")
 
+const snapshot = await 
 // ✅ THEN query
 const snapshot = await salesRef
 .where("createdAt", ">=", lastWeekStart)
