@@ -803,35 +803,36 @@ Hammasini o'chirish
 <!-- INVENTORY (NEW DESIGN) -->
 <div id="stockPage" class="page hidden">
 
-  <!-- 🔵 HEADER -->
-  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+ <div style="
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+">
 
-    <div style="display:flex; align-items:center; gap:10px;">
-      
-      <img src="icon.png" style="width:42px; height:42px; border-radius:12px;">
-      
-      <div>
-        <div style="font-size:12px; color:#64748b;">Do'kon</div>
-        <div style="font-size:20px; font-weight:700;">Zaxira</div>
-      </div>
+  <!-- ONLY TITLE -->
+  <h2 style="
+    font-size:22px;
+    font-weight:700;
+  ">
+    Zaxira
+  </h2>
 
-    </div>
+  <!-- ➕ ADD BUTTON (KEEP) -->
+  <button onclick="navigate('addProductPage')" style="
+    width:44px;
+    height:44px;
+    border:none;
+    border-radius:12px;
+    background:#2563eb;
+    color:white;
+    font-size:22px;
+    cursor:pointer;
+  ">
+    +
+  </button>
 
-    <!-- ➕ ADD BUTTON -->
-    <button onclick="navigate('addProductPage')" style="
-      width:44px;
-      height:44px;
-      border:none;
-      border-radius:12px;
-      background:#2563eb;
-      color:white;
-      font-size:22px;
-      cursor:pointer;
-    ">
-      +
-    </button>
-
-  </div>
+</div>
 
   <!-- 📊 STATS -->
   <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
