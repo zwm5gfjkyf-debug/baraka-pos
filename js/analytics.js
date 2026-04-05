@@ -11,40 +11,39 @@ async function loadWeeklyAnalytics(){
 
 if(!currentShopId) return
 
-
 const now = new Date()
 
 const weekStart = new Date(now)
 weekStart.setHours(0,0,0,0)
 
+// Monday start
 const day = weekStart.getDay()
 const diff = (day === 0 ? -6 : 1 - day)
 weekStart.setDate(weekStart.getDate() + diff)
 
-// ✅ MOVE HERE
+// last week start
 const lastWeekStart = new Date(weekStart)
 lastWeekStart.setDate(lastWeekStart.getDate() - 7)
+
+// 🔥 FIXED (salesRef defined correctly)
 const salesRef = db
 .collection("shops")
 .doc(currentShopId)
 .collection("sales")
 
-
-// ✅ THEN query
 const snapshot = await salesRef
 .where("createdAt", ">=", lastWeekStart)
 .orderBy("createdAt")
 .get()
-   
+
 let weekRevenue = 0
 let weekItems = 0
 let weekProfit = 0
 
-
 const days = ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"]
+
 const thisWeekTotals = [0,0,0,0,0,0,0]
 const lastWeekTotals = [0,0,0,0,0,0,0]
-
 
 snapshot.forEach(doc=>{
 
@@ -53,49 +52,51 @@ const sale = doc.data()
 let date
 
 if(sale.createdAt?.seconds){
-date = new Date(sale.createdAt.seconds*1000)
+date = new Date(sale.createdAt.seconds * 1000)
 }else{
 date = new Date(sale.createdAt)
 }
 
-// 🔥 THIS WEEK
+// ✅ THIS WEEK
 if(date >= weekStart){
 
-  if(sale.type !== "debt"){
-    weekRevenue += sale.total || 0
-  }
-
-  let dayIndex = date.getDay()
-  dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
-
-  if(sale.type !== "debt_payment"){
-    thisWeekTotals[dayIndex] += sale.total || 0
-  }
-
-  if(sale.items){
-    sale.items.forEach(item=>{
-      const qty = item.qty || 0
-      const price = item.price || 0
-      const cost = item.cost || 0
-
-      weekItems += qty
-      weekProfit += (price-cost)*qty
-    })
-  }
+if(sale.type !== "debt"){
+weekRevenue += sale.total || 0
 }
 
-// 🔥 LAST WEEK (SEPARATE!)
+let dayIndex = date.getDay()
+dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
+
+if(sale.type !== "debt_payment"){
+thisWeekTotals[dayIndex] += sale.total || 0
+}
+
+if(sale.items){
+sale.items.forEach(item=>{
+const qty = item.qty || 0
+const price = item.price || 0
+const cost = item.cost || 0
+
+weekItems += qty
+weekProfit += (price - cost) * qty
+})
+}
+}
+
+// ✅ LAST WEEK
 if(date >= lastWeekStart && date < weekStart){
 
-  let dayIndex = date.getDay()
-  dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
+let dayIndex = date.getDay()
+dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
 
-  if(sale.type !== "debt_payment"){
-    lastWeekTotals[dayIndex] += sale.total || 0
-  }
+if(sale.type !== "debt_payment"){
+lastWeekTotals[dayIndex] += sale.total || 0
+}
 }
 
 })
+
+// 🔥 UI UPDATE
 const rev = document.getElementById("weekRevenue")
 const items = document.getElementById("weekItems")
 const profit = document.getElementById("weekProfit")
@@ -103,32 +104,38 @@ const profit = document.getElementById("weekProfit")
 if(rev) rev.innerText = formatMoney(weekRevenue)
 if(items) items.innerText = weekItems
 if(profit) profit.innerText = formatMoney(weekProfit)
+
 // 🔥 TOTALS
 const thisWeekTotal = thisWeekTotals.reduce((a,b)=>a+b,0)
 const lastWeekTotal = lastWeekTotals.reduce((a,b)=>a+b,0)
 
-// 🔥 PERCENT CHANGE
+// 🔥 PERCENT
 let percent = 0
-
 if(lastWeekTotal > 0){
 percent = ((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100
 }
 
-// 🔥 UPDATE UI
+// 🔥 PERCENT UI
 const percentBox = document.getElementById("weekPercent")
 
 if(percentBox){
-
 const sign = percent >= 0 ? "+" : ""
 const color = percent >= 0 ? "#22c55e" : "#ef4444"
 
 percentBox.innerText = `${sign}${percent.toFixed(0)}%`
 percentBox.style.color = color
+}
 
+// 🔥 BACKGROUND DATA (FOR DESIGN STYLE)
+const maxValue = Math.max(...thisWeekTotals, ...lastWeekTotals)
+const backgroundData = thisWeekTotals.map(()=> maxValue)
+
+// 🔥 RENDER
+renderWeeklyChart(days, thisWeekTotals, lastWeekTotals, backgroundData)
 }
-renderWeeklyChart(days, thisWeekTotals, lastWeekTotals)
-}
-function renderWeeklyChart(labels, thisWeek, lastWeek){
+
+
+function renderWeeklyChart(labels, thisWeek, lastWeek, backgroundData){
 
 const ctx = document.getElementById("weeklySalesChart")
 if(!ctx) return
@@ -146,31 +153,35 @@ labels: labels,
 
 datasets:[
 
+// 🔥 BACKGROUND (FULL HEIGHT)
 {
-label: "O'tgan hafta",
-data: lastWeek,
-
-backgroundColor: "#e2e8f0", // clean gray
-borderRadius: 12,
-
-barThickness: 16,
-categoryPercentage: 0.6,
-barPercentage: 0.9
+data: backgroundData,
+backgroundColor: "#eef2f7",
+borderRadius: 20,
+barThickness: 22,
+order: 1
 },
 
+// 🔥 LAST WEEK
 {
-label: "Bu hafta",
+data: lastWeek,
+backgroundColor: "#93c5fd",
+borderRadius: 20,
+barThickness: 22,
+order: 2
+},
+
+// 🔥 THIS WEEK
+{
 data: thisWeek,
-
-backgroundColor: "#2563eb", // strong blue
-borderRadius: 12,
-
-barThickness: 16,
-categoryPercentage: 0.6,
-barPercentage: 0.9
+backgroundColor: "#2563eb",
+borderRadius: 20,
+barThickness: 22,
+order: 3
 }
 
 ]
+
 },
 
 options:{
@@ -178,17 +189,13 @@ responsive:true,
 maintainAspectRatio:false,
 
 plugins:{
-legend:{
-display:true,
-labels:{
-color:"#9aa4b2"
-}
-}
+legend:{ display:false }
 },
 
 scales:{
 
 x:{
+stacked:true,
 grid:{display:false},
 border:{display:false},
 ticks:{
@@ -197,10 +204,10 @@ color:"#9aa4b2"
 },
 
 y:{
+stacked:true,
 beginAtZero:true,
 grid:{
-color:"rgba(0,0,0,0.04)",
-drawBorder:false
+color:"rgba(0,0,0,0.04)"
 },
 ticks:{
 color:"#9aa4b2",
