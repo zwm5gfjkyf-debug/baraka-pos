@@ -240,23 +240,69 @@ if(stock > 0 && stock <= 10){
             </div>
           </div>
 
-          <div class="stock-right">
+         <div class="stock-right" style="min-width:90px; text-align:right;">
 
-            <div class="stock-qty" style="
-              ${stock <= 0 ? 'color:#ef4444;font-weight:600;' : ''}
-            ">
-              ${
-                stock <= 0
-                  ? "Qolmadi"
-                  : `${stock} ${p.unit || "dona"}`
-              }
-            </div>
+  <!-- BADGE -->
+  <div style="
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:6px;
 
-            <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
-              ⋮
-            </button>
+    ${
+      stock <= 0
+        ? "background:#fee2e2;color:#dc2626;"
+        : stock <= 10
+        ? "background:#fff7ed;color:#ea580c;"
+        : "background:#e6f4ea;color:#16a34a;"
+    }
+  ">
+    ${
+      stock <= 0
+        ? "Qolmadi"
+        : `${stock} ${p.unit || "dona"}`
+    }
+  </div>
 
-          </div>
+  <!-- PROGRESS BAR -->
+  <div style="
+    width:80px;
+    height:6px;
+    background:#e5e7eb;
+    border-radius:999px;
+    overflow:hidden;
+    margin-left:auto;
+  ">
+    <div style="
+      height:100%;
+      width:${Math.min(100, (stock / 100) * 100)}%;
+      border-radius:999px;
+
+      ${
+        stock <= 0
+          ? "background:#ef4444;"
+          : stock <= 10
+          ? "background:#f59e0b;"
+          : "background:#22c55e;"
+      }
+    "></div>
+  </div>
+
+  <!-- MENU -->
+  <button onclick="openEditModal('${doc.id}')" style="
+    margin-top:6px;
+    border:none;
+    background:none;
+    font-size:18px;
+    color:#9ca3af;
+    cursor:pointer;
+  ">
+    ⋮
+  </button>
+
+</div>
         `
 
         fragment.appendChild(div)
