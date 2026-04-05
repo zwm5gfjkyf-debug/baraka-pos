@@ -17,16 +17,15 @@ const now = new Date()
 const weekStart = new Date(now)
 weekStart.setHours(0,0,0,0)
 
-// 🔥 FIX: Monday as start
-const day = weekStart.getDay() // 0=Sun,1=Mon...
+const day = weekStart.getDay()
 const diff = (day === 0 ? -6 : 1 - day)
-
 weekStart.setDate(weekStart.getDate() + diff)
-const salesRef = db
-.collection("shops")
-.doc(currentShopId)
-.collection("sales")
 
+// ✅ MOVE HERE
+const lastWeekStart = new Date(weekStart)
+lastWeekStart.setDate(lastWeekStart.getDate() - 7)
+
+// ✅ THEN query
 const snapshot = await salesRef
 .where("createdAt", ">=", lastWeekStart)
 .orderBy("createdAt")
@@ -41,9 +40,7 @@ const days = ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"]
 const thisWeekTotals = [0,0,0,0,0,0,0]
 const lastWeekTotals = [0,0,0,0,0,0,0]
 
-// 🔥 last week start
-const lastWeekStart = new Date(weekStart)
-lastWeekStart.setDate(lastWeekStart.getDate() - 7)
+
 snapshot.forEach(doc=>{
 
 const sale = doc.data()
@@ -70,18 +67,7 @@ if(date >= weekStart){
     thisWeekTotals[dayIndex] += sale.total || 0
   }
 
-  if(!sale.items) return
-
-  sale.items.forEach(item=>{
-    const qty = item.qty || 0
-    const price = item.price || 0
-    const cost = item.cost || 0
-
-    weekItems += qty
-    weekProfit += (price-cost)*qty
-  })
-}
-
+ 
 // 🔥 LAST WEEK
 if(date >= lastWeekStart && date < weekStart){
 
