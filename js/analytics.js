@@ -149,21 +149,28 @@ datasets:[
 {
 label: "O'tgan hafta",
 data: lastWeek,
-backgroundColor: "rgba(200,210,230,0.6)",
-borderRadius: 8,
-barThickness: 10
+
+backgroundColor: "#e2e8f0", // clean gray
+borderRadius: 12,
+
+barThickness: 16,
+categoryPercentage: 0.6,
+barPercentage: 0.9
 },
 
 {
 label: "Bu hafta",
 data: thisWeek,
-backgroundColor: "#2f6fed",
-borderRadius: 8,
-barThickness: 10
+
+backgroundColor: "#2563eb", // strong blue
+borderRadius: 12,
+
+barThickness: 16,
+categoryPercentage: 0.6,
+barPercentage: 0.9
 }
 
 ]
-
 },
 
 options:{
@@ -183,6 +190,7 @@ scales:{
 
 x:{
 grid:{display:false},
+border:{display:false},
 ticks:{
 color:"#9aa4b2"
 }
@@ -190,7 +198,10 @@ color:"#9aa4b2"
 
 y:{
 beginAtZero:true,
-grid:{color:"rgba(0,0,0,0.05)"},
+grid:{
+color:"rgba(0,0,0,0.04)",
+drawBorder:false
+},
 ticks:{
 color:"#9aa4b2",
 callback:function(value){
