@@ -109,7 +109,6 @@ const newStock = Math.max(0, (freshData.stock || 0) + (qty || 0))
 
 t.update(doc.ref, {
 stock: newStock,
-initialStock: newStock, // ✅ ADD THIS
 cost: cost || freshData.cost,
 price: price,
 barcode: barcode || freshData.barcode,
