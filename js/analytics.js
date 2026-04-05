@@ -848,7 +848,7 @@ if(!ctx) return
   gradient.addColorStop(1, "rgba(37,99,235,0.02)")
 
   todayChart = new Chart(ctx,{
-
+plugins: [ChartDataLabels],
     type:"line",
 
     data:{
