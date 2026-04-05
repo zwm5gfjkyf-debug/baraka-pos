@@ -88,6 +88,7 @@ artikul: artikul,
 unit: unit,
 
 stock: qty,
+initialStock: qty, // ✅ ADD THIS LINE
 cost: cost || 0,
 price: price,
 image: imageUrl || "",
@@ -108,6 +109,7 @@ const newStock = Math.max(0, (freshData.stock || 0) + (qty || 0))
 
 t.update(doc.ref, {
 stock: newStock,
+initialStock: newStock, // ✅ ADD THIS
 cost: cost || freshData.cost,
 price: price,
 barcode: barcode || freshData.barcode,
@@ -216,7 +218,8 @@ if(stock > 0 && stock <= 10){
 
         const div = document.createElement("div")
         div.className = "stock-row-item"
-
+const initial = p.initialStock || stock || 1
+const percent = Math.min(100, (stock / initial) * 100)
         div.innerHTML = `
           <div class="product-img">
             ${
@@ -268,7 +271,7 @@ if(stock > 0 && stock <= 10){
 
   <!-- PROGRESS BAR -->
   <div style="
-    width:80px;
+   width:${percent}%;
     height:6px;
     background:#e5e7eb;
     border-radius:999px;
@@ -277,7 +280,7 @@ if(stock > 0 && stock <= 10){
   ">
     <div style="
       height:100%;
-      width:${Math.min(100, (stock / 100) * 100)}%;
+      
       border-radius:999px;
 
       ${
