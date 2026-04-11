@@ -3942,13 +3942,16 @@ SALE HEADER ACTIONS (NEW)
 .blue-card{
   background:linear-gradient(135deg,#3b82f6,#2563eb);
   color:white;
+  padding:20px;
+  min-height:150px;
+  overflow:hidden;
 }
 
 .blue-card .card-title,
 .blue-card .card-value,
 .blue-card .card-sub{
   color:white !important;
-  text-shadow:0 1px 2px rgba(0,0,0,0.2);
+  text-shadow:0 1px 2px rgba(0,0,0,0.18);
 }
 
 /* TEXTS */
@@ -3959,8 +3962,18 @@ SALE HEADER ACTIONS (NEW)
 }
 
 .card-value{
-  font-size:22px;
+  font-size:26px;
   font-weight:700;
+  line-height:1.05;
+}
+
+.card-sub{
+  margin-top:10px;
+}
+
+#todaySalesChart{
+  width:100%;
+  height:100%;
 }
 
 .card-sub{

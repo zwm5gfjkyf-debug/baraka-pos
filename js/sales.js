@@ -937,11 +937,6 @@ function stopCameraScanner(){
 }
 document.addEventListener("DOMContentLoaded", () => {
   initScannerInput()
-  loadDashboard()
-
-  // 🔥 AUTO REFRESH EVERY 10s
-  setInterval(loadDashboard, 10000)
- 
 })
 function clearCart(){
 

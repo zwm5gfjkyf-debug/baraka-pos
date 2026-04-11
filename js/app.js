@@ -75,23 +75,52 @@ const salesRef = db
 .collection("sales")
 
 if(dashboardListener){
-dashboardListener()
-dashboardListener = null
+  dashboardListener()
+  dashboardListener = null
 }
 
 const now = new Date()
 const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-// Yesterday for comparison
-const yesterdayStart = new Date(todayStart)
-yesterdayStart.setDate(yesterdayStart.getDate() - 1)
-const yesterdayEnd = new Date(yesterdayStart)
-yesterdayEnd.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())
+const rev = document.getElementById("todayRevenue")
+const items = document.getElementById("todayItems")
+const profit = document.getElementById("todayProfit")
+const debt = document.getElementById("todayDebt")
+const changeEl = document.getElementById("todayRevenueChange")
+const profitStatus = document.getElementById("profitStatusText")
+const debtStatus = document.getElementById("debtStatusText")
+const listEl = document.getElementById("recentSalesList")
+
+if(rev) rev.innerText = formatMoney(0)
+if(items) items.innerText = 0
+if(profit) profit.innerText = formatMoney(0)
+if(debt) debt.innerText = formatMoney(0)
+if(changeEl){
+  changeEl.innerText = "0% kechagidan"
+  changeEl.style.color = "#64748b"
+}
+if(profitStatus){
+  profitStatus.innerText = "Yaxshi ko‘rsatkich"
+  profitStatus.style.color = "#16a34a"
+}
+if(debtStatus){
+  debtStatus.innerText = "Qarzdorlik yo‘q"
+  debtStatus.style.color = "#16a34a"
+}
+if(listEl) listEl.innerHTML = ""
+
+const currentTimeLabel = now.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit', hour12:false })
+if(typeof renderTodaySalesChart === "function"){
+  renderTodaySalesChart({
+    labels:["00:00", currentTimeLabel],
+    values:[0,0]
+  })
+}
 
 dashboardListener = salesRef
 .where("createdAt", ">=", todayStart)
 .orderBy("createdAt")
-.onSnapshot(async (salesSnapshot) => {
+.onSnapshot((salesSnapshot) => {
 
 let todayRevenue = 0
 let todayItems = 0
@@ -163,41 +192,53 @@ date
 }
 })
 
-// Calculate yesterday revenue up to same time
-let yesterdayRevenue = 0
-try {
-const yesterdaySnapshot = await salesRef
+const changeEl = document.getElementById("todayRevenueChange")
+if(changeEl){
+  changeEl.innerText = "0% kechagidan"
+  changeEl.style.color = "#64748b"
+}
+
+const currentTime = new Date()
+const yesterdayStart = new Date(todayStart)
+yesterdayStart.setDate(yesterdayStart.getDate() - 1)
+const yesterdayEnd = new Date(yesterdayStart)
+yesterdayEnd.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds(), currentTime.getMilliseconds())
+
+salesRef
 .where("createdAt", ">=", yesterdayStart)
 .where("createdAt", "<=", yesterdayEnd)
 .get()
-yesterdaySnapshot.forEach(doc => {
-const sale = doc.data()
-if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
-yesterdayRevenue += sale.total || 0
-}
+.then(yesterdaySnapshot => {
+  let yesterdayRevenue = 0
+  yesterdaySnapshot.forEach(doc => {
+    const sale = doc.data()
+    if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
+      yesterdayRevenue += sale.total || 0
+    }
+  })
+
+  const difference = todayRevenue - yesterdayRevenue
+  let percent = 0
+  if(yesterdayRevenue > 0){
+    percent = (difference / yesterdayRevenue) * 100
+  }
+
+  if(changeEl){
+    if(difference > 0){
+      changeEl.innerText = `↑ +${percent.toFixed(1)}% kechagidan`
+      changeEl.style.color = "#16a34a"
+    } else if(difference < 0){
+      changeEl.innerText = `↓ ${Math.abs(percent).toFixed(1)}% kechagidan`
+      changeEl.style.color = "#dc2626"
+    } else {
+      changeEl.innerText = "0% kechagidan"
+      changeEl.style.color = "#64748b"
+    }
+  }
 })
-} catch(e) {
-console.error("Yesterday query error:", e)
-}
-
-// Percent change
-const difference = todayRevenue - yesterdayRevenue
-let percent = 0
-if(yesterdayRevenue > 0){
-percent = (difference / yesterdayRevenue) * 100
-}
-
-const changeEl = document.getElementById("todayRevenueChange")
-if(difference > 0){
-changeEl.innerText = `↑ +${percent.toFixed(1)}% kechagidan`
-changeEl.style.color = "#16a34a"
-} else if(difference < 0){
-changeEl.innerText = `↓ ${Math.abs(percent).toFixed(1)}% kechagidan`
-changeEl.style.color = "#dc2626"
-} else {
-changeEl.innerText = "0% kechagidan"
-changeEl.style.color = "#64748b"
-}
+.catch(e => {
+  console.error("Yesterday query error:", e)
+})
 
 // Update UI
 const rev = document.getElementById("todayRevenue")

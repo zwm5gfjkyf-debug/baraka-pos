@@ -929,28 +929,6 @@ if(!ctx) return
 
 }
 
-          ticks:{
-            color:"#9aa4b2",
-            font:{ size:10 },
-
-            // 🔥 FORMAT NUMBERS (1.2M, 500k)
-            callback: function(value){
-              if(value >= 1000000){
-                return (value / 1000000).toFixed(1) + "M"
-              }
-              if(value >= 1000){
-                return (value / 1000).toFixed(1) + "k"
-              }
-              return value
-            }
-          }
-        }
-
-      }
-    }
-
-  })
-}
 function filterDebtAnalytics(){
 
 const search = document
