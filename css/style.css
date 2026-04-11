@@ -1528,122 +1528,34 @@ CHART SECTION (MOBILE APP DESIGN)
 }
 
 /* ======================
-PRODUCTS SECTION
+NEW WEEKLY ANALYTICS DESIGN
 ====================== */
 
-.products-section{
-  background:#FFFFFF;
-  border:0.5px solid #E0E4F0;
-  border-radius:14px;
-  margin:0 20px 24px 20px;
-  padding:16px;
-}
-
-.products-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:16px;
-}
-
-.products-title{
-  font-size:16px;
-  font-weight:600;
-  color:#1a1a2e;
-}
-
-.view-all-btn{
-  font-size:12px;
-  color:#1976D2;
-  font-weight:600;
-  background:none;
-  border:none;
-  cursor:pointer;
-}
-
-.product-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 0;
-  border-bottom:1px solid #F0F2F5;
-}
-
-.product-item:last-child{
-  border-bottom:none;
-}
-
-.product-info{
-  display:flex;
-  flex-direction:column;
-  gap:2px;
-}
-
-.product-name{
-  font-size:14px;
-  font-weight:500;
-  color:#1a1a2e;
-}
-
-.product-sales{
-  font-size:12px;
-  color:#888888;
-}
-
-.product-value{
-  font-size:14px;
-  font-weight:600;
-  color:#1a1a2e;
-}
-
-.product-progress{
-  width:60px;
-  height:4px;
-  background:#E0E4F0;
-  border-radius:2px;
-  margin-left:12px;
-  position:relative;
-}
-
-.progress-fill{
-  height:100%;
-  background:#1976D2;
-  border-radius:2px;
-  transition:width 0.3s ease;
-}
-
-/* ======================
-SUMMARY SECTION
-====================== */
-
-.summary-section{
-  background:#FFFFFF;
-  border:0.5px solid #E0E4F0;
-  border-radius:14px;
-  margin:0 20px 24px 20px;
-  padding:16px;
-}
-
-.summary-title{
-  font-size:16px;
-  font-weight:600;
-  color:#1a1a2e;
-  margin-bottom:16px;
-}
-
-.summary-grid{
+.stats-grid-new{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:16px;
+  gap:10px;
+  padding:0 20px;
+  margin-bottom:24px;
 }
 
-.summary-item{
+.stat-card-new{
+  background:#FFFFFF;
+  border:0.5px solid #E0E4F0;
+  border-radius:14px;
+  padding:14px 16px;
   display:flex;
   flex-direction:column;
   gap:4px;
 }
 
-.summary-label{
+.stat-card-new.primary-new{
+  background:#1976D2;
+  color:white;
+  grid-column:1 / -1; /* SPAN FULL WIDTH */
+}
+
+.card-label-new{
   font-size:10px;
   font-weight:600;
   text-transform:uppercase;
@@ -1651,22 +1563,363 @@ SUMMARY SECTION
   color:#888888;
 }
 
-.summary-value{
+.stat-card-new.primary-new .card-label-new{
+  color:rgba(255,255,255,0.75);
+}
+
+.card-value-new{
+  font-size:22px;
+  font-weight:800;
+  color:#1a1a2e;
+  margin:4px 0;
+}
+
+.stat-card-new.primary-new .card-value-new{
+  color:white;
+  font-size:22px;
+}
+
+.card-value-new.profit-new{
+  color:#43A047;
+  font-size:18px;
+  font-weight:700;
+}
+
+.card-value-new.blue-new{
+  color:#1976D2;
+  font-size:18px;
+  font-weight:700;
+}
+
+.card-value-new.dark-new{
+  color:#1a1a2e;
+  font-size:22px;
+  font-weight:700;
+}
+
+.card-trend-new{
+  font-size:11px;
+  font-weight:500;
+  color:#43A047;
+}
+
+.stat-card-new.primary-new .card-trend-new{
+  color:rgba(255,255,255,0.85);
+}
+
+.card-trend-new.profit-new{
+  color:#43A047;
+}
+
+.card-subtitle-new{
+  font-size:11px;
+  color:#aaa;
+  margin-top:2px;
+}
+
+/* ======================
+CHART SECTION NEW
+====================== */
+
+.chart-section-new{
+  background:#FFFFFF;
+  border:0.5px solid #E0E4F0;
+  border-radius:14px;
+  margin:0 20px 24px 20px;
+  padding:14px;
+}
+
+.chart-header-new{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.chart-title-new{
   font-size:16px;
+  font-weight:600;
+  color:#1a1a2e;
+}
+
+.chart-legend-new{
+  display:flex;
+  gap:16px;
+}
+
+.legend-item-new{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.legend-dot-new{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+}
+
+.legend-dot-new.light-blue-new{
+  background:#BBDEFB;
+}
+
+.legend-dot-new.dark-blue-new{
+  background:#1976D2;
+}
+
+.legend-text-new{
+  font-size:12px;
+  font-weight:500;
+  color:#666666;
+}
+
+.chart-peak-values-new{
+  display:flex;
+  justify-content:flex-end;
+  gap:16px;
+  margin-bottom:12px;
+}
+
+.peak-value-new{
+  font-size:12px;
+  font-weight:600;
+}
+
+.peak-value-new.gray-new{
+  color:#666666;
+}
+
+.peak-value-new.blue-new{
+  color:#1976D2;
+}
+
+.chart-container-new{
+  height:200px;
+  margin-bottom:16px;
+  position:relative;
+}
+
+.comparison-strip-new{
+  background:#F8F9FF;
+  border-radius:10px;
+  padding:8px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:10px;
+}
+
+.comparison-left-new{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.comparison-icon-new{
+  font-size:14px;
+}
+
+.comparison-text-new{
+  font-size:12px;
+  color:#1976D2;
+  font-weight:500;
+}
+
+.comparison-value-new{
+  font-size:14px;
+  font-weight:600;
+  color:#43A047;
+}
+
+.comparison-value-new.negative{
+  color:#E53935;
+}
+
+/* ======================
+PRODUCTS SECTION NEW
+====================== */
+
+.products-section-new{
+  background:#FFFFFF;
+  border:0.5px solid #E0E4F0;
+  border-radius:14px;
+  margin:0 20px 24px 20px;
+  padding:16px;
+}
+
+.products-header-new{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.products-title-new{
+  font-size:16px;
+  font-weight:600;
+  color:#1a1a2e;
+}
+
+.products-subtitle-new{
+  font-size:12px;
+  color:#888888;
+}
+
+.top-products-list-new{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.product-item-new{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.product-rank-new{
+  width:28px;
+  font-size:14px;
+  font-weight:700;
+  color:#1976D2;
+  text-align:center;
+}
+
+.product-info-new{
+  flex:1;
+}
+
+.product-name-new{
+  font-size:13px;
+  font-weight:600;
+  color:#1a1a2e;
+  margin-bottom:4px;
+}
+
+.product-progress-new{
+  width:100%;
+  height:4px;
+  background:#EEF0F8;
+  border-radius:4px;
+  position:relative;
+  margin-bottom:6px;
+}
+
+.progress-fill-new{
+  height:100%;
+  background:#1976D2;
+  border-radius:4px;
+  transition:width 0.3s ease;
+}
+
+.product-details-new{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.product-quantity-new{
+  font-size:12px;
+  color:#888888;
+}
+
+.product-revenue-new{
+  font-size:13px;
+  font-weight:700;
+  color:#1976D2;
+}
+
+/* ======================
+SUMMARY SECTION NEW
+====================== */
+
+.summary-section-new{
+  background:#FFFFFF;
+  border:0.5px solid #E0E4F0;
+  border-radius:14px;
+  margin:0 20px 24px 20px;
+  padding:16px;
+}
+
+.summary-title-new{
+  font-size:16px;
+  font-weight:600;
+  color:#1a1a2e;
+  margin-bottom:16px;
+}
+
+.weekly-summary-new{
+  display:flex;
+  flex-direction:column;
+}
+
+.summary-row-new{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:0.5px solid #EEF0F8;
+}
+
+.summary-row-new:last-child{
+  border-bottom:none;
+}
+
+.summary-label-new{
+  font-size:14px;
+  color:#666666;
+  font-weight:500;
+}
+
+.summary-value-new{
+  font-size:14px;
   font-weight:700;
   color:#1a1a2e;
 }
 
-.summary-value.profit{
+.summary-value-new.profit{
   color:#43A047;
 }
 
-.summary-value.blue{
+.summary-value-new.blue{
   color:#1976D2;
 }
 
-.summary-value.dark{
-  color:#1a1a2e;
+.summary-value-new.orange{
+  color:#FB8C00;
+}
+
+/* ======================
+LOADING SKELETONS
+====================== */
+
+.skeleton-new{
+  background:linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size:200% 100%;
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+  0%{ background-position:200% 0; }
+  100%{ background-position:-200% 0; }
+}
+
+.stat-card-new.skeleton-new{
+  height:80px;
+}
+
+.chart-container-new.skeleton-new{
+  height:200px;
+  border-radius:8px;
+}
+
+.product-item-new.skeleton-new{
+  height:60px;
+  border-radius:8px;
+}
+
+.summary-row-new.skeleton-new{
+  height:40px;
 }
 
 /* ======================

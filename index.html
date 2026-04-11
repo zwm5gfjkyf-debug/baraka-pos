@@ -946,81 +946,82 @@ Hammasini o'chirish
 <div id="weeklyAnalytics">
 
 <!-- STATS CARDS 2x2 GRID -->
-<div class="stats-grid">
-
+<div class="stats-grid-new">
   <!-- CARD 1 - HAFTALIK TUSHUM (PRIMARY BLUE) -->
-  <div class="stat-card primary">
-    <div class="card-label">HAFTALIK TUSHUM</div>
-    <div class="card-value" id="weekRevenue">0</div>
-    <div class="card-trend" id="weekRevenuePercent">↑ +0%</div>
+  <div class="stat-card-new primary-new">
+    <div class="card-label-new">HAFTALIK TUSHUM</div>
+    <div class="card-value-new" id="weekRevenueNew">0</div>
+    <div class="card-trend-new" id="weekRevenuePercentNew">↑ +0% o'tgan haftadan</div>
   </div>
 
   <!-- CARD 2 - HAFTALIK FOYDA -->
-  <div class="stat-card">
-    <div class="card-label">HAFTALIK FOYDA</div>
-    <div class="card-value profit" id="weekProfit">0</div>
-    <div class="card-trend profit" id="weekProfitPercent">↑ +0%</div>
+  <div class="stat-card-new">
+    <div class="card-label-new">HAFTALIK FOYDA</div>
+    <div class="card-value-new profit-new" id="weekProfitNew">0</div>
+    <div class="card-trend-new profit-new" id="weekProfitPercentNew">+0%</div>
   </div>
 
   <!-- CARD 3 - SOTILGAN MAHSULOT -->
-  <div class="stat-card">
-    <div class="card-label">SOTILGAN MAHSULOT</div>
-    <div class="card-value dark" id="weekItems">0</div>
-    <div class="card-subtitle">Bu hafta</div>
+  <div class="stat-card-new">
+    <div class="card-label-new">SOTILGAN MAHSULOT</div>
+    <div class="card-value-new dark-new" id="weekItemsNew">0</div>
+    <div class="card-subtitle-new">Bu hafta</div>
   </div>
 
   <!-- CARD 4 - O'RTACHA CHEK -->
-  <div class="stat-card">
-    <div class="card-label">O'RTACHA CHEK</div>
-    <div class="card-value blue" id="weekAvgCheck">0</div>
-    <div class="card-subtitle">Har bir sotuv</div>
+  <div class="stat-card-new">
+    <div class="card-label-new">O'RTACHA CHEK</div>
+    <div class="card-value-new blue-new" id="weekAvgCheckNew">0</div>
+    <div class="card-subtitle-new">Har bir sotuv</div>
   </div>
-
 </div>
 
 <!-- CHART SECTION -->
-<div class="chart-section">
-  <div class="section-title">Haftalik savdo grafigi</div>
-  <div class="chart-legend">
-    <div class="legend-item">
-      <span class="legend-dot light-blue"></span>
-      O'tgan hafta
+<div class="chart-section-new">
+  <div class="chart-header-new">
+    <div class="chart-title-new">Haftalik savdo grafigi</div>
+    <div class="chart-legend-new">
+      <div class="legend-item-new">
+        <div class="legend-dot-new light-blue-new"></div>
+        <span class="legend-text-new">O'tgan hafta</span>
+      </div>
+      <div class="legend-item-new">
+        <div class="legend-dot-new dark-blue-new"></div>
+        <span class="legend-text-new">Bu hafta</span>
+      </div>
     </div>
-    <div class="legend-item">
-      <span class="legend-dot dark-blue"></span>
-      Bu hafta
+  </div>
+  <div class="chart-peak-values-new">
+    <span class="peak-value-new gray-new" id="lastWeekPeakNew">0k</span>
+    <span class="peak-value-new blue-new" id="thisWeekPeakNew">0k</span>
+  </div>
+  <div class="chart-container-new" id="weeklyChartContainerNew">
+    <canvas id="weeklySalesChartNew"></canvas>
+  </div>
+  <div class="comparison-strip-new">
+    <div class="comparison-left-new">
+      <span class="comparison-icon-new">📈</span>
+      <span class="comparison-text-new">O'tgan haftaga nisbatan</span>
     </div>
-  </div>
-  <div class="chart-peak-values">
-    <span class="peak-value" id="lastWeekPeak">0k</span>
-    <span class="peak-value" id="thisWeekPeak">0k</span>
-  </div>
-  <div style="height:280px;">
-    <canvas id="weeklySalesChart"></canvas>
-  </div>
-  <!-- COMPARISON STRIP -->
-  <div class="comparison-strip">
-    <div class="comparison-icon">📈</div>
-    <div class="comparison-text">O'tgan haftaga nisbatan</div>
-    <div class="comparison-value" id="weekPercent">+0%</div>
+    <div class="comparison-value-new" id="weekPercentNew">+0%</div>
   </div>
 </div>
 
 <!-- TOP PRODUCTS -->
-<div class="products-section">
-  <div class="section-header">
-    <div class="section-title">Top mahsulotlar</div>
-    <div class="section-subtitle">Bu hafta</div>
+<div class="products-section-new">
+  <div class="products-header-new">
+    <div class="products-title-new">Top mahsulotlar</div>
+    <div class="products-subtitle-new">Bu hafta</div>
   </div>
-  <div id="topProductsList" class="top-products-list">
+  <div id="topProductsListNew" class="top-products-list-new">
     <!-- Dynamic content -->
   </div>
 </div>
 
 <!-- WEEKLY SUMMARY -->
-<div class="summary-section">
-  <div class="section-title">Hafta xulosasi</div>
-  <div id="weeklySummary" class="weekly-summary">
+<div class="summary-section-new">
+  <div class="summary-title-new">Hafta xulosasi</div>
+  <div id="weeklySummaryNew" class="weekly-summary-new">
     <!-- Dynamic content -->
   </div>
 </div>
