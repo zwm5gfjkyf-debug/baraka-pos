@@ -1067,21 +1067,80 @@ Do'kon tahlili
 </div>
   <!-- DEBT PAGE -->
 <div id="debtAnalyticsPage" class="page hidden">
-<h2 class="page-title">Nasiya tahlili</h2>
+  <div class="debt-analytics-top">
+    <div>
+      <h2 class="page-title">Nasiya tahlili</h2>
+      <p class="debt-analytics-subtitle">Tizimdan olinadigan har bir qarz va tezkor monitoring.</p>
+    </div>
+    <button class="btn-secondary debt-add-btn" onclick="openNewDebtModal()">Yangi nasiya</button>
+  </div>
 
-<div class="dashboard-card glass">
-<div class="card-title">Umumiy nasiya</div>
-<div id="totalDebtAmount" class="dashboard-amount">0 so'm</div>
-</div>
+  <div class="debt-summary-grid">
+    <div class="debt-hero-card">
+      <div class="debt-hero-header">
+        <div class="debt-hero-title">Umumiy nasiya qarzdorlik</div>
+        <div id="debtAnalyticsDate" class="debt-hero-date"></div>
+      </div>
+      <div id="debtAnalyticsTotal" class="debt-hero-amount">0 so'm</div>
+      <div class="debt-hero-meta"><span id="debtAnalyticsClients">0</span> mijoz</div>
+    </div>
+    <div class="debt-mini-cards">
+      <div class="debt-mini-card">
+        <div class="mini-label">Muddati o‘tgan</div>
+        <div class="mini-value" id="debtOverdueCount">0</div>
+        <div class="mini-note">Shoshilinch</div>
+      </div>
+      <div class="debt-mini-card">
+        <div class="mini-label">Bu oy</div>
+        <div class="mini-value" id="debtMonthCount">0</div>
+        <div class="mini-note">Joriy oy</div>
+      </div>
+      <div class="debt-mini-card">
+        <div class="mini-label">Eng ko‘p</div>
+        <div class="mini-value" id="debtMaxAmount">0 so'm</div>
+        <div class="mini-note">Yagona mijoz</div>
+      </div>
+    </div>
+  </div>
 
-<input
-id="debtAnalyticsSearch"
-placeholder="🔎 Mijoz qidirish..."
-class="search-input"
-oninput="filterDebtAnalytics()"
-style="margin:15px 0;width:100%">
+  <div class="debt-controls-row">
+    <div class="debt-search-wrapper">
+      <input id="debtAnalyticsSearch" class="debt-search-input" placeholder="Mijoz qidirish…" oninput="setDebtSearch(this.value)">
+      <button class="debt-clear-search" onclick="clearDebtSearchInput()">✕</button>
+    </div>
+    <button id="debtSortButton" class="debt-sort-button" onclick="toggleDebtSort()">Ko‘p qarz ↓</button>
+  </div>
 
-<div id="debtAnalyticsList"></div>
+  <div id="debtAnalyticsList" class="debt-list"></div>
+  <div id="debtEmptyState" class="empty-state hidden">Faol qarzlar topilmadi. Yangi nasiya qo‘shing yoki filtrni tozalang.</div>
+
+  <div id="debtPaymentModal" class="debt-modal hidden">
+    <div class="debt-modal-content">
+      <button class="debt-modal-close" onclick="closeDebtPaymentModal()">×</button>
+      <div class="modal-title">To‘lov qabul qilish</div>
+      <div class="modal-detail" id="paymentModalCustomer">Mijoz: —</div>
+      <div class="modal-detail" id="paymentModalRemaining">Qolgan qarz: 0 so'm</div>
+      <label class="modal-label">To‘lov summasi</label>
+      <input id="paymentAmountInput" class="modal-input" type="number" inputmode="numeric" placeholder="0">
+      <button class="btn-primary modal-submit" onclick="submitDebtPayment()">To‘lovni tasdiqlash</button>
+    </div>
+  </div>
+
+  <div id="debtNewModal" class="debt-modal hidden">
+    <div class="debt-modal-content">
+      <button class="debt-modal-close" onclick="closeNewDebtModal()">×</button>
+      <div class="modal-title">Yangi nasiya</div>
+      <label class="modal-label">Mijoz nomi</label>
+      <input id="newDebtCustomer" class="modal-input" type="text" placeholder="Mijoz ismi">
+      <label class="modal-label">Telefon</label>
+      <input id="newDebtPhone" class="modal-input" type="tel" placeholder="Optional">
+      <label class="modal-label">Summa</label>
+      <input id="newDebtAmount" class="modal-input" type="number" inputmode="numeric" placeholder="0">
+      <label class="modal-label">Muddati</label>
+      <input id="newDebtDueDate" class="modal-input" type="date">
+      <button class="btn-primary modal-submit" onclick="submitNewDebt()">Saqlash</button>
+    </div>
+  </div>
 </div>
 
 <!-- SALES PAGE -->

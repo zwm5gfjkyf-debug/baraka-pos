@@ -1097,7 +1097,6 @@ if(!ctx || !data || !data.labels || !data.values) return
         pointBorderWidth: 3
       }]
     },
-
     options:{
 
       responsive: true,
@@ -1272,13 +1271,8 @@ function showAnalyticsTab(tab){
 }
 window.showAnalyticsTab = showAnalyticsTab   
 function openDebtAnalytics(){
-
-navigate("debtAnalyticsPage")
-
-loadDebtAnalytics()
-
+  navigate("debtAnalyticsPage")
 }
-async function loadDebtAnalytics(){
 
 const list = document.getElementById("debtAnalyticsList")
 const totalBox = document.getElementById("totalDebtAmount")
@@ -1334,7 +1328,7 @@ renderDebtCustomers(customers)
 
 totalBox.innerText = totalDebt.toLocaleString()+" so'm"
 
-}
+
 function renderDebtCustomers(customers){
 
 const list = document.getElementById("debtAnalyticsList")
