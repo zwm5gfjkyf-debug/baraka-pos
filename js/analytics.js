@@ -842,10 +842,10 @@ if(!ctx) return
     return
   }
 
-  // 🔥 BLUE GRADIENT
+  // 🔥 GREEN GRADIENT
   const gradient = ctx.getContext("2d").createLinearGradient(0,0,0,220)
-  gradient.addColorStop(0, "rgba(37,99,235,0.35)")
-  gradient.addColorStop(1, "rgba(37,99,235,0.02)")
+  gradient.addColorStop(0, "rgba(34,197,94,0.3)")
+  gradient.addColorStop(1, "rgba(34,197,94,0.05)")
 
   todayChart = new Chart(ctx,{
 plugins: [ChartDataLabels],
@@ -858,8 +858,8 @@ plugins: [ChartDataLabels],
 
         data: data.values,
 
- borderColor: "#16a34a",
-backgroundColor: "rgba(34,197,94,0.15)",
+        borderColor: "#22c55e",
+        backgroundColor: gradient,
 
         fill: true,
         tension: 0.4,
@@ -867,10 +867,13 @@ backgroundColor: "rgba(34,197,94,0.15)",
 
         // 🔥 ONLY LAST POINT
         pointRadius: (ctx)=>{
-          return ctx.dataIndex === data.values.length - 1 ? 5 : 0
+          return ctx.dataIndex === data.values.length - 1 ? 6 : 0
         },
 
-pointBackgroundColor: "#16a34a"      }]
+        pointBackgroundColor: "#22c55e",
+        pointBorderColor: "#fff",
+        pointBorderWidth: 2
+      }]
     },
 
     options:{
@@ -879,7 +882,10 @@ pointBackgroundColor: "#16a34a"      }]
       maintainAspectRatio: false,
 
       plugins:{
-        legend:{ display:false }
+        legend:{ display:false },
+        datalabels: {
+          display: false
+        }
       },
 
       scales:{
@@ -887,8 +893,8 @@ pointBackgroundColor: "#16a34a"      }]
         x:{
           grid:{ display:false },
           ticks:{
-            color:"#9aa4b2",
-            font:{ size:10 }
+            color:"#64748b",
+            font:{ size:11 }
           }
         },
 
@@ -898,6 +904,34 @@ pointBackgroundColor: "#16a34a"      }]
           grid:{
             color:"rgba(0,0,0,0.05)"
           },
+
+          ticks:{
+            color:"#64748b",
+            font:{ size:11 },
+            callback: function(value) {
+              return formatMoney(value)
+            }
+          }
+        }
+
+      },
+
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+
+      elements: {
+        point: {
+          hoverRadius: 8
+        }
+      }
+
+    }
+
+  })
+
+}
 
           ticks:{
             color:"#9aa4b2",

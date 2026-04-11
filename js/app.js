@@ -74,122 +74,132 @@ const salesRef = db
 .doc(currentShopId)
 .collection("sales")
 
-
 if(dashboardListener){
 dashboardListener()
 dashboardListener = null
 }
-const now = new Date()
 
-const todayStart = new Date(
-now.getFullYear(),
-now.getMonth(),
-now.getDate()
-)
+const now = new Date()
+const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+// Yesterday for comparison
+const yesterdayStart = new Date(todayStart)
+yesterdayStart.setDate(yesterdayStart.getDate() - 1)
+const yesterdayEnd = new Date(yesterdayStart)
+yesterdayEnd.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds())
 
 dashboardListener = salesRef
 .where("createdAt", ">=", todayStart)
 .orderBy("createdAt")
-.onSnapshot(salesSnapshot => {
+.onSnapshot(async (salesSnapshot) => {
+
 let todayRevenue = 0
 let todayItems = 0
 let todayProfit = 0
 let todayDebt = 0
 
-
-const chartLabels = []
-const chartValues = []
-
-let runningTotal = 0
-
-chartLabels.push("0")
-chartValues.push(0)
-
-salesSnapshot.forEach(doc=>{
-
-const sale = doc.data()
-let date
-
-if(sale.createdAt?.seconds){
-date = new Date(sale.createdAt.seconds * 1000)
-}else{
-date = new Date(sale.createdAt)
+// Buckets for chart (30 min intervals)
+const bucketSize = 30 * 60 * 1000 // 30 min
+const buckets = []
+const startTime = todayStart.getTime()
+const endTime = now.getTime()
+for(let time = startTime; time <= endTime; time += bucketSize){
+buckets.push({ time, total: 0 })
 }
+
+const recentSales = []
+
+salesSnapshot.forEach(doc => {
+const sale = doc.data()
+let date = sale.createdAt?.seconds ? new Date(sale.createdAt.seconds * 1000) : new Date(sale.createdAt)
 
 if(date >= todayStart){
 
-// Only cash sales increase revenue
-if(sale.type === "cash" || sale.type === "card"){
+// Revenue from cash/card/debt_payment
+if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
 todayRevenue += sale.total || 0
-runningTotal += sale.total || 0
-
+// Add to bucket
+const saleTime = date.getTime()
+const bucketIndex = Math.floor((saleTime - startTime) / bucketSize)
+if(bucketIndex < buckets.length){
+buckets[bucketIndex].total += sale.total || 0
+}
 }
 
-// Debt payments also increase revenue
-if(sale.type === "debt_payment"){
-
-todayRevenue += sale.total || 0
-runningTotal += sale.total || 0
-
-}
-// If it IS debt, count as debt
+// Debt tracking
 if(sale.type === "debt"){
 todayDebt += sale.total || 0
 }
-
 if(sale.type === "debt_payment"){
 todayDebt -= sale.total || 0
 }
 
-const time = date.toLocaleTimeString('uz-UZ', {
-hour:'2-digit',
-minute:'2-digit',
-hour12:false
-})
-
-chartLabels.push(time)
-chartValues.push(runningTotal)
-
-// Profit only from real product sales
-// Profit only from CASH sales
-// Count sold products (cash + debt)
+// Items sold (cash + debt)
 if(sale.items && (sale.type === "cash" || sale.type === "debt")){
-
-sale.items.forEach(item=>{
-
-const qty = item.qty || 0
-
-todayItems += qty
-
+sale.items.forEach(item => {
+todayItems += item.qty || 0
 })
-
 }
 
-// Profit only from CASH sales
+// Profit from cash/card + debt payments
 if(sale.items && (sale.type === "cash" || sale.type === "card")){
-sale.items.forEach(item=>{
-
+sale.items.forEach(item => {
 const qty = item.qty || 0
 const price = item.price || 0
 const cost = item.cost || 0
-
 todayProfit += (price - cost) * qty
-
 })
-
 }
-
-// Profit from debt payments
 if(sale.type === "debt_payment"){
 todayProfit += sale.profitPart || 0
 }
 
+// Collect for recent sales
+recentSales.push({
+id: doc.id,
+...sale,
+date
+})
 }
-
 })
 
+// Calculate yesterday revenue up to same time
+let yesterdayRevenue = 0
+try {
+const yesterdaySnapshot = await salesRef
+.where("createdAt", ">=", yesterdayStart)
+.where("createdAt", "<=", yesterdayEnd)
+.get()
+yesterdaySnapshot.forEach(doc => {
+const sale = doc.data()
+if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
+yesterdayRevenue += sale.total || 0
+}
+})
+} catch(e) {
+console.error("Yesterday query error:", e)
+}
 
+// Percent change
+const difference = todayRevenue - yesterdayRevenue
+let percent = 0
+if(yesterdayRevenue > 0){
+percent = (difference / yesterdayRevenue) * 100
+}
 
+const changeEl = document.getElementById("todayRevenueChange")
+if(difference > 0){
+changeEl.innerText = `↑ +${percent.toFixed(1)}% kechagidan`
+changeEl.style.color = "#16a34a"
+} else if(difference < 0){
+changeEl.innerText = `↓ ${Math.abs(percent).toFixed(1)}% kechagidan`
+changeEl.style.color = "#dc2626"
+} else {
+changeEl.innerText = "0% kechagidan"
+changeEl.style.color = "#64748b"
+}
+
+// Update UI
 const rev = document.getElementById("todayRevenue")
 const items = document.getElementById("todayItems")
 const profit = document.getElementById("todayProfit")
@@ -200,6 +210,42 @@ if(items) items.innerText = todayItems
 if(profit) profit.innerText = formatMoney(todayProfit)
 if(debt) debt.innerText = formatMoney(todayDebt)
 
+// Profit status
+const profitStatus = document.getElementById("profitStatusText")
+if(profitStatus){
+if(todayProfit > 0){
+profitStatus.innerText = "Yaxshi ko‘rsatkich"
+profitStatus.style.color = "#16a34a"
+} else {
+profitStatus.innerText = "Foyda yo‘q"
+profitStatus.style.color = "#dc2626"
+}
+}
+
+// Debt status
+const debtStatus = document.getElementById("debtStatusText")
+if(debtStatus){
+if(todayDebt > 0){
+debtStatus.innerText = "Qarzdorlik bor"
+debtStatus.style.color = "#ea580c"
+} else {
+debtStatus.innerText = "Qarzdorlik yo‘q"
+debtStatus.style.color = "#16a34a"
+}
+}
+
+// Chart data
+const chartLabels = buckets.map(b => {
+const d = new Date(b.time)
+return d.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit', hour12:false })
+})
+const chartValues = []
+let cumulative = 0
+buckets.forEach(b => {
+cumulative += b.total
+chartValues.push(cumulative)
+})
+
 if(typeof renderTodaySalesChart === "function"){
 renderTodaySalesChart({
 labels: chartLabels,
@@ -207,9 +253,29 @@ values: chartValues
 })
 }
 
+// Recent sales
+recentSales.sort((a,b) => b.createdAt.seconds - a.createdAt.seconds)
+const top10 = recentSales.slice(0,10)
+
+const listEl = document.getElementById("recentSalesList")
+if(listEl){
+listEl.innerHTML = ""
+top10.forEach(sale => {
+const item = document.createElement("div")
+item.className = "recent-sale-item"
+item.innerHTML = `
+<div class="sale-icon">🛒</div>
+<div class="sale-info">
+<div class="sale-title">Sotuv #${sale.id.slice(-6)}</div>
+<div class="sale-meta">${sale.date.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit' })} • ${sale.items ? sale.items.length : 0} mahsulot</div>
+</div>
+<div class="sale-amount">${formatMoney(sale.total)}</div>
+`
+listEl.appendChild(item)
 })
+}
 
-
+})
 
 }
 // ===============================
