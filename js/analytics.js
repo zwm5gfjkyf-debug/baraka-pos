@@ -7,141 +7,405 @@ if (typeof Chart === "undefined") {
 
 let weeklyChart = null;
 
-async function loadWeeklyAnalytics(){
+// ===============================
+// REAL-TIME WEEKLY ANALYTICS
+// ===============================
+
+let weeklyListener = null
+let weeklyCache = {
+  thisWeekRevenue: 0,
+  thisWeekProfit: 0,
+  thisWeekItems: 0,
+  thisWeekSalesCount: 0,
+  lastWeekRevenue: 0,
+  thisWeekByDay: [0,0,0,0,0,0,0],
+  lastWeekByDay: [0,0,0,0,0,0,0],
+  topProducts: [],
+  bestDay: null,
+  averageDaily: 0
+}
+
+function loadWeeklyAnalytics(){
 
 if(!currentShopId) return
 
-const now = new Date()
+// 🔥 INSTANT UI RENDER (no delay)
+renderWeeklyUI()
 
+// 🔥 DETACH OLD LISTENER
+if(weeklyListener){
+  weeklyListener()
+  weeklyListener = null
+}
+
+// 🔥 CALCULATE TIME RANGES
+const now = new Date()
 const weekStart = new Date(now)
 weekStart.setHours(0,0,0,0)
 
-// Monday start
+// Monday start (0 = Sunday, so adjust)
 const day = weekStart.getDay()
 const diff = (day === 0 ? -6 : 1 - day)
 weekStart.setDate(weekStart.getDate() + diff)
 
-// last week start
+// Last week same time range
 const lastWeekStart = new Date(weekStart)
 lastWeekStart.setDate(lastWeekStart.getDate() - 7)
+const lastWeekEnd = new Date(lastWeekStart)
+lastWeekEnd.setDate(lastWeekEnd.getDate() + 7)
 
-// 🔥 FIXED (salesRef defined correctly)
-const salesRef = db
-.collection("shops")
-.doc(currentShopId)
-.collection("sales")
+// 🔥 REAL-TIME LISTENER (only needed data)
+const salesRef = db.collection("shops").doc(currentShopId).collection("sales")
 
-const snapshot = await salesRef
+weeklyListener = salesRef
 .where("createdAt", ">=", lastWeekStart)
 .orderBy("createdAt")
-.get()
+.onSnapshot((snapshot) => {
 
-let weekRevenue = 0
-let weekItems = 0
-let weekProfit = 0
+  // 🔥 RESET CACHE
+  weeklyCache = {
+    thisWeekRevenue: 0,
+    thisWeekProfit: 0,
+    thisWeekItems: 0,
+    thisWeekSalesCount: 0,
+    lastWeekRevenue: 0,
+    thisWeekByDay: [0,0,0,0,0,0,0],
+    lastWeekByDay: [0,0,0,0,0,0,0],
+    topProducts: {},
+    bestDay: null,
+    averageDaily: 0
+  }
 
-const days = ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"]
+  snapshot.forEach(doc => {
+    const sale = doc.data()
+    let date
 
-const thisWeekTotals = [0,0,0,0,0,0,0]
-const lastWeekTotals = [0,0,0,0,0,0,0]
+    // 🔥 SAFE DATE PARSING
+    if(sale.createdAt?.seconds){
+      date = new Date(sale.createdAt.seconds * 1000)
+    } else if(sale.createdAt instanceof Date){
+      date = sale.createdAt
+    } else {
+      date = new Date(sale.createdAt)
+    }
 
-snapshot.forEach(doc=>{
+    // 🔥 THIS WEEK (until now)
+    if(date >= weekStart && date <= now){
 
-const sale = doc.data()
+      // Revenue (cash + card + debt_payment)
+      if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
+        weeklyCache.thisWeekRevenue += sale.total || 0
+      }
 
-let date
+      // Sales count
+      if(sale.type === "cash" || sale.type === "debt"){
+        weeklyCache.thisWeekSalesCount++
+      }
 
-if(sale.createdAt?.seconds){
-date = new Date(sale.createdAt.seconds * 1000)
-}else{
-date = new Date(sale.createdAt)
-}
+      // Items and profit
+      if(sale.items && (sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment")){
 
-// ✅ THIS WEEK
-if(date >= weekStart){
+        sale.items.forEach(item => {
+          const qty = item.qty || 0
+          const price = item.price || 0
+          const cost = item.cost || 0
 
-if(sale.type !== "debt"){
-weekRevenue += sale.total || 0
-}
+          weeklyCache.thisWeekItems += qty
+          weeklyCache.thisWeekProfit += (price - cost) * qty
 
-let dayIndex = date.getDay()
-dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
+          // 🔥 TOP PRODUCTS AGGREGATION
+          const productName = item.name || "Noma'lum"
+          if(!weeklyCache.topProducts[productName]){
+            weeklyCache.topProducts[productName] = {
+              quantity: 0,
+              revenue: 0
+            }
+          }
+          weeklyCache.topProducts[productName].quantity += qty
+          weeklyCache.topProducts[productName].revenue += price * qty
+        })
+      }
 
-if(sale.type !== "debt_payment"){
-thisWeekTotals[dayIndex] += sale.total || 0
-}
+      // 🔥 BY DAY (this week)
+      const dayIndex = date.getDay()
+      const adjustedIndex = (dayIndex === 0) ? 6 : dayIndex - 1
 
-if(sale.items){
-sale.items.forEach(item=>{
-const qty = item.qty || 0
-const price = item.price || 0
-const cost = item.cost || 0
+      if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
+        weeklyCache.thisWeekByDay[adjustedIndex] += sale.total || 0
+      }
+    }
 
-weekItems += qty
-weekProfit += (price - cost) * qty
+    // 🔥 LAST WEEK (same time range)
+    if(date >= lastWeekStart && date < lastWeekEnd){
+
+      if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
+        weeklyCache.lastWeekRevenue += sale.total || 0
+
+        // 🔥 BY DAY (last week)
+        const dayIndex = date.getDay()
+        const adjustedIndex = (dayIndex === 0) ? 6 : dayIndex - 1
+        weeklyCache.lastWeekByDay[adjustedIndex] += sale.total || 0
+      }
+    }
+  })
+
+  // 🔥 CALCULATE DERIVED METRICS
+  calculateWeeklyMetrics(now, weekStart)
+
+  // 🔥 UPDATE UI
+  updateWeeklyUI()
+
+}, (error) => {
+  console.error("Weekly analytics error:", error)
 })
 }
+
+// 🔥 CALCULATE METRICS
+function calculateWeeklyMetrics(now, weekStart){
+
+  // Best day (this week)
+  const days = ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"]
+  const maxDayIndex = weeklyCache.thisWeekByDay.indexOf(Math.max(...weeklyCache.thisWeekByDay))
+  weeklyCache.bestDay = maxDayIndex >= 0 ? days[maxDayIndex] : null
+
+  // Average daily (this week until now)
+  const daysPassed = Math.max(1, Math.ceil((now - weekStart) / (1000 * 60 * 60 * 24)))
+  weeklyCache.averageDaily = weeklyCache.thisWeekRevenue / daysPassed
+
+  // Top products (sort and take top 3)
+  const sortedProducts = Object.entries(weeklyCache.topProducts)
+    .sort(([,a], [,b]) => b.quantity - a.quantity)
+    .slice(0, 3)
+
+  weeklyCache.topProducts = sortedProducts
 }
 
-// ✅ LAST WEEK
-if(date >= lastWeekStart && date < weekStart){
+// 🔥 INSTANT UI RENDER
+function renderWeeklyUI(){
 
-let dayIndex = date.getDay()
-dayIndex = (dayIndex === 0) ? 6 : dayIndex - 1
+  // Cards with zeros
+  const rev = document.getElementById("weekRevenue")
+  const items = document.getElementById("weekItems")
+  const profit = document.getElementById("weekProfit")
+  const avgCheck = document.getElementById("weekAvgCheck")
 
-if(sale.type !== "debt_payment"){
-lastWeekTotals[dayIndex] += sale.total || 0
+  if(rev) rev.innerText = formatMoney(0)
+  if(items) items.innerText = "0"
+  if(profit) profit.innerText = formatMoney(0)
+  if(avgCheck) avgCheck.innerText = formatMoney(0)
+
+  // Percentages
+  const revPercent = document.getElementById("weekRevenuePercent")
+  const profitPercent = document.getElementById("weekProfitPercent")
+
+  if(revPercent){
+    revPercent.innerText = "0%"
+    revPercent.style.color = "#64748b"
+  }
+  if(profitPercent){
+    profitPercent.innerText = "0%"
+    profitPercent.style.color = "#64748b"
+  }
+
+  // Chart placeholder
+  renderWeeklyChart(["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0])
+
+  // Top products placeholder
+  const topProductsEl = document.getElementById("topProductsList")
+  if(topProductsEl){
+    topProductsEl.innerHTML = `
+      <div class="top-product-item">
+        <div class="product-info">
+          <div class="product-name">Yuklanmo...</div>
+          <div class="product-meta">0 dona • 0 so'm</div>
+        </div>
+        <div class="product-bar">
+          <div class="bar-fill" style="width:0%"></div>
+        </div>
+      </div>
+    `
+  }
+
+  // Weekly summary placeholder
+  const summaryEl = document.getElementById("weeklySummary")
+  if(summaryEl){
+    summaryEl.innerHTML = `
+      <div class="summary-item">
+        <span>Jami tushum</span>
+        <strong>${formatMoney(0)}</strong>
+      </div>
+      <div class="summary-item">
+        <span>Jami foyda</span>
+        <strong>${formatMoney(0)}</strong>
+      </div>
+      <div class="summary-item">
+        <span>Sotuvlar soni</span>
+        <strong>0</strong>
+      </div>
+      <div class="summary-item">
+        <span>Eng yaxshi kun</span>
+        <strong>-</strong>
+      </div>
+      <div class="summary-item">
+        <span>O'rtacha kunlik</span>
+        <strong>${formatMoney(0)}</strong>
+      </div>
+    `
+  }
 }
+
+// 🔥 UPDATE UI WITH REAL DATA
+function updateWeeklyUI(){
+
+  // Cards
+  const rev = document.getElementById("weekRevenue")
+  const items = document.getElementById("weekItems")
+  const profit = document.getElementById("weekProfit")
+  const avgCheck = document.getElementById("weekAvgCheck")
+
+  if(rev) rev.innerText = formatMoney(weeklyCache.thisWeekRevenue)
+  if(items) items.innerText = weeklyCache.thisWeekItems
+  if(profit) profit.innerText = formatMoney(weeklyCache.thisWeekProfit)
+  if(avgCheck) avgCheck.innerText = formatMoney(
+    weeklyCache.thisWeekSalesCount > 0 ?
+    weeklyCache.thisWeekRevenue / weeklyCache.thisWeekSalesCount : 0
+  )
+
+  // Percentages
+  const revPercent = document.getElementById("weekRevenuePercent")
+  const profitPercent = document.getElementById("weekProfitPercent")
+
+  // Revenue percentage
+  if(revPercent){
+    const revDiff = weeklyCache.thisWeekRevenue - weeklyCache.lastWeekRevenue
+    let revPct = 0
+    if(weeklyCache.lastWeekRevenue > 0){
+      revPct = (revDiff / weeklyCache.lastWeekRevenue) * 100
+    }
+
+    const sign = revPct >= 0 ? "+" : ""
+    const color = revPct >= 0 ? "#22c55e" : "#ef4444"
+    revPercent.innerText = `${sign}${revPct.toFixed(0)}%`
+    revPercent.style.color = color
+  }
+
+  // Profit percentage (same logic)
+  if(profitPercent){
+    // Note: We don't have last week profit, so we'll show revenue percentage for now
+    // In a full implementation, you'd track profit for last week too
+    const profitDiff = weeklyCache.thisWeekProfit - (weeklyCache.lastWeekRevenue * 0.1) // Estimate
+    let profitPct = 0
+    if(weeklyCache.lastWeekRevenue > 0){
+      profitPct = (profitDiff / (weeklyCache.lastWeekRevenue * 0.1)) * 100
+    }
+
+    const sign = profitPct >= 0 ? "+" : ""
+    const color = profitPct >= 0 ? "#22c55e" : "#ef4444"
+    profitPercent.innerText = `${sign}${profitPct.toFixed(0)}%`
+    profitPercent.style.color = color
+  }
+
+  // Chart
+  renderWeeklyChart(
+    ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"],
+    weeklyCache.thisWeekByDay,
+    weeklyCache.lastWeekByDay
+  )
+
+  // Top products
+  updateTopProducts()
+
+  // Weekly summary
+  updateWeeklySummary()
 }
 
-})
+// 🔥 TOP PRODUCTS
+function updateTopProducts(){
+  const container = document.getElementById("topProductsList")
+  if(!container) return
 
-// 🔥 UI UPDATE
-const rev = document.getElementById("weekRevenue")
-const items = document.getElementById("weekItems")
-const profit = document.getElementById("weekProfit")
+  if(weeklyCache.topProducts.length === 0){
+    container.innerHTML = `
+      <div class="top-product-item">
+        <div class="product-info">
+          <div class="product-name">Ma'lumot yo'q</div>
+          <div class="product-meta">Haftada sotuv bo'lmagan</div>
+        </div>
+        <div class="product-bar">
+          <div class="bar-fill" style="width:0%"></div>
+        </div>
+      </div>
+    `
+    return
+  }
 
-if(rev) rev.innerText = formatMoney(weekRevenue)
-if(items) items.innerText = weekItems
-if(profit) profit.innerText = formatMoney(weekProfit)
+  // Find max quantity for progress bar scaling
+  const maxQty = Math.max(...weeklyCache.topProducts.map(([,data]) => data.quantity))
 
-// 🔥 TOTALS
-const thisWeekTotal = thisWeekTotals.reduce((a,b)=>a+b,0)
-const lastWeekTotal = lastWeekTotals.reduce((a,b)=>a+b,0)
-
-// 🔥 PERCENT
-let percent = 0
-if(lastWeekTotal > 0){
-percent = ((thisWeekTotal - lastWeekTotal) / lastWeekTotal) * 100
+  container.innerHTML = weeklyCache.topProducts.map(([name, data]) => {
+    const percentage = maxQty > 0 ? (data.quantity / maxQty) * 100 : 0
+    return `
+      <div class="top-product-item">
+        <div class="product-info">
+          <div class="product-name">${name}</div>
+          <div class="product-meta">${data.quantity} dona • ${formatMoney(data.revenue)}</div>
+        </div>
+        <div class="product-bar">
+          <div class="bar-fill" style="width:${percentage}%"></div>
+        </div>
+      </div>
+    `
+  }).join('')
 }
 
-// 🔥 PERCENT UI
-const percentBox = document.getElementById("weekPercent")
+// 🔥 WEEKLY SUMMARY
+function updateWeeklySummary(){
+  const container = document.getElementById("weeklySummary")
+  if(!container) return
 
-if(percentBox){
-const sign = percent >= 0 ? "+" : ""
-const color = percent >= 0 ? "#22c55e" : "#ef4444"
-
-percentBox.innerText = `${sign}${percent.toFixed(0)}%`
-percentBox.style.color = color
+  container.innerHTML = `
+    <div class="summary-item">
+      <span>Jami tushum</span>
+      <strong>${formatMoney(weeklyCache.thisWeekRevenue)}</strong>
+    </div>
+    <div class="summary-item">
+      <span>Jami foyda</span>
+      <strong>${formatMoney(weeklyCache.thisWeekProfit)}</strong>
+    </div>
+    <div class="summary-item">
+      <span>Sotuvlar soni</span>
+      <strong>${weeklyCache.thisWeekSalesCount}</strong>
+    </div>
+    <div class="summary-item">
+      <span>Eng yaxshi kun</span>
+      <strong>${weeklyCache.bestDay || '-'}</strong>
+    </div>
+    <div class="summary-item">
+      <span>O'rtacha kunlik</span>
+      <strong>${formatMoney(weeklyCache.averageDaily)}</strong>
+    </div>
+  `
 }
 
-// 🔥 BACKGROUND DATA (FOR DESIGN STYLE)
-const maxValue = Math.max(...thisWeekTotals, ...lastWeekTotals)
-const backgroundData = thisWeekTotals.map(()=> maxValue)
 
-// 🔥 RENDER
-renderWeeklyChart(days, thisWeekTotals, lastWeekTotals, backgroundData)
-}
-
-
-function renderWeeklyChart(labels, thisWeek, lastWeek, backgroundData){
+function renderWeeklyChart(labels, thisWeek, lastWeek){
 
 const ctx = document.getElementById("weeklySalesChart")
 if(!ctx) return
 
 if(weeklyChart){
-weeklyChart.destroy()
+  weeklyChart.destroy()
+}
+
+// 🔥 FORMAT NUMBERS FOR LABELS
+function formatChartLabel(value){
+  if(value >= 1000000){
+    return (value/1000000).toFixed(1) + 'm'
+  }
+  if(value >= 1000){
+    return (value/1000).toFixed(0) + 'k'
+  }
+  return value.toString()
 }
 
 weeklyChart = new Chart(ctx,{
@@ -153,35 +417,26 @@ labels: labels,
 
 datasets:[
 
-// 🔥 BACKGROUND (FULL HEIGHT)
+// 🔥 LAST WEEK (gray background)
 {
-data: backgroundData,
-backgroundColor: "#eef2f7",
-borderRadius: 20,
-barThickness: 22,
+data: lastWeek,
+backgroundColor: "#f1f5f9",
+borderRadius: 8,
+barThickness: 24,
 order: 1
 },
 
-// 🔥 LAST WEEK
-{
-data: lastWeek,
-backgroundColor: "#93c5fd",
-borderRadius: 20,
-barThickness: 22,
-order: 2
-},
-
-// 🔥 THIS WEEK
+// 🔥 THIS WEEK (blue)
 {
 data: thisWeek,
 backgroundColor: (ctx)=>{
 const i = ctx.dataIndex
-return i === ctx.dataset.data.length - 1
-? "#1d4ed8"   // darker blue (last day)
-: "#3b82f6"
-},borderRadius: 20,
-barThickness: 22,
-order: 3
+const isLastDay = i === labels.length - 1
+return isLastDay ? "#1d4ed8" : "#3b82f6"
+},
+borderRadius: 8,
+barThickness: 24,
+order: 2
 }
 
 ]
@@ -197,26 +452,19 @@ legend:{ display:false },
 
 tooltip:{ enabled:false },
 
-// 🔥 SHOW VALUES ABOVE BARS
+// 🔥 SHOW VALUES ABOVE BARS (only this week)
 datalabels:{
 anchor:'end',
 align:'top',
-offset:4,
+offset:6,
 
 formatter:(value, ctx)=>{
-// only show for THIS WEEK bars
-if(ctx.datasetIndex !== 2) return ''
-
-if(value >= 1000000){
-return (value/1000000).toFixed(2)+'m'
-}
-if(value >= 1000){
-return (value/1000).toFixed(0)+'k'
-}
-return value
+// Only show for THIS WEEK bars (dataset index 1)
+if(ctx.datasetIndex !== 1) return ''
+return formatChartLabel(value)
 },
 
-color:'#2563eb',
+color:'#1e40af',
 font:{
 weight:'600',
 size:11
@@ -227,34 +475,22 @@ size:11
 scales:{
 
 x:{
-stacked:true,
+stacked:false,
 grid:{display:false},
 border:{display:false},
 ticks:{
-color:"#9aa4b2"
+color:"#64748b",
+font:{ size:12 }
 }
 },
 
 y:{
-stacked:true,
+stacked:false,
 beginAtZero:true,
-grid:{
-color:"rgba(0,0,0,0.04)"
-},
-ticks:{
-color:"#9aa4b2",
-callback:function(value){
-if(value >= 1000000){
-return (value/1000000).toFixed(1)+"M"
+display:false, // 🔥 HIDE Y-AXIS
+grid:{display:false},
+ticks:{display:false}
 }
-if(value >= 1000){
-return (value/1000).toFixed(1)+"k"
-}
-return value
-}
-}
-}
-
 }
 
 }

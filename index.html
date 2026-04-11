@@ -934,6 +934,7 @@ Hammasini o'chirish
 <div class="dashboard-card glass">
 <div class="card-title">Haftalik tushum</div>
 <div id="weekRevenue" class="dashboard-amount">0</div>
+<div id="weekRevenuePercent" class="dashboard-percent">0%</div>
 </div>
 
 <div class="dashboard-card glass">
@@ -944,8 +945,22 @@ Hammasini o'chirish
 <div class="dashboard-card glass">
 <div class="card-title">Haftalik foyda</div>
 <div id="weekProfit" class="dashboard-amount">0</div>
+<div id="weekProfitPercent" class="dashboard-percent">0%</div>
 </div>
 
+<div class="dashboard-card glass">
+<div class="card-title">O'rtacha chek</div>
+<div id="weekAvgCheck" class="dashboard-amount">0</div>
+</div>
+
+</div>
+
+<!-- TOP PRODUCTS -->
+<div class="dashboard-card glass" style="margin-top:20px;">
+<div class="card-title">Eng ko'p sotilgan mahsulotlar</div>
+<div id="topProductsList" class="top-products-list">
+<!-- Dynamic content -->
+</div>
 </div>
 
 <div class="chart-container glass big-chart">
@@ -977,17 +992,20 @@ Hammasini o'chirish
   </div>
 
   <!-- 🔥 CHART -->
-  <div style="height:220px;">
+  <div style="height:320px;">
     <canvas id="weeklySalesChart"></canvas>
   </div>
 
-  <!-- 🔥 PERCENT BOX -->
-  <div class="week-compare">
-    <div>📈 O'tgan haftaga nisbatan</div>
-    <div id="weekPercent">+0%</div>
-  </div>
-
 </div>
+
+<!-- WEEKLY SUMMARY -->
+<div class="dashboard-card glass" style="margin-top:20px;">
+<div class="card-title">Hafta xulosasi</div>
+<div id="weeklySummary" class="weekly-summary">
+<!-- Dynamic content -->
+</div>
+</div>
+
 </div>
 
 <!-- MONTHLY -->
