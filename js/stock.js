@@ -215,10 +215,16 @@ if(stock > 0 && stock <= 10){
         if(currentStockFilter === "inactive" && stock > 0) return
         if(currentStockFilter === "low" && stock > 10) return
 
+        const level = stock <= 0 ? "out" : stock <= 10 ? "low" : "high"
+        const badgeClass = stock <= 0 ? "out" : stock <= 10 ? "low" : "high"
+        const badgeText = stock <= 0 ? "Qolmadi" : `${stock} ${p.unit || "dona"}`
+        const initial = p.initialStock || stock || 1
+        const percent = Math.max(2, Math.min(100, (stock / initial) * 100))
+        const formattedPrice = formatMoney(p.price || 0)
+
         const div = document.createElement("div")
-        div.className = "stock-row-item"
-const initial = p.initialStock || stock || 1
-const percent = Math.min(100, (stock / initial) * 100)
+        div.className = `stock-card ${level}`
+
         div.innerHTML = `
           <div class="product-img">
             ${
@@ -229,82 +235,20 @@ const percent = Math.min(100, (stock / initial) * 100)
           </div>
 
           <div class="stock-info">
-            <div class="stock-name">
-              ${p.name || "Noma'lum"}
-            </div>
-
-            <div class="stock-price">
-              ${formatMoney(p.price || 0)}
-            </div>
-
-            <div class="stock-meta">
-              ${p.artikul || "-"} / ${p.barcode || "-"}
+            <div class="stock-name">${p.name || "Noma'lum"}</div>
+            <div class="stock-meta">${p.artikul || "-"}</div>
+            <div class="stock-price">${formattedPrice}</div>
+            <div class="bar-bg">
+              <div class="bar-fill" style="width:${percent}%; background:${stock <= 0 ? '#ef4444' : stock <= 10 ? '#f59e0b' : '#22c55e'}"></div>
             </div>
           </div>
 
-         <div class="stock-right" style="min-width:90px; text-align:right;">
-
-  <!-- BADGE -->
-  <div style="
-    display:inline-block;
-    padding:6px 12px;
-    border-radius:999px;
-    font-size:13px;
-    font-weight:600;
-    margin-bottom:6px;
-
-    ${
-      stock <= 0
-        ? "background:#fee2e2;color:#dc2626;"
-        : stock <= 10
-        ? "background:#fff7ed;color:#ea580c;"
-        : "background:#e6f4ea;color:#16a34a;"
-    }
-  ">
-    ${
-      stock <= 0
-        ? "Qolmadi"
-        : `${stock} ${p.unit || "dona"}`
-    }
-  </div>
-
-<!-- PROGRESS BAR -->
-<div style="
-  width:80px;
-  height:6px;
-  background:#e5e7eb;
-  border-radius:999px;
-  overflow:hidden;
-  margin-left:auto;
-">
-  <div style="
-    height:100%;
-    width:${percent}%;
-    border-radius:999px;
-
-    ${
-      stock <= 0
-        ? "background:#ef4444;"
-        : stock <= 10
-        ? "background:#f59e0b;"
-        : "background:#22c55e;"
-    }
-  "></div>
-</div>
-
-  <!-- MENU -->
-  <button onclick="openEditModal('${doc.id}')" style="
-    margin-top:6px;
-    border:none;
-    background:none;
-    font-size:18px;
-    color:#9ca3af;
-    cursor:pointer;
-  ">
-    ⋮
-  </button>
-
-</div>
+          <div class="stock-right">
+            <div class="stock-badge ${badgeClass}">${badgeText}</div>
+            <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
+              ⋮
+            </button>
+          </div>
         `
 
         fragment.appendChild(div)
@@ -334,11 +278,17 @@ if(statOut) statOut.innerText = countOut
 const warningBox = document.getElementById("lowStockWarning")
 const warningText = document.getElementById("lowStockText")
 
-if(countLow > 0){
-  if(warningBox) warningBox.style.display = "flex"
-  if(warningText) warningText.innerText = `${countLow} ta mahsulot tugagan`
+if(countOut > 0){
+  if(warningBox) {
+    warningBox.classList.remove("hidden")
+    warningBox.style.display = "flex"
+  }
+  if(warningText) warningText.innerText = `${countOut} ta mahsulot tugagan, zaxirani to‘ldiring`
 }else{
-  if(warningBox) warningBox.style.display = "none"
+  if(warningBox) {
+    warningBox.classList.add("hidden")
+    warningBox.style.display = "none"
+  }
 }
     })
 }
