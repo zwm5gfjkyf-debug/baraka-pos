@@ -1233,8 +1233,8 @@ function closeDebtPage(){
 
 function saveDebtSale(){
 
-  const name = document.getElementById("debtName").value.trim()
-  const phone = document.getElementById("debtPhone").value.trim()
+  const name = (document.getElementById("debtName")?.value || "").trim()
+  const phone = (document.getElementById("debtPhone")?.value || "").trim()
 
   if(!name){
     showTopBanner("Mijoz ismini kiriting", "error")

@@ -17,7 +17,7 @@ stockProcessing = true
 
 try{
 
-const name = document.getElementById("stockName").value.trim()
+const name = (document.getElementById("stockName")?.value || "").trim()
 const nameKey = name.toLowerCase()
 const barcode = document.getElementById("stockBarcode")?.value.trim() || ""
 const artikul = document.getElementById("stockArtikul")?.value.trim() || ""
