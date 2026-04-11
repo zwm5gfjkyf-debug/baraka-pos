@@ -1293,18 +1293,29 @@ TOP PRODUCTS
 
 .product-info{
   flex:1;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.product-rank{
+  font-size:14px;
+  font-weight:700;
+  color:#64748b;
+  min-width:24px;
 }
 
 .product-name{
   font-size:14px;
   font-weight:600;
   color:#1e293b;
-  margin-bottom:2px;
+  flex:1;
 }
 
 .product-meta{
   font-size:12px;
   color:#64748b;
+  margin-left:8px;
 }
 
 .product-bar{
@@ -1324,32 +1335,28 @@ TOP PRODUCTS
 }
 
 /* ======================
-WEEKLY SUMMARY
+WEEK COMPARISON
 ====================== */
 
-.weekly-summary{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-top:12px;
-}
-
-.summary-item{
+.week-compare{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:8px 0;
+  padding:16px 0;
+  margin-top:8px;
+  border-top:1px solid #f1f5f9;
 }
 
-.summary-item span{
-  font-size:13px;
-  color:#64748b;
-}
-
-.summary-item strong{
+.week-compare div:first-child{
   font-size:14px;
-  font-weight:600;
-  color:#1e293b;
+  color:#64748b;
+  font-weight:500;
+}
+
+.week-compare div:last-child{
+  font-size:16px;
+  font-weight:700;
+  color:#22c55e;
 }
 
 /* ======================

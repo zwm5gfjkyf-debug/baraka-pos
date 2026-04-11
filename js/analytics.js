@@ -189,10 +189,10 @@ function renderWeeklyUI(){
   const profit = document.getElementById("weekProfit")
   const avgCheck = document.getElementById("weekAvgCheck")
 
-  if(rev) rev.innerText = formatMoney(0)
+  if(rev) rev.innerText = formatShortMoney(0)
   if(items) items.innerText = "0"
-  if(profit) profit.innerText = formatMoney(0)
-  if(avgCheck) avgCheck.innerText = formatMoney(0)
+  if(profit) profit.innerText = formatShortMoney(0)
+  if(avgCheck) avgCheck.innerText = formatShortMoney(0)
 
   // Percentages
   const revPercent = document.getElementById("weekRevenuePercent")
@@ -232,11 +232,11 @@ function renderWeeklyUI(){
     summaryEl.innerHTML = `
       <div class="summary-item">
         <span>Jami tushum</span>
-        <strong>${formatMoney(0)}</strong>
+        <strong>${formatShortMoney(0)}</strong>
       </div>
       <div class="summary-item">
         <span>Jami foyda</span>
-        <strong>${formatMoney(0)}</strong>
+        <strong>${formatShortMoney(0)}</strong>
       </div>
       <div class="summary-item">
         <span>Sotuvlar soni</span>
@@ -248,7 +248,7 @@ function renderWeeklyUI(){
       </div>
       <div class="summary-item">
         <span>O'rtacha kunlik</span>
-        <strong>${formatMoney(0)}</strong>
+        <strong>${formatShortMoney(0)}</strong>
       </div>
     `
   }
@@ -263,10 +263,10 @@ function updateWeeklyUI(){
   const profit = document.getElementById("weekProfit")
   const avgCheck = document.getElementById("weekAvgCheck")
 
-  if(rev) rev.innerText = formatMoney(weeklyCache.thisWeekRevenue)
+  if(rev) rev.innerText = formatShortMoney(weeklyCache.thisWeekRevenue)
   if(items) items.innerText = weeklyCache.thisWeekItems
-  if(profit) profit.innerText = formatMoney(weeklyCache.thisWeekProfit)
-  if(avgCheck) avgCheck.innerText = formatMoney(
+  if(profit) profit.innerText = formatShortMoney(weeklyCache.thisWeekProfit)
+  if(avgCheck) avgCheck.innerText = formatShortMoney(
     weeklyCache.thisWeekSalesCount > 0 ?
     weeklyCache.thisWeekRevenue / weeklyCache.thisWeekSalesCount : 0
   )
@@ -275,7 +275,7 @@ function updateWeeklyUI(){
   const revPercent = document.getElementById("weekRevenuePercent")
   const profitPercent = document.getElementById("weekProfitPercent")
 
-  // Revenue percentage
+  // Revenue percentage (time-aligned comparison)
   if(revPercent){
     const revDiff = weeklyCache.thisWeekRevenue - weeklyCache.lastWeekRevenue
     let revPct = 0
@@ -289,20 +289,19 @@ function updateWeeklyUI(){
     revPercent.style.color = color
   }
 
-  // Profit percentage (same logic)
-  if(profitPercent){
-    // Note: We don't have last week profit, so we'll show revenue percentage for now
-    // In a full implementation, you'd track profit for last week too
-    const profitDiff = weeklyCache.thisWeekProfit - (weeklyCache.lastWeekRevenue * 0.1) // Estimate
-    let profitPct = 0
+  // Update the comparison block percentage
+  const weekPercent = document.getElementById("weekPercent")
+  if(weekPercent){
+    const revDiff = weeklyCache.thisWeekRevenue - weeklyCache.lastWeekRevenue
+    let revPct = 0
     if(weeklyCache.lastWeekRevenue > 0){
-      profitPct = (profitDiff / (weeklyCache.lastWeekRevenue * 0.1)) * 100
+      revPct = (revDiff / weeklyCache.lastWeekRevenue) * 100
     }
 
-    const sign = profitPct >= 0 ? "+" : ""
-    const color = profitPct >= 0 ? "#22c55e" : "#ef4444"
-    profitPercent.innerText = `${sign}${profitPct.toFixed(0)}%`
-    profitPercent.style.color = color
+    const sign = revPct >= 0 ? "+" : ""
+    const color = revPct >= 0 ? "#22c55e" : "#ef4444"
+    weekPercent.innerText = `${sign}${revPct.toFixed(0)}%`
+    weekPercent.style.color = color
   }
 
   // Chart
@@ -339,16 +338,23 @@ function updateTopProducts(){
     return
   }
 
-  // Find max quantity for progress bar scaling
-  const maxQty = Math.max(...weeklyCache.topProducts.map(([,data]) => data.quantity))
+  // Sort by revenue instead of quantity
+  const sortedProducts = Object.entries(weeklyCache.topProducts)
+    .sort(([,a], [,b]) => b.revenue - a.revenue)
+    .slice(0, 3)
 
-  container.innerHTML = weeklyCache.topProducts.map(([name, data]) => {
-    const percentage = maxQty > 0 ? (data.quantity / maxQty) * 100 : 0
+  // Find max revenue for progress bar scaling
+  const maxRevenue = Math.max(...sortedProducts.map(([,data]) => data.revenue))
+
+  container.innerHTML = sortedProducts.map(([name, data], index) => {
+    const percentage = maxRevenue > 0 ? (data.revenue / maxRevenue) * 100 : 0
+    const rank = index + 1
     return `
       <div class="top-product-item">
         <div class="product-info">
+          <div class="product-rank">#${rank}</div>
           <div class="product-name">${name}</div>
-          <div class="product-meta">${data.quantity} dona • ${formatMoney(data.revenue)}</div>
+          <div class="product-meta">×${data.quantity} • ${formatShortMoney(data.revenue)}</div>
         </div>
         <div class="product-bar">
           <div class="bar-fill" style="width:${percentage}%"></div>
@@ -366,11 +372,11 @@ function updateWeeklySummary(){
   container.innerHTML = `
     <div class="summary-item">
       <span>Jami tushum</span>
-      <strong>${formatMoney(weeklyCache.thisWeekRevenue)}</strong>
+      <strong>${formatShortMoney(weeklyCache.thisWeekRevenue)}</strong>
     </div>
     <div class="summary-item">
       <span>Jami foyda</span>
-      <strong>${formatMoney(weeklyCache.thisWeekProfit)}</strong>
+      <strong>${formatShortMoney(weeklyCache.thisWeekProfit)}</strong>
     </div>
     <div class="summary-item">
       <span>Sotuvlar soni</span>
@@ -382,7 +388,7 @@ function updateWeeklySummary(){
     </div>
     <div class="summary-item">
       <span>O'rtacha kunlik</span>
-      <strong>${formatMoney(weeklyCache.averageDaily)}</strong>
+      <strong>${formatShortMoney(weeklyCache.averageDaily)}</strong>
     </div>
   `
 }
@@ -417,25 +423,25 @@ labels: labels,
 
 datasets:[
 
-// 🔥 LAST WEEK (gray background)
+// 🔥 LAST WEEK (gray)
 {
+label: 'O\'tgan hafta',
 data: lastWeek,
-backgroundColor: "#f1f5f9",
-borderRadius: 8,
-barThickness: 24,
+backgroundColor: "#e2e8f0",
+borderRadius: 4,
+barThickness: 16,
+borderSkipped: false,
 order: 1
 },
 
 // 🔥 THIS WEEK (blue)
 {
+label: 'Bu hafta',
 data: thisWeek,
-backgroundColor: (ctx)=>{
-const i = ctx.dataIndex
-const isLastDay = i === labels.length - 1
-return isLastDay ? "#1d4ed8" : "#3b82f6"
-},
-borderRadius: 8,
-barThickness: 24,
+backgroundColor: "#3b82f6",
+borderRadius: 4,
+barThickness: 16,
+borderSkipped: false,
 order: 2
 }
 
@@ -456,7 +462,7 @@ tooltip:{ enabled:false },
 datalabels:{
 anchor:'end',
 align:'top',
-offset:6,
+offset:4,
 
 formatter:(value, ctx)=>{
 // Only show for THIS WEEK bars (dataset index 1)
@@ -487,10 +493,19 @@ font:{ size:12 }
 y:{
 stacked:false,
 beginAtZero:true,
-display:false, // 🔥 HIDE Y-AXIS
+display:false,
 grid:{display:false},
 ticks:{display:false}
 }
+},
+
+interaction: {
+  mode: 'index',
+  intersect: false
+},
+
+layout:{
+  padding:{ top:20, right:10, bottom:10, left:10 }
 }
 
 }
