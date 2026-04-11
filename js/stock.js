@@ -197,29 +197,43 @@ function loadCurrent(){
         if(p.deleted === true) return
 
         const stock = Number(p.stock || 0)
+        const initial = p.initialStock || stock || 1
+        const percent = Math.max(2, Math.min(100, (stock / initial) * 100))
 
         // ✅ COUNTING
-       countAll++
+        countAll++
+        if(stock > 0) countActive++
+        if(stock <= 0){
+          countInactive++
+          countOut++
+        }
+        if(percent <= 20 && stock > 0){
+          countLow++
+        }
 
-if(stock > 0) countActive++
-if(stock <= 0){
-  countInactive++
-  countOut++ // 🔥 NEW
-}
-
-if(stock > 0 && stock <= 10){
-  countLow++
-}
         // ✅ FILTERS
         if(currentStockFilter === "active" && stock <= 0) return
         if(currentStockFilter === "inactive" && stock > 0) return
-        if(currentStockFilter === "low" && stock > 10) return
+        if(currentStockFilter === "low" && !(percent <= 20 && stock > 0)) return
 
-        const level = stock <= 0 ? "out" : stock <= 10 ? "low" : "high"
-        const badgeClass = stock <= 0 ? "out" : stock <= 10 ? "low" : "high"
-        const badgeText = stock <= 0 ? "Qolmadi" : `${stock} ${p.unit || "dona"}`
-        const initial = p.initialStock || stock || 1
-        const percent = Math.max(2, Math.min(100, (stock / initial) * 100))
+        let level, badgeClass, badgeText, color;
+        if(stock === 0){
+          level = "out";
+          badgeClass = "out";
+          badgeText = "Qolmadi";
+          color = "#ef4444";
+        } else if(percent <= 20){
+          level = "low";
+          badgeClass = "low";
+          badgeText = `${stock} ${p.unit || "dona"}`;
+          color = "#f59e0b";
+        } else {
+          level = "high";
+          badgeClass = "high";
+          badgeText = `${stock} ${p.unit || "dona"}`;
+          color = "#22c55e";
+        }
+
         const formattedPrice = formatMoney(p.price || 0)
 
         const div = document.createElement("div")
@@ -239,7 +253,7 @@ if(stock > 0 && stock <= 10){
             <div class="stock-meta">${p.artikul || "-"}</div>
             <div class="stock-price">${formattedPrice}</div>
             <div class="bar-bg">
-              <div class="bar-fill" style="width:${percent}%; background:${stock <= 0 ? '#ef4444' : stock <= 10 ? '#f59e0b' : '#22c55e'}"></div>
+              <div class="bar-fill" style="width:${percent}%; background:${color};"></div>
             </div>
           </div>
 
