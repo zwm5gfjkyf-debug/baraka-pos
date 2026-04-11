@@ -255,19 +255,19 @@ values: chartValues
 
 // Recent sales
 recentSales.sort((a,b) => b.createdAt.seconds - a.createdAt.seconds)
-const top10 = recentSales.slice(0,10)
+const top7 = recentSales.slice(0,7)
 
 const listEl = document.getElementById("recentSalesList")
 if(listEl){
 listEl.innerHTML = ""
-top10.forEach(sale => {
+top7.forEach(sale => {
 const item = document.createElement("div")
 item.className = "recent-sale-item"
 item.innerHTML = `
 <div class="sale-icon">🛒</div>
 <div class="sale-info">
 <div class="sale-title">Sotuv #${sale.id.slice(-6)}</div>
-<div class="sale-meta">${sale.date.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit' })} • ${sale.items ? sale.items.length : 0} mahsulot</div>
+<div class="sale-meta">${sale.date.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit' })} • ${sale.items ? sale.items.length : 0} ta mahsulot</div>
 </div>
 <div class="sale-amount">${formatMoney(sale.total)}</div>
 `
