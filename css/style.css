@@ -1442,6 +1442,234 @@ SMALL CARDS (MOBILE)
 }
 
 /* ======================
+CHART SECTION (MOBILE APP DESIGN)
+====================== */
+
+.chart-section{
+  background:#FFFFFF;
+  border:0.5px solid #E0E4F0;
+  border-radius:14px;
+  margin:0 20px 24px 20px;
+  padding:16px;
+}
+
+.chart-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.chart-title{
+  font-size:16px;
+  font-weight:600;
+  color:#1a1a2e;
+}
+
+.chart-legend{
+  display:flex;
+  gap:16px;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.legend-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+}
+
+.legend-dot.current{
+  background:#1976D2;
+}
+
+.legend-dot.previous{
+  background:#E0E4F0;
+}
+
+.legend-text{
+  font-size:12px;
+  font-weight:500;
+  color:#666666;
+}
+
+.chart-container{
+  height:200px;
+  margin-bottom:16px;
+}
+
+.comparison-strip{
+  background:#F8F9FA;
+  border-radius:8px;
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.comparison-label{
+  font-size:12px;
+  color:#666666;
+  font-weight:500;
+}
+
+.comparison-value{
+  font-size:14px;
+  font-weight:600;
+  color:#43A047;
+}
+
+.comparison-value.negative{
+  color:#E53935;
+}
+
+/* ======================
+PRODUCTS SECTION
+====================== */
+
+.products-section{
+  background:#FFFFFF;
+  border:0.5px solid #E0E4F0;
+  border-radius:14px;
+  margin:0 20px 24px 20px;
+  padding:16px;
+}
+
+.products-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+
+.products-title{
+  font-size:16px;
+  font-weight:600;
+  color:#1a1a2e;
+}
+
+.view-all-btn{
+  font-size:12px;
+  color:#1976D2;
+  font-weight:600;
+  background:none;
+  border:none;
+  cursor:pointer;
+}
+
+.product-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #F0F2F5;
+}
+
+.product-item:last-child{
+  border-bottom:none;
+}
+
+.product-info{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.product-name{
+  font-size:14px;
+  font-weight:500;
+  color:#1a1a2e;
+}
+
+.product-sales{
+  font-size:12px;
+  color:#888888;
+}
+
+.product-value{
+  font-size:14px;
+  font-weight:600;
+  color:#1a1a2e;
+}
+
+.product-progress{
+  width:60px;
+  height:4px;
+  background:#E0E4F0;
+  border-radius:2px;
+  margin-left:12px;
+  position:relative;
+}
+
+.progress-fill{
+  height:100%;
+  background:#1976D2;
+  border-radius:2px;
+  transition:width 0.3s ease;
+}
+
+/* ======================
+SUMMARY SECTION
+====================== */
+
+.summary-section{
+  background:#FFFFFF;
+  border:0.5px solid #E0E4F0;
+  border-radius:14px;
+  margin:0 20px 24px 20px;
+  padding:16px;
+}
+
+.summary-title{
+  font-size:16px;
+  font-weight:600;
+  color:#1a1a2e;
+  margin-bottom:16px;
+}
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.summary-item{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.summary-label{
+  font-size:10px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  color:#888888;
+}
+
+.summary-value{
+  font-size:16px;
+  font-weight:700;
+  color:#1a1a2e;
+}
+
+.summary-value.profit{
+  color:#43A047;
+}
+
+.summary-value.blue{
+  color:#1976D2;
+}
+
+.summary-value.dark{
+  color:#1a1a2e;
+}
+
+/* ======================
 ANALYTICS GRID
 ====================== */
 
@@ -2352,41 +2580,177 @@ SaaS Dashboard System
 ===================================================== */
 
 /* ======================
-ANALYTICS TABS
+MOBILE HEADER
 ====================== */
 
-.analytics-tabs{
+.mobile-header{
   display:flex;
-  gap:10px;
-  margin-bottom:14px;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 20px;
+  background:#FFFFFF;
+  border-bottom:1px solid #E0E4F0;
 }
 
-/* TAB BUTTON */
-.tab-btn{
-  flex:1;
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 
-  padding:10px;
-
+.baraka-icon{
+  width:40px;
+  height:40px;
+  background:#1976D2;
   border-radius:10px;
-
-  background:#f1f5f9;
-
-  border:1px solid var(--border);
-
-  font-weight:600;
-
-  color:#475569;
-
-  cursor:pointer;
-
-  transition:all 0.15s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  color:white;
 }
 
-/* ACTIVE TAB */
-.tab-btn.active{
-  background:var(--blue);
-  color:white;
+.header-text{
+  display:flex;
+  flex-direction:column;
+}
+
+.header-title{
+  font-size:16px;
+  font-weight:600;
+  color:#1a1a2e;
+}
+
+.header-subtitle{
+  font-size:12px;
+  color:#888888;
+  font-weight:500;
+}
+
+.date-range-pill{
+  background:#E3F2FD;
+  padding:6px 12px;
+  border-radius:16px;
+}
+
+.date-range-pill span{
+  color:#1565C0;
+  font-size:12px;
+  font-weight:600;
+}
+
+/* ======================
+TAB SWITCHER
+====================== */
+
+.tab-switcher{
+  display:flex;
+  background:#F4F6FA;
+  border-radius:20px;
+  padding:4px;
+  margin:16px 20px;
+  gap:4px;
+}
+
+.tab-option{
+  flex:1;
+  padding:10px 16px;
+  border-radius:16px;
   border:none;
+  background:none;
+  font-size:14px;
+  font-weight:600;
+  color:#888888;
+  cursor:pointer;
+  transition:all 0.2s ease;
+}
+
+.tab-option.active{
+  background:#1976D2;
+  color:white;
+}
+
+/* ======================
+STATS GRID
+====================== */
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  padding:0 20px;
+  margin-bottom:24px;
+}
+
+.stat-card{
+  background:#FFFFFF;
+  border:0.5px solid #E0E4F0;
+  border-radius:14px;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.stat-card.primary{
+  background:#1976D2;
+  color:white;
+  grid-column:1 / -1; /* SPAN FULL WIDTH */
+}
+
+.card-label{
+  font-size:10px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  color:#888888;
+}
+
+.stat-card.primary .card-label{
+  color:rgba(255,255,255,0.8);
+}
+
+.card-value{
+  font-size:24px;
+  font-weight:700;
+  color:#1a1a2e;
+  margin:4px 0;
+}
+
+.stat-card.primary .card-value{
+  color:white;
+}
+
+.card-value.profit{
+  color:#43A047;
+}
+
+.card-value.blue{
+  color:#1976D2;
+}
+
+.card-value.dark{
+  color:#1a1a2e;
+}
+
+.card-trend{
+  font-size:12px;
+  font-weight:500;
+  color:#43A047;
+}
+
+.stat-card.primary .card-trend{
+  color:rgba(255,255,255,0.9);
+}
+
+.card-trend.profit{
+  color:#43A047;
+}
+
+.card-subtitle{
+  font-size:11px;
+  color:#888888;
+  margin-top:2px;
 }
 
 /* ======================

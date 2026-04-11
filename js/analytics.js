@@ -257,6 +257,9 @@ function renderWeeklyUI(){
 // 🔥 UPDATE UI WITH REAL DATA
 function updateWeeklyUI(){
 
+// 🔥 UPDATE DATE RANGE IN HEADER
+updateDateRange()
+
   // Cards
   const rev = document.getElementById("weekRevenue")
   const items = document.getElementById("weekItems")
@@ -511,7 +514,71 @@ layout:{
 }
 
 })
+
+// 🔥 UPDATE CHART LEGEND WITH PEAK VALUES
+updateChartLegend(thisWeek, lastWeek)
+
 }
+
+// 🔥 ADD PEAK VALUES TO CHART LEGEND
+function updateChartLegend(thisWeek, lastWeek){
+
+const thisWeekMax = Math.max(...thisWeek)
+const lastWeekMax = Math.max(...lastWeek)
+
+const legendHTML = `
+<div class="chart-legend">
+  <div class="legend-item">
+    <div class="legend-dot current"></div>
+    <span class="legend-text">Bu hafta (${formatShortMoney(thisWeekMax)})</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot previous"></div>
+    <span class="legend-text">O'tgan hafta (${formatShortMoney(lastWeekMax)})</span>
+  </div>
+</div>
+`
+
+// Find chart header and add legend
+const chartHeader = document.querySelector('.chart-header')
+if(chartHeader){
+  // Remove existing legend if any
+  const existingLegend = chartHeader.querySelector('.chart-legend')
+  if(existingLegend) existingLegend.remove()
+
+  // Add new legend
+  chartHeader.insertAdjacentHTML('beforeend', legendHTML)
+}
+}
+
+// 🔥 UPDATE DATE RANGE IN MOBILE HEADER
+function updateDateRange(){
+
+// Calculate current week range
+const now = new Date()
+const weekStart = new Date(now)
+weekStart.setHours(0,0,0,0)
+
+// Monday start (0 = Sunday, so adjust)
+const day = weekStart.getDay()
+const diff = (day === 0 ? -6 : 1 - day)
+weekStart.setDate(weekStart.getDate() + diff)
+
+const weekEnd = new Date(weekStart)
+weekEnd.setDate(weekEnd.getDate() + 6)
+
+// Format dates (DD.MM - DD.MM)
+const startStr = weekStart.toLocaleDateString('uz-UZ', { day: '2-digit', month: '2-digit' })
+const endStr = weekEnd.toLocaleDateString('uz-UZ', { day: '2-digit', month: '2-digit' })
+const dateRange = `${startStr} - ${endStr}`
+
+// Update header
+const dateRangePill = document.querySelector('.date-range-pill span')
+if(dateRangePill){
+  dateRangePill.textContent = dateRange
+}
+}
+
 async function loadDashboardStats(){
 
 if(!currentShopId) return
