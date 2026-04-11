@@ -857,7 +857,7 @@ if(!ctx || !data || !data.labels || !data.values) return
   }
 
   // 🔥 GREEN GRADIENT
-  const chartHeight = ctx.canvas.clientHeight || 260
+  const chartHeight = ctx.clientHeight || 260
   const gradient = ctx.getContext("2d").createLinearGradient(0,0,0,chartHeight)
   gradient.addColorStop(0, "rgba(34,197,94,0.24)")
   gradient.addColorStop(1, "rgba(34,197,94,0.04)")

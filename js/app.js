@@ -140,7 +140,16 @@ const recentSales = []
 
 salesSnapshot.forEach(doc => {
 const sale = doc.data()
-let date = sale.createdAt?.seconds ? new Date(sale.createdAt.seconds * 1000) : new Date(sale.createdAt)
+let date
+if(sale.createdAt?.seconds){
+  date = new Date(sale.createdAt.seconds * 1000)
+} else if(sale.createdAt instanceof Date){
+  date = sale.createdAt
+} else if(typeof sale.createdAt === 'string'){
+  date = new Date(sale.createdAt)
+} else {
+  date = new Date()
+}
 
 if(date >= todayStart){
 
@@ -246,7 +255,7 @@ const items = document.getElementById("todayItems")
 const profit = document.getElementById("todayProfit")
 const debt = document.getElementById("todayDebt")
 
-rev.innerText = formatMoney(todayRevenue)
+if(rev) rev.innerText = formatMoney(todayRevenue)
 if(items) items.innerText = todayItems
 if(profit) profit.innerText = formatMoney(todayProfit)
 if(debt) debt.innerText = formatMoney(todayDebt)
@@ -296,8 +305,8 @@ values: chartValues
 
 // Recent sales
 recentSales.sort((a,b) => {
-  const timeA = a.date.getTime ? a.date.getTime() : new Date(a.date).getTime()
-  const timeB = b.date.getTime ? b.date.getTime() : new Date(b.date).getTime()
+  const timeA = a.date && a.date.getTime ? a.date.getTime() : (a.date ? new Date(a.date).getTime() : 0)
+  const timeB = b.date && b.date.getTime ? b.date.getTime() : (b.date ? new Date(b.date).getTime() : 0)
   return timeB - timeA
 })
 const top7 = recentSales.slice(0,7)
@@ -308,11 +317,14 @@ listEl.innerHTML = ""
 top7.forEach(sale => {
 const item = document.createElement("div")
 item.className = "recent-sale-item"
+const saleTime = (sale.date && sale.date.toLocaleTimeString) ? sale.date.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit' }) : '--:--'
+const itemCount = (sale.items && Array.isArray(sale.items)) ? sale.items.length : 0
+const saleId = (sale.id || '').slice(-6)
 item.innerHTML = `
 <div class="sale-icon">🛒</div>
 <div class="sale-info">
-<div class="sale-title">Sotuv #${sale.id.slice(-6)}</div>
-<div class="sale-meta">${sale.date.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit' })} • ${sale.items ? sale.items.length : 0} ta mahsulot</div>
+<div class="sale-title">Sotuv #${saleId}</div>
+<div class="sale-meta">${saleTime} • ${itemCount} ta mahsulot</div>
 </div>
 <div class="sale-amount">${formatMoney(sale.total)}</div>
 `
