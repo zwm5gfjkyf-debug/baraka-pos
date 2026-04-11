@@ -848,25 +848,31 @@ if(!ctx || !data || !data.labels || !data.values) return
 
   // 🔥 PERFORMANCE: update instead of destroy
   if(todayChart && todayChart.data){
-    todayChart.data.labels = data.labels
+    // Filter labels to show only key times (4-6 labels max)
+    const filteredLabels = filterChartLabels(data.labels)
+    todayChart.data.labels = filteredLabels
     if(todayChart.data.datasets && todayChart.data.datasets[0]){
       todayChart.data.datasets[0].data = data.values
-      todayChart.update()
+      todayChart.update('none')
     }
     return
   }
 
-  // 🔥 GREEN GRADIENT
-  const chartHeight = ctx.clientHeight || 260
+  // 🔥 GREEN GRADIENT - Ultra subtle
+  const chartHeight = ctx.clientHeight || 320
   const gradient = ctx.getContext("2d").createLinearGradient(0,0,0,chartHeight)
-  gradient.addColorStop(0, "rgba(34,197,94,0.24)")
-  gradient.addColorStop(1, "rgba(34,197,94,0.04)")
+  gradient.addColorStop(0, "rgba(34,197,94,0.2)")
+  gradient.addColorStop(0.5, "rgba(34,197,94,0.08)")
+  gradient.addColorStop(1, "rgba(34,197,94,0.01)")
+
+  // Filter labels to show only key times
+  const filteredLabels = filterChartLabels(data.labels)
 
   todayChart = new Chart(ctx,{
     type:"line",
 
     data:{
-      labels: data.labels,
+      labels: filteredLabels,
 
       datasets:[{
 
@@ -876,18 +882,20 @@ if(!ctx || !data || !data.labels || !data.values) return
         backgroundColor: gradient,
 
         fill: true,
-        tension: 0.45,
-        borderWidth: 4,
+        tension: 0.5,
+        borderWidth: 3.5,
+        borderCapStyle: 'round',
+        borderJoinStyle: 'round',
 
-        // 🔥 ONLY LAST POINT
+        // 🔥 ONLY LAST POINT - larger for focus
         pointRadius: (ctx)=>{
-          return ctx.dataIndex === data.values.length - 1 ? 6 : 0
+          return ctx.dataIndex === data.values.length - 1 ? 7 : 0
         },
 
-        pointHoverRadius: 7,
+        pointHoverRadius: 8,
         pointBackgroundColor: "#22c55e",
-        pointBorderColor: "#fff",
-        pointBorderWidth: 2
+        pointBorderColor: "#ffffff",
+        pointBorderWidth: 3
       }]
     },
 
@@ -905,34 +913,21 @@ if(!ctx || !data || !data.labels || !data.values) return
         x:{
           grid:{ display:false },
           ticks:{
-            color:"#64748b",
-            font:{ size:11 },
-            autoSkip:true,
-            maxTicksLimit:6,
+            color:"#94a3b8",
+            font:{ size:12, weight:'500' },
+            autoSkip:false,
             maxRotation:0,
-            callback: function(value){
+            callback: function(value, index){
               return value
             }
           }
         },
 
         y:{
+          display:false,
           beginAtZero:true,
-          maxTicksLimit:5,
-          grid:{
-            color:"rgba(0,0,0,0.06)",
-            drawBorder:false
-          },
-
-          ticks:{
-            color:"#64748b",
-            font:{ size:11 },
-            padding:8,
-            callback: function(value) {
-              if(value === 0) return "0"
-              return formatShortMoney(value) + " so'm"
-            }
-          }
+          grid:{ display:false },
+          ticks:{ display:false }
         }
 
       },
@@ -943,12 +938,12 @@ if(!ctx || !data || !data.labels || !data.values) return
       },
 
       layout:{
-        padding:{ top:8, right:8, bottom:4, left:4 }
+        padding:{ top:16, right:12, bottom:8, left:8 }
       },
 
       elements: {
         point: {
-          hoverRadius: 8
+          hoverRadius: 9
         }
       }
 
@@ -956,6 +951,27 @@ if(!ctx || !data || !data.labels || !data.values) return
 
   })
 
+}
+
+// Helper function to filter labels for clean display
+function filterChartLabels(labels){
+  if(!labels || labels.length < 6) return labels
+  
+  // Keep first, last, and evenly spaced labels (4-6 total)
+  const filtered = []
+  const interval = Math.ceil(labels.length / 5)
+  
+  for(let i = 0; i < labels.length; i += interval){
+    filtered.push(labels[i])
+  }
+  
+  // Ensure last label is always included
+  if(filtered[filtered.length - 1] !== labels[labels.length - 1]){
+    filtered.pop()
+    filtered.push(labels[labels.length - 1])
+  }
+  
+  return filtered
 }
 
 function filterDebtAnalytics(){
