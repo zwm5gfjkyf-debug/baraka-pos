@@ -1359,33 +1359,51 @@ container.appendChild(div)
 }
 function showAnalyticsTab(tab){
 
+// Hide all analytics sections
 document.getElementById("weeklyAnalytics").classList.add("hidden")
 document.getElementById("monthlyAnalytics").classList.add("hidden")
 document.getElementById("extraAnalytics").classList.add("hidden")
 
-document.getElementById("weeklyTab").classList.remove("active")
-document.getElementById("monthlyTab").classList.remove("active")
-document.getElementById("extraTab").classList.remove("active")
+// Remove active class from all tab buttons
+const tabButtons = document.querySelectorAll('.tab-option')
+tabButtons.forEach(button => {
+  button.classList.remove('active')
+})
 
 if(tab === "weekly"){
-document.getElementById("weeklyAnalytics").classList.remove("hidden")
-document.getElementById("weeklyTab").classList.add("active")
+  document.getElementById("weeklyAnalytics").classList.remove("hidden")
 
-// 🔥 ADD THIS
-loadWeeklyAnalytics()
+  // Find and activate the weekly tab button
+  const weeklyButton = Array.from(tabButtons).find(button =>
+    button.textContent.trim() === 'Haftalik'
+  )
+  if(weeklyButton) weeklyButton.classList.add('active')
+
+  // Load weekly analytics
+  loadWeeklyAnalytics()
 }
 
 if(tab === "monthly"){
-document.getElementById("monthlyAnalytics").classList.remove("hidden")
-document.getElementById("monthlyTab").classList.add("active")
+  document.getElementById("monthlyAnalytics").classList.remove("hidden")
 
-// 🔥 ADD THIS
-loadMonthlyAnalytics()
+  // Find and activate the monthly tab button
+  const monthlyButton = Array.from(tabButtons).find(button =>
+    button.textContent.trim() === 'Oylik'
+  )
+  if(monthlyButton) monthlyButton.classList.add('active')
+
+  // Load monthly analytics
+  loadMonthlyAnalytics()
 }
 
 if(tab === "extra"){
-document.getElementById("extraAnalytics").classList.remove("hidden")
-document.getElementById("extraTab").classList.add("active")
+  document.getElementById("extraAnalytics").classList.remove("hidden")
+
+  // Find and activate the extra tab button
+  const extraButton = Array.from(tabButtons).find(button =>
+    button.textContent.trim() === 'Boshqa'
+  )
+  if(extraButton) extraButton.classList.add('active')
 }
 }
 window.showAnalyticsTab = showAnalyticsTab   
