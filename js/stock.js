@@ -107,14 +107,20 @@ const freshData = freshDoc.data()
 
 const newStock = Math.max(0, (freshData.stock || 0) + (qty || 0))
 
-t.update(doc.ref, {
+const updateData = {
 stock: newStock,
 cost: cost || freshData.cost,
 price: price,
 barcode: barcode || freshData.barcode,
 artikul: artikul || freshData.artikul,
 unit: unit || freshData.unit
-})
+}
+
+if(qty > 0){
+updateData.initialStock = newStock
+}
+
+t.update(doc.ref, updateData)
 
 })
 }
@@ -354,18 +360,22 @@ const newStock = Math.max(0, current + add)
 const cost = Number(document.getElementById("editCost").value)
 const price = Number(document.getElementById("editPrice").value)
 
+const updateData = {
+stock: newStock,
+cost: cost,
+price: price
+}
+
+if(add > 0){
+updateData.initialStock = newStock
+}
+
 await db
 .collection("shops")
 .doc(currentShopId)
 .collection("products")
 .doc(editingProductId)
-.update({
-
-stock: newStock,
-cost: cost,
-price: price
-
-})
+.update(updateData)
 
 closeEditModal()
 
@@ -383,14 +393,24 @@ if(field !== "name"){
 value = Number(value)
 }
 
+const updateData = {
+[field]: value
+}
+
+if(field === "stock"){
+const doc = await db.collection("shops").doc(currentShopId).collection("products").doc(id).get()
+const currentStock = doc.data().stock || 0
+if(value > currentStock){
+updateData.initialStock = value
+}
+}
+
 await db
 .collection("shops")
 .doc(currentShopId)
 .collection("products")
 .doc(id)
-.update({
-[field]: value
-})
+.update(updateData)
 
 showTopBanner("Yangilandi", "success")
 }
