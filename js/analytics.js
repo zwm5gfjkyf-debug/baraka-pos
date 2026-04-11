@@ -22,143 +22,152 @@ let weeklyCache = {
   lastWeekByDay: [0,0,0,0,0,0,0],
   topProducts: [],
   bestDay: null,
-  averageDaily: 0
+  averageDaily: 0,
+  revenueChange: 0,
+  profitChange: 0,
+  dateRangeLabel: ""
 }
 
-function loadWeeklyAnalytics(){
-
-if(!currentShopId) return
-
-// 🔥 INSTANT UI RENDER (no delay)
-renderWeeklyUI()
-
-// 🔥 DETACH OLD LISTENER
-if(weeklyListener){
-  weeklyListener()
-  weeklyListener = null
+function calcPercent(current, previous) {
+  if (previous === 0 && current === 0) return 0;
+  if (previous === 0) return 100;
+  return Math.round(((current - previous) / previous) * 100);
 }
 
-// 🔥 CALCULATE TIME RANGES
-const now = new Date()
-const weekStart = new Date(now)
-weekStart.setHours(0,0,0,0)
+function formatPercent(value) {
+  const sign = value >= 0 ? '+' : '';
+  return `${sign}${value}%`;
+}
 
-// Monday start (0 = Sunday, so adjust)
-const day = weekStart.getDay()
-const diff = (day === 0 ? -6 : 1 - day)
-weekStart.setDate(weekStart.getDate() + diff)
+function getWeekStart(offsetWeeks = 0) {
+  const now = new Date();
+  const day = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1) - (offsetWeeks * 7));
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
 
-// Last week same time range
-const lastWeekStart = new Date(weekStart)
-lastWeekStart.setDate(lastWeekStart.getDate() - 7)
-const lastWeekEnd = new Date(lastWeekStart)
-lastWeekEnd.setDate(lastWeekEnd.getDate() + 7)
+function getDayIndex(timestamp) {
+  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const day = date.getDay();
+  return day === 0 ? 6 : day - 1;
+}
 
-// 🔥 REAL-TIME LISTENER (only needed data)
-const salesRef = db.collection("shops").doc(currentShopId).collection("sales")
+function formatDateRange(start, end) {
+  const months = ['Jan','Fev','Mar','Apr','May','Iyn','Iyl','Avg','Sen','Okt','Noy','Dek'];
+  const endDate = new Date(end);
+  endDate.setDate(endDate.getDate() - 1);
+  return `${start.getDate()}-${endDate.getDate()} ${months[start.getMonth()]}`;
+}
 
-weeklyListener = salesRef
-.where("createdAt", ">=", lastWeekStart)
-.orderBy("createdAt")
-.onSnapshot((snapshot) => {
+async function loadWeeklyAnalytics(){
+  if (!currentShopId) return;
 
-  // 🔥 RESET CACHE
-  weeklyCache = {
-    thisWeekRevenue: 0,
-    thisWeekProfit: 0,
-    thisWeekItems: 0,
-    thisWeekSalesCount: 0,
-    lastWeekRevenue: 0,
-    thisWeekByDay: [0,0,0,0,0,0,0],
-    lastWeekByDay: [0,0,0,0,0,0,0],
-    topProducts: {},
-    bestDay: null,
-    averageDaily: 0
+  renderWeeklyUI();
+
+  const thisWeekStart = getWeekStart(0);
+  const thisWeekEnd = new Date(thisWeekStart);
+  thisWeekEnd.setDate(thisWeekStart.getDate() + 7);
+  const lastWeekStart = getWeekStart(1);
+  const lastWeekEnd = new Date(thisWeekStart);
+
+  try {
+    const [thisWeekSnapshot, lastWeekSnapshot] = await Promise.all([
+      db.collection('shops').doc(currentShopId).collection('sales')
+        .where('createdAt', '>=', Timestamp.fromDate(thisWeekStart))
+        .where('createdAt', '<', Timestamp.fromDate(thisWeekEnd))
+        .get(),
+      db.collection('shops').doc(currentShopId).collection('sales')
+        .where('createdAt', '>=', Timestamp.fromDate(lastWeekStart))
+        .where('createdAt', '<', Timestamp.fromDate(lastWeekEnd))
+        .get()
+    ]);
+
+    const thisWeekDocs = thisWeekSnapshot.docs.map(doc => doc.data());
+    const lastWeekDocs = lastWeekSnapshot.docs.map(doc => doc.data());
+
+    const weeklyRevenue = thisWeekDocs.reduce((sum, sale) => sum + (sale.total || 0), 0);
+    const lastWeekRevenue = lastWeekDocs.reduce((sum, sale) => sum + (sale.total || 0), 0);
+    const weeklyProfit = thisWeekDocs.reduce((sum, sale) => sum + (sale.profit || 0), 0);
+    const lastWeekProfit = lastWeekDocs.reduce((sum, sale) => sum + (sale.profit || 0), 0);
+
+    const productsSold = thisWeekDocs.reduce((sum, sale) => {
+      return sum + (sale.items || []).reduce((count, item) => count + (item.quantity || 0), 0);
+    }, 0);
+
+    const salesCount = thisWeekDocs.length;
+    const averageCheck = salesCount > 0 ? Math.round(weeklyRevenue / salesCount) : 0;
+    const revenueChange = calcPercent(weeklyRevenue, lastWeekRevenue);
+    const profitChange = calcPercent(weeklyProfit, lastWeekProfit);
+
+    const thisWeekByDay = [0, 0, 0, 0, 0, 0, 0];
+    const lastWeekByDay = [0, 0, 0, 0, 0, 0, 0];
+
+    thisWeekDocs.forEach(sale => {
+      if (!sale.createdAt) return;
+      const idx = getDayIndex(sale.createdAt);
+      thisWeekByDay[idx] += sale.total || 0;
+    });
+
+    lastWeekDocs.forEach(sale => {
+      if (!sale.createdAt) return;
+      const idx = getDayIndex(sale.createdAt);
+      lastWeekByDay[idx] += sale.total || 0;
+    });
+
+    const productMap = {};
+    thisWeekDocs.forEach(sale => {
+      (sale.items || []).forEach(item => {
+        const name = item.name || "Noma'lum mahsulot";
+        const quantity = item.quantity || 0;
+        const price = item.price || 0;
+
+        if (!productMap[name]) {
+          productMap[name] = { name, quantity: 0, revenue: 0 };
+        }
+        productMap[name].quantity += quantity;
+        productMap[name].revenue += price * quantity;
+      });
+    });
+
+    const topProducts = Object.values(productMap)
+      .sort((a, b) => b.quantity - a.quantity)
+      .slice(0, 3);
+
+    const bestDayIndex = thisWeekByDay.indexOf(Math.max(...thisWeekByDay));
+    const dayNames = ['Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba','Yakshanba'];
+    const bestDayName = dayNames[bestDayIndex] || '-';
+    const bestDayValue = thisWeekByDay[bestDayIndex] || 0;
+
+    const dailyAverage = Math.round(weeklyRevenue / 7);
+    const dateRangeLabel = formatDateRange(thisWeekStart, thisWeekEnd);
+
+    weeklyCache = {
+      thisWeekRevenue: weeklyRevenue,
+      thisWeekProfit: weeklyProfit,
+      thisWeekItems: productsSold,
+      thisWeekSalesCount: salesCount,
+      lastWeekRevenue: lastWeekRevenue,
+      thisWeekByDay,
+      lastWeekByDay,
+      topProducts,
+      bestDay: bestDayName,
+      averageDaily: dailyAverage,
+      revenueChange,
+      profitChange,
+      dateRangeLabel,
+      bestDayValue,
+      salesCount
+    };
+
+    updateWeeklyUI();
+  } catch (error) {
+    console.error('Weekly analytics load failed:', error);
+    showWeeklyError();
   }
-
-  snapshot.forEach(doc => {
-    const sale = doc.data()
-    let date
-
-    // 🔥 SAFE DATE PARSING
-    if(sale.createdAt?.seconds){
-      date = new Date(sale.createdAt.seconds * 1000)
-    } else if(sale.createdAt instanceof Date){
-      date = sale.createdAt
-    } else {
-      date = new Date(sale.createdAt)
-    }
-
-    // 🔥 THIS WEEK (until now)
-    if(date >= weekStart && date <= now){
-
-      // Revenue (cash + card + debt_payment)
-      if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
-        weeklyCache.thisWeekRevenue += sale.total || 0
-      }
-
-      // Sales count
-      if(sale.type === "cash" || sale.type === "debt"){
-        weeklyCache.thisWeekSalesCount++
-      }
-
-      // Items and profit
-      if(sale.items && (sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment")){
-
-        sale.items.forEach(item => {
-          const qty = item.qty || 0
-          const price = item.price || 0
-          const cost = item.cost || 0
-
-          weeklyCache.thisWeekItems += qty
-          weeklyCache.thisWeekProfit += (price - cost) * qty
-
-          // 🔥 TOP PRODUCTS AGGREGATION
-          const productName = item.name || "Noma'lum"
-          if(!weeklyCache.topProducts[productName]){
-            weeklyCache.topProducts[productName] = {
-              quantity: 0,
-              revenue: 0
-            }
-          }
-          weeklyCache.topProducts[productName].quantity += qty
-          weeklyCache.topProducts[productName].revenue += price * qty
-        })
-      }
-
-      // 🔥 BY DAY (this week)
-      const dayIndex = date.getDay()
-      const adjustedIndex = (dayIndex === 0) ? 6 : dayIndex - 1
-
-      if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
-        weeklyCache.thisWeekByDay[adjustedIndex] += sale.total || 0
-      }
-    }
-
-    // 🔥 LAST WEEK (same time range)
-    if(date >= lastWeekStart && date < lastWeekEnd){
-
-      if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
-        weeklyCache.lastWeekRevenue += sale.total || 0
-
-        // 🔥 BY DAY (last week)
-        const dayIndex = date.getDay()
-        const adjustedIndex = (dayIndex === 0) ? 6 : dayIndex - 1
-        weeklyCache.lastWeekByDay[adjustedIndex] += sale.total || 0
-      }
-    }
-  })
-
-  // 🔥 CALCULATE DERIVED METRICS
-  calculateWeeklyMetrics(now, weekStart)
-
-  // 🔥 UPDATE UI
-  updateWeeklyUI()
-
-}, (error) => {
-  console.error("Weekly analytics error:", error)
-})
 }
+
 
 // 🔥 CALCULATE METRICS
 function calculateWeeklyMetrics(now, weekStart){
@@ -182,373 +191,245 @@ function calculateWeeklyMetrics(now, weekStart){
 
 // 🔥 INSTANT UI RENDER
 function renderWeeklyUI(){
+  const rev = document.getElementById('weekRevenueNew');
+  const items = document.getElementById('weekItemsNew');
+  const profit = document.getElementById('weekProfitNew');
+  const avgCheck = document.getElementById('weekAvgCheckNew');
+  const weekPercent = document.getElementById('weekPercentNew');
+  const topProductsEl = document.getElementById('topProductsListNew');
+  const summaryEl = document.getElementById('weeklySummaryNew');
+  const dateRangeEl = document.getElementById('weekDateRange');
 
-  // Cards with zeros
-  const rev = document.getElementById("weekRevenue")
-  const items = document.getElementById("weekItems")
-  const profit = document.getElementById("weekProfit")
-  const avgCheck = document.getElementById("weekAvgCheck")
+  if (dateRangeEl) dateRangeEl.textContent = '—';
+  if (rev) rev.innerText = formatShortMoney(0);
+  if (items) items.innerText = '0';
+  if (profit) profit.innerText = formatShortMoney(0);
+  if (avgCheck) avgCheck.innerText = formatShortMoney(0);
 
-  if(rev) rev.innerText = formatShortMoney(0)
-  if(items) items.innerText = "0"
-  if(profit) profit.innerText = formatShortMoney(0)
-  if(avgCheck) avgCheck.innerText = formatShortMoney(0)
-
-  // Percentages
-  const revPercent = document.getElementById("weekRevenuePercent")
-  const profitPercent = document.getElementById("weekProfitPercent")
-
-  if(revPercent){
-    revPercent.innerText = "0%"
-    revPercent.style.color = "#64748b"
-  }
-  if(profitPercent){
-    profitPercent.innerText = "0%"
-    profitPercent.style.color = "#64748b"
+  if (weekPercent) {
+    weekPercent.innerText = '+0%';
+    weekPercent.classList.remove('negative');
   }
 
-  // Chart placeholder
-  renderWeeklyChart(["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"], [0,0,0,0,0,0,0], [0,0,0,0,0,0,0])
+  renderWeeklyChart(
+    ['Dush','Sesh','Chor','Pay','Jum','Shan','Yak'],
+    [0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0]
+  );
 
-  // Top products placeholder
-  const topProductsEl = document.getElementById("topProductsList")
-  if(topProductsEl){
+  if (topProductsEl) {
     topProductsEl.innerHTML = `
-      <div class="top-product-item">
-        <div class="product-info">
-          <div class="product-name">Yuklanmo...</div>
-          <div class="product-meta">0 dona • 0 so'm</div>
-        </div>
-        <div class="product-bar">
-          <div class="bar-fill" style="width:0%"></div>
+      <div class="product-item-new">
+        <div class="product-rank-new">#1</div>
+        <div class="product-info-new">
+          <div class="product-name-new">Yuklanmoqda...</div>
+          <div class="product-details-new">
+            <span class="product-quantity-new">×0</span>
+            <span class="product-revenue-new">0</span>
+          </div>
+          <div class="product-progress-new">
+            <div class="progress-fill-new" style="width:0%"></div>
+          </div>
         </div>
       </div>
-    `
+    `;
   }
 
-  // Weekly summary placeholder
-  const summaryEl = document.getElementById("weeklySummary")
-  if(summaryEl){
+  if (summaryEl) {
     summaryEl.innerHTML = `
-      <div class="summary-item">
-        <span>Jami tushum</span>
-        <strong>${formatShortMoney(0)}</strong>
+      <div class="summary-row-new">
+        <span class="summary-label-new">Jami tushum</span>
+        <span class="summary-value-new blue">${formatShortMoney(0)}</span>
       </div>
-      <div class="summary-item">
-        <span>Jami foyda</span>
-        <strong>${formatShortMoney(0)}</strong>
+      <div class="summary-row-new">
+        <span class="summary-label-new">Jami foyda</span>
+        <span class="summary-value-new profit">${formatShortMoney(0)}</span>
       </div>
-      <div class="summary-item">
-        <span>Sotuvlar soni</span>
-        <strong>0</strong>
+      <div class="summary-row-new">
+        <span class="summary-label-new">Sotuvlar soni</span>
+        <span class="summary-value-new">0 ta</span>
       </div>
-      <div class="summary-item">
-        <span>Eng yaxshi kun</span>
-        <strong>-</strong>
+      <div class="summary-row-new">
+        <span class="summary-label-new">Eng yaxshi kun</span>
+        <span class="summary-value-new orange">- — 0k</span>
       </div>
-      <div class="summary-item">
-        <span>O'rtacha kunlik</span>
-        <strong>${formatShortMoney(0)}</strong>
+      <div class="summary-row-new">
+        <span class="summary-label-new">O'rtacha kunlik</span>
+        <span class="summary-value-new">${formatShortMoney(0)}</span>
       </div>
-    `
+    `;
   }
 }
 
 // 🔥 UPDATE UI WITH REAL DATA
 function updateWeeklyUI(){
+  const dateRangeEl = document.getElementById('weekDateRange');
+  if (dateRangeEl) dateRangeEl.textContent = weeklyCache.dateRangeLabel;
 
-// 🔥 UPDATE DATE RANGE IN HEADER
-updateDateRange()
+  const rev = document.getElementById('weekRevenueNew');
+  const items = document.getElementById('weekItemsNew');
+  const profit = document.getElementById('weekProfitNew');
+  const avgCheck = document.getElementById('weekAvgCheckNew');
+  const revPercent = document.getElementById('weekRevenuePercentNew');
+  const weekPercent = document.getElementById('weekPercentNew');
 
-  // Cards
-  const rev = document.getElementById("weekRevenue")
-  const items = document.getElementById("weekItems")
-  const profit = document.getElementById("weekProfit")
-  const avgCheck = document.getElementById("weekAvgCheck")
+  if (rev) rev.innerText = formatShortMoney(weeklyCache.thisWeekRevenue);
+  if (items) items.innerText = weeklyCache.thisWeekItems.toLocaleString('uz-UZ');
+  if (profit) profit.innerText = formatShortMoney(weeklyCache.thisWeekProfit);
+  if (avgCheck) avgCheck.innerText = formatShortMoney(weeklyCache.averageDaily);
 
-  if(rev) rev.innerText = formatShortMoney(weeklyCache.thisWeekRevenue)
-  if(items) items.innerText = weeklyCache.thisWeekItems
-  if(profit) profit.innerText = formatShortMoney(weeklyCache.thisWeekProfit)
-  if(avgCheck) avgCheck.innerText = formatShortMoney(
-    weeklyCache.thisWeekSalesCount > 0 ?
-    weeklyCache.thisWeekRevenue / weeklyCache.thisWeekSalesCount : 0
-  )
-
-  // Percentages
-  const revPercent = document.getElementById("weekRevenuePercent")
-  const profitPercent = document.getElementById("weekProfitPercent")
-
-  // Revenue percentage (time-aligned comparison)
-  if(revPercent){
-    const revDiff = weeklyCache.thisWeekRevenue - weeklyCache.lastWeekRevenue
-    let revPct = 0
-    if(weeklyCache.lastWeekRevenue > 0){
-      revPct = (revDiff / weeklyCache.lastWeekRevenue) * 100
-    }
-
-    const sign = revPct >= 0 ? "+" : ""
-    const color = revPct >= 0 ? "#22c55e" : "#ef4444"
-    revPercent.innerText = `${sign}${revPct.toFixed(0)}%`
-    revPercent.style.color = color
+  if (revPercent) {
+    revPercent.innerText = `${weeklyCache.revenueChange >= 0 ? '↑' : '↓'} ${formatPercent(weeklyCache.revenueChange)} o'tgan haftadan`;
+    revPercent.style.color = weeklyCache.revenueChange >= 0 ? '#ffffff' : '#ffffff';
   }
 
-  // Update the comparison block percentage
-  const weekPercent = document.getElementById("weekPercent")
-  if(weekPercent){
-    const revDiff = weeklyCache.thisWeekRevenue - weeklyCache.lastWeekRevenue
-    let revPct = 0
-    if(weeklyCache.lastWeekRevenue > 0){
-      revPct = (revDiff / weeklyCache.lastWeekRevenue) * 100
-    }
-
-    const sign = revPct >= 0 ? "+" : ""
-    const color = revPct >= 0 ? "#22c55e" : "#ef4444"
-    weekPercent.innerText = `${sign}${revPct.toFixed(0)}%`
-    weekPercent.style.color = color
+  if (weekPercent) {
+    weekPercent.innerText = formatPercent(weeklyCache.revenueChange);
+    weekPercent.classList.toggle('negative', weeklyCache.revenueChange < 0);
   }
 
-  // Chart
   renderWeeklyChart(
-    ["Dush","Sesh","Chor","Pay","Jum","Shan","Yak"],
+    ['Dush','Sesh','Chor','Pay','Jum','Shan','Yak'],
     weeklyCache.thisWeekByDay,
     weeklyCache.lastWeekByDay
-  )
+  );
 
-  // Top products
-  updateTopProducts()
+  document.getElementById('lastWeekPeakNew').textContent = formatShortMoney(Math.max(...weeklyCache.lastWeekByDay));
+  document.getElementById('thisWeekPeakNew').textContent = formatShortMoney(Math.max(...weeklyCache.thisWeekByDay));
 
-  // Weekly summary
-  updateWeeklySummary()
+  updateTopProducts();
+  updateWeeklySummary();
 }
 
 // 🔥 TOP PRODUCTS
 function updateTopProducts(){
-  const container = document.getElementById("topProductsList")
-  if(!container) return
+  const container = document.getElementById('topProductsListNew');
+  if (!container) return;
 
-  if(weeklyCache.topProducts.length === 0){
+  if (!weeklyCache.topProducts || weeklyCache.topProducts.length === 0) {
     container.innerHTML = `
-      <div class="top-product-item">
-        <div class="product-info">
-          <div class="product-name">Ma'lumot yo'q</div>
-          <div class="product-meta">Haftada sotuv bo'lmagan</div>
-        </div>
-        <div class="product-bar">
-          <div class="bar-fill" style="width:0%"></div>
-        </div>
+      <div style="text-align:center; color:#888; padding:20px;">
+        Bu hafta sotuvlar yo'q
       </div>
-    `
-    return
+    `;
+    return;
   }
 
-  // Sort by revenue instead of quantity
-  const sortedProducts = Object.entries(weeklyCache.topProducts)
-    .sort(([,a], [,b]) => b.revenue - a.revenue)
-    .slice(0, 3)
+  const maxQuantity = Math.max(...weeklyCache.topProducts.map(product => product.quantity));
 
-  // Find max revenue for progress bar scaling
-  const maxRevenue = Math.max(...sortedProducts.map(([,data]) => data.revenue))
-
-  container.innerHTML = sortedProducts.map(([name, data], index) => {
-    const percentage = maxRevenue > 0 ? (data.revenue / maxRevenue) * 100 : 0
-    const rank = index + 1
+  container.innerHTML = weeklyCache.topProducts.map((product, index) => {
+    const progressWidth = maxQuantity > 0 ? (product.quantity / maxQuantity) * 100 : 0;
     return `
-      <div class="top-product-item">
-        <div class="product-info">
-          <div class="product-rank">#${rank}</div>
-          <div class="product-name">${name}</div>
-          <div class="product-meta">×${data.quantity} • ${formatShortMoney(data.revenue)}</div>
-        </div>
-        <div class="product-bar">
-          <div class="bar-fill" style="width:${percentage}%"></div>
+      <div class="product-item-new">
+        <div class="product-rank-new">#${index + 1}</div>
+        <div class="product-info-new">
+          <div class="product-name-new">${product.name}</div>
+          <div class="product-progress-new">
+            <div class="progress-fill-new" style="width:${progressWidth}%"></div>
+          </div>
+          <div class="product-details-new">
+            <span class="product-quantity-new">×${product.quantity}</span>
+            <span class="product-revenue-new">${formatShortMoney(product.revenue)}</span>
+          </div>
         </div>
       </div>
-    `
-  }).join('')
+    `;
+  }).join('');
 }
 
 // 🔥 WEEKLY SUMMARY
 function updateWeeklySummary(){
-  const container = document.getElementById("weeklySummary")
-  if(!container) return
+  const container = document.getElementById('weeklySummaryNew');
+  if (!container) return;
 
   container.innerHTML = `
-    <div class="summary-item">
-      <span>Jami tushum</span>
-      <strong>${formatShortMoney(weeklyCache.thisWeekRevenue)}</strong>
+    <div class="summary-row-new">
+      <span class="summary-label-new">Jami tushum</span>
+      <span class="summary-value-new blue">${formatShortMoney(weeklyCache.thisWeekRevenue)}</span>
     </div>
-    <div class="summary-item">
-      <span>Jami foyda</span>
-      <strong>${formatShortMoney(weeklyCache.thisWeekProfit)}</strong>
+    <div class="summary-row-new">
+      <span class="summary-label-new">Jami foyda</span>
+      <span class="summary-value-new profit">${formatShortMoney(weeklyCache.thisWeekProfit)}</span>
     </div>
-    <div class="summary-item">
-      <span>Sotuvlar soni</span>
-      <strong>${weeklyCache.thisWeekSalesCount}</strong>
+    <div class="summary-row-new">
+      <span class="summary-label-new">Sotuvlar soni</span>
+      <span class="summary-value-new">${weeklyCache.thisWeekSalesCount} ta</span>
     </div>
-    <div class="summary-item">
-      <span>Eng yaxshi kun</span>
-      <strong>${weeklyCache.bestDay || '-'}</strong>
+    <div class="summary-row-new">
+      <span class="summary-label-new">Eng yaxshi kun</span>
+      <span class="summary-value-new orange">${weeklyCache.bestDay || '-'} — ${formatShortMoney(weeklyCache.bestDayValue || 0)}</span>
     </div>
-    <div class="summary-item">
-      <span>O'rtacha kunlik</span>
-      <strong>${formatShortMoney(weeklyCache.averageDaily)}</strong>
+    <div class="summary-row-new">
+      <span class="summary-label-new">O'rtacha kunlik</span>
+      <span class="summary-value-new">${formatShortMoney(weeklyCache.averageDaily)}</span>
     </div>
-  `
+  `;
 }
 
 
 function renderWeeklyChart(labels, thisWeek, lastWeek){
+  const ctx = document.getElementById('weeklySalesChartNew');
+  if (!ctx) return;
 
-const ctx = document.getElementById("weeklySalesChart")
-if(!ctx) return
-
-if(weeklyChart){
-  weeklyChart.destroy()
-}
-
-// 🔥 FORMAT NUMBERS FOR LABELS
-function formatChartLabel(value){
-  if(value >= 1000000){
-    return (value/1000000).toFixed(1) + 'm'
+  if (weeklyChart) {
+    weeklyChart.destroy();
   }
-  if(value >= 1000){
-    return (value/1000).toFixed(0) + 'k'
-  }
-  return value.toString()
+
+  weeklyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "O'tgan hafta",
+          data: lastWeek,
+          backgroundColor: '#e2e8f0',
+          borderRadius: 6,
+          barThickness: 16,
+          borderSkipped: false,
+          order: 1,
+        },
+        {
+          label: 'Bu hafta',
+          data: thisWeek,
+          backgroundColor: '#2563eb',
+          borderRadius: 6,
+          barThickness: 16,
+          borderSkipped: false,
+          order: 2,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false },
+      },
+      scales: {
+        x: {
+          stacked: false,
+          grid: { display: false },
+          border: { display: false },
+          ticks: { color: '#64748b', font: { size: 12 } },
+        },
+        y: {
+          stacked: false,
+          beginAtZero: true,
+          display: false,
+          grid: { display: false },
+          ticks: { display: false },
+        },
+      },
+      interaction: { mode: 'index', intersect: false },
+      layout: { padding: { top: 12, right: 10, bottom: 10, left: 10 } },
+    },
+  });
 }
 
-weeklyChart = new Chart(ctx,{
-
-type:"bar",
-
-data:{
-labels: labels,
-
-datasets:[
-
-// 🔥 LAST WEEK (gray)
-{
-label: 'O\'tgan hafta',
-data: lastWeek,
-backgroundColor: "#e2e8f0",
-borderRadius: 4,
-barThickness: 16,
-borderSkipped: false,
-order: 1
-},
-
-// 🔥 THIS WEEK (blue)
-{
-label: 'Bu hafta',
-data: thisWeek,
-backgroundColor: "#3b82f6",
-borderRadius: 4,
-barThickness: 16,
-borderSkipped: false,
-order: 2
-}
-
-]
-
-},
-
-options:{
-responsive:true,
-maintainAspectRatio:false,
-
-plugins:{
-legend:{ display:false },
-
-tooltip:{ enabled:false },
-
-// 🔥 SHOW VALUES ABOVE BARS (only this week)
-datalabels:{
-anchor:'end',
-align:'top',
-offset:4,
-
-formatter:(value, ctx)=>{
-// Only show for THIS WEEK bars (dataset index 1)
-if(ctx.datasetIndex !== 1) return ''
-return formatChartLabel(value)
-},
-
-color:'#1e40af',
-font:{
-weight:'600',
-size:11
-}
-}
-},
-
-scales:{
-
-x:{
-stacked:false,
-grid:{display:false},
-border:{display:false},
-ticks:{
-color:"#64748b",
-font:{ size:12 }
-}
-},
-
-y:{
-stacked:false,
-beginAtZero:true,
-display:false,
-grid:{display:false},
-ticks:{display:false}
-}
-},
-
-interaction: {
-  mode: 'index',
-  intersect: false
-},
-
-layout:{
-  padding:{ top:20, right:10, bottom:10, left:10 }
-}
-
-}
-
-})
-
-// 🔥 UPDATE CHART LEGEND WITH PEAK VALUES
-updateChartLegend(thisWeek, lastWeek)
-
-}
-
-// 🔥 ADD PEAK VALUES TO CHART LEGEND
-function updateChartLegend(thisWeek, lastWeek){
-
-const thisWeekMax = Math.max(...thisWeek)
-const lastWeekMax = Math.max(...lastWeek)
-
-const legendHTML = `
-<div class="chart-legend">
-  <div class="legend-item">
-    <div class="legend-dot current"></div>
-    <span class="legend-text">Bu hafta (${formatShortMoney(thisWeekMax)})</span>
-  </div>
-  <div class="legend-item">
-    <div class="legend-dot previous"></div>
-    <span class="legend-text">O'tgan hafta (${formatShortMoney(lastWeekMax)})</span>
-  </div>
-</div>
-`
-
-// Find chart header and add legend
-const chartHeader = document.querySelector('.chart-header')
-if(chartHeader){
-  // Remove existing legend if any
-  const existingLegend = chartHeader.querySelector('.chart-legend')
-  if(existingLegend) existingLegend.remove()
-
-  // Add new legend
-  chartHeader.insertAdjacentHTML('beforeend', legendHTML)
-}
+function updateChartLegend() {
+  return;
 }
 
 // 🔥 UPDATE DATE RANGE IN MOBILE HEADER
@@ -1212,7 +1093,7 @@ if(!ctx || !data || !data.labels || !data.values) return
 
         pointHoverRadius: 8,
         pointBackgroundColor: "#22c55e",
-        pointBorderColor: "#ffffff",
+        pointBorderColor: "#ffffffff",
         pointBorderWidth: 3
       }]
     },
@@ -1358,35 +1239,36 @@ container.appendChild(div)
 
 }
 function showAnalyticsTab(tab){
+  const tabs = document.querySelectorAll('.tab-option');
+  tabs.forEach(button => button.classList.remove('active'));
 
-document.getElementById("weeklyAnalytics").classList.add("hidden")
-document.getElementById("monthlyAnalytics").classList.add("hidden")
-document.getElementById("extraAnalytics").classList.add("hidden")
+  const weeklySection = document.getElementById('weeklyAnalytics');
+  const monthlySection = document.getElementById('monthlyAnalytics');
+  const extraSection = document.getElementById('extraAnalytics');
 
-document.getElementById("weeklyTab").classList.remove("active")
-document.getElementById("monthlyTab").classList.remove("active")
-document.getElementById("extraTab").classList.remove("active")
+  if (weeklySection) weeklySection.classList.add('hidden');
+  if (monthlySection) monthlySection.classList.add('hidden');
+  if (extraSection) extraSection.classList.add('hidden');
 
-if(tab === "weekly"){
-document.getElementById("weeklyAnalytics").classList.remove("hidden")
-document.getElementById("weeklyTab").classList.add("active")
+  if (tab === 'weekly') {
+    if (weeklySection) weeklySection.classList.remove('hidden');
+    const weeklyTab = Array.from(tabs).find(button => button.textContent.trim() === 'Haftalik');
+    if (weeklyTab) weeklyTab.classList.add('active');
+    loadWeeklyAnalytics();
+  }
 
-// 🔥 ADD THIS
-loadWeeklyAnalytics()
-}
+  if (tab === 'monthly') {
+    if (monthlySection) monthlySection.classList.remove('hidden');
+    const monthlyTab = Array.from(tabs).find(button => button.textContent.trim() === 'Oylik');
+    if (monthlyTab) monthlyTab.classList.add('active');
+    loadMonthlyAnalytics();
+  }
 
-if(tab === "monthly"){
-document.getElementById("monthlyAnalytics").classList.remove("hidden")
-document.getElementById("monthlyTab").classList.add("active")
-
-// 🔥 ADD THIS
-loadMonthlyAnalytics()
-}
-
-if(tab === "extra"){
-document.getElementById("extraAnalytics").classList.remove("hidden")
-document.getElementById("extraTab").classList.add("active")
-}
+  if (tab === 'extra') {
+    if (extraSection) extraSection.classList.remove('hidden');
+    const extraTab = Array.from(tabs).find(button => button.textContent.trim() === 'Boshqa');
+    if (extraTab) extraTab.classList.add('active');
+  }
 }
 window.showAnalyticsTab = showAnalyticsTab   
 function openDebtAnalytics(){
