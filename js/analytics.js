@@ -844,13 +844,15 @@ function formatShortMoney(value){
 function renderTodaySalesChart(data){
 
 const ctx = document.getElementById("todaySalesChart")
-if(!ctx) return
+if(!ctx || !data || !data.labels || !data.values) return
 
   // 🔥 PERFORMANCE: update instead of destroy
-  if(todayChart){
+  if(todayChart && todayChart.data){
     todayChart.data.labels = data.labels
-    todayChart.data.datasets[0].data = data.values
-    todayChart.update()
+    if(todayChart.data.datasets && todayChart.data.datasets[0]){
+      todayChart.data.datasets[0].data = data.values
+      todayChart.update()
+    }
     return
   }
 

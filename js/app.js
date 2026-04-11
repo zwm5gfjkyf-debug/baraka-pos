@@ -295,7 +295,11 @@ values: chartValues
 }
 
 // Recent sales
-recentSales.sort((a,b) => b.createdAt.seconds - a.createdAt.seconds)
+recentSales.sort((a,b) => {
+  const timeA = a.date.getTime ? a.date.getTime() : new Date(a.date).getTime()
+  const timeB = b.date.getTime ? b.date.getTime() : new Date(b.date).getTime()
+  return timeB - timeA
+})
 const top7 = recentSales.slice(0,7)
 
 const listEl = document.getElementById("recentSalesList")
