@@ -919,229 +919,133 @@ Hammasini o'chirish
 <!-- ANALYTICS -->
 <div id="analyticsPage" class="page hidden">
 
-
-<!-- TAB SWITCHER -->
-<div class="tab-switcher">
-  <button class="tab-option active" onclick="showAnalyticsTab('weekly')">Haftalik</button>
-  <button class="tab-option" onclick="showAnalyticsTab('monthly')">Oylik</button>
-  <button class="tab-option" onclick="showAnalyticsTab('extra')">Boshqa</button>
-</div>
-
-<h2 class="page-title">Tahlil</h2>
-
-<!-- WEEKLY -->
-<div id="weeklyAnalytics">
-
-<!-- STATS CARDS 2x2 GRID -->
-<div class="stats-grid-new">
-  <!-- CARD 1 - HAFTALIK TUSHUM (PRIMARY BLUE) -->
-  <div class="stat-card-new primary-new">
-    <div class="card-label-new">HAFTALIK TUSHUM</div>
-    <div class="card-value-new" id="weekRevenueNew">0</div>
-    <div class="card-trend-new" id="weekRevenuePercentNew">↑ +0% o'tgan haftadan</div>
-  </div>
-
-  <!-- CARD 2 - HAFTALIK FOYDA -->
-  <div class="stat-card-new">
-    <div class="card-label-new">HAFTALIK FOYDA</div>
-    <div class="card-value-new profit-new" id="weekProfitNew">0</div>
-    <div class="card-trend-new profit-new" id="weekProfitPercentNew">+0%</div>
-  </div>
-
-  <!-- CARD 3 - SOTILGAN MAHSULOT -->
-  <div class="stat-card-new">
-    <div class="card-label-new">SOTILGAN MAHSULOT</div>
-    <div class="card-value-new dark-new" id="weekItemsNew">0</div>
-    <div class="card-subtitle-new">Bu hafta</div>
-  </div>
-
-  <!-- CARD 4 - O'RTACHA CHEK -->
-  <div class="stat-card-new">
-    <div class="card-label-new">O'RTACHA CHEK</div>
-    <div class="card-value-new blue-new" id="weekAvgCheckNew">0</div>
-    <div class="card-subtitle-new">Har bir sotuv</div>
-  </div>
-</div>
-
-<!-- CHART SECTION -->
-<div class="chart-section-new">
-  <div class="chart-header-new">
-    <div class="chart-title-new">Haftalik savdo grafigi</div>
-    <div class="chart-legend-new">
-      <div class="legend-item-new">
-        <div class="legend-dot-new light-blue-new"></div>
-        <span class="legend-text-new">O'tgan hafta</span>
-      </div>
-      <div class="legend-item-new">
-        <div class="legend-dot-new dark-blue-new"></div>
-        <span class="legend-text-new">Bu hafta</span>
-      </div>
+<!-- HEADER -->
+<div class="debt-header">
+  <div class="debt-logo">
+    <div class="debt-logo-square">
+      <div class="debt-logo-circle"></div>
     </div>
   </div>
-  <div class="chart-peak-values-new">
-    <span class="peak-value-new gray-new" id="lastWeekPeakNew">0k</span>
-    <span class="peak-value-new blue-new" id="thisWeekPeakNew">0k</span>
+  <div class="debt-title-section">
+    <div class="debt-subtitle">Do'kon</div>
+    <div class="debt-title">Nasiya tahlili</div>
   </div>
-  <div class="chart-container-new" id="weeklyChartContainerNew">
-    <canvas id="weeklySalesChartNew"></canvas>
+  <button class="debt-new-btn" onclick="openNewDebtModal()">+ Yangi nasiya</button>
+</div>
+
+<!-- RED SUMMARY CARD -->
+<div class="debt-summary-card">
+  <div class="debt-summary-header">
+    <div class="debt-summary-label">UMUMIY NASIYA QARZDORLIK</div>
+    <div class="debt-summary-value" id="totalDebtAmount">0 so'm</div>
+    <div class="debt-summary-subtitle" id="totalDebtSubtitle">0 ta mijoz · 5 Mart 2026 holatiga</div>
   </div>
-  <div class="comparison-strip-new">
-    <div class="comparison-left-new">
-      <span class="comparison-icon-new">📈</span>
-      <span class="comparison-text-new">O'tgan haftaga nisbatan</span>
+  <div class="debt-mini-stats">
+    <div class="debt-mini-stat">
+      <div class="mini-stat-label">MUDDATI O'TGAN</div>
+      <div class="mini-stat-value" id="overdueCount">0 ta</div>
+      <div class="mini-stat-note">Shoshilinch</div>
     </div>
-    <div class="comparison-value-new" id="weekPercentNew">+0%</div>
-  </div>
-</div>
-
-<!-- TOP PRODUCTS -->
-<div class="products-section-new">
-  <div class="products-header-new">
-    <div class="products-title-new">Top mahsulotlar</div>
-    <div class="products-subtitle-new">Bu hafta</div>
-  </div>
-  <div id="topProductsListNew" class="top-products-list-new">
-    <!-- Dynamic content -->
-  </div>
-</div>
-
-<!-- WEEKLY SUMMARY -->
-<div class="summary-section-new">
-  <div class="summary-title-new">Hafta xulosasi</div>
-  <div id="weeklySummaryNew" class="weekly-summary-new">
-    <!-- Dynamic content -->
-  </div>
-</div>
-
-</div>
-
-<!-- MONTHLY -->
-<div id="monthlyAnalytics" class="hidden">
-
-<div class="dashboard-grid">
-
-<div class="dashboard-card glass">
-<div class="card-title">Oylik tushum</div>
-<div id="monthRevenue" class="dashboard-amount">0</div>
-</div>
-
-<div class="dashboard-card glass">
-<div class="card-title">Oyda sotilgan mahsulotlar</div>
-<div id="monthItems" class="dashboard-amount">0</div>
-</div>
-
-</div>
-
-<div class="dashboard-card glass">
-<div class="card-title">Oylik foyda</div>
-<div id="monthProfit" class="dashboard-amount">0</div>
-</div>
-
-<div class="chart-container glass">
-<h3 class="chart-title">Oylik savdo grafigi</h3>
-<div style="overflow-x:auto;">
-  <div style="min-width:600px;">
-    <canvas id="monthlySalesChart"></canvas>
-  </div>
-</div></div>
-
-</div>
-
-<!-- EXTRA -->
-<div id="extraAnalytics" class="hidden">
-
-<button class="btn-primary" onclick="openDebtAnalytics()" style="margin-top:15px;width:100%">
-Nasiya tahlil
-</button>
-
-<button class="btn-secondary" onclick="openSalesAnalytics()" style="margin-top:10px;width:100%">
-Umumiy savdo tahlil
-</button>
-
-<button class="btn-primary" onclick="openShopAnalytics()" style="margin-top:10px;width:100%">
-Do'kon tahlili
-</button>
-
-</div>
-
-</div>
-  <!-- DEBT PAGE -->
-<div id="debtAnalyticsPage" class="page hidden">
-  <div class="debt-analytics-top">
-    <div>
-      <h2 class="page-title">Nasiya tahlili</h2>
-      <p class="debt-analytics-subtitle">Tizimdan olinadigan har bir qarz va tezkor monitoring.</p>
+    <div class="debt-mini-stat">
+      <div class="mini-stat-label">BU OY</div>
+      <div class="mini-stat-value" id="newThisMonthCount">0 ta</div>
+      <div class="mini-stat-note">Yangi</div>
     </div>
-    <button class="btn-secondary debt-add-btn" onclick="openNewDebtModal()">Yangi nasiya</button>
-  </div>
-
-  <div class="debt-summary-grid">
-    <div class="debt-hero-card">
-      <div class="debt-hero-header">
-        <div class="debt-hero-title">Umumiy nasiya qarzdorlik</div>
-        <div id="debtAnalyticsDate" class="debt-hero-date"></div>
-      </div>
-      <div id="debtAnalyticsTotal" class="debt-hero-amount">0 so'm</div>
-      <div class="debt-hero-meta"><span id="debtAnalyticsClients">0</span> mijoz</div>
-    </div>
-    <div class="debt-mini-cards">
-      <div class="debt-mini-card">
-        <div class="mini-label">Muddati o‘tgan</div>
-        <div class="mini-value" id="debtOverdueCount">0</div>
-        <div class="mini-note">Shoshilinch</div>
-      </div>
-      <div class="debt-mini-card">
-        <div class="mini-label">Bu oy</div>
-        <div class="mini-value" id="debtMonthCount">0</div>
-        <div class="mini-note">Joriy oy</div>
-      </div>
-      <div class="debt-mini-card">
-        <div class="mini-label">Eng ko‘p</div>
-        <div class="mini-value" id="debtMaxAmount">0 so'm</div>
-        <div class="mini-note">Yagona mijoz</div>
-      </div>
+    <div class="debt-mini-stat">
+      <div class="mini-stat-label">ENG KO'P</div>
+      <div class="mini-stat-value" id="largestDebtAmount">0</div>
+      <div class="mini-stat-note">so'm</div>
     </div>
   </div>
+</div>
 
-  <div class="debt-controls-row">
-    <div class="debt-search-wrapper">
-      <input id="debtAnalyticsSearch" class="debt-search-input" placeholder="Mijoz qidirish…" oninput="setDebtSearch(this.value)">
-      <button class="debt-clear-search" onclick="clearDebtSearchInput()">✕</button>
-    </div>
-    <button id="debtSortButton" class="debt-sort-button" onclick="toggleDebtSort()">Ko‘p qarz ↓</button>
+<!-- SEARCH BAR -->
+<div class="debt-search-container">
+  <div class="debt-search-input-wrapper">
+    <div class="debt-search-icon">🔍</div>
+    <input type="text" class="debt-search-input" placeholder="Mijoz qidirish..." id="debtSearchInput" oninput="filterDebtCustomers()">
   </div>
+</div>
 
-  <div id="debtAnalyticsList" class="debt-list"></div>
-  <div id="debtEmptyState" class="empty-state hidden">Faol qarzlar topilmadi. Yangi nasiya qo‘shing yoki filtrni tozalang.</div>
+<!-- SECTION HEADER -->
+<div class="debt-section-header">
+  <div class="debt-section-title" id="customersTitle">Mijozlar (0 ta)</div>
+  <button class="debt-sort-btn" id="debtSortBtn" onclick="toggleDebtSort()">Ko'p qarz ↓</button>
+</div>
 
-  <div id="debtPaymentModal" class="debt-modal hidden">
+<!-- CUSTOMER CARDS LIST -->
+<div class="debt-customers-list" id="debtCustomersList">
+  <!-- Customer cards will be inserted here -->
+</div>
+
+<!-- EMPTY STATE -->
+<div class="debt-empty-state hidden" id="debtEmptyState">
+  <div class="debt-empty-icon">✅</div>
+  <div class="debt-empty-title">Barcha nasiyalar to'langan!</div>
+  <div class="debt-empty-subtitle">Hozircha qarzdor mijozlar yo'q</div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="debt-modal-overlay hidden" id="debtPaymentModal">
+  <div class="debt-modal">
+    <div class="debt-modal-handle"></div>
     <div class="debt-modal-content">
-      <button class="debt-modal-close" onclick="closeDebtPaymentModal()">×</button>
-      <div class="modal-title">To‘lov qabul qilish</div>
-      <div class="modal-detail" id="paymentModalCustomer">Mijoz: —</div>
-      <div class="modal-detail" id="paymentModalRemaining">Qolgan qarz: 0 so'm</div>
-      <label class="modal-label">To‘lov summasi</label>
-      <input id="paymentAmountInput" class="modal-input" type="number" inputmode="numeric" placeholder="0">
-      <button class="btn-primary modal-submit" onclick="submitDebtPayment()">To‘lovni tasdiqlash</button>
-    </div>
-  </div>
-
-  <div id="debtNewModal" class="debt-modal hidden">
-    <div class="debt-modal-content">
-      <button class="debt-modal-close" onclick="closeNewDebtModal()">×</button>
-      <div class="modal-title">Yangi nasiya</div>
-      <label class="modal-label">Mijoz nomi</label>
-      <input id="newDebtCustomer" class="modal-input" type="text" placeholder="Mijoz ismi">
-      <label class="modal-label">Telefon</label>
-      <input id="newDebtPhone" class="modal-input" type="tel" placeholder="Optional">
-      <label class="modal-label">Summa</label>
-      <input id="newDebtAmount" class="modal-input" type="number" inputmode="numeric" placeholder="0">
-      <label class="modal-label">Muddati</label>
-      <input id="newDebtDueDate" class="modal-input" type="date">
-      <button class="btn-primary modal-submit" onclick="submitNewDebt()">Saqlash</button>
+      <div class="debt-modal-title">To'lov qabul qilish</div>
+      <div class="debt-modal-customer" id="paymentModalCustomer">Mijoz nomi</div>
+      <div class="debt-modal-debt" id="paymentModalDebt">0 so'm qarz</div>
+      <div class="debt-modal-input-group">
+        <label class="debt-modal-label">To'lov miqdori (so'm)</label>
+        <input type="number" class="debt-modal-input" id="paymentAmountInput" inputmode="numeric">
+      </div>
+      <div class="debt-modal-quick-amounts">
+        <button class="debt-quick-btn" onclick="setQuickAmount(0.25)">25%</button>
+        <button class="debt-quick-btn" onclick="setQuickAmount(0.5)">50%</button>
+        <button class="debt-quick-btn" onclick="setQuickAmount(0.75)">75%</button>
+        <button class="debt-quick-btn" onclick="setQuickAmount(1)">100%</button>
+      </div>
+      <div class="debt-modal-actions">
+        <button class="debt-modal-cancel" onclick="closePaymentModal()">Bekor</button>
+        <button class="debt-modal-confirm" onclick="submitDebtPayment()">Saqlash</button>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- NEW DEBT MODAL -->
+<div class="debt-modal-overlay hidden" id="debtNewModal">
+  <div class="debt-modal">
+    <div class="debt-modal-handle"></div>
+    <div class="debt-modal-content">
+      <div class="debt-modal-title">Yangi nasiya</div>
+      <div class="debt-modal-input-group">
+        <label class="debt-modal-label">Mijoz nomi</label>
+        <input type="text" class="debt-modal-input" id="newDebtCustomerName" placeholder="Mijoz ismi">
+      </div>
+      <div class="debt-modal-input-group">
+        <label class="debt-modal-label">Summa (so'm)</label>
+        <input type="number" class="debt-modal-input" id="newDebtAmount" inputmode="numeric" placeholder="0">
+      </div>
+      <div class="debt-modal-input-group">
+        <label class="debt-modal-label">Muddati</label>
+        <input type="date" class="debt-modal-input" id="newDebtDueDate">
+      </div>
+      <div class="debt-modal-actions">
+        <button class="debt-modal-cancel" onclick="closeNewDebtModal()">Bekor</button>
+        <button class="debt-modal-confirm" onclick="submitNewDebt()">Saqlash</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING SKELETON -->
+<div class="debt-loading-skeleton hidden" id="debtLoadingSkeleton">
+  <div class="debt-skeleton-card"></div>
+  <div class="debt-skeleton-card"></div>
+  <div class="debt-skeleton-card"></div>
+</div>
+
+</div>
+
 
 <!-- SALES PAGE -->
 <div id="salesAnalyticsPage" class="page hidden">
@@ -1784,6 +1688,26 @@ Bekor qilish
 </div>
 
 </div>
+
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav">
+  <button onclick="navigate('dashboardPage')" class="nav-btn">
+    <div class="nav-icon">📊</div>
+    <div class="nav-label">Asosiy</div>
+  </button>
+  <button onclick="navigate('salePage')" class="nav-btn">
+    <div class="nav-icon">🛒</div>
+    <div class="nav-label">Savdo</div>
+  </button>
+  <button onclick="navigate('stockPage')" class="nav-btn">
+    <div class="nav-icon">📦</div>
+    <div class="nav-label">Zaxira</div>
+  </button>
+  <button onclick="navigate('analyticsPage')" class="nav-btn">
+    <div class="nav-icon">📈</div>
+    <div class="nav-label">Tahlil</div>
+  </button>
+</nav>
 
 <!-- TOP BANNER -->
 

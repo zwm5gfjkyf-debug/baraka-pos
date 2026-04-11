@@ -116,13 +116,8 @@ if(pageId === "analyticsPage"){
 
   setTimeout(() => {
 
-    if(typeof showAnalyticsTab === "function"){
-      showAnalyticsTab("weekly")
-    }
-
-    // 🔥 ENSURE DATA LOAD
-    if(typeof loadWeeklyAnalytics === "function"){
-      loadWeeklyAnalytics()
+    if(typeof loadDebtAnalytics === "function"){
+      loadDebtAnalytics()
     }
 
   }, 150)

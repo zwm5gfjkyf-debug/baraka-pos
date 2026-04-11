@@ -1,889 +1,521 @@
 // ===============================
-// BARAKA POS DEBT SYSTEM
+// BARAKA POS DEBT ANALYTICS SYSTEM
+// Real-time Firebase integration
 // ===============================
 
-let debtCart = []
-let debtProcessing = false
-let debtPaymentProcessing = false
-let lastClick = 0
-let debtAnalyticsListener = null
-let debtAnalyticsState = {
-  debts: [],
-  search: '',
-  sortDesc: true
-}
-let debtPaymentTarget = null
-
+let debtAnalyticsListener = null;
+let currentDebtCustomers = [];
+let filteredDebtCustomers = [];
+let debtSortByNewest = false;
 
 // ===============================
-// SEARCH PRODUCTS FOR DEBT
+// UTILITY FUNCTIONS
 // ===============================
 
-function searchDebtProducts(text){
-
-const results = document.getElementById("debtSearchResults")
-if(!results) return
-
-results.innerHTML = ""
-
-if(!text) return
-
-const query = text.toLowerCase()
-
-const keys = productKeys
-let filtered = []
-
-for(let i=0;i<keys.length;i++){
-
-const key = keys[i]
-
-if(key.startsWith(query)){
-filtered = filtered.concat(productIndex[key])
+function formatMoney(value) {
+  if (!value || isNaN(value)) return '0 so\'m';
+  return Math.round(value).toLocaleString('uz-UZ').replace(/,/g, ' ') + ' so\'m';
 }
 
+function formatMoneyShort(value) {
+  if (!value || isNaN(value)) return '0';
+  if (value >= 1000000) return (value/1000000).toFixed(1).replace('.0','') + ' mln';
+  if (value >= 1000) return Math.round(value/1000) + ' 000';
+  return Math.round(value).toString();
 }
 
-filtered.slice(0,10).forEach(product => {
-
-const div = document.createElement("div")
-
-div.className = "search-item"
-
-div.innerHTML = `
-<b>${product.name}</b>
-<span>${formatMoney(product.price)} so'm</span>
-`
-
-div.addEventListener("click", function(e){
-
-e.preventDefault()
-e.stopPropagation()
-
-addDebtToCart(product)
-
-results.innerHTML = ""
-
-})
-
-results.appendChild(div)
-
-})
-
+function formatDate(timestamp) {
+  if (!timestamp) return '—';
+  const months = ['Yanvar','Fevral','Mart','Aprel','May','Iyun',
+                  'Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+  const d = timestamp.toDate();
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+function getInitials(name) {
+  if (!name) return '??';
+  const parts = name.trim().split(' ');
+  if (parts.length >= 2) return parts[0][0].toUpperCase() + parts[1][0].toUpperCase();
+  return parts[0].slice(0, 2).toUpperCase();
+}
+
+function getTodayLabel() {
+  const months = ['Yanvar','Fevral','Mart','Aprel','May','Iyun',
+                  'Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+  const d = new Date();
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 // ===============================
-// ADD PRODUCT TO DEBT CART
+// DATA FETCHING & CALCULATIONS
 // ===============================
 
-function addDebtToCart(product){
+async function loadDebtAnalytics() {
+  if (!currentShopId) return;
 
-const now = Date.now()
+  showDebtLoading();
 
-if(now - lastClick < 300) return
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-lastClick = now
+  try {
+    // Set up real-time listener
+    if (debtAnalyticsListener) {
+      debtAnalyticsListener();
+    }
 
-if(!product || product.stock <= 0){
-showTopBanner("Zaxirada qolmadi","error")
-return
+    debtAnalyticsListener = db.collection('nasiya')
+      .where('shopId', '==', currentShopId)
+      .where('status', '==', 'active')
+      .onSnapshot(snapshot => {
+        processDebtData(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      }, error => {
+        console.error('Debt analytics error:', error);
+        showDebtError();
+      });
+
+  } catch (error) {
+    console.error('Failed to load debt analytics:', error);
+    showDebtError();
+  }
 }
 
-const existing = debtCart.find(i => i.id === product.id)
+function processDebtData(records) {
+  // 1. Calculate remaining debt per record
+  records.forEach(r => {
+    r.remainingDebt = (r.amount || 0) - (r.paidAmount || 0);
+  });
 
-if(existing){
+  // Remove fully paid ones
+  const activeRecords = records.filter(r => r.remainingDebt > 0);
 
-if(existing.qty + 1 > product.stock){
-showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
-return
+  // 2. Group by customer
+  const customerMap = {};
+  activeRecords.forEach(r => {
+    const id = r.customerId;
+    if (!customerMap[id]) {
+      customerMap[id] = {
+        customerId: id,
+        customerName: r.customerName,
+        totalDebt: 0,
+        latestNasiyaDate: r.createdAt,
+        earliestDueDate: r.dueDate,
+        records: []
+      };
+    }
+    customerMap[id].totalDebt += r.remainingDebt;
+    customerMap[id].records.push(r);
+    // Track latest nasiya date
+    if (r.createdAt?.toDate() > customerMap[id].latestNasiyaDate?.toDate()) {
+      customerMap[id].latestNasiyaDate = r.createdAt;
+    }
+    // Track earliest due date (most urgent)
+    if (r.dueDate?.toDate() < customerMap[id].earliestDueDate?.toDate()) {
+      customerMap[id].earliestDueDate = r.dueDate;
+    }
+  });
+
+  const customers = Object.values(customerMap);
+
+  // 3. Calculate summary stats
+  const totalDebt = customers.reduce((sum, c) => sum + c.totalDebt, 0);
+  const customerCount = customers.length;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 4. Overdue customers
+  const overdueCustomers = customers.filter(c => {
+    const due = c.earliestDueDate?.toDate();
+    return due && due < today;
+  });
+  const overdueCount = overdueCustomers.length;
+
+  // 5. New this month
+  const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const newThisMonth = activeRecords.filter(r => {
+    const created = r.createdAt?.toDate();
+    return created && created >= thisMonthStart;
+  });
+  const newThisMonthCustomers = new Set(newThisMonth.map(r => r.customerId)).size;
+
+  // 6. Largest single debt
+  const largestDebt = customers.length > 0
+    ? Math.max(...customers.map(c => c.totalDebt))
+    : 0;
+
+  // 7. Add days diff and status to customers
+  customers.forEach(customer => {
+    const due = customer.earliestDueDate?.toDate();
+    if (due) {
+      const diffMs = due - today;
+      customer.daysDiff = Math.round(diffMs / (1000 * 60 * 60 * 24));
+    } else {
+      customer.daysDiff = null;
+    }
+
+    // Calculate days since created for "new" badge
+    const created = customer.latestNasiyaDate?.toDate();
+    if (created) {
+      const createdDiffMs = today - created;
+      customer.daysSinceCreated = Math.round(createdDiffMs / (1000 * 60 * 60 * 24));
+    } else {
+      customer.daysSinceCreated = null;
+    }
+  });
+
+  // 8. Sort customers
+  sortDebtCustomers(customers);
+
+  // 9. Update UI
+  updateDebtSummary(totalDebt, customerCount, overdueCount, newThisMonthCustomers, largestDebt);
+  renderDebtCustomers(customers, largestDebt);
+
+  currentDebtCustomers = customers;
+  filteredDebtCustomers = [...customers];
 }
-
-existing.qty++
-
-}else{
-
-debtCart.push({
-...product,
-qty:1
-})
-
-}
-
-renderDebtCart()
-
-}
-
 
 // ===============================
-// RENDER DEBT CART
+// SORTING & FILTERING
 // ===============================
 
-function renderDebtCart(){
+function sortDebtCustomers(customers) {
+  customers.sort((a, b) => {
+    const daysA = a.daysDiff ?? 999;
+    const daysB = b.daysDiff ?? 999;
 
-const list = document.getElementById("debtCartList")
-if(!list) return
+    // Overdue first
+    if (daysA < 0 && daysB >= 0) return -1;
+    if (daysB < 0 && daysA >= 0) return 1;
+    if (daysA < 0 && daysB < 0) return daysA - daysB; // most overdue first
 
-list.innerHTML = ""
-
-let total = 0
-
-debtCart.forEach(item => {
-
-const itemTotal = item.price * item.qty
-
-total += itemTotal
-
-const div = document.createElement("div")
-
-div.className = "cart-item"
-
-div.innerHTML = `
-
-<b>${item.name}</b>
-
-<div class="quantity-controls">
-
-<button onclick="decreaseDebtQty('${item.id}')">-</button>
-
-<span>${item.qty}</span>
-
-<button onclick="increaseDebtQty('${item.id}')">+</button>
-
-</div>
-
-<input
-type="number"
-value="${item.price}"
-class="price-input"
-onchange="changeDebtPrice('${item.id}', this.value)"
->
-
-<strong>${formatMoney(itemTotal)} so'm</strong>
-
-`
-
-list.appendChild(div)
-
-})
-
-const totalEl = document.getElementById("debtTotal")
-if(totalEl) totalEl.innerText = formatMoney(total)
+    // Then by debt amount (highest first)
+    return b.totalDebt - a.totalDebt;
+  });
 }
 
-
-// ===============================
-// QTY CONTROLS
-// ===============================
-
-function increaseDebtQty(id){
-
-const item = debtCart.find(i => i.id === id)
-
-if(!item) return
-
-const product = productById[id]
-if(!product){
-showTopBanner("Mahsulot topilmadi","error")
-return
-}
-
-if(item.qty + 1 > product.stock){
-showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
-return
-}
-
-item.qty++
-
-renderDebtCart()
-
-}
-
-function decreaseDebtQty(id){
-
-const item = debtCart.find(i => i.id === id)
-
-if(!item) return
-
-item.qty--
- 
-if(item.qty <= 0){
-debtCart = debtCart.filter(i => i.id !== id)
-}
-
-renderDebtCart()
-
-}
-
-
-function changeDebtPrice(id,newPrice){
-
-const item = debtCart.find(i => i.id === id)
-
-if(!item) return
-
-item.price = Number(newPrice || 0)
-
-renderDebtCart()
-
-}
-
-
-// ===============================
-// COMPLETE DEBT SALE
-// ===============================
-
-async function completeDebtSale(){
-
-if(debtProcessing) return
-debtProcessing = true
-
-const btn = document.getElementById("debtCompleteBtn")
-
-if(btn){
-btn.innerText = "Berilyapti..."
-btn.disabled = true
-}
-
-try{
-
-const customer = document
-.getElementById("debtCustomerName")?.value.trim() || ""
-
-if(!customer){
-showTopBanner("Mijoz ismini kiriting","error")
-if(btn){
-btn.innerText = "Nasiya berish"
-btn.disabled = false
-}
-debtProcessing = false
-return
-}
-
-if(debtCart.length === 0){
-showTopBanner("Mahsulot tanlang","error")
-if(btn){
-btn.innerText = "Nasiya berish"
-btn.disabled = false
-}
-debtProcessing = false
-return
-}
-
-let total = 0
-let profit = 0
-
-debtCart.forEach(i => {
-total += i.price * i.qty
-profit += (i.price - i.cost) * i.qty
-})
-
-const debtsRef = db
-.collection("shops")
-.doc(currentShopId)
-.collection("debts")
-
-await db
-.collection("shops")
-.doc(currentShopId)
-.collection("sales")
-.add({
-items: debtCart,
-total: total,
-type: "debt",
-createdAt: firebase.firestore.FieldValue.serverTimestamp()
-})
-
-const existing = await debtsRef
-.where("customer","==",customer)
-.where("status","in",["unpaid","partial"])
-.get()
- if(existing.empty){
-
-await debtsRef.add({
-customer: customer,
-items: debtCart,
-total: total,
-remaining: total,
-profit: profit,
-status: "unpaid",
-createdAt: firebase.firestore.FieldValue.serverTimestamp()
-})
-
-}else{
-
-const doc = existing.docs[0]
-const data = doc.data()
-
-await doc.ref.update({
-items: [...data.items, ...debtCart],
-total: data.total + total,
-remaining: data.remaining + total,
-profit: (data.profit || 0) + profit
-})
-
-}
-
-
-// ===============================
-// UPDATE STOCK
-// ===============================
-
-for(const item of debtCart){
-
-const ref = db
-.collection("shops")
-.doc(currentShopId)
-.collection("products")
-.doc(item.id)
-
-await db.runTransaction(async t => {
-
-const doc = await t.get(ref)
-const stock = doc.data().stock || 0
-
-if(stock < item.qty){
-showTopBanner("Zaxirada yetarli mahsulot yo'q","error")
-throw new Error("Not enough stock")
-}
-
-t.update(ref,{
-stock: Math.max(0, stock - item.qty)
-})
-
-})
-
-const p = productCache.find(p => p.id === item.id)
-if(p){
-p.stock -= item.qty
-}
-
-}
-
-// CLEAR CART
-
-debtCart = []
-
-renderDebtCart()
-
-if(typeof scanSound !== "undefined"){
-scanSound.currentTime = 0
-scanSound.play().catch(()=>{})
-}
-
-showTopBanner("Nasiya saqlandi","success")
-
-if(btn){
-btn.innerText = "Nasiya berish"
-btn.disabled = false
-}
-
-}
-finally{
-debtProcessing = false
-}
-
-}
-
-
-
-
-// ===============================
-// DEBT ANALYTICS REAL-TIME
-// ===============================
-
-function formatDebtDate(timestamp){
-  if(!timestamp) return '-'
-  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
-  return date.toLocaleDateString('uz-UZ', { day: '2-digit', month: '2-digit', year: 'numeric' })
-}
-
-function getDebtInitials(name){
-  if(!name) return 'NA'
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0,2)
-    .map(part => part[0].toUpperCase())
-    .join('')
-}
-
-function getDebtStatus(debt){
-  const now = new Date()
-  const created = debt.createdAt?.toDate ? debt.createdAt.toDate() : new Date(debt.createdAt || now)
-  const due = debt.dueDate?.toDate ? debt.dueDate.toDate() : new Date(debt.dueDate || now)
-  const totalTime = due - created
-  const elapsed = now - created
-  const progress = totalTime > 0 ? Math.min(Math.max(elapsed / totalTime, 0), 1) : 1
-
-  if(now > due) return { variant: 'overdue', progress, due, created }
-  if(progress >= 0.7) return { variant: 'warning', progress, due, created }
-  return { variant: 'safe', progress, due, created }
-}
-
-function getDebtBadgeText(debt){
-  const now = new Date()
-  const status = getDebtStatus(debt)
-  const due = status.due
-  const created = status.created
-
-  if(status.variant === 'overdue'){
-    const daysOverdue = Math.max(1, Math.ceil((now - due) / (1000 * 60 * 60 * 24)))
-    return `${daysOverdue} kun muddati o'tgan`
+function toggleDebtSort() {
+  debtSortByNewest = !debtSortByNewest;
+  const sortBtn = document.getElementById('debtSortBtn');
+
+  if (debtSortByNewest) {
+    // Sort by newest first
+    filteredDebtCustomers.sort((a, b) => {
+      const dateA = a.latestNasiyaDate?.toDate() || new Date(0);
+      const dateB = b.latestNasiyaDate?.toDate() || new Date(0);
+      return dateB - dateA;
+    });
+    sortBtn.textContent = 'Yangi';
+  } else {
+    // Sort by debt amount
+    sortDebtCustomers(filteredDebtCustomers);
+    sortBtn.textContent = 'Ko\'p qarz ↓';
   }
 
-  if(status.variant === 'warning'){
-    const daysLeft = Math.max(1, Math.ceil((due - now) / (1000 * 60 * 60 * 24)))
-    return `${daysLeft} kun qoldi`
+  renderDebtCustomers(filteredDebtCustomers, Math.max(...filteredDebtCustomers.map(c => c.totalDebt)));
+}
+
+function filterDebtCustomers() {
+  const searchTerm = document.getElementById('debtSearchInput').value.toLowerCase().trim();
+
+  if (!searchTerm) {
+    filteredDebtCustomers = [...currentDebtCustomers];
+  } else {
+    filteredDebtCustomers = currentDebtCustomers.filter(customer =>
+      customer.customerName.toLowerCase().includes(searchTerm)
+    );
   }
 
-  const daysSince = Math.max(1, Math.ceil((now - created) / (1000 * 60 * 60 * 24)))
-  return `Yangi • ${daysSince} kun oldin`
-}
-
-function setDebtSearch(value){
-  debtAnalyticsState.search = (value || '').trim().toLowerCase()
-  renderDebtAnalytics()
-}
-
-function clearDebtSearchInput(){
-  const input = document.getElementById('debtAnalyticsSearch')
-  if(input) input.value = ''
-  setDebtSearch('')
-}
-
-function toggleDebtSort(){
-  debtAnalyticsState.sortDesc = !debtAnalyticsState.sortDesc
-  const button = document.getElementById('debtSortButton')
-  if(button){
-    button.innerText = debtAnalyticsState.sortDesc ? 'Ko‘p qarz ↓' : 'Kam qarz ↑'
-  }
-  renderDebtAnalytics()
-}
-
-function renderDebtAnalytics(){
-  const list = document.getElementById('debtAnalyticsList')
-  const emptyState = document.getElementById('debtEmptyState')
-  const totalBox = document.getElementById('debtAnalyticsTotal')
-  const clientsBox = document.getElementById('debtAnalyticsClients')
-  const overdueBox = document.getElementById('debtOverdueCount')
-  const monthBox = document.getElementById('debtMonthCount')
-  const maxBox = document.getElementById('debtMaxAmount')
-
-  if(!list || !totalBox || !clientsBox || !overdueBox || !monthBox || !maxBox) return
-
-  const now = new Date()
-  const allDebts = debtAnalyticsState.debts
-  const totalDebt = allDebts.reduce((sum, debt) => sum + (debt.remaining || 0), 0)
-  const uniqueClients = new Set(allDebts.map(d => d.customer?.trim() || 'Noma\'lum')).size
-  const overdueCount = allDebts.filter(debt => getDebtStatus(debt).variant === 'overdue').length
-  const monthCount = allDebts.filter(debt => {
-    const created = debt.createdAt?.toDate ? debt.createdAt.toDate() : new Date(debt.createdAt || now)
-    return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear()
-  }).length
-  const maxDebt = allDebts.reduce((max, debt) => Math.max(max, debt.remaining || 0), 0)
-
-  totalBox.innerText = formatMoney(totalDebt)
-  clientsBox.innerText = uniqueClients.toLocaleString('uz-UZ')
-  overdueBox.innerText = overdueCount.toLocaleString('uz-UZ')
-  monthBox.innerText = monthCount.toLocaleString('uz-UZ')
-  maxBox.innerText = formatMoney(maxDebt)
-
-  const search = debtAnalyticsState.search
-  const filtered = allDebts.filter(debt => {
-    const name = (debt.customer || '').toLowerCase()
-    const phone = (debt.phone || '').toLowerCase()
-    return name.includes(search) || phone.includes(search)
-  })
-
-  filtered.sort((a, b) => {
-    const aValue = a.remaining || 0
-    const bValue = b.remaining || 0
-    return debtAnalyticsState.sortDesc ? bValue - aValue : aValue - bValue
-  })
-
-  if(filtered.length === 0){
-    list.innerHTML = ''
-    emptyState.classList.remove('hidden')
-    return
+  // Re-apply current sort
+  if (debtSortByNewest) {
+    filteredDebtCustomers.sort((a, b) => {
+      const dateA = a.latestNasiyaDate?.toDate() || new Date(0);
+      const dateB = b.latestNasiyaDate?.toDate() || new Date(0);
+      return dateB - dateA;
+    });
+  } else {
+    sortDebtCustomers(filteredDebtCustomers);
   }
 
-  emptyState.classList.add('hidden')
+  renderDebtCustomers(filteredDebtCustomers, Math.max(...filteredDebtCustomers.map(c => c.totalDebt)));
+}
 
-  list.innerHTML = filtered.map(debt => {
-    const initials = getDebtInitials(debt.customer)
-    const status = getDebtStatus(debt)
-    const badge = getDebtBadgeText(debt)
-    const progress = Math.round(status.progress * 100)
-    const createdLabel = formatDebtDate(debt.createdAt)
-    const remaining = formatMoney(debt.remaining || 0)
+// ===============================
+// UI RENDERING
+// ===============================
+
+function updateDebtSummary(totalDebt, customerCount, overdueCount, newThisMonthCount, largestDebt) {
+  document.getElementById('totalDebtAmount').textContent = formatMoneyShort(totalDebt) + ' so\'m';
+  document.getElementById('totalDebtSubtitle').textContent = `${customerCount} ta mijoz · ${getTodayLabel()} holatiga`;
+  document.getElementById('overdueCount').textContent = `${overdueCount} ta`;
+  document.getElementById('newThisMonthCount').textContent = `${newThisMonthCount} ta`;
+  document.getElementById('largestDebtAmount').textContent = formatMoneyShort(largestDebt);
+  document.getElementById('customersTitle').textContent = `Mijozlar (${customerCount} ta)`;
+}
+
+function renderDebtCustomers(customers, largestDebt) {
+  const container = document.getElementById('debtCustomersList');
+  const emptyState = document.getElementById('debtEmptyState');
+
+  if (customers.length === 0) {
+    container.innerHTML = '';
+    emptyState.classList.remove('hidden');
+    return;
+  }
+
+  emptyState.classList.add('hidden');
+
+  container.innerHTML = customers.map(customer => {
+    const daysDiff = customer.daysDiff;
+    const daysSinceCreated = customer.daysSinceCreated;
+
+    // Determine status and styling
+    let borderColor, avatarBg, avatarColor, debtColor, statusBadge;
+
+    if (daysDiff < 0) {
+      // Overdue
+      borderColor = '#E53935';
+      avatarBg = '#FFEBEE';
+      avatarColor = '#C62828';
+      debtColor = '#E53935';
+      statusBadge = `${Math.abs(daysDiff)} kun muddati o'tgan`;
+    } else if (daysDiff <= 7) {
+      // Due within 7 days
+      borderColor = '#FF9800';
+      avatarBg = '#FFF3E0';
+      avatarColor = '#E65100';
+      debtColor = '#E65100';
+      statusBadge = daysDiff === 0 ? 'Bugun muddati' : `${daysDiff} kun qoldi`;
+    } else {
+      // Safe
+      borderColor = '#43A047';
+      avatarBg = '#E8F5E9';
+      avatarColor = '#2E7D32';
+      debtColor = '#E65100'; // Orange for debt amount
+      if (daysSinceCreated !== null && daysSinceCreated <= 7) {
+        statusBadge = `Yangi · ${daysSinceCreated} kun oldin`;
+      } else {
+        statusBadge = 'Faol';
+      }
+    }
+
+    const barWidth = largestDebt > 0 ? (customer.totalDebt / largestDebt) * 100 : 0;
 
     return `
-      <div class="debt-customer-card">
-        <div class="debt-card-row">
-          <div class="debt-avatar debt-avatar-${status.variant}">${initials}</div>
-          <div class="debt-card-meta">
-            <div class="debt-name">${debt.customer || 'Noma\'lum mijoz'}</div>
-            <div class="debt-subtitle">Oxirgi nasiya: ${createdLabel}</div>
+      <div class="debt-customer-card" style="border-left-color: ${borderColor}">
+        <div class="debt-customer-header">
+          <div class="debt-customer-avatar" style="background-color: ${avatarBg}; color: ${avatarColor}">
+            ${getInitials(customer.customerName)}
           </div>
-          <div class="debt-amount-block">
-            <div class="debt-amount-value">${remaining}</div>
-            <div class="debt-amount-label">so'm qarz</div>
+          <div class="debt-customer-info">
+            <div class="debt-customer-name">${customer.customerName}</div>
+            <div class="debt-customer-date">Oxirgi nasiya: ${formatDate(customer.latestNasiyaDate)}</div>
+          </div>
+          <div class="debt-customer-amount" style="color: ${debtColor}">
+            ${formatMoneyShort(customer.totalDebt)}
+            <div class="debt-customer-unit">so'm qarz</div>
           </div>
         </div>
-        <div class="debt-progress-track">
-          <div class="debt-progress-fill debt-progress-${status.variant}" style="width:${progress}%;"></div>
+        <div class="debt-customer-progress">
+          <div class="debt-progress-bar">
+            <div class="debt-progress-fill" style="width: ${barWidth}%; background-color: ${borderColor}"></div>
+          </div>
         </div>
-        <div class="debt-card-footer">
-          <span class="debt-badge debt-badge-${status.variant}">${badge}</span>
-          <button class="debt-pay-button" onclick="openDebtPaymentModal('${debt.id}')">To‘lov qabul qilish →</button>
+        <div class="debt-customer-footer">
+          <div class="debt-customer-status" style="background-color: ${avatarBg}; color: ${avatarColor}">
+            ${statusBadge}
+          </div>
+          <button class="debt-payment-btn" onclick="openPaymentModal('${customer.customerId}', '${customer.customerName}', ${customer.totalDebt})">
+            To'lov qabul qilish →
+          </button>
         </div>
       </div>
-    `
-  }).join('')
+    `;
+  }).join('');
 }
 
-function openDebtPaymentModal(id){
-  const debt = debtAnalyticsState.debts.find(item => item.id === id)
-  if(!debt) return
+// ===============================
+// MODAL FUNCTIONS
+// ===============================
 
-  debtPaymentTarget = id
-  const customer = document.getElementById('paymentModalCustomer')
-  const remaining = document.getElementById('paymentModalRemaining')
-  const amountInput = document.getElementById('paymentAmountInput')
-  const modal = document.getElementById('debtPaymentModal')
+function openPaymentModal(customerId, customerName, totalDebt) {
+  document.getElementById('paymentModalCustomer').textContent = customerName;
+  document.getElementById('paymentModalDebt').textContent = formatMoney(totalDebt) + ' qarz';
+  document.getElementById('paymentAmountInput').value = '';
 
-  if(customer) customer.innerText = `Mijoz: ${debt.customer || 'Noma\'lum'}`
-  if(remaining) remaining.innerText = `Qolgan qarz: ${formatMoney(debt.remaining || 0)}`
-  if(amountInput) amountInput.value = ''
-  if(modal) modal.classList.remove('hidden')
+  // Store current payment target
+  window.currentPaymentTarget = { customerId, customerName, totalDebt };
+
+  document.getElementById('debtPaymentModal').classList.remove('hidden');
 }
 
-function closeDebtPaymentModal(){
-  const modal = document.getElementById('debtPaymentModal')
-  if(modal) modal.classList.add('hidden')
-  debtPaymentTarget = null
+function closePaymentModal() {
+  document.getElementById('debtPaymentModal').classList.add('hidden');
+  window.currentPaymentTarget = null;
 }
 
-async function submitDebtPayment(){
-  if(!debtPaymentTarget || debtPaymentProcessing) return
-  const amountInput = document.getElementById('paymentAmountInput')
-  const amount = Number(amountInput?.value || 0)
+function setQuickAmount(percentage) {
+  if (!window.currentPaymentTarget) return;
+  const amount = Math.round(window.currentPaymentTarget.totalDebt * percentage);
+  document.getElementById('paymentAmountInput').value = amount;
+}
 
-  if(!amount || isNaN(amount) || amount <= 0){
-    showTopBanner('To‘lov summasini kiriting', 'error')
-    return
+async function submitDebtPayment() {
+  if (!window.currentPaymentTarget) return;
+
+  const amount = parseFloat(document.getElementById('paymentAmountInput').value);
+  if (!amount || amount <= 0) {
+    showTopBanner('To\'lov summasini kiriting', 'error');
+    return;
   }
 
-  debtPaymentProcessing = true
-  try{
-    const ref = db.collection('shops').doc(currentShopId).collection('debts').doc(debtPaymentTarget)
-    const doc = await ref.get()
-    if(!doc.exists){
-      showTopBanner('Qarz topilmadi', 'error')
-      return
+  if (amount > window.currentPaymentTarget.totalDebt) {
+    showTopBanner('To\'lov summasi qarzdan oshib ketdi', 'error');
+    return;
+  }
+
+  try {
+    // Find the customer's records and distribute payment
+    const customerRecords = currentDebtCustomers.find(c => c.customerId === window.currentPaymentTarget.customerId)?.records || [];
+
+    let remainingPayment = amount;
+    const updates = [];
+
+    // Sort records by due date (earliest first)
+    customerRecords.sort((a, b) => {
+      const dateA = a.dueDate?.toDate() || new Date(9999, 0, 1);
+      const dateB = b.dueDate?.toDate() || new Date(9999, 0, 1);
+      return dateA - dateB;
+    });
+
+    for (const record of customerRecords) {
+      if (remainingPayment <= 0) break;
+
+      const recordRemaining = record.remainingDebt;
+      const paymentForThisRecord = Math.min(remainingPayment, recordRemaining);
+
+      updates.push({
+        docId: record.id,
+        incrementAmount: paymentForThisRecord,
+        newPaidAmount: (record.paidAmount || 0) + paymentForThisRecord,
+        shouldMarkPaid: ((record.paidAmount || 0) + paymentForThisRecord) >= record.amount
+      });
+
+      remainingPayment -= paymentForThisRecord;
     }
 
-    const data = doc.data()
-    const remaining = data.remaining || 0
-    if(amount > remaining){
-      showTopBanner('To‘lov qarzdan katta bo‘lishi mumkin emas', 'error')
-      return
+    // Execute updates
+    for (const update of updates) {
+      await db.collection('nasiya').doc(update.docId).update({
+        paidAmount: firebase.firestore.FieldValue.increment(update.incrementAmount)
+      });
+
+      if (update.shouldMarkPaid) {
+        await db.collection('nasiya').doc(update.docId).update({ status: 'paid' });
+      }
     }
 
-    const profitRatio = data.total ? ((data.profit || 0) / data.total) : 0
-    const profitPart = amount * profitRatio
-    const newRemaining = remaining - amount
+    // Log the payment
+    await db.collection('nasiyaPayments').add({
+      nasiyaId: updates[0]?.docId, // Use first record ID
+      customerId: window.currentPaymentTarget.customerId,
+      customerName: window.currentPaymentTarget.customerName,
+      amount: amount,
+      createdAt: firebase.firestore.Timestamp.now(),
+      shopId: currentShopId
+    });
 
-    await ref.update({
-      remaining: newRemaining,
-      status: newRemaining <= 0 ? 'paid' : 'partial'
-    })
+    showTopBanner('To\'lov muvaffaqiyatli qabul qilindi', 'success');
+    closePaymentModal();
 
-    await db.collection('shops').doc(currentShopId).collection('sales').add({
-      items: [{ name: 'Debt payment', price: amount, cost: amount - profitPart, qty: 1 }],
-      total: amount,
-      type: 'debt_payment',
-      customer: data.customer || '',
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    })
-
-    closeDebtPaymentModal()
-    showTopBanner('To‘lov qabul qilindi', 'success')
-  }
-  catch(error){
-    console.error(error)
-    showTopBanner('Xatolik yuz berdi', 'error')
-  }
-  finally{
-    debtPaymentProcessing = false
+  } catch (error) {
+    console.error('Payment submission error:', error);
+    showTopBanner('To\'lovda xato yuz berdi', 'error');
   }
 }
 
-function openNewDebtModal(){
-  const modal = document.getElementById('debtNewModal')
-  if(modal){
-    modal.classList.remove('hidden')
-  }
+function openNewDebtModal() {
+  document.getElementById('newDebtCustomerName').value = '';
+  document.getElementById('newDebtAmount').value = '';
+  document.getElementById('newDebtDueDate').value = '';
+  document.getElementById('debtNewModal').classList.remove('hidden');
 }
 
-function closeNewDebtModal(){
-  const modal = document.getElementById('debtNewModal')
-  if(modal){
-    modal.classList.add('hidden')
-  }
+function closeNewDebtModal() {
+  document.getElementById('debtNewModal').classList.add('hidden');
 }
 
-async function submitNewDebt(){
-  if(debtProcessing) return
-  const nameInput = document.getElementById('newDebtCustomer')
-  const phoneInput = document.getElementById('newDebtPhone')
-  const amountInput = document.getElementById('newDebtAmount')
-  const dueInput = document.getElementById('newDebtDueDate')
+async function submitNewDebt() {
+  const customerName = document.getElementById('newDebtCustomerName').value.trim();
+  const amount = parseFloat(document.getElementById('newDebtAmount').value);
+  const dueDateValue = document.getElementById('newDebtDueDate').value;
 
-  const customer = nameInput?.value.trim() || ''
-  const phone = phoneInput?.value.trim() || ''
-  const amount = Number(amountInput?.value || 0)
-  const dueDateValue = dueInput?.value || ''
-
-  if(!customer){
-    showTopBanner('Mijoz nomini kiriting', 'error')
-    return
-  }
-  if(!amount || isNaN(amount) || amount <= 0){
-    showTopBanner('To‘lov summasini kiriting', 'error')
-    return
-  }
-  if(!dueDateValue){
-    showTopBanner('Muddati uchun sanani tanlang', 'error')
-    return
+  if (!customerName) {
+    showTopBanner('Mijoz nomini kiriting', 'error');
+    return;
   }
 
-  const now = new Date()
-  const dueDate = new Date(dueDateValue)
-  dueDate.setHours(23,59,59,999)
-
-  if(dueDate <= now){
-    showTopBanner('Muddati bugundan keyin bo‘lishi kerak', 'error')
-    return
+  if (!amount || amount <= 0) {
+    showTopBanner('To\'g\'ri summa kiriting', 'error');
+    return;
   }
 
-  debtProcessing = true
-  try{
-    const debtsRef = db.collection('shops').doc(currentShopId).collection('debts')
-    const existing = await debtsRef
-      .where('customer', '==', customer)
-      .where('status', 'in', ['unpaid', 'partial'])
-      .get()
-
-    if(existing.empty){
-      await debtsRef.add({
-        customer,
-        phone,
-        total: amount,
-        remaining: amount,
-        profit: 0,
-        status: 'unpaid',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        dueDate: firebase.firestore.Timestamp.fromDate(dueDate)
-      })
-    } else {
-      const doc = existing.docs[0]
-      const data = doc.data()
-      await doc.ref.update({
-        total: (data.total || 0) + amount,
-        remaining: (data.remaining || 0) + amount,
-        dueDate: firebase.firestore.Timestamp.fromDate(dueDate),
-        phone,
-        status: 'partial'
-      })
-    }
-
-    await db.collection('shops').doc(currentShopId).collection('sales').add({
-      items: [{ name: 'Debt sale', price: amount, cost: 0, qty: 1 }],
-      total: amount,
-      type: 'debt',
-      customer,
-      phone,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    })
-
-    nameInput.value = ''
-    phoneInput.value = ''
-    amountInput.value = ''
-    dueInput.value = ''
-    closeNewDebtModal()
-    showTopBanner('Yangi nasiya saqlandi', 'success')
-  }
-  catch(error){
-    console.error(error)
-    showTopBanner('Xatolik yuz berdi', 'error')
-  }
-  finally{
-    debtProcessing = false
-  }
-}
-
-async function loadDebtCustomers(){
-  const list = document.getElementById('debtAnalyticsList')
-  const emptyState = document.getElementById('debtEmptyState')
-  const dateBox = document.getElementById('debtAnalyticsDate')
-  if(!list || !currentShopId) return
-
-  if(dateBox){
-    const now = new Date()
-    dateBox.innerText = now.toLocaleDateString('uz-UZ', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  if (!dueDateValue) {
+    showTopBanner('Muddati kiriting', 'error');
+    return;
   }
 
-  if(emptyState) emptyState.classList.add('hidden')
-  if(debtAnalyticsState.debts.length > 0){
-    renderDebtAnalytics()
-  } else {
-    list.innerHTML = '<div class="debt-loading">Yuklanmoqda...</div>'
+  try {
+    const customerId = customerName.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
+    const dueDate = firebase.firestore.Timestamp.fromDate(new Date(dueDateValue));
+
+    await db.collection('nasiya').add({
+      customerId: customerId,
+      customerName: customerName,
+      amount: amount,
+      paidAmount: 0,
+      dueDate: dueDate,
+      createdAt: firebase.firestore.Timestamp.now(),
+      status: 'active',
+      shopId: currentShopId
+    });
+
+    showTopBanner('Yangi nasiya muvaffaqiyatli qo\'shildi', 'success');
+    closeNewDebtModal();
+
+  } catch (error) {
+    console.error('New debt submission error:', error);
+    showTopBanner('Nasiya qo\'shishda xato yuz berdi', 'error');
   }
-
-  if(typeof debtAnalyticsListener === 'function'){
-    debtAnalyticsListener()
-  }
-
-  debtAnalyticsListener = db.collection('shops').doc(currentShopId).collection('debts')
-    .where('remaining', '>', 0)
-    .onSnapshot(snapshot => {
-      const debts = []
-      snapshot.forEach(doc => {
-        const data = doc.data()
-        if(data.remaining <= 0) return
-        debts.push({ id: doc.id, ...data })
-      })
-
-      debtAnalyticsState.debts = debts
-      renderDebtAnalytics()
-    }, error => {
-      console.error('Debt analytics listener failed:', error)
-      if(list) list.innerHTML = '<div class="debt-error">Ma'lumot olinmadi. Internetni tekshiring.</div>'
-    })
 }
 
 // ===============================
-// PAY DEBT
+// LOADING & ERROR STATES
 // ===============================
 
-async function payDebt(id, btn){
-
-if(debtPaymentProcessing) return
-debtPaymentProcessing = true
-
-btn.innerText = "To'lanmoqda..."
-btn.disabled = true
-
-try{
-
-const input = document.getElementById("pay_"+id)
-const amount = Number(input.value)
-
-if(!amount || isNaN(amount)){
-showTopBanner("To'lov summasini kiriting","error")
-return
+function showDebtLoading() {
+  document.getElementById('debtLoadingSkeleton').classList.remove('hidden');
+  document.getElementById('debtCustomersList').innerHTML = '';
+  document.getElementById('debtEmptyState').classList.add('hidden');
 }
 
-const ref = db
-.collection("shops")
-.doc(currentShopId)
-.collection("debts")
-.doc(id)
-
-const doc = await ref.get()
-
-if(!doc.exists){
-showTopBanner("Qarz topilmadi","error")
-return
+function hideDebtLoading() {
+  document.getElementById('debtLoadingSkeleton').classList.add('hidden');
 }
 
-const data = doc.data()
-
-if(amount > data.remaining){
-showTopBanner("To'lov qarzdan katta bo'lishi mumkin emas","error")
-return
+function showDebtError() {
+  hideDebtLoading();
+  // Could add error state UI here
+  showTopBanner('Ma\'lumotlarni yuklashda xato', 'error');
 }
-
-const profitRatio = data.total ? data.profit / data.total : 0
-const profitPart = amount * profitRatio
-
-const newRemaining = data.remaining - amount
-
-if(newRemaining <= 0){
-
-await ref.update({
-remaining: 0,
-status: "paid"
-})
-
-}else{
-
-await ref.update({
-remaining: newRemaining,
-status: "partial"
-})
-
-}
-
-const salesRef = db
-.collection("shops")
-.doc(currentShopId)
-.collection("sales")
-
-await salesRef.add({
-items: [{
-name:"Debt payment",
-price:amount,
-cost:amount - profitPart,
-qty:1
-}],
-total: amount,
-createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-type: "debt_payment"
-})
-
-if(typeof scanSound !== "undefined"){
-scanSound.currentTime = 0
-scanSound.play().catch(()=>{})
-}
-
-showTopBanner("To'lov qabul qilindi","success")
-
-input.value = ""
-
-}
-catch(e){
-console.error(e)
-showTopBanner("Xatolik yuz berdi","error")
-}
-finally{
-
-btn.innerText = "To'lash"
-btn.disabled = false
-debtPaymentProcessing = false
-
-}
-
-}
-
 
 // ===============================
-// CLEAR SEARCH
+// CLEANUP
 // ===============================
 
-function clearDebtSearch(){
-
-const input = document.getElementById("debtSearch")
-
-if(input){
-input.value = ""
-}
-
-const results = document.getElementById("debtSearchResults")
-
-if(results){
-results.innerHTML = ""
-}
-
+function cleanupDebtAnalytics() {
+  if (debtAnalyticsListener) {
+    debtAnalyticsListener();
+    debtAnalyticsListener = null;
+  }
 }
