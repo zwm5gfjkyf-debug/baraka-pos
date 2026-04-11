@@ -829,6 +829,18 @@ function renderTopProducts(stats){
 
 let todayChart = null
 
+function formatShortMoney(value){
+  if(value >= 1000000){
+    const result = value / 1000000
+    return Number.isInteger(result) ? `${result} mln` : `${result.toFixed(1)} mln`
+  }
+  if(value >= 1000){
+    const result = value / 1000
+    return Number.isInteger(result) ? `${result} ming` : `${result.toFixed(1)} ming`
+  }
+  return `${value}`
+}
+
 function renderTodaySalesChart(data){
 
 const ctx = document.getElementById("todaySalesChart")
@@ -843,9 +855,10 @@ if(!ctx) return
   }
 
   // 🔥 GREEN GRADIENT
-  const gradient = ctx.getContext("2d").createLinearGradient(0,0,0,220)
-  gradient.addColorStop(0, "rgba(34,197,94,0.3)")
-  gradient.addColorStop(1, "rgba(34,197,94,0.05)")
+  const chartHeight = ctx.canvas.clientHeight || 260
+  const gradient = ctx.getContext("2d").createLinearGradient(0,0,0,chartHeight)
+  gradient.addColorStop(0, "rgba(34,197,94,0.24)")
+  gradient.addColorStop(1, "rgba(34,197,94,0.04)")
 
   todayChart = new Chart(ctx,{
     type:"line",
@@ -861,14 +874,15 @@ if(!ctx) return
         backgroundColor: gradient,
 
         fill: true,
-        tension: 0.4,
-        borderWidth: 3,
+        tension: 0.45,
+        borderWidth: 4,
 
         // 🔥 ONLY LAST POINT
         pointRadius: (ctx)=>{
           return ctx.dataIndex === data.values.length - 1 ? 6 : 0
         },
 
+        pointHoverRadius: 7,
         pointBackgroundColor: "#22c55e",
         pointBorderColor: "#fff",
         pointBorderWidth: 2
@@ -890,22 +904,31 @@ if(!ctx) return
           grid:{ display:false },
           ticks:{
             color:"#64748b",
-            font:{ size:11 }
+            font:{ size:11 },
+            autoSkip:true,
+            maxTicksLimit:6,
+            maxRotation:0,
+            callback: function(value){
+              return value
+            }
           }
         },
 
         y:{
           beginAtZero:true,
-
+          maxTicksLimit:5,
           grid:{
-            color:"rgba(0,0,0,0.05)"
+            color:"rgba(0,0,0,0.06)",
+            drawBorder:false
           },
 
           ticks:{
             color:"#64748b",
             font:{ size:11 },
+            padding:8,
             callback: function(value) {
-              return formatMoney(value)
+              if(value === 0) return "0"
+              return formatShortMoney(value) + " so'm"
             }
           }
         }
@@ -915,6 +938,10 @@ if(!ctx) return
       interaction: {
         intersect: false,
         mode: 'index'
+      },
+
+      layout:{
+        padding:{ top:8, right:8, bottom:4, left:4 }
       },
 
       elements: {
