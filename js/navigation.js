@@ -116,8 +116,8 @@ if(pageId === "analyticsPage"){
 
   setTimeout(() => {
 
-    if(typeof loadDebtAnalytics === "function"){
-      loadDebtAnalytics()
+    if(typeof loadStoreAnalytics === "function"){
+      loadStoreAnalytics()
     }
 
   }, 150)

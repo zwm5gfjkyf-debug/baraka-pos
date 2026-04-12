@@ -919,130 +919,113 @@ Hammasini o'chirish
 <!-- ANALYTICS -->
 <div id="analyticsPage" class="page hidden">
 
-<!-- HEADER -->
-<div class="debt-header">
-  <div class="debt-logo">
-    <div class="debt-logo-square">
-      <div class="debt-logo-circle"></div>
-    </div>
-  </div>
-  <div class="debt-title-section">
-    <div class="debt-subtitle">Do'kon</div>
-    <div class="debt-title">Nasiya tahlili</div>
-  </div>
-  <button class="debt-new-btn" onclick="openNewDebtModal()">+ Yangi nasiya</button>
-</div>
-
-<!-- RED SUMMARY CARD -->
-<div class="debt-summary-card">
-  <div class="debt-summary-header">
-    <div class="debt-summary-label">UMUMIY NASIYA QARZDORLIK</div>
-    <div class="debt-summary-value" id="totalDebtAmount">0 so'm</div>
-    <div class="debt-summary-subtitle" id="totalDebtSubtitle">0 ta mijoz · 5 Mart 2026 holatiga</div>
-  </div>
-  <div class="debt-mini-stats">
-    <div class="debt-mini-stat">
-      <div class="mini-stat-label">MUDDATI O'TGAN</div>
-      <div class="mini-stat-value" id="overdueCount">0 ta</div>
-      <div class="mini-stat-note">Shoshilinch</div>
-    </div>
-    <div class="debt-mini-stat">
-      <div class="mini-stat-label">BU OY</div>
-      <div class="mini-stat-value" id="newThisMonthCount">0 ta</div>
-      <div class="mini-stat-note">Yangi</div>
-    </div>
-    <div class="debt-mini-stat">
-      <div class="mini-stat-label">ENG KO'P</div>
-      <div class="mini-stat-value" id="largestDebtAmount">0</div>
-      <div class="mini-stat-note">so'm</div>
-    </div>
-  </div>
-</div>
-
-<!-- SEARCH BAR -->
-<div class="debt-search-container">
-  <div class="debt-search-input-wrapper">
-    <div class="debt-search-icon">🔍</div>
-    <input type="text" class="debt-search-input" placeholder="Mijoz qidirish..." id="debtSearchInput" oninput="filterDebtCustomers()">
-  </div>
-</div>
-
-<!-- SECTION HEADER -->
-<div class="debt-section-header">
-  <div class="debt-section-title" id="customersTitle">Mijozlar (0 ta)</div>
-  <button class="debt-sort-btn" id="debtSortBtn" onclick="toggleDebtSort()">Ko'p qarz ↓</button>
-</div>
-
-<!-- CUSTOMER CARDS LIST -->
-<div class="debt-customers-list" id="debtCustomersList">
-  <!-- Customer cards will be inserted here -->
-</div>
-
-<!-- EMPTY STATE -->
-<div class="debt-empty-state hidden" id="debtEmptyState">
-  <div class="debt-empty-icon">✅</div>
-  <div class="debt-empty-title">Barcha nasiyalar to'langan!</div>
-  <div class="debt-empty-subtitle">Hozircha qarzdor mijozlar yo'q</div>
-</div>
-
-<!-- PAYMENT MODAL -->
-<div class="debt-modal-overlay hidden" id="debtPaymentModal">
-  <div class="debt-modal">
-    <div class="debt-modal-handle"></div>
-    <div class="debt-modal-content">
-      <div class="debt-modal-title">To'lov qabul qilish</div>
-      <div class="debt-modal-customer" id="paymentModalCustomer">Mijoz nomi</div>
-      <div class="debt-modal-debt" id="paymentModalDebt">0 so'm qarz</div>
-      <div class="debt-modal-input-group">
-        <label class="debt-modal-label">To'lov miqdori (so'm)</label>
-        <input type="number" class="debt-modal-input" id="paymentAmountInput" inputmode="numeric">
+  <div class="analytics-header">
+    <div class="analytics-title-wrapper">
+      <div class="analytics-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 9.5L12 4l9 5.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5Z" fill="white"/>
+          <path d="M9 21V12h6v9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
-      <div class="debt-modal-quick-amounts">
-        <button class="debt-quick-btn" onclick="setQuickAmount(0.25)">25%</button>
-        <button class="debt-quick-btn" onclick="setQuickAmount(0.5)">50%</button>
-        <button class="debt-quick-btn" onclick="setQuickAmount(0.75)">75%</button>
-        <button class="debt-quick-btn" onclick="setQuickAmount(1)">100%</button>
-      </div>
-      <div class="debt-modal-actions">
-        <button class="debt-modal-cancel" onclick="closePaymentModal()">Bekor</button>
-        <button class="debt-modal-confirm" onclick="submitDebtPayment()">Saqlash</button>
+      <div>
+        <div class="analytics-text-small">Do'kon</div>
+        <div class="analytics-text-large">Do'kon tahlili</div>
       </div>
     </div>
+    <div id="healthPill" class="health-pill safe">Sog'lom ✓</div>
   </div>
-</div>
 
-<!-- NEW DEBT MODAL -->
-<div class="debt-modal-overlay hidden" id="debtNewModal">
-  <div class="debt-modal">
-    <div class="debt-modal-handle"></div>
-    <div class="debt-modal-content">
-      <div class="debt-modal-title">Yangi nasiya</div>
-      <div class="debt-modal-input-group">
-        <label class="debt-modal-label">Mijoz nomi</label>
-        <input type="text" class="debt-modal-input" id="newDebtCustomerName" placeholder="Mijoz ismi">
+  <div id="storeAnalysisContent">
+
+    <div class="blue-hero-card">
+      <div class="blue-hero-label">OMBORDAGI TOVAR QIYMATI</div>
+      <div id="inventoryValueLabel" class="blue-hero-value">0 so'm</div>
+      <div id="inventoryHeroSubtitle" class="blue-hero-subtitle">0 xil mahsulot · 0 ta birlik</div>
+    </div>
+
+    <div class="qiyma-card">
+      <div class="qiyma-title">Qiymat tahlili</div>
+
+      <div class="qiyma-row">
+        <div class="qiyma-label">Sotib olish</div>
+        <div class="qiyma-bar-track">
+          <div id="buyBar" class="qiyma-bar-fill qiyma-bar-buy" style="width:0%;">0</div>
+        </div>
+        <div id="buyPercent" class="qiyma-percent">0%</div>
       </div>
-      <div class="debt-modal-input-group">
-        <label class="debt-modal-label">Summa (so'm)</label>
-        <input type="number" class="debt-modal-input" id="newDebtAmount" inputmode="numeric" placeholder="0">
+
+      <div class="qiyma-row">
+        <div class="qiyma-label">Sotish narxi</div>
+        <div class="qiyma-bar-track">
+          <div id="sellBar" class="qiyma-bar-fill qiyma-bar-sell" style="width:100%;">0</div>
+        </div>
+        <div id="sellPercent" class="qiyma-percent">100%</div>
       </div>
-      <div class="debt-modal-input-group">
-        <label class="debt-modal-label">Muddati</label>
-        <input type="date" class="debt-modal-input" id="newDebtDueDate">
-      </div>
-      <div class="debt-modal-actions">
-        <button class="debt-modal-cancel" onclick="closeNewDebtModal()">Bekor</button>
-        <button class="debt-modal-confirm" onclick="submitNewDebt()">Saqlash</button>
+
+      <div class="qiyma-row">
+        <div class="qiyma-label">Potensial foyda</div>
+        <div class="qiyma-bar-track">
+          <div id="profitBar" class="qiyma-bar-fill qiyma-bar-profit" style="width:0%;">0</div>
+        </div>
+        <div id="profitPercent" class="qiyma-percent">0%</div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- LOADING SKELETON -->
-<div class="debt-loading-skeleton hidden" id="debtLoadingSkeleton">
-  <div class="debt-skeleton-card"></div>
-  <div class="debt-skeleton-card"></div>
-  <div class="debt-skeleton-card"></div>
-</div>
+    <div class="stats-grid">
+      <div class="stats-card green">
+        <div class="stats-label">POTENSIAL FOYDA</div>
+        <div id="potentialProfitValue" class="stats-value green">0</div>
+        <div class="stats-subtitle">so'm</div>
+      </div>
+      <div class="stats-card blue">
+        <div class="stats-label">O'RTACHA MARJA</div>
+        <div id="averageMarginValue" class="stats-value blue">0%</div>
+        <div class="stats-subtitle">foyda foizi</div>
+      </div>
+      <div class="stats-card orange">
+        <div class="stats-label">MAHSULOT TURLARI</div>
+        <div id="productTypesValue" class="stats-value orange">0 ta</div>
+        <div class="stats-subtitle">zaxirada</div>
+      </div>
+      <div class="stats-card red">
+        <div class="stats-label">TUGAGAN</div>
+        <div id="outOfStockValue" class="stats-value red">0 ta</div>
+        <div class="stats-subtitle">mahsulot</div>
+      </div>
+    </div>
+
+    <div class="products-card">
+      <div class="products-header">
+        <div class="products-title">Mahsulot bo'yicha zaxira</div>
+        <div class="products-subtitle">Sotish narxida</div>
+      </div>
+      <div id="productsList"></div>
+    </div>
+
+    <div class="status-card">
+      <div class="status-title">Do'kon holati</div>
+      <div id="statusRows"></div>
+    </div>
+  </div>
+
+  <div id="storeAnalysisLoading" class="hidden">
+    <div class="skeleton-card skeleton-pulse"></div>
+    <div class="skeleton-card skeleton-pulse"></div>
+    <div class="skeleton-card skeleton-pulse"></div>
+  </div>
+
+  <div id="storeAnalysisError" class="error-state hidden">
+    <div class="error-state-title">Ma'lumotlarni yuklashda xato</div>
+    <div class="error-state-text">Ma'lumotlarni qayta olish uchun qayta urinish tugmasini bosing.</div>
+    <button class="error-state-button" onclick="retryStoreAnalysis()">Qayta urinish</button>
+  </div>
+
+  <div id="storeAnalysisEmpty" class="empty-state hidden">
+    <div class="empty-state-icon">🏠</div>
+    <div class="empty-state-title">Mahsulotlar yo'q</div>
+    <div class="empty-state-subtitle">Zaxira bo'limidan mahsulot qo'shing</div>
+    <button class="empty-state-button" onclick="navigate('stockPage')">Zaxiraga o'tish</button>
+  </div>
 
 </div>
 
