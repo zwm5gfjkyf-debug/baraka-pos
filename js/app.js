@@ -215,11 +215,11 @@ function renderDashboard(){
 }
 
 function calculateTodayRevenue(){
-  return todaySalesData.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0)
+  return todaySalesData.reduce((sum, sale) => sum + (Number(sale.amount) || 0), 0)
 }
 
 function calculateYesterdayRevenue(){
-  return yesterdaySalesData.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0)
+  return yesterdaySalesData.reduce((sum, sale) => sum + (Number(sale.amount) || 0), 0)
 }
 
 function calculateRevenueChange(today, yesterday){
@@ -356,7 +356,7 @@ function calculateCumulativeRevenueUpTo(targetTime){
       const saleTime = sale.createdAt?.toDate ? sale.createdAt.toDate() : new Date(sale.createdAt)
       return saleTime <= targetTime
     })
-    .reduce((sum, sale) => sum + (Number(sale.total) || 0), 0)
+    .reduce((sum, sale) => sum + (Number(sale.amount) || 0), 0)
 }
 
 function updateRecentSales(){
@@ -405,7 +405,7 @@ function updateRecentSales(){
         <div style="font-size:15px; font-weight:700; color:#1a1a2e;">Sotuv #${saleNumber}</div>
         <div style="font-size:12px; color:#aaa; margin-top:2px;">${timeStr} · ${itemCount} ta mahsulot</div>
       </div>
-      <div style="font-size:16px; font-weight:700; color:#1976D2;">${formatMoney(sale.total)}</div>
+      <div style="font-size:16px; font-weight:700; color:#1976D2;">${formatMoney(sale.amount)}</div>
     `
 
     container.appendChild(saleDiv)

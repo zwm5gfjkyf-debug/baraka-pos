@@ -6153,13 +6153,14 @@ Mobile-first responsive design
   .stats-grid { grid-template-columns: 1fr; }
 }
 
-/* SKELETON LOADING */
+/* SKELETON LOADING ANIMATION */
 .skeleton {
-  background: #e0e0e0;
-  animation: pulse 1.5s ease-in-out infinite alternate;
+  background: linear-gradient(90deg, #e8eaed 0%, #f0f2f5 50%, #e8eaed 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }
 
-@keyframes pulse {
-  from { opacity: 0.4; }
-  to { opacity: 1; }
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

@@ -342,112 +342,107 @@ Hammasini o'chirish
 <div id="dashboardPage" class="page" style="background:#F4F6FA; padding-bottom:120px;">
 
   <!-- HEADER -->
-  <div style="background:white; padding:14px 20px;">
+  <div style="background:white; padding:16px 20px; border-bottom:1px solid #E8EAF0;">
     <div style="display:flex; align-items:center; justify-content:space-between;">
       <div style="display:flex; align-items:center; gap:12px;">
-        <div style="width:44px; height:44px; background:#1976D2; border-radius:12px; display:flex; align-items:center; justify-content:center;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+        <div style="width:48px; height:48px; background:#1976D2; border-radius:14px; display:flex; align-items:center; justify-content:center;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
             <path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"/>
             <path d="M9 8H11V17H9V8ZM13 8H15V17H13V8Z"/>
           </svg>
         </div>
         <div>
-          <div style="font-size:12px; color:#888;">Do'kon</div>
-          <div style="font-size:22px; font-weight:800; color:#1a1a2e; letter-spacing:0.02em;">BARAKA</div>
+          <div style="font-size:12px; font-weight:500; color:#888; letter-spacing:0.5px;">Do'kon</div>
+          <div style="font-size:24px; font-weight:800; color:#1a1a2e; letter-spacing:0.02em;">BARAKA</div>
         </div>
       </div>
       <div style="text-align:right;">
-        <div id="currentDate" style="font-size:13px; color:#888;">28 Mart, 2026</div>
-        <div id="currentTime" style="font-size:16px; font-weight:700; color:#1976D2;">14:28</div>
+        <div id="currentDate" style="font-size:13px; color:#999; font-weight:500;">28 Mart, 2026</div>
+        <div id="currentTime" style="font-size:17px; font-weight:700; color:#1976D2;">14:28</div>
       </div>
     </div>
   </div>
 
   <!-- LOADING STATE -->
   <div id="loadingState" style="display:block;">
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px 16px; margin-bottom:20px;">
-      <div class="skeleton" style="height:80px; border-radius:14px;"></div>
-      <div class="skeleton" style="height:80px; border-radius:14px;"></div>
-      <div class="skeleton" style="height:80px; border-radius:14px;"></div>
-      <div class="skeleton" style="height:80px; border-radius:14px;"></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:16px 16px; margin-bottom:20px;">
+      <div class="skeleton" style="height:100px; border-radius:16px;"></div>
+      <div class="skeleton" style="height:100px; border-radius:16px;"></div>
+      <div class="skeleton" style="height:100px; border-radius:16px;"></div>
+      <div class="skeleton" style="height:100px; border-radius:16px;"></div>
     </div>
-    <div class="skeleton" style="height:140px; border-radius:14px; margin:0 16px; margin-bottom:20px;"></div>
+    <div class="skeleton" style="height:200px; border-radius:16px; margin:0 16px; margin-bottom:20px;"></div>
     <div style="padding:0 16px;">
-      <div class="skeleton" style="height:60px; border-radius:14px; margin-bottom:8px;"></div>
-      <div class="skeleton" style="height:60px; border-radius:14px; margin-bottom:8px;"></div>
-      <div class="skeleton" style="height:60px; border-radius:14px;"></div>
+      <div class="skeleton" style="height:70px; border-radius:16px; margin-bottom:10px;"></div>
+      <div class="skeleton" style="height:70px; border-radius:16px; margin-bottom:10px;"></div>
+      <div class="skeleton" style="height:70px; border-radius:16px;"></div>
     </div>
   </div>
 
   <!-- 2x2 STATS GRID -->
-  <div id="statsGrid" style="display:none;">
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px 16px;">
+  <div id="statsGrid" style="display:none; margin:20px 16px; gap:12px; display:grid; grid-template-columns:1fr 1fr;">
     <!-- BUGUNGI TUSHUM -->
-    <div style="background:#1976D2; border-radius:14px; padding:14px;">
-      <div style="font-size:9px; color:rgba(255,255,255,0.75); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">BUGUNGI TUSHUM</div>
-      <div style="font-size:20px; font-weight:800; color:white; display:inline;">
-        <span id="todayRevenueNumber">0</span>
-        <span style="font-size:14px; font-weight:500; margin-left:3px;">so'm</span>
+    <div style="background:#1976D2; border-radius:18px; padding:20px; box-shadow:0 2px 8px rgba(25,118,210,0.15);">
+      <div style="font-size:10px; color:rgba(255,255,255,0.7); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">Bugungi tushum</div>
+      <div style="font-size:32px; font-weight:800; color:white; margin-bottom:8px;">
+        <span id="todayRevenueNumber">0</span><span style="font-size:20px; font-weight:600; margin-left:4px;">so'm</span>
       </div>
-      <div id="revenueChange" style="font-size:11px; color:rgba(255,255,255,0.85); margin-top:4px;">↑ 0% kechagidan</div>
+      <div id="revenueChange" style="font-size:12px; color:rgba(255,255,255,0.85); font-weight:500;">↑ 0% kechagidan</div>
     </div>
 
     <!-- BUGUNGI FOYDA -->
-    <div style="background:white; border-radius:14px; padding:14px; border:0.5px solid #E0E4F0;">
-      <div style="font-size:9px; color:#aaa; font-weight:600; text-transform:uppercase; margin-bottom:8px;">BUGUNGI FOYDA</div>
-      <div id="todayProfit" style="font-size:20px; font-weight:800; color:#43A047;">0 so'm</div>
-      <div id="profitStatus" style="font-size:11px; color:#43A047; margin-top:4px;">Hozircha sotuv yo'q</div>
+    <div style="background:white; border-radius:18px; padding:20px; border:1px solid #E8EAF0; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="font-size:10px; color:#999; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">Bugungi foyda</div>
+      <div id="todayProfit" style="font-size:32px; font-weight:800; color:#43A047; margin-bottom:8px;">0 so'm</div>
+      <div id="profitStatus" style="font-size:12px; color:#43A047; font-weight:500;">Hozircha sotuv yo'q</div>
     </div>
 
     <!-- SOTILGAN MAHSULOT -->
-    <div style="background:white; border-radius:14px; padding:14px; border:0.5px solid #E0E4F0;">
-      <div style="font-size:9px; color:#aaa; font-weight:600; text-transform:uppercase; margin-bottom:8px;">SOTILGAN MAHSULOT</div>
-      <div id="productsSold" style="font-size:28px; font-weight:800; color:#1976D2;">0</div>
-      <div style="font-size:11px; color:#aaa; margin-top:4px;">Bugun</div>
+    <div style="background:white; border-radius:18px; padding:20px; border:1px solid #E8EAF0; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="font-size:10px; color:#999; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">Sotilgan mahsulot</div>
+      <div id="productsSold" style="font-size:32px; font-weight:800; color:#1976D2; margin-bottom:8px;">0</div>
+      <div style="font-size:12px; color:#999; font-weight:500;">Bugun</div>
     </div>
 
     <!-- NASIYA -->
-    <div style="background:white; border-radius:14px; padding:14px; border:0.5px solid #E0E4F0;">
-      <div style="font-size:9px; color:#aaa; font-weight:600; text-transform:uppercase; margin-bottom:8px;">NASIYA</div>
-      <div id="nasiyaTotal" style="font-size:20px; font-weight:800; color:#FB8C00;">0 so'm</div>
-      <div id="nasiyaStatus" style="font-size:11px; color:#FB8C00; margin-top:4px;">Qarzdorlik yo'q</div>
+    <div style="background:white; border-radius:18px; padding:20px; border:1px solid #E8EAF0; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+      <div style="font-size:10px; color:#999; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;">Nasiya</div>
+      <div id="nasiyaTotal" style="font-size:32px; font-weight:800; color:#FB8C00; margin-bottom:8px;">0 so'm</div>
+      <div id="nasiyaStatus" style="font-size:12px; color:#999; font-weight:500;">Qarzdorlik yo'q</div>
     </div>
-  </div>
   </div>
 
   <!-- BUGUNGI SAVDO GRAFIGI CARD -->
-  <div id="chartCard" style="display:none; background:white; border-radius:14px; padding:16px; margin:0 16px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <div style="font-size:16px; font-weight:700; color:#1a1a2e;">Bugungi savdo grafigi</div>
-      <div style="background:#E8F5E9; color:#2E7D32; font-size:11px; font-weight:600; padding:4px 12px; border-radius:20px;">Jonli</div>
+  <div id="chartCard" style="display:none; background:white; border-radius:18px; padding:24px; margin:20px 16px; border:1px solid #E8EAF0; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <div style="font-size:18px; font-weight:700; color:#1a1a2e;">Bugungi savdo grafigi</div>
+      <div style="background:#E8F5E9; color:#2E7D32; font-size:12px; font-weight:600; padding:6px 14px; border-radius:20px;">Jonli</div>
     </div>
-    <div style="height:140px;">
+    <div style="height:180px;">
       <canvas id="revenueChart"></canvas>
     </div>
-    <div style="display:flex; justify-content:space-between; margin-top:8px;">
-      <div style="font-size:11px; color:#aaa;">09:00</div>
-      <div style="font-size:11px; color:#aaa;">11:00</div>
-      <div style="font-size:11px; color:#aaa;">13:00</div>
-      <div style="font-size:11px; color:#aaa;">15:00</div>
-      <div style="font-size:11px; color:#aaa;">Hozir</div>
+    <div style="display:flex; justify-content:space-between; margin-top:12px; padding:0 8px;">
+      <div style="font-size:11px; color:#aaa; font-weight:500;">09:00</div>
+      <div style="font-size:11px; color:#aaa; font-weight:500;">11:00</div>
+      <div style="font-size:11px; color:#aaa; font-weight:500;">13:00</div>
+      <div style="font-size:11px; color:#aaa; font-weight:500;">15:00</div>
+      <div style="font-size:11px; color:#aaa; font-weight:500;">Hozir</div>
     </div>
   </div>
 
   <!-- SO'NGGI SOTUVLAR SECTION -->
-  <div id="recentSection" style="display:none; padding:0 16px; margin-top:24px;">
+  <div id="recentSection" style="display:none; padding:0 16px; margin-top:24px; margin-bottom:40px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <div style="font-size:18px; font-weight:700; color:#1a1a2e;">So'nggi sotuvlar</div>
-      <button onclick="navigate('analyticsPage')" style="background:none; border:none; color:#1976D2; font-size:14px; font-weight:600; cursor:pointer;">Barchasini ko'rish →</button>
+      <div style="font-size:20px; font-weight:700; color:#1a1a2e;">So'nggi sotuvlar</div>
+      <button onclick="navigate('analyticsPage')" style="background:none; border:none; color:#1976D2; font-size:15px; font-weight:600; cursor:pointer; padding:0;">Barchasini ko'rish →</button>
     </div>
-    <div id="recentSalesContainer">
-      <!-- Recent sales will be inserted here -->
-    </div>
+    <div id="recentSalesContainer"></div>
   </div>
 
   <!-- ERROR STATE -->
-  <div id="errorState" style="display:none; text-align:center; padding:50px; color:#666;">
-    Ma'lumotlarni yuklashda xato<br>
-    <button onclick="retryLoad()" style="margin-top:20px; background:#1976D2; color:white; border:none; padding:10px 20px; border-radius:8px;">Qayta urinish</button>
+  <div id="errorState" style="display:none; text-align:center; padding:60px 20px; color:#666;">
+    <div style="font-size:16px; margin-bottom:20px;">Ma'lumotlarni yuklashda xato</div>
+    <button onclick="retryLoad()" style="background:#1976D2; color:white; border:none; padding:12px 24px; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer;">Qayta urinish</button>
   </div>
 
 </div>
