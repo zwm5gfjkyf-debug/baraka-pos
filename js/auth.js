@@ -16,6 +16,11 @@ auth.onAuthStateChanged(async (user) => {
     if(authScreen) authScreen.style.display = "none"
     if(appScreen) appScreen.classList.remove("hidden")
 
+    // Navigate to dashboard
+    if(typeof navigate === "function"){
+      navigate('dashboardPage')
+    }
+
     // load inventory
     if(typeof loadCurrentStock === "function"){
       loadCurrentStock()
