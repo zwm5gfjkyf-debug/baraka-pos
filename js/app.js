@@ -100,36 +100,48 @@ syncOfflineSales()
 async function loadDashboard(){
   if(!currentShopId) return
 
-  // Unsubscribe previous listeners
-  if(todaySalesListener) todaySalesListener()
-  if(yesterdaySalesListener) yesterdaySalesListener()
-  if(nasiyaListener) nasiyaListener()
-  if(timeUpdateInterval) clearInterval(timeUpdateInterval)
+  cleanupDashboardListeners()
 
-  // Initialize data
   todaySalesData = []
   yesterdaySalesData = []
   nasiyaData = []
 
-  // Show loading, hide others
-  document.getElementById('loadingState').style.display = 'block'
-  document.getElementById('statsGrid').style.display = 'none'
-  document.getElementById('chartCard').style.display = 'none'
-  document.getElementById('recentSection').style.display = 'none'
-  document.getElementById('errorState').style.display = 'none'
+  const loadingState = document.getElementById('loadingState')
+  const statsGrid = document.getElementById('statsGrid')
+  const chartCard = document.getElementById('chartCard')
+  const recentSection = document.getElementById('recentSection')
+  const errorState = document.getElementById('errorState')
 
-  // Set up time updates
+  if(loadingState) loadingState.style.display = 'block'
+  if(statsGrid) statsGrid.style.display = 'none'
+  if(chartCard) chartCard.style.display = 'none'
+  if(recentSection) recentSection.style.display = 'none'
+  if(errorState) errorState.style.display = 'none'
+
   updateTimeAndDate()
-  timeUpdateInterval = setInterval(updateTimeAndDate, 60000) // Update every minute
+  timeUpdateInterval = setInterval(updateTimeAndDate, 60000)
 
-  // Set up listeners
   setupTodaySalesListener()
   setupYesterdaySalesListener()
   setupNasiyaListener()
   loadSidebarData()
 
-  // Initial render
   renderDashboard()
+}
+
+function cleanupDashboardListeners(){
+  if(typeof todaySalesListener === 'function') todaySalesListener()
+  if(typeof yesterdaySalesListener === 'function') yesterdaySalesListener()
+  if(typeof nasiyaListener === 'function') nasiyaListener()
+
+  todaySalesListener = null
+  yesterdaySalesListener = null
+  nasiyaListener = null
+
+  if(timeUpdateInterval){
+    clearInterval(timeUpdateInterval)
+    timeUpdateInterval = null
+  }
 }
 
 function updateTimeAndDate(){
@@ -160,9 +172,17 @@ function setupTodaySalesListener(){
     .onSnapshot(snapshot => {
       todaySalesData = []
       snapshot.forEach(doc => {
-        const data = doc.data()
-        data.id = doc.id
-        todaySalesData.push(data)
+        const raw = doc.data() || {}
+        const sale = {
+          id: doc.id,
+          saleNumber: Number(raw.saleNumber) || null,
+          total: Number(raw.total ?? raw.amount) || 0,
+          profit: Number(raw.profit) || 0,
+          itemsCount: Number(raw.itemsCount) || (Array.isArray(raw.items) ? raw.items.length : 0),
+          paymentType: raw.paymentType || '',
+          createdAt: raw.createdAt || null
+        }
+        todaySalesData.push(sale)
       })
       renderDashboard()
     }, error => {
@@ -186,11 +206,16 @@ function setupYesterdaySalesListener(){
     .onSnapshot(snapshot => {
       yesterdaySalesData = []
       snapshot.forEach(doc => {
-        yesterdaySalesData.push(doc.data())
+        const raw = doc.data() || {}
+        yesterdaySalesData.push({
+          total: Number(raw.total ?? raw.amount) || 0,
+          createdAt: raw.createdAt || null
+        })
       })
       renderDashboard()
     }, error => {
       console.error('Yesterday sales listener error:', error)
+      showErrorState()
     })
 }
 
@@ -203,7 +228,13 @@ function setupNasiyaListener(){
     .onSnapshot(snapshot => {
       nasiyaData = []
       snapshot.forEach(doc => {
-        nasiyaData.push(doc.data())
+        const raw = doc.data() || {}
+        nasiyaData.push({
+          amount: Number(raw.amount) || 0,
+          paidAmount: Number(raw.paidAmount) || 0,
+          status: raw.status || '',
+          createdAt: raw.createdAt || null
+        })
       })
       renderDashboard()
     }, error => {
@@ -213,7 +244,6 @@ function setupNasiyaListener(){
 }
 
 function renderDashboard(){
-  // Calculations
   const todayRevenue = calculateTodayRevenue()
   const yesterdayRevenue = calculateYesterdayRevenue()
   const revenueChange = calculateRevenueChange(todayRevenue, yesterdayRevenue)
@@ -221,28 +251,29 @@ function renderDashboard(){
   const productsSold = calculateProductsSold()
   const nasiyaTotal = calculateNasiyaTotal()
 
-  // Update stats cards
   updateStatsCards(todayRevenue, revenueChange, todayProfit, productsSold, nasiyaTotal)
-
-  // Update chart
-  updateRevenueChart(todayRevenue)
-
-  // Update recent sales
+  updateRevenueChart()
   updateRecentSales()
 
-  // Hide loading, show content
-  document.getElementById('loadingState').style.display = 'none'
-  document.getElementById('statsGrid').style.display = 'block'
-  document.getElementById('chartCard').style.display = 'block'
-  document.getElementById('recentSection').style.display = 'block'
+  const loadingState = document.getElementById('loadingState')
+  const statsGrid = document.getElementById('statsGrid')
+  const chartCard = document.getElementById('chartCard')
+  const recentSection = document.getElementById('recentSection')
+  const errorState = document.getElementById('errorState')
+
+  if(loadingState) loadingState.style.display = 'none'
+  if(statsGrid) statsGrid.style.display = 'grid'
+  if(chartCard) chartCard.style.display = 'block'
+  if(recentSection) recentSection.style.display = 'block'
+  if(errorState) errorState.style.display = 'none'
 }
 
 function calculateTodayRevenue(){
-  return todaySalesData.reduce((sum, sale) => sum + (Number(sale.amount) || 0), 0)
+  return todaySalesData.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0)
 }
 
 function calculateYesterdayRevenue(){
-  return yesterdaySalesData.reduce((sum, sale) => sum + (Number(sale.amount) || 0), 0)
+  return yesterdaySalesData.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0)
 }
 
 function calculateRevenueChange(today, yesterday){
@@ -256,7 +287,7 @@ function calculateTodayProfit(){
 }
 
 function calculateProductsSold(){
-  return todaySalesData.reduce((sum, sale) => sum + (Number(sale.itemsCount) || 0), 0)
+  return todaySalesData.reduce((sum, sale) => sum + (Number(sale.itemsCount) || (Array.isArray(sale.items) ? sale.items.length : 0)), 0)
 }
 
 function calculateNasiyaTotal(){

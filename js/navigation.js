@@ -5,7 +5,7 @@
 let currentPage = null;
 
 function navigate(pageId){
-
+  const previousPage = currentPage;
   currentPage = pageId;
 
 /* ================================
@@ -47,7 +47,16 @@ if(page){
   ================================ */
   const appHeader = document.querySelector('.app-header');
   if(appHeader){
-    appHeader.style.display = 'flex';
+    appHeader.style.display = pageId === 'dashboardPage' ? 'none' : 'flex';
+  }
+
+  const mainContent = document.querySelector('.main-content');
+  if(mainContent){
+    mainContent.style.paddingTop = pageId === 'dashboardPage' ? '0' : '80px';
+  }
+
+  if(previousPage === 'dashboardPage' && pageId !== 'dashboardPage' && typeof cleanupDashboardListeners === 'function'){
+    cleanupDashboardListeners()
   }
 
   /* ================================
