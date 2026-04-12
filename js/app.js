@@ -7,6 +7,16 @@ let currentShopId = null
 window.currentShopId = null
 let dashboardSalesCache = []
 let dashboardListener = null
+
+// Dashboard listeners and data
+let todaySalesListener = null
+let yesterdaySalesListener = null
+let nasiyaListener = null
+let todaySalesData = []
+let yesterdaySalesData = []
+let nasiyaData = []
+let timeUpdateInterval = null
+let revenueChart = null
 // =============================
 // AUTH STATE
 // =============================
@@ -66,278 +76,367 @@ syncOfflineSales()
 // =============================
 
 async function loadDashboard(){
+  if(!currentShopId) return
 
-if(!currentShopId) return
+  // Unsubscribe previous listeners
+  if(todaySalesListener) todaySalesListener()
+  if(yesterdaySalesListener) yesterdaySalesListener()
+  if(nasiyaListener) nasiyaListener()
+  if(timeUpdateInterval) clearInterval(timeUpdateInterval)
 
-const salesRef = db
-.collection("shops")
-.doc(currentShopId)
-.collection("sales")
+  // Initialize data
+  todaySalesData = []
+  yesterdaySalesData = []
+  nasiyaData = []
 
-if(dashboardListener){
-  dashboardListener()
-  dashboardListener = null
+  // Set up time updates
+  updateTimeAndDate()
+  timeUpdateInterval = setInterval(updateTimeAndDate, 60000) // Update every minute
+
+  // Set up listeners
+  setupTodaySalesListener()
+  setupYesterdaySalesListener()
+  setupNasiyaListener()
+
+  // Initial render
+  renderDashboard()
 }
 
-const now = new Date()
-const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+function updateTimeAndDate(){
+  const now = new Date()
+  const timeStr = now.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit', hour12: false })
+  const dateStr = formatDate()
 
-const rev = document.getElementById("todayRevenue")
-const items = document.getElementById("todayItems")
-const profit = document.getElementById("todayProfit")
-const debt = document.getElementById("todayDebt")
-const changeEl = document.getElementById("todayRevenueChange")
-const profitStatus = document.getElementById("profitStatusText")
-const debtStatus = document.getElementById("debtStatusText")
-const listEl = document.getElementById("recentSalesList")
+  const timeEl = document.getElementById('currentTime')
+  const dateEl = document.getElementById('currentDate')
 
-if(rev) rev.innerText = formatMoney(0)
-if(items) items.innerText = 0
-if(profit) profit.innerText = formatMoney(0)
-if(debt) debt.innerText = formatMoney(0)
-if(changeEl){
-  changeEl.innerText = "0% kechagidan"
-  changeEl.style.color = "#64748b"
-}
-if(profitStatus){
-  profitStatus.innerText = "Yaxshi ko‘rsatkich"
-  profitStatus.style.color = "#16a34a"
-}
-if(debtStatus){
-  debtStatus.innerText = "Qarzdorlik yo‘q"
-  debtStatus.style.color = "#16a34a"
-}
-if(listEl) listEl.innerHTML = ""
-
-const currentTimeLabel = now.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit', hour12:false })
-if(typeof renderTodaySalesChart === "function"){
-  renderTodaySalesChart({
-    labels:["00:00", currentTimeLabel],
-    values:[0,0]
-  })
+  if(timeEl) timeEl.textContent = timeStr
+  if(dateEl) dateEl.textContent = dateStr
 }
 
-dashboardListener = salesRef
-.where("createdAt", ">=", todayStart)
-.orderBy("createdAt")
-.onSnapshot((salesSnapshot) => {
+function setupTodaySalesListener(){
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const tomorrowStart = new Date(todayStart)
+  tomorrowStart.setDate(tomorrowStart.getDate() + 1)
 
-let todayRevenue = 0
-let todayItems = 0
-let todayProfit = 0
-let todayDebt = 0
-
-// Buckets for chart (30 min intervals)
-const bucketSize = 30 * 60 * 1000 // 30 min
-const buckets = []
-const startTime = todayStart.getTime()
-const endTime = now.getTime()
-for(let time = startTime; time <= endTime; time += bucketSize){
-buckets.push({ time, total: 0 })
+  todaySalesListener = db
+    .collection('shops')
+    .doc(currentShopId)
+    .collection('sales')
+    .where('createdAt', '>=', todayStart)
+    .where('createdAt', '<', tomorrowStart)
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(snapshot => {
+      todaySalesData = []
+      snapshot.forEach(doc => {
+        const data = doc.data()
+        data.id = doc.id
+        todaySalesData.push(data)
+      })
+      renderDashboard()
+    }, error => {
+      console.error('Today sales listener error:', error)
+      showErrorState()
+    })
 }
 
-const recentSales = []
+function setupYesterdaySalesListener(){
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterdayStart = new Date(todayStart)
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1)
 
-salesSnapshot.forEach(doc => {
-const sale = doc.data()
-let date
-if(sale.createdAt?.seconds){
-  date = new Date(sale.createdAt.seconds * 1000)
-} else if(sale.createdAt instanceof Date){
-  date = sale.createdAt
-} else if(typeof sale.createdAt === 'string'){
-  date = new Date(sale.createdAt)
-} else {
-  date = new Date()
+  yesterdaySalesListener = db
+    .collection('shops')
+    .doc(currentShopId)
+    .collection('sales')
+    .where('createdAt', '>=', yesterdayStart)
+    .where('createdAt', '<', todayStart)
+    .onSnapshot(snapshot => {
+      yesterdaySalesData = []
+      snapshot.forEach(doc => {
+        yesterdaySalesData.push(doc.data())
+      })
+      renderDashboard()
+    }, error => {
+      console.error('Yesterday sales listener error:', error)
+    })
 }
 
-if(date >= todayStart){
-
-// Revenue from cash/card/debt_payment
-if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
-todayRevenue += sale.total || 0
-// Add to bucket
-const saleTime = date.getTime()
-const bucketIndex = Math.floor((saleTime - startTime) / bucketSize)
-if(bucketIndex < buckets.length){
-buckets[bucketIndex].total += sale.total || 0
-}
-}
-
-// Debt tracking
-if(sale.type === "debt"){
-todayDebt += sale.total || 0
-}
-if(sale.type === "debt_payment"){
-todayDebt -= sale.total || 0
+function setupNasiyaListener(){
+  nasiyaListener = db
+    .collection('shops')
+    .doc(currentShopId)
+    .collection('nasiya')
+    .where('status', '==', 'active')
+    .onSnapshot(snapshot => {
+      nasiyaData = []
+      snapshot.forEach(doc => {
+        nasiyaData.push(doc.data())
+      })
+      renderDashboard()
+    }, error => {
+      console.error('Nasiya listener error:', error)
+      showErrorState()
+    })
 }
 
-// Items sold (cash + debt)
-if(sale.items && (sale.type === "cash" || sale.type === "debt")){
-sale.items.forEach(item => {
-todayItems += item.qty || 0
-})
+function renderDashboard(){
+  // Calculations
+  const todayRevenue = calculateTodayRevenue()
+  const yesterdayRevenue = calculateYesterdayRevenue()
+  const revenueChange = calculateRevenueChange(todayRevenue, yesterdayRevenue)
+  const todayProfit = calculateTodayProfit()
+  const productsSold = calculateProductsSold()
+  const nasiyaTotal = calculateNasiyaTotal()
+
+  // Update stats cards
+  updateStatsCards(todayRevenue, revenueChange, todayProfit, productsSold, nasiyaTotal)
+
+  // Update chart
+  updateRevenueChart(todayRevenue)
+
+  // Update recent sales
+  updateRecentSales()
 }
 
-// Profit from cash/card + debt payments
-if(sale.items && (sale.type === "cash" || sale.type === "card")){
-sale.items.forEach(item => {
-const qty = item.qty || 0
-const price = item.price || 0
-const cost = item.cost || 0
-todayProfit += (price - cost) * qty
-})
-}
-if(sale.type === "debt_payment"){
-todayProfit += sale.profitPart || 0
+function calculateTodayRevenue(){
+  return todaySalesData.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0)
 }
 
-// Collect for recent sales
-recentSales.push({
-id: doc.id,
-...sale,
-date
-})
-}
-})
-
-const changeEl = document.getElementById("todayRevenueChange")
-if(changeEl){
-  changeEl.innerText = "0% kechagidan"
-  changeEl.style.color = "#64748b"
+function calculateYesterdayRevenue(){
+  return yesterdaySalesData.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0)
 }
 
-const currentTime = new Date()
-const yesterdayStart = new Date(todayStart)
-yesterdayStart.setDate(yesterdayStart.getDate() - 1)
-const yesterdayEnd = new Date(yesterdayStart)
-yesterdayEnd.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds(), currentTime.getMilliseconds())
+function calculateRevenueChange(today, yesterday){
+  if(today === 0 && yesterday === 0) return 0
+  if(yesterday === 0 && today > 0) return 100
+  return Math.round(((today - yesterday) / yesterday) * 100)
+}
 
-salesRef
-.where("createdAt", ">=", yesterdayStart)
-.where("createdAt", "<=", yesterdayEnd)
-.get()
-.then(yesterdaySnapshot => {
-  let yesterdayRevenue = 0
-  yesterdaySnapshot.forEach(doc => {
-    const sale = doc.data()
-    if(sale.type === "cash" || sale.type === "card" || sale.type === "debt_payment"){
-      yesterdayRevenue += sale.total || 0
+function calculateTodayProfit(){
+  return todaySalesData.reduce((sum, sale) => {
+    if(sale.type === 'debt_payment') return sum + (Number(sale.profitPart) || 0)
+    if((sale.type === 'cash' || sale.type === 'card') && sale.items){
+      return sum + sale.items.reduce((itemSum, item) => {
+        const qty = Number(item.qty) || 0
+        const price = Number(item.price) || 0
+        const cost = Number(item.cost) || 0
+        return itemSum + (price - cost) * qty
+      }, 0)
     }
-  })
+    return sum
+  }, 0)
+}
 
-  const difference = todayRevenue - yesterdayRevenue
-  let percent = 0
-  if(yesterdayRevenue > 0){
-    percent = (difference / yesterdayRevenue) * 100
+function calculateProductsSold(){
+  return todaySalesData.reduce((sum, sale) => {
+    if(sale.itemsCount) return sum + Number(sale.itemsCount)
+    if(sale.items) return sum + sale.items.length
+    return sum
+  }, 0)
+}
+
+function calculateNasiyaTotal(){
+  return nasiyaData.reduce((sum, debt) => {
+    const amount = Number(debt.amount) || 0
+    const paid = Number(debt.paidAmount) || 0
+    return sum + Math.max(0, amount - paid)
+  }, 0)
+}
+
+function updateStatsCards(todayRevenue, revenueChange, todayProfit, productsSold, nasiyaTotal){
+  // Today revenue
+  const revenueNumberEl = document.getElementById('todayRevenueNumber')
+  if(revenueNumberEl){
+    revenueNumberEl.textContent = Math.round(todayRevenue).toLocaleString('uz-UZ').replace(/,/g, ' ')
   }
 
+  const changeEl = document.getElementById('revenueChange')
   if(changeEl){
-    if(difference > 0){
-      changeEl.innerText = `↑ +${percent.toFixed(1)}% kechagidan`
-      changeEl.style.color = "#16a34a"
-    } else if(difference < 0){
-      changeEl.innerText = `↓ ${Math.abs(percent).toFixed(1)}% kechagidan`
-      changeEl.style.color = "#dc2626"
+    const percentStr = formatPercent(revenueChange)
+    const arrow = revenueChange >= 0 ? '↑' : '↓'
+    changeEl.textContent = `${arrow} ${percentStr}`
+  }
+
+  // Today profit
+  const profitEl = document.getElementById('todayProfit')
+  if(profitEl){
+    profitEl.textContent = formatMoney(todayProfit)
+    profitEl.style.color = todayProfit > 0 ? '#43A047' : '#FB8C00'
+  }
+
+  const profitStatusEl = document.getElementById('profitStatus')
+  if(profitStatusEl){
+    if(todayProfit > 0){
+      profitStatusEl.textContent = '↑ Yaxshi ko\'rsatkich'
+      profitStatusEl.style.color = '#43A047'
     } else {
-      changeEl.innerText = "0% kechagidan"
-      changeEl.style.color = "#64748b"
+      profitStatusEl.textContent = 'Hozircha sotuv yo\'q'
+      profitStatusEl.style.color = '#888'
     }
   }
-})
-.catch(e => {
-  console.error("Yesterday query error:", e)
-})
 
-// Update UI
-const rev = document.getElementById("todayRevenue")
-const items = document.getElementById("todayItems")
-const profit = document.getElementById("todayProfit")
-const debt = document.getElementById("todayDebt")
+  // Products sold
+  const productsEl = document.getElementById('productsSold')
+  if(productsEl){
+    productsEl.textContent = productsSold.toString()
+  }
 
-if(rev) rev.innerText = formatMoney(todayRevenue)
-if(items) items.innerText = todayItems
-if(profit) profit.innerText = formatMoney(todayProfit)
-if(debt) debt.innerText = formatMoney(todayDebt)
+  // Nasiya
+  const nasiyaEl = document.getElementById('nasiyaTotal')
+  if(nasiyaEl){
+    nasiyaEl.textContent = formatMoney(nasiyaTotal)
+    nasiyaEl.style.color = '#FB8C00' // Always orange
+  }
 
-// Profit status
-const profitStatus = document.getElementById("profitStatusText")
-if(profitStatus){
-if(todayProfit > 0){
-profitStatus.innerText = "Yaxshi ko‘rsatkich"
-profitStatus.style.color = "#16a34a"
-} else {
-profitStatus.innerText = "Foyda yo‘q"
-profitStatus.style.color = "#dc2626"
-}
+  const nasiyaStatusEl = document.getElementById('nasiyaStatus')
+  if(nasiyaStatusEl){
+    if(nasiyaTotal > 0){
+      nasiyaStatusEl.textContent = 'Faol qarzdorlik'
+      nasiyaStatusEl.style.color = '#FB8C00'
+    } else {
+      nasiyaStatusEl.textContent = 'Qarzdorlik yo\'q'
+      nasiyaStatusEl.style.color = '#888'
+    }
+  }
 }
 
-// Debt status
-const debtStatus = document.getElementById("debtStatusText")
-if(debtStatus){
-if(todayDebt > 0){
-debtStatus.innerText = "Qarzdorlik bor"
-debtStatus.style.color = "#ea580c"
-} else {
-debtStatus.innerText = "Qarzdorlik yo‘q"
-debtStatus.style.color = "#16a34a"
+function updateRevenueChart(todayRevenue){
+  const canvas = document.getElementById('revenueChart')
+  if(!canvas) return
+
+  const ctx = canvas.getContext('2d')
+  if(revenueChart) revenueChart.destroy()
+
+  // Build chart data points every 2 hours from 09:00 to now
+  const now = new Date()
+  const dataPoints = []
+  let currentHour = 9
+  while(currentHour <= now.getHours() + 1){ // +1 to include current hour
+    const pointTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), currentHour)
+    if(pointTime <= now){
+      const cumulative = calculateCumulativeRevenueUpTo(pointTime)
+      const label = currentHour === now.getHours() + 1 ? 'Hozir' : `${currentHour.toString().padStart(2,'0')}:00`
+      dataPoints.push({ hour: label, cumulative })
+    }
+    currentHour += 2
+  }
+
+  // If no data, show flat line
+  if(dataPoints.length === 0 || todayRevenue === 0){
+    dataPoints.push({ hour: '09:00', cumulative: 0 }, { hour: 'Hozir', cumulative: 0 })
+  }
+
+  const labels = dataPoints.map(p => p.hour)
+  const values = dataPoints.map(p => p.cumulative)
+
+  revenueChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        borderColor: '#2E7D32',
+        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.4,
+        pointRadius: (ctx) => ctx.dataIndex === 0 || ctx.dataIndex === values.length - 1 ? 6 : 0,
+        pointBackgroundColor: (ctx) => ctx.dataIndex === 0 ? '#43A047' : ctx.dataIndex === values.length - 1 ? '#2E7D32' : 'transparent',
+        pointBorderColor: (ctx) => ctx.dataIndex === 0 ? '#43A047' : ctx.dataIndex === values.length - 1 ? '#2E7D32' : 'transparent'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      },
+      scales: {
+        x: { display: false },
+        y: { display: false }
+      },
+      elements: {
+        point: { hoverRadius: 0 }
+      }
+    }
+  })
 }
+
+function calculateCumulativeRevenueUpTo(targetTime){
+  return todaySalesData
+    .filter(sale => {
+      const saleTime = sale.createdAt?.toDate ? sale.createdAt.toDate() : new Date(sale.createdAt)
+      return saleTime <= targetTime
+    })
+    .reduce((sum, sale) => sum + (Number(sale.total) || 0), 0)
 }
 
-// Chart data
-const chartLabels = buckets.map(b => {
-const d = new Date(b.time)
-return d.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit', hour12:false })
-})
-const chartValues = []
-let cumulative = 0
-buckets.forEach(b => {
-cumulative += b.total
-chartValues.push(cumulative)
-})
+function updateRecentSales(){
+  const container = document.getElementById('recentSalesContainer')
+  if(!container) return
 
-if(typeof renderTodaySalesChart === "function"){
-renderTodaySalesChart({
-labels: chartLabels,
-values: chartValues
-})
+  container.innerHTML = ''
+
+  if(todaySalesData.length === 0){
+    // Empty state
+    const emptyDiv = document.createElement('div')
+    emptyDiv.style.textAlign = 'center'
+    emptyDiv.style.padding = '40px 20px'
+    emptyDiv.innerHTML = `
+      <div style="font-size:48px; color:#ccc; margin-bottom:16px;">🛒</div>
+      <div style="font-size:16px; font-weight:700; color:#666; margin-bottom:8px;">Bugun hali sotuv yo'q</div>
+      <div style="font-size:14px; color:#999;">Sotuv qo'shish uchun + tugmasini bosing</div>
+    `
+    container.appendChild(emptyDiv)
+    return
+  }
+
+  const recent = todaySalesData.slice(0, 3)
+
+  recent.forEach((sale, index) => {
+    const saleDiv = document.createElement('div')
+    saleDiv.style.display = 'flex'
+    saleDiv.style.alignItems = 'center'
+    saleDiv.style.gap = '14px'
+    saleDiv.style.padding = '12px 16px'
+    saleDiv.style.borderRadius = '14px'
+    saleDiv.style.border = '0.5px solid #E8EAF0'
+    saleDiv.style.marginBottom = '8px'
+    saleDiv.style.background = 'white'
+
+    const iconBg = ['#E8F5E9', '#E3F2FD', '#FFF8E1'][index % 3]
+    const iconColor = ['#2E7D32', '#1976D2', '#F57C00'][index % 3]
+
+    const saleNumber = sale.saleNumber || '—'
+    const timeStr = formatTime(sale.createdAt)
+    const itemCount = sale.itemsCount || (sale.items ? sale.items.length : 0)
+
+    saleDiv.innerHTML = `
+      <div style="width:46px; height:46px; border-radius:12px; background:${iconBg}; display:flex; align-items:center; justify-content:center; font-size:20px;">🛒</div>
+      <div style="flex:1;">
+        <div style="font-size:15px; font-weight:700; color:#1a1a2e;">Sotuv #${saleNumber}</div>
+        <div style="font-size:12px; color:#aaa; margin-top:2px;">${timeStr} · ${itemCount} ta mahsulot</div>
+      </div>
+      <div style="font-size:16px; font-weight:700; color:#1976D2;">${formatMoney(sale.total)}</div>
+    `
+
+    container.appendChild(saleDiv)
+  })
 }
 
-// Recent sales
-recentSales.sort((a,b) => {
-  const timeA = a.date && a.date.getTime ? a.date.getTime() : (a.date ? new Date(a.date).getTime() : 0)
-  const timeB = b.date && b.date.getTime ? b.date.getTime() : (b.date ? new Date(b.date).getTime() : 0)
-  return timeB - timeA
-})
-const top7 = recentSales.slice(0,7)
-
-const listEl = document.getElementById("recentSalesList")
-if(listEl){
-listEl.innerHTML = ""
-top7.forEach(sale => {
-const item = document.createElement("div")
-item.className = "recent-sale-item"
-const saleTime = (sale.date && sale.date.toLocaleTimeString) ? sale.date.toLocaleTimeString('uz-UZ', { hour:'2-digit', minute:'2-digit' }) : '--:--'
-const itemCount = (sale.items && Array.isArray(sale.items)) ? sale.items.length : 0
-const saleId = (sale.id || '').slice(-6)
-item.innerHTML = `
-<div class="sale-icon">🛒</div>
-<div class="sale-info">
-<div class="sale-title">Sotuv #${saleId}</div>
-<div class="sale-meta">${saleTime} • ${itemCount} ta mahsulot</div>
-</div>
-<div class="sale-amount">${formatMoney(sale.total)}</div>
-`
-listEl.appendChild(item)
-})
+function showErrorState(){
+  // Implement error state if needed
+  console.error('Dashboard error state')
 }
 
-})
-
-}
 // ===============================
 // SYNC OFFLINE SALES
 // ===============================
+
 
 async function syncOfflineSales(){
 

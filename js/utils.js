@@ -6,8 +6,26 @@
 FORMAT MONEY
 =============================== */
 
-function formatMoney(num){
-return Number(num || 0).toLocaleString("ru-RU") + " so'm"
+function formatMoney(value){
+  if (!value || isNaN(value)) return '0 so\'m';
+  return Math.round(value).toLocaleString('uz-UZ').replace(/,/g, ' ') + ' so\'m';
+}
+
+function formatPercent(value){
+  if (value >= 0) return `+${Math.round(value)}% kechagidan`;
+  return `−${Math.round(Math.abs(value))}% kechagidan`;
+}
+
+function formatTime(timestamp){
+  if (!timestamp) return '--:--';
+  const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  return d.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+function formatDate(){
+  const months = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+  const d = new Date();
+  return `${d.getDate()} ${months[d.getMonth()]}, ${d.getFullYear()}`;
 }
 
 /* ===============================

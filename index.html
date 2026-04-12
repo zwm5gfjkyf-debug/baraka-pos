@@ -339,119 +339,94 @@ Hammasini o'chirish
 <!-- MAIN -->
 <main class="main-content" style="padding-top:80px; padding-bottom:120px;">
   <!-- DASHBOARD -->
-<div id="dashboardPage" class="page" style="padding-bottom:120px;">
-<div class="dashboard-grid-new">
+<div id="dashboardPage" class="page" style="background:#F4F6FA; padding-bottom:120px;">
 
-  <!-- 🔵 BIG CARD -->
-  <div class="card big-card blue-card">
-<div class="card-title" style="color:rgba(255,255,255,0.8);">
-  BUGUNGI TUSHUM
-</div>
-    <div class="card-value" id="todayRevenue">0 so'm</div>
-
-<div class="card-sub" id="todayRevenueChange" style="color:rgba(255,255,255,0.9);">
-  ↑ 0% kechagidan
-</div>
-  </div>
-
-  <!-- ⚪ FOYDA -->
-  <div class="card small-card">
-    <div class="card-title">BUGUNGI FOYDA</div>
-
-    <div class="card-value green" id="todayProfit">0 so'm</div>
-
-<div class="card-sub green" id="profitStatusText">
-  Yaxshi ko‘rsatkich
-</div>
-  </div>
-
-  <!-- 📦 SOTILGAN -->
-  <div class="card small-card">
-    <div class="card-title">SOTILGAN MAHSULOT</div>
-
-    <div class="card-value" id="todayItems">0</div>
-
-    <div class="card-sub">
-      Bugun
+  <!-- HEADER -->
+  <div style="background:white; padding:14px 20px;">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="width:44px; height:44px; background:#1976D2; border-radius:12px; display:flex; align-items:center; justify-content:center;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+            <path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V19C19 20.1 18.1 21 17 21H7C5.9 21 5 20.1 5 19V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7ZM9 3V4H15V3H9ZM7 6V19H17V6H7Z"/>
+            <path d="M9 8H11V17H9V8ZM13 8H15V17H13V8Z"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-size:12px; color:#888;">Do'kon</div>
+          <div style="font-size:22px; font-weight:800; color:#1a1a2e; letter-spacing:0.02em;">BARAKA</div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div id="currentDate" style="font-size:13px; color:#888;">28 Mart, 2026</div>
+        <div id="currentTime" style="font-size:16px; font-weight:700; color:#1976D2;">14:28</div>
+      </div>
     </div>
   </div>
 
-  <!-- 🟠 NASIYA -->
-  <div class="card small-card">
-    <div class="card-title">NASIYA</div>
+  <!-- 2x2 STATS GRID -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px 16px;">
+    <!-- BUGUNGI TUSHUM -->
+    <div style="background:#1976D2; border-radius:14px; padding:14px;">
+      <div style="font-size:9px; color:rgba(255,255,255,0.75); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">BUGUNGI TUSHUM</div>
+      <div style="font-size:20px; font-weight:800; color:white; display:inline;">
+        <span id="todayRevenueNumber">0</span>
+        <span style="font-size:14px; font-weight:500; margin-left:3px;">so'm</span>
+      </div>
+      <div id="revenueChange" style="font-size:11px; color:rgba(255,255,255,0.85); margin-top:4px;">↑ 0% kechagidan</div>
+    </div>
 
-    <div class="card-value orange" id="todayDebt">0 so'm</div>
+    <!-- BUGUNGI FOYDA -->
+    <div style="background:white; border-radius:14px; padding:14px; border:0.5px solid #E0E4F0;">
+      <div style="font-size:9px; color:#aaa; font-weight:600; text-transform:uppercase; margin-bottom:8px;">BUGUNGI FOYDA</div>
+      <div id="todayProfit" style="font-size:20px; font-weight:800; color:#43A047;">0 so'm</div>
+      <div id="profitStatus" style="font-size:11px; color:#43A047; margin-top:4px;">Hozircha sotuv yo'q</div>
+    </div>
 
-<div class="card-sub" id="debtStatusText">
-  Qarzdorlik yo‘q
-</div>
+    <!-- SOTILGAN MAHSULOT -->
+    <div style="background:white; border-radius:14px; padding:14px; border:0.5px solid #E0E4F0;">
+      <div style="font-size:9px; color:#aaa; font-weight:600; text-transform:uppercase; margin-bottom:8px;">SOTILGAN MAHSULOT</div>
+      <div id="productsSold" style="font-size:28px; font-weight:800; color:#1976D2;">0</div>
+      <div style="font-size:11px; color:#aaa; margin-top:4px;">Bugun</div>
+    </div>
+
+    <!-- NASIYA -->
+    <div style="background:white; border-radius:14px; padding:14px; border:0.5px solid #E0E4F0;">
+      <div style="font-size:9px; color:#aaa; font-weight:600; text-transform:uppercase; margin-bottom:8px;">NASIYA</div>
+      <div id="nasiyaTotal" style="font-size:20px; font-weight:800; color:#FB8C00;">0 so'm</div>
+      <div id="nasiyaStatus" style="font-size:11px; color:#FB8C00; margin-top:4px;">Qarzdorlik yo'q</div>
+    </div>
+  </div>
+
+  <!-- BUGUNGI SAVDO GRAFIGI CARD -->
+  <div style="background:white; border-radius:14px; padding:16px; margin:0 16px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div style="font-size:16px; font-weight:700; color:#1a1a2e;">Bugungi savdo grafigi</div>
+      <div style="background:#E8F5E9; color:#2E7D32; font-size:11px; font-weight:600; padding:4px 12px; border-radius:20px;">Jonli</div>
+    </div>
+    <div style="height:140px;">
+      <canvas id="revenueChart"></canvas>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-top:8px;">
+      <div style="font-size:11px; color:#aaa;">09:00</div>
+      <div style="font-size:11px; color:#aaa;">11:00</div>
+      <div style="font-size:11px; color:#aaa;">13:00</div>
+      <div style="font-size:11px; color:#aaa;">15:00</div>
+      <div style="font-size:11px; color:#aaa;">Hozir</div>
+    </div>
+  </div>
+
+  <!-- SO'NGGI SOTUVLAR SECTION -->
+  <div style="padding:0 16px; margin-top:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div style="font-size:18px; font-weight:700; color:#1a1a2e;">So'nggi sotuvlar</div>
+      <button onclick="navigate('analyticsPage')" style="background:none; border:none; color:#1976D2; font-size:14px; font-weight:600; cursor:pointer;">Barchasini ko'rish →</button>
+    </div>
+    <div id="recentSalesContainer">
+      <!-- Recent sales will be inserted here -->
+    </div>
   </div>
 
 </div>
-  <!-- TODAY CHART -->
-<div class="card" style="margin-top:16px; border-radius:20px; padding:20px;">
-
-  <div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:12px;
-  ">
-    
-    <h3 style="font-size:16px; font-weight:600;">
-      Bugungi savdo grafigi
-    </h3>
-
-    <span style="
-      background:#e6f4ea;
-      color:#16a34a;
-      padding:6px 12px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:600;
-    ">
-      Jonli
-    </span>
-
-  </div>
-
-<div style="height:380px; min-height:380px;">
-  <canvas id="todaySalesChart"></canvas>
-</div>
-</div>
-
-<!-- 🔥 RECENT SALES -->
-<div style="margin-top:24px;">
-
-  <!-- HEADER -->
-  <div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:10px;
-  ">
-<h3 style="font-size:20px; font-weight:700;">
-  So‘nggi sotuvlar
-    </h3>
-
-<button style="
-  background:none;
-  border:none;
-  color:#2563eb;
-  font-weight:600;
-  font-size:14px;
-  cursor:pointer;
-">
-      Barchasini ko‘rish →
-    </button>
-  </div>
-
-<div id="recentSalesList" style="
-  display:flex;
-  flex-direction:column;
-"></div></div>
-
-</div> <!-- ✅ ADD THIS (close dashboardPage) -->
 
 <!-- SALE -->
 <div id="salePage" class="page hidden">
@@ -1514,24 +1489,29 @@ Metr
 
 <nav class="bottom-nav glass">
 <button onclick="navigate('dashboardPage')" class="active">
+<div style="font-size:20px; margin-bottom:2px;">⊞</div>
 Asosiy
 </button>
 
 <button onclick="navigate('salePage')">
+<div style="font-size:20px; margin-bottom:2px;">🛒</div>
 Sotuv
 </button>
 
-
 <button onclick="navigate('stockPage')">
+<div style="font-size:20px; margin-bottom:2px;">📦</div>
 Zaxira
 </button>
 
 <button onclick="navigate('analyticsPage')">
+<div style="font-size:20px; margin-bottom:2px;">📊</div>
 Tahlil
 </button>
 
 </nav>
 
+<!-- FLOATING ACTION BUTTON -->
+<button id="floatingAddBtn" onclick="navigate('salePage')" style="position:fixed; bottom:90px; right:20px; width:56px; height:56px; background:#43A047; border-radius:18px; border:none; color:white; font-size:28px; font-weight:300; box-shadow:0 4px 12px rgba(0,0,0,0.3); cursor:pointer; z-index:1000;">+</button>
 
 </div>
 
