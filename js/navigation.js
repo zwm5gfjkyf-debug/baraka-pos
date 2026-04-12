@@ -47,15 +47,21 @@ if(page){
   ================================ */
   const appHeader = document.querySelector('.app-header');
   if(appHeader){
-    appHeader.style.display = pageId === 'dashboardPage' ? 'none' : 'flex';
+    const hideHeader = pageId === 'dashboardPage' || pageId === 'todaySalesHistoryPage';
+    appHeader.style.display = hideHeader ? 'none' : 'flex';
   }
 
   const mainContent = document.querySelector('.main-content');
   if(mainContent){
-    mainContent.style.paddingTop = pageId === 'dashboardPage' ? '0' : '80px';
+    const topPad = (pageId === 'dashboardPage' || pageId === 'todaySalesHistoryPage') ? '0' : '80px';
+    mainContent.style.paddingTop = topPad;
   }
 
-  if(previousPage === 'dashboardPage' && pageId !== 'dashboardPage' && typeof cleanupDashboardListeners === 'function'){
+  if(previousPage === 'todaySalesHistoryPage' && pageId !== 'todaySalesHistoryPage' && typeof cleanupTodaySalesHistoryListeners === 'function'){
+    cleanupTodaySalesHistoryListeners()
+  }
+
+  if(previousPage === 'dashboardPage' && pageId !== 'dashboardPage' && pageId !== 'todaySalesHistoryPage' && typeof cleanupDashboardListeners === 'function'){
     cleanupDashboardListeners()
   }
 
@@ -75,6 +81,11 @@ if(page){
     centerHandle.style.display = pageId === 'dashboardPage' ? 'flex' : 'none';
   }
 
+  const fab = document.getElementById('floatingAddBtn');
+  if(fab){
+    fab.style.display = (pageId === 'dashboardPage' || pageId === 'todaySalesHistoryPage') ? 'flex' : 'none';
+  }
+
   /* ================================
      ACTIVE NAV BUTTON
   ================================ */
@@ -92,8 +103,12 @@ if(page){
     navButtons[navMap[pageId]].classList.add("active");
   }
 
+  if(pageId === 'todaySalesHistoryPage' && navButtons.length > 0){
+    navButtons[0].classList.add("active");
+  }
+
   if(typeof updateSidebarActive === 'function'){
-    updateSidebarActive(pageId)
+    updateSidebarActive(pageId === 'todaySalesHistoryPage' ? 'dashboardPage' : pageId)
   }
 
  /* ================================
@@ -106,9 +121,12 @@ if(pageId === "dashboardPage"){
     loadDashboard()
   }
 
-  // 🔥 FIX TODAY CHART
-  if(typeof loadTodayAnalytics === "function"){
-    loadTodayAnalytics()
+}
+
+if(pageId === "todaySalesHistoryPage"){
+
+  if(typeof loadTodaySalesHistory === "function"){
+    loadTodaySalesHistory()
   }
 
 }

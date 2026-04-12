@@ -495,46 +495,46 @@ Hammasini o'chirish
 <!-- MAIN -->
 <main class="main-content" style="padding-top:80px; padding-bottom:120px;">
   <!-- DASHBOARD -->
-  <div id="dashboardPage" class="page" style="background:#F4F6FA; padding-bottom:120px;">
+  <div id="dashboardPage" class="page page-asosiy">
     <div class="dashboard-page-inner">
 
       <!-- LOADING STATE -->
       <div id="loadingState" class="dashboard-loading-state">
-        <div class="dashboard-skeleton-grid">
-          <div class="dashboard-skeleton-card"></div>
-          <div class="dashboard-skeleton-card"></div>
-          <div class="dashboard-skeleton-card"></div>
-          <div class="dashboard-skeleton-card"></div>
+        <div class="asosiy-skeleton-stats">
+          <div class="asosiy-skeleton-stat-block"></div>
+          <div class="asosiy-skeleton-stat-block"></div>
         </div>
-        <div class="dashboard-skeleton-chart"></div>
-        <div class="dashboard-skeleton-row"></div>
-        <div class="dashboard-skeleton-row"></div>
-        <div class="dashboard-skeleton-row"></div>
+        <div class="dashboard-skeleton-chart asosiy-skeleton-pulse"></div>
+        <div class="dashboard-skeleton-row asosiy-skeleton-pulse"></div>
+        <div class="dashboard-skeleton-row asosiy-skeleton-pulse"></div>
+        <div class="dashboard-skeleton-row asosiy-skeleton-pulse"></div>
       </div>
 
       <!-- STATS GRID -->
       <div id="statsGrid" class="dashboard-stat-grid hidden">
         <div class="dashboard-card dashboard-card-primary">
-          <div class="dashboard-card-label">BUGUNGI TUSHUM</div>
-          <div class="dashboard-card-value"><span id="todayRevenueValue">0</span><span>so'm</span></div>
-          <div id="todayRevenueTrend" class="dashboard-card-helper">↑ +0% kechagidan</div>
+          <div class="dashboard-card-label dashboard-card-label-on-primary">BUGUNGI TUSHUM</div>
+          <div class="dashboard-card-value dashboard-revenue-line">
+            <span id="todayRevenueValue">0</span><span class="som-suffix-on-primary">so'm</span>
+          </div>
+          <div id="todayRevenueTrend" class="dashboard-card-helper dashboard-helper-on-primary">↑ +0% kechagidan</div>
         </div>
 
         <div class="dashboard-card dashboard-card-secondary">
           <div class="dashboard-card-label">BUGUNGI FOYDA</div>
-          <div id="todayProfitValue" class="dashboard-card-value"><span>0</span><span>so'm</span></div>
+          <div id="todayProfitValue" class="dashboard-card-value dashboard-profit-amount">0 so'm</div>
           <div id="todayProfitStatus" class="dashboard-card-helper">Hozircha sotuv yo'q</div>
         </div>
 
         <div class="dashboard-card dashboard-card-secondary">
           <div class="dashboard-card-label">SOTILGAN MAHSULOT</div>
-          <div id="productsSoldValue" class="dashboard-card-value">0</div>
+          <div id="productsSoldValue" class="dashboard-card-value dashboard-products-sold">0</div>
           <div class="dashboard-card-helper">Bugun</div>
         </div>
 
         <div class="dashboard-card dashboard-card-secondary">
           <div class="dashboard-card-label">NASIYA</div>
-          <div id="nasiyaDebtValue" class="dashboard-card-value"><span>0</span><span>so'm</span></div>
+          <div id="nasiyaDebtValue" class="dashboard-card-value dashboard-nasiya-amount">0 so'm</div>
           <div id="nasiyaDebtStatus" class="dashboard-card-helper">Qarzdorlik yo'q</div>
         </div>
       </div>
@@ -561,7 +561,7 @@ Hammasini o'chirish
       <div id="recentSection" class="dashboard-recent-section hidden">
         <div class="dashboard-section-title-row">
           <div class="dashboard-section-title">So'nggi sotuvlar</div>
-          <button class="dashboard-link-btn" onclick="navigate('salePage')">Barchasini ko'rish →</button>
+          <button type="button" class="dashboard-link-btn" onclick="navigate('todaySalesHistoryPage')">Barchasini ko'rish →</button>
         </div>
         <div id="recentSalesContainer" class="dashboard-recent-list"></div>
       </div>
@@ -574,6 +574,17 @@ Hammasini o'chirish
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- BUGUNGI SOTUVLAR (to'liq ro'yxat) -->
+  <div id="todaySalesHistoryPage" class="page hidden page-today-sales">
+    <div class="today-sales-history-inner">
+      <div class="today-sales-history-header">
+        <button type="button" class="today-sales-back" onclick="navigate('dashboardPage')" aria-label="Orqaga">←</button>
+        <h1 class="today-sales-history-title">Bugungi sotuvlar</h1>
+      </div>
+      <div id="todaySalesHistoryList" class="today-sales-history-list"></div>
     </div>
   </div>
 
@@ -1776,7 +1787,7 @@ Bekor qilish
 </div>
 
 <!-- FLOATING ACTION BUTTON -->
-<button id="floatingAddBtn" onclick="navigate('salePage')" style="position:fixed; bottom:84px; right:20px; width:56px; height:56px; background:#22C55E; border-radius:16px; border:none; color:white; font-size:28px; font-weight:300; box-shadow:0 4px 12px rgba(0,0,0,0.3); cursor:pointer; z-index:1000;">+</button>
+<button type="button" id="floatingAddBtn" onclick="goToNewSaleFromFab()" class="fab-new-sale" aria-label="Yangi sotuv">+</button>
 
 <!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
@@ -1800,7 +1811,7 @@ Bekor qilish
         <path d="M15 11V7" />
       </svg>
     </div>
-    <div class="nav-label">Savdo</div>
+    <div class="nav-label">Sotuv</div>
   </button>
   <button onclick="navigate('stockPage')" class="nav-btn">
     <div class="nav-icon">
@@ -1909,6 +1920,7 @@ z-index:999;
 <script src="js/sales.js"></script>
 <script src="js/stock.js"></script>
 <script src="js/analytics.js"></script>
+<script src="js/home-asosiy.js"></script>
 <script src="js/app.js"></script>
 <script src="js/ui.js"></script>
 
@@ -1927,12 +1939,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if(typeof showAnalyticsTab === "function"){
     window.showAnalyticsTab = showAnalyticsTab
   }
-
-  setTimeout(() => {
-    if (typeof loadRecentSales === "function") {
-      loadRecentSales()
-    }
-  }, 500)
 
   // 🔥 ADD THIS
   updateDateTime()

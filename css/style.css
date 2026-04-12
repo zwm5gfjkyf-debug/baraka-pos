@@ -5686,6 +5686,168 @@ BOTTOM NAVIGATION
   100% { background-position: -200% 0; }
 }
 
+/* ----- Asosiy (Home) screen ----- */
+.page-asosiy {
+  background: #F4F6FA !important;
+  min-height: 100%;
+  padding-bottom: 120px;
+}
+
+.dashboard-card-secondary .dashboard-card-label {
+  color: #94A3B8;
+}
+
+.dashboard-card-label-on-primary {
+  color: rgba(255, 255, 255, 0.92) !important;
+  opacity: 1 !important;
+}
+
+.dashboard-revenue-line {
+  color: #fff;
+  align-items: baseline;
+}
+
+.dashboard-revenue-line #todayRevenueValue {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.som-suffix-on-primary {
+  font-size: 18px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.dashboard-helper-on-primary {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.dashboard-profit-amount {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.dashboard-nasiya-amount {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.dashboard-products-sold {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1976D2;
+}
+
+.asosiy-skeleton-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.asosiy-skeleton-stat-block {
+  min-height: 168px;
+  border-radius: 24px;
+  background: #E5E7EB;
+  animation: asosiyOpacityPulse 1.8s ease-in-out infinite;
+}
+
+.asosiy-skeleton-pulse {
+  animation: asosiyOpacityPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes asosiyOpacityPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.92;
+  }
+}
+
+.fab-new-sale {
+  position: fixed;
+  bottom: 88px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  border: none;
+  background: #166534;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 200;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(22, 101, 52, 0.35);
+  cursor: pointer;
+  z-index: 1000;
+  padding: 0;
+}
+
+.page-today-sales {
+  background: #F4F6FA;
+  min-height: 100%;
+  padding-bottom: 120px;
+}
+
+.today-sales-history-inner {
+  padding: 12px 16px 24px;
+}
+
+.today-sales-history-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.today-sales-back {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  background: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  color: #0f172a;
+}
+
+.today-sales-history-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.today-sales-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.today-sales-history-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.today-sales-history-row {
+  margin-bottom: 10px;
+}
+
+.bottom-nav {
+  background: #fff !important;
+  backdrop-filter: none !important;
+  border-top: 1px solid #e5e7eb !important;
+}
+
 /* =====================================================
 DEBT ANALYTICS STYLES
 Mobile-first responsive design

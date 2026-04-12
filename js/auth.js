@@ -150,6 +150,14 @@ function logout(){
     cleanupSidebarListeners()
   }
 
+  if(typeof cleanupDashboardListeners === 'function'){
+    cleanupDashboardListeners()
+  }
+
+  if(typeof cleanupTodaySalesHistoryListeners === 'function'){
+    cleanupTodaySalesHistoryListeners()
+  }
+
   showTopBanner("Tizimdan chiqdingiz", "success")
    
   const appScreen = document.getElementById("appScreen")
