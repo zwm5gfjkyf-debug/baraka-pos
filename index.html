@@ -498,6 +498,82 @@ Hammasini o'chirish
   <div id="dashboardPage" class="page" style="background:#F4F6FA; padding-bottom:120px;">
     <div class="dashboard-page-inner">
 
+      <!-- LOADING STATE -->
+      <div id="loadingState" class="dashboard-loading-state">
+        <div class="dashboard-skeleton-grid">
+          <div class="dashboard-skeleton-card"></div>
+          <div class="dashboard-skeleton-card"></div>
+          <div class="dashboard-skeleton-card"></div>
+          <div class="dashboard-skeleton-card"></div>
+        </div>
+        <div class="dashboard-skeleton-chart"></div>
+        <div class="dashboard-skeleton-row"></div>
+        <div class="dashboard-skeleton-row"></div>
+        <div class="dashboard-skeleton-row"></div>
+      </div>
+
+      <!-- STATS GRID -->
+      <div id="statsGrid" class="dashboard-stat-grid hidden">
+        <div class="dashboard-card dashboard-card-primary">
+          <div class="dashboard-card-label">BUGUNGI TUSHUM</div>
+          <div class="dashboard-card-value"><span id="todayRevenueValue">0</span><span>so'm</span></div>
+          <div id="todayRevenueTrend" class="dashboard-card-helper">↑ +0% kechagidan</div>
+        </div>
+
+        <div class="dashboard-card dashboard-card-secondary">
+          <div class="dashboard-card-label">BUGUNGI FOYDA</div>
+          <div id="todayProfitValue" class="dashboard-card-value"><span>0</span><span>so'm</span></div>
+          <div id="todayProfitStatus" class="dashboard-card-helper">Hozircha sotuv yo'q</div>
+        </div>
+
+        <div class="dashboard-card dashboard-card-secondary">
+          <div class="dashboard-card-label">SOTILGAN MAHSULOT</div>
+          <div id="productsSoldValue" class="dashboard-card-value">0</div>
+          <div class="dashboard-card-helper">Bugun</div>
+        </div>
+
+        <div class="dashboard-card dashboard-card-secondary">
+          <div class="dashboard-card-label">NASIYA</div>
+          <div id="nasiyaDebtValue" class="dashboard-card-value"><span>0</span><span>so'm</span></div>
+          <div id="nasiyaDebtStatus" class="dashboard-card-helper">Qarzdorlik yo'q</div>
+        </div>
+      </div>
+
+      <!-- CHART CARD -->
+      <div id="chartCard" class="dashboard-chart-card hidden">
+        <div class="dashboard-chart-header">
+          <div class="dashboard-chart-title">Bugungi savdo grafigi</div>
+          <span class="dashboard-live-pill">Jonli</span>
+        </div>
+        <div class="dashboard-chart-wrapper">
+          <canvas id="revenueChart"></canvas>
+        </div>
+        <div class="dashboard-chart-xlabels">
+          <span>09:00</span>
+          <span>11:00</span>
+          <span>13:00</span>
+          <span>15:00</span>
+          <span>Hozir</span>
+        </div>
+      </div>
+
+      <!-- RECENT SALES -->
+      <div id="recentSection" class="dashboard-recent-section hidden">
+        <div class="dashboard-section-title-row">
+          <div class="dashboard-section-title">So'nggi sotuvlar</div>
+          <button class="dashboard-link-btn" onclick="navigate('salePage')">Barchasini ko'rish →</button>
+        </div>
+        <div id="recentSalesContainer" class="dashboard-recent-list"></div>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div id="errorState" class="dashboard-error-state hidden">
+        <div class="dashboard-error-card">
+          <div class="dashboard-error-message">Ma'lumotlarni yuklashda xato</div>
+          <button class="dashboard-error-btn" onclick="retryLoad()">Qayta urinish</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -1698,6 +1774,9 @@ Bekor qilish
 </div>
 
 </div>
+
+<!-- FLOATING ACTION BUTTON -->
+<button id="floatingAddBtn" onclick="navigate('salePage')" style="position:fixed; bottom:84px; right:20px; width:56px; height:56px; background:#22C55E; border-radius:16px; border:none; color:white; font-size:28px; font-weight:300; box-shadow:0 4px 12px rgba(0,0,0,0.3); cursor:pointer; z-index:1000;">+</button>
 
 <!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
