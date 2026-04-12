@@ -83,6 +83,10 @@ if(page){
     navButtons[navMap[pageId]].classList.add("active");
   }
 
+  if(typeof updateSidebarActive === 'function'){
+    updateSidebarActive(pageId)
+  }
+
  /* ================================
    DATA LOADERS (LAZY LOAD)
 ================================ */

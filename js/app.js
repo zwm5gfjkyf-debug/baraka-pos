@@ -15,6 +15,28 @@ let nasiyaListener = null
 let todaySalesData = []
 let yesterdaySalesData = []
 let nasiyaData = []
+let sidebarListeners = {
+  shop: null,
+  sales: null,
+  products: null,
+  nasiya: null
+}
+let sidebarLoaded = {
+  shop: false,
+  sales: false,
+  products: false,
+  nasiya: false
+}
+let sidebarData = {
+  shopName: 'Do\'kon',
+  ownerEmail: 'No email',
+  revenue: 0,
+  salesCount: 0,
+  lowStockCount: 0,
+  outOfStockCount: 0,
+  activeNasiyaCount: 0,
+  loading: true
+}
 let timeUpdateInterval = null
 let revenueChart = null
 // =============================
@@ -104,6 +126,7 @@ async function loadDashboard(){
   setupTodaySalesListener()
   setupYesterdaySalesListener()
   setupNasiyaListener()
+  loadSidebarData()
 
   // Initial render
   renderDashboard()
@@ -524,6 +547,208 @@ function menuClick(action){
   closeMenu()
   setTimeout(action, 150)
 }
+
+function sidebarNavigate(pageId){
+  closeMenu()
+  setTimeout(() => {
+    if(typeof navigate === 'function'){
+      const page = document.getElementById(pageId)
+      if(page){
+        navigate(pageId)
+      } else {
+        if(typeof showTopBanner === 'function'){
+          showTopBanner('Sahifa mavjud emas', 'error')
+        }
+      }
+    }
+  }, 150)
+}
+
+function cleanupSidebarListeners(){
+  Object.values(sidebarListeners).forEach(unsubscribe => {
+    if(typeof unsubscribe === 'function'){
+      unsubscribe()
+    }
+  })
+  sidebarListeners = {
+    shop: null,
+    sales: null,
+    products: null,
+    nasiya: null
+  }
+  sidebarLoaded = {
+    shop: false,
+    sales: false,
+    products: false,
+    nasiya: false
+  }
+}
+
+function formatPlainNumber(value){
+  const amount = Number(value)
+  if(!amount || isNaN(amount)) return '0'
+  return Math.round(amount).toLocaleString('uz-UZ').replace(/,/g, ' ')
+}
+
+function formatSalesCount(value){
+  const count = Number(value)
+  if(!count || isNaN(count)) return '0 ta'
+  return `${count.toLocaleString('uz-UZ').replace(/,/g, ' ')} ta`
+}
+
+function loadSidebarData(){
+  if(!currentShopId) return
+
+  cleanupSidebarListeners()
+  sidebarData.loading = true
+  renderSidebar()
+
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const tomorrowStart = new Date(todayStart)
+  tomorrowStart.setDate(tomorrowStart.getDate() + 1)
+
+  sidebarListeners.shop = db
+    .collection('shops')
+    .doc(currentShopId)
+    .onSnapshot(doc => {
+      const data = doc.data() || {}
+      const shopName = data.name || data.shopName || data.title || 'Do\'kon'
+      const ownerEmail = data.ownerEmail || data.email || 'No email'
+      sidebarData.shopName = `${shopName} Do'koni`
+      sidebarData.ownerEmail = ownerEmail
+      sidebarLoaded.shop = true
+      sidebarData.loading = Object.values(sidebarLoaded).some(v => v === false)
+      renderSidebar()
+    }, error => {
+      console.error('Sidebar shop listener error:', error)
+    })
+
+  sidebarListeners.sales = db
+    .collection('shops')
+    .doc(currentShopId)
+    .collection('sales')
+    .where('createdAt', '>=', todayStart)
+    .where('createdAt', '<', tomorrowStart)
+    .onSnapshot(snapshot => {
+      let revenue = 0
+      snapshot.forEach(doc => {
+        const sale = doc.data() || {}
+        revenue += Number(sale.total || sale.amount || 0) || 0
+      })
+      sidebarData.revenue = revenue
+      sidebarData.salesCount = snapshot.size
+      sidebarLoaded.sales = true
+      sidebarData.loading = Object.values(sidebarLoaded).some(v => v === false)
+      renderSidebar()
+    }, error => {
+      console.error('Sidebar sales listener error:', error)
+    })
+
+  sidebarListeners.products = db
+    .collection('shops')
+    .doc(currentShopId)
+    .collection('products')
+    .where('status', '==', 'active')
+    .onSnapshot(snapshot => {
+      let outCount = 0
+      let lowCount = 0
+      snapshot.forEach(doc => {
+        const product = doc.data() || {}
+        const quantity = Number(product.quantity) || 0
+        if(quantity === 0) outCount += 1
+        if(quantity > 0 && quantity <= 5) lowCount += 1
+      })
+      sidebarData.outOfStockCount = outCount
+      sidebarData.lowStockCount = lowCount
+      sidebarLoaded.products = true
+      sidebarData.loading = Object.values(sidebarLoaded).some(v => v === false)
+      renderSidebar()
+    }, error => {
+      console.error('Sidebar products listener error:', error)
+    })
+
+  sidebarListeners.nasiya = db
+    .collection('shops')
+    .doc(currentShopId)
+    .collection('nasiya')
+    .where('status', '==', 'active')
+    .onSnapshot(snapshot => {
+      sidebarData.activeNasiyaCount = snapshot.size
+      sidebarLoaded.nasiya = true
+      sidebarData.loading = Object.values(sidebarLoaded).some(v => v === false)
+      renderSidebar()
+    }, error => {
+      console.error('Sidebar nasiya listener error:', error)
+    })
+}
+
+function renderSidebar(){
+  const shopNameEl = document.getElementById('sidebarShopName')
+  const shopEmailEl = document.getElementById('sidebarShopEmail')
+  const revenueEl = document.getElementById('sidebarRevenue')
+  const salesCountEl = document.getElementById('sidebarSalesCount')
+  const zaxiraBadge = document.getElementById('sidebarZaxiraBadge')
+  const zaxiraChevron = document.getElementById('sidebarZaxiraChevron')
+  const nasiyaBadge = document.getElementById('sidebarNasiyaBadge')
+  const nasiyaChevron = document.getElementById('sidebarNasiyaChevron')
+  const shopEditBtn = document.getElementById('sidebarEditBtn')
+
+  if(shopNameEl) shopNameEl.textContent = sidebarData.shopName || 'Do\'kon'
+  if(shopEmailEl) shopEmailEl.textContent = sidebarData.ownerEmail || 'No email'
+
+  if(revenueEl){
+    revenueEl.textContent = sidebarData.loading ? '' : formatPlainNumber(sidebarData.revenue)
+    revenueEl.classList.toggle('skeleton', sidebarData.loading)
+  }
+
+  if(salesCountEl){
+    salesCountEl.textContent = sidebarData.loading ? '' : formatSalesCount(sidebarData.salesCount)
+    salesCountEl.classList.toggle('skeleton', sidebarData.loading)
+  }
+
+  const zaxiraCount = sidebarData.lowStockCount + sidebarData.outOfStockCount
+  if(zaxiraBadge && zaxiraChevron){
+    if(sidebarData.loading || zaxiraCount === 0){
+      zaxiraBadge.style.display = 'none'
+      zaxiraChevron.style.display = 'block'
+    } else {
+      zaxiraBadge.style.display = 'flex'
+      zaxiraChevron.style.display = 'none'
+      zaxiraBadge.innerHTML = `<div class="badge-number">${formatPlainNumber(zaxiraCount)}</div><div class="badge-label">kam</div>`
+    }
+  }
+
+  if(nasiyaBadge && nasiyaChevron){
+    if(sidebarData.loading || sidebarData.activeNasiyaCount === 0){
+      nasiyaBadge.style.display = 'none'
+      nasiyaChevron.style.display = 'block'
+    } else {
+      nasiyaBadge.style.display = 'flex'
+      nasiyaChevron.style.display = 'none'
+      nasiyaBadge.innerHTML = `<div class="badge-number">${formatPlainNumber(sidebarData.activeNasiyaCount)}</div><div class="badge-label">qarz</div>`
+    }
+  }
+
+  if(shopEditBtn){
+    shopEditBtn.disabled = sidebarData.loading
+  }
+
+  const versionDateEl = document.getElementById('sidebarVersionDate')
+  if(versionDateEl){
+    const now = new Date()
+    const months = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr']
+    versionDateEl.textContent = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`
+  }
+}
+
+function updateSidebarActive(pageId){
+  document.querySelectorAll('.sidebar-item').forEach(item => {
+    const route = item.dataset.route
+    item.classList.toggle('active', route === pageId)
+  })
+}
+
 // =============================
 // CAMERA TOGGLE SYSTEM
 // =============================

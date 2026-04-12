@@ -141,6 +141,10 @@ function logout(){
 
   auth.signOut()
 
+  if(typeof cleanupSidebarListeners === 'function'){
+    cleanupSidebarListeners()
+  }
+
   showTopBanner("Tizimdan chiqdingiz", "success")
    
   const appScreen = document.getElementById("appScreen")

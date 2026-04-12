@@ -243,11 +243,167 @@
 
 </div>
 <div id="sidebar" class="sidebar">
+  <div class="sidebar-content">
 
-  <div class="sidebar-header">
-    BARAKA
+    <div class="sidebar-top">
+      <div class="sidebar-top-row">
+        <div class="sidebar-brand">
+          <div class="sidebar-shop-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 5L4 7V20H20V7L18 5H6Z" fill="white"/>
+              <path d="M8 5V3H16V5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 11H17" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div id="sidebarShopName" class="sidebar-shop-name">BARAKA Do'koni</div>
+            <div id="sidebarShopEmail" class="sidebar-shop-email">No email</div>
+          </div>
+        </div>
+        <button id="sidebarEditBtn" class="sidebar-edit-btn" onclick="sidebarNavigate('settingsPage')" aria-label="Edit shop">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 20H20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M14.5 5.5L18.5 9.5L8 20H4V16L14.5 5.5Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-stats-row">
+        <div class="sidebar-stat-card">
+          <div id="sidebarRevenue" class="sidebar-stat-number skeleton"></div>
+          <div class="sidebar-stat-label">BUGUNGI TUSHUM</div>
+        </div>
+        <div class="sidebar-stat-card">
+          <div id="sidebarSalesCount" class="sidebar-stat-number skeleton"></div>
+          <div class="sidebar-stat-label">SOTUVLAR</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">ASOSIY</div>
+      <button class="sidebar-item active" data-route="dashboardPage" onclick="sidebarNavigate('dashboardPage')">
+        <div class="sidebar-item-icon sidebar-icon-blue">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="7" height="7" rx="2" fill="#1976D2"/>
+            <rect x="14" y="3" width="7" height="7" rx="2" fill="#1976D2"/>
+            <rect x="3" y="14" width="7" height="7" rx="2" fill="#1976D2"/>
+            <rect x="14" y="14" width="7" height="7" rx="2" fill="#1976D2"/>
+          </svg>
+        </div>
+        <div class="sidebar-item-body">
+          <div class="sidebar-item-title sidebar-item-title-active">Asosiy sahifa</div>
+        </div>
+        <div class="sidebar-item-right">
+          <span class="sidebar-active-dot"></span>
+        </div>
+      </button>
+      <button class="sidebar-item" data-route="salePage" onclick="sidebarNavigate('salePage')">
+        <div class="sidebar-item-icon sidebar-icon-green">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 7H18L16 21H8L6 7Z" fill="#43A047"/>
+            <path d="M6 7L8 3H16L18 7" stroke="#43A047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 11V7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M15 11V7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="sidebar-item-body">
+          <div class="sidebar-item-title">Sotuv</div>
+          <div class="sidebar-item-subtitle">Yangi sotuv qo'shish</div>
+        </div>
+        <div class="sidebar-item-right sidebar-chevron">›</div>
+      </button>
+      <button class="sidebar-item" data-route="stockPage" onclick="sidebarNavigate('stockPage')">
+        <div class="sidebar-item-icon sidebar-icon-orange">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8L12 3L21 8V20H3V8Z" fill="#FB8C00"/>
+            <path d="M12 3V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 8L12 13L21 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="sidebar-item-body">
+          <div class="sidebar-item-title">Zaxira</div>
+          <div class="sidebar-item-subtitle">Mahsulotlar boshqaruvi</div>
+        </div>
+        <div class="sidebar-item-right">
+          <div id="sidebarZaxiraBadge" class="sidebar-badge"></div>
+          <div id="sidebarZaxiraChevron" class="sidebar-chevron">›</div>
+        </div>
+      </button>
+      <button class="sidebar-item" data-route="analyticsPage" onclick="sidebarNavigate('analyticsPage')">
+        <div class="sidebar-item-icon sidebar-icon-purple">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 20V12" stroke="#7B1FA2" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 20V6" stroke="#7B1FA2" stroke-width="2" stroke-linecap="round"/>
+            <path d="M18 20V16" stroke="#7B1FA2" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="sidebar-item-body">
+          <div class="sidebar-item-title">Tahlil</div>
+          <div class="sidebar-item-subtitle">Hisobotlar va grafiklar</div>
+        </div>
+        <div class="sidebar-item-right sidebar-chevron">›</div>
+      </button>
+      <button class="sidebar-item" data-route="debtCustomerPage" onclick="sidebarNavigate('debtCustomerPage')">
+        <div class="sidebar-item-icon sidebar-icon-red">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3C9.79 3 8 4.79 8 7C8 9.21 9.79 11 12 11C14.21 11 16 9.21 16 7C16 4.79 14.21 3 12 3Z" fill="#C62828"/>
+            <path d="M4 21V19C4 16.79 5.79 15 8 15H16C18.21 15 20 16.79 20 19V21" stroke="#C62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="sidebar-item-body">
+          <div class="sidebar-item-title">Nasiya</div>
+          <div class="sidebar-item-subtitle">Qarzdorlar ro'yxati</div>
+        </div>
+        <div class="sidebar-item-right">
+          <div id="sidebarNasiyaBadge" class="sidebar-badge"></div>
+          <div id="sidebarNasiyaChevron" class="sidebar-chevron">›</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section-label">SOZLAMALAR</div>
+    <button class="sidebar-item" data-route="settingsPage" onclick="sidebarNavigate('settingsPage')">
+      <div class="sidebar-item-icon sidebar-icon-grey">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="#888888" stroke-width="2"/>
+          <path d="M19.4 15C19.5 14.35 19.56 13.7 19.56 13.04C19.56 12.38 19.5 11.73 19.4 11.08L21.5 9.47L19.53 6.53L17.1 7.17C16.4 6.68 15.63 6.32 14.81 6.1L14.3 3H9.7L9.19 6.1C8.37 6.32 7.6 6.68 6.9 7.17L4.47 6.53L2.5 9.47L4.6 11.08C4.5 11.73 4.44 12.38 4.44 13.04C4.44 13.7 4.5 14.35 4.6 15L2.5 16.62L4.47 19.56L6.9 18.92C7.6 19.41 8.37 19.77 9.19 19.99L9.7 23H14.3L14.81 19.99C15.63 19.77 16.4 19.41 17.1 18.92L19.53 19.56L21.5 16.62L19.4 15Z" stroke="#888888" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="sidebar-item-body">
+        <div class="sidebar-item-title">Sozlamalar</div>
+      </div>
+      <div class="sidebar-item-right sidebar-chevron">›</div>
+    </button>
+    <button class="sidebar-item" data-route="helpPage" onclick="sidebarNavigate('helpPage')">
+      <div class="sidebar-item-icon sidebar-icon-grey">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 18H12.01" stroke="#888888" stroke-width="2" stroke-linecap="round"/>
+          <path d="M9.09 9.09C9.32522 8.85478 9.62075 8.68674 9.94918 8.59893C10.2776 8.51112 10.6289 8.50767 10.9596 8.5897C11.2902 8.67172 11.5842 8.83682 11.8137 9.06729C12.0432 9.29776 12.2083 9.59182 12.2903 9.92243C12.3723 10.2531 12.3689 10.6044 12.2811 10.9328C12.1933 11.2612 12.0252 11.5567 11.79 11.79C11.53 12.05 11.5 12.5 11.5 12.5" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z" stroke="#888888" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="sidebar-item-body">
+        <div class="sidebar-item-title">Yordam</div>
+      </div>
+      <div class="sidebar-item-right sidebar-chevron">›</div>
+    </button>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-logout" onclick="showConfirm('Chiqmoqchimisiz?', logout)">
+        <div class="sidebar-logout-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 17L21 12L16 7" stroke="#C62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 12H9" stroke="#C62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 5H5C4.44772 5 4 5.44772 4 6V18C4 18.5523 4.44772 19 5 19H9" stroke="#C62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="sidebar-logout-text">Chiqish</div>
+      </button>
+      <div class="sidebar-version">BARAKA v1.0.0 · <span id="sidebarVersionDate"></span></div>
+    </div>
   </div>
-
 </div>
 <!-- OVERLAY -->
 <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeMenu()"></div>
