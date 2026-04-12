@@ -299,27 +299,24 @@ function calculateNasiyaTotal(){
 }
 
 function updateStatsCards(todayRevenue, revenueChange, todayProfit, productsSold, nasiyaTotal){
-  // Today revenue
-  const revenueNumberEl = document.getElementById('todayRevenueNumber')
-  if(revenueNumberEl){
-    revenueNumberEl.textContent = Math.round(todayRevenue).toLocaleString('uz-UZ').replace(/,/g, ' ')
+  const revenueValueEl = document.getElementById('todayRevenueValue')
+  if(revenueValueEl){
+    revenueValueEl.textContent = Math.round(todayRevenue).toLocaleString('uz-UZ').replace(/,/g, ' ')
   }
 
-  const changeEl = document.getElementById('revenueChange')
-  if(changeEl){
-    const percentStr = formatPercent(revenueChange)
+  const trendEl = document.getElementById('todayRevenueTrend')
+  if(trendEl){
     const arrow = revenueChange >= 0 ? '↑' : '↓'
-    changeEl.textContent = `${arrow} ${percentStr}`
+    trendEl.textContent = `${arrow} ${formatPercent(revenueChange)}`
   }
 
-  // Today profit
-  const profitEl = document.getElementById('todayProfit')
-  if(profitEl){
-    profitEl.textContent = formatMoney(todayProfit)
-    profitEl.style.color = todayProfit > 0 ? '#43A047' : '#FB8C00'
+  const profitValueEl = document.getElementById('todayProfitValue')
+  if(profitValueEl){
+    profitValueEl.textContent = formatMoney(todayProfit)
+    profitValueEl.style.color = todayProfit > 0 ? '#43A047' : '#FB8C00'
   }
 
-  const profitStatusEl = document.getElementById('profitStatus')
+  const profitStatusEl = document.getElementById('todayProfitStatus')
   if(profitStatusEl){
     if(todayProfit > 0){
       profitStatusEl.textContent = '↑ Yaxshi ko\'rsatkich'
@@ -330,20 +327,18 @@ function updateStatsCards(todayRevenue, revenueChange, todayProfit, productsSold
     }
   }
 
-  // Products sold
-  const productsEl = document.getElementById('productsSold')
+  const productsEl = document.getElementById('productsSoldValue')
   if(productsEl){
     productsEl.textContent = productsSold.toString()
   }
 
-  // Nasiya
-  const nasiyaEl = document.getElementById('nasiyaTotal')
-  if(nasiyaEl){
-    nasiyaEl.textContent = formatMoney(nasiyaTotal)
-    nasiyaEl.style.color = '#FB8C00' // Always orange
+  const nasiyaValueEl = document.getElementById('nasiyaDebtValue')
+  if(nasiyaValueEl){
+    nasiyaValueEl.textContent = formatMoney(nasiyaTotal)
+    nasiyaValueEl.style.color = '#FB8C00'
   }
 
-  const nasiyaStatusEl = document.getElementById('nasiyaStatus')
+  const nasiyaStatusEl = document.getElementById('nasiyaDebtStatus')
   if(nasiyaStatusEl){
     if(nasiyaTotal > 0){
       nasiyaStatusEl.textContent = 'Faol qarzdorlik'
@@ -355,7 +350,7 @@ function updateStatsCards(todayRevenue, revenueChange, todayProfit, productsSold
   }
 }
 
-function updateRevenueChart(todayRevenue){
+function updateRevenueChart(){
   const canvas = document.getElementById('revenueChart')
   if(!canvas) return
 
@@ -370,20 +365,34 @@ function updateRevenueChart(todayRevenue){
     return calculateCumulativeRevenueUpTo(targetTime)
   })
 
+  const hasSales = todaySalesData.length > 0
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
+  gradient.addColorStop(0, 'rgba(34, 197, 94, 0.18)')
+  gradient.addColorStop(1, 'rgba(34, 197, 94, 0)')
+
   revenueChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,
       datasets: [{
         data: values,
-        borderColor: '#2E7D32',
-        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+        borderColor: '#166534',
+        backgroundColor: hasSales ? gradient : 'rgba(0,0,0,0)',
         borderWidth: 2.5,
-        fill: true,
+        fill: hasSales,
         tension: 0.4,
-        pointRadius: (ctx) => ctx.dataIndex === 0 || ctx.dataIndex === values.length - 1 ? 6 : 0,
-        pointBackgroundColor: (ctx) => ctx.dataIndex === 0 ? '#43A047' : ctx.dataIndex === values.length - 1 ? '#2E7D32' : 'transparent',
-        pointBorderColor: (ctx) => ctx.dataIndex === 0 ? '#43A047' : ctx.dataIndex === values.length - 1 ? '#2E7D32' : 'transparent'
+        pointRadius: (ctx) => {
+          if(!hasSales) return ctx.dataIndex === 0 ? 6 : 0
+          return ctx.dataIndex === 0 || ctx.dataIndex === values.length - 1 ? 6 : 0
+        },
+        pointBackgroundColor: (ctx) => {
+          if(!hasSales) return ctx.dataIndex === 0 ? '#166534' : 'transparent'
+          return ctx.dataIndex === 0 ? '#166534' : ctx.dataIndex === values.length - 1 ? '#166534' : 'transparent'
+        },
+        pointBorderColor: (ctx) => {
+          if(!hasSales) return ctx.dataIndex === 0 ? '#166534' : 'transparent'
+          return ctx.dataIndex === 0 ? '#166534' : ctx.dataIndex === values.length - 1 ? '#166534' : 'transparent'
+        }
       }]
     },
     options: {
@@ -410,7 +419,7 @@ function calculateCumulativeRevenueUpTo(targetTime){
       const saleTime = sale.createdAt?.toDate ? sale.createdAt.toDate() : new Date(sale.createdAt)
       return saleTime <= targetTime
     })
-    .reduce((sum, sale) => sum + (Number(sale.amount) || 0), 0)
+    .reduce((sum, sale) => sum + (Number(sale.total || sale.amount) || 0), 0)
 }
 
 function updateRecentSales(){
@@ -459,7 +468,7 @@ function updateRecentSales(){
         <div style="font-size:15px; font-weight:700; color:#1a1a2e;">Sotuv #${saleNumber}</div>
         <div style="font-size:12px; color:#aaa; margin-top:2px;">${timeStr} · ${itemCount} ta mahsulot</div>
       </div>
-      <div style="font-size:16px; font-weight:700; color:#1976D2;">${formatMoney(sale.amount)}</div>
+      <div style="font-size:16px; font-weight:700; color:#1976D2;">${formatMoney(sale.total || sale.amount)}</div>
     `
 
     container.appendChild(saleDiv)
