@@ -158,6 +158,26 @@ function logout(){
     cleanupTodaySalesHistoryListeners()
   }
 
+  if(typeof cleanupTahlilHubListeners === 'function'){
+    cleanupTahlilHubListeners()
+  }
+
+  if(typeof cleanupWeeklyTahliliListeners === 'function'){
+    cleanupWeeklyTahliliListeners()
+  }
+
+  if(typeof cleanupMonthlyTahliliListeners === 'function'){
+    cleanupMonthlyTahliliListeners()
+  }
+
+  if(typeof cleanupNasiyaTahliliListeners === 'function'){
+    cleanupNasiyaTahliliListeners()
+  }
+
+  if(typeof cleanupStoreAnalyticsListener === 'function'){
+    cleanupStoreAnalyticsListener()
+  }
+
   showTopBanner("Tizimdan chiqdingiz", "success")
    
   const appScreen = document.getElementById("appScreen")

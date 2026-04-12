@@ -6397,17 +6397,518 @@ Mobile-first responsive design
   }
 }
 
-#analyticsPage {
-  background: #F4F6FA;
+#dokonTahliliPage,
+#tahlilHubPage,
+#weeklyTahliliPage,
+#monthlyTahliliPage,
+#nasiyaTahliliPage {
+  background: #f2f2f2;
   min-height: calc(100vh - 68px);
-  padding-bottom: 90px;
+  padding-bottom: 100px;
+}
+
+.tahlil-page-bg {
+  background: #f2f2f2;
+}
+
+/* ----- Tahlil hub ----- */
+.tahlil-hub-skeleton-wrap {
+  padding: 16px;
+}
+
+.tahlil-skel-quick {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.tahlil-skel-box {
+  height: 72px;
+  border-radius: 14px;
+  background: #e5e7eb;
+}
+
+.tahlil-skel-menu-row {
+  height: 88px;
+  border-radius: 16px;
+  background: #e5e7eb;
+  margin-bottom: 10px;
+}
+
+.tahlil-skel-bottom {
+  height: 160px;
+  border-radius: 16px;
+  background: #e5e7eb;
+  margin-top: 8px;
+}
+
+.tahlil-hub-error-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px;
+}
+
+.tahlil-hub-error-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  max-width: 320px;
+  border: 1px solid #e5e7eb;
+}
+
+.tahlil-hub-error-text {
+  color: #64748b;
+  margin: 0 0 16px;
+  font-size: 15px;
+}
+
+.tahlil-hub-error-btn {
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.tahlil-hub-inner {
+  padding-bottom: 8px;
+}
+
+.tahlil-hub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  background: #fff;
+  border-bottom: 1px solid #e8eaef;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.tahlil-hub-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tahlil-hub-icon-blue {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #1976d2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tahlil-hub-icon-blue svg {
+  width: 22px;
+  height: 22px;
+}
+
+.tahlil-hub-eyebrow {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.tahlil-hub-heading {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.15;
+}
+
+.tahlil-hub-pill-month {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1976d2;
+  background: #e3f2fd;
+  padding: 8px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.tahlil-hub-quick-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 12px 16px 0;
+}
+
+.tahlil-hub-mini-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.tahlil-mini-value {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.tahlil-mini-blue {
+  color: #1976d2;
+}
+
+.tahlil-mini-green {
+  color: #2e7d32;
+}
+
+.tahlil-mini-orange {
+  color: #fb8c00;
+}
+
+.tahlil-mini-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.tahlil-hub-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #94a3b8;
+  padding: 18px 16px 10px;
+  text-transform: uppercase;
+}
+
+.tahlil-hub-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 32px);
+  margin: 0 16px 10px;
+  padding: 14px 14px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  cursor: pointer;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.tahlil-hub-menu-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tahlil-menu-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tahlil-menu-icon-blue {
+  background: #e3f2fd;
+}
+
+.tahlil-menu-icon-green {
+  background: #e8f5e9;
+}
+
+.tahlil-menu-icon-red {
+  background: #ffebee;
+}
+
+.tahlil-menu-icon-purple {
+  background: #f3e5f5;
+}
+
+.tahlil-hub-menu-text {
+  min-width: 0;
+}
+
+.tahlil-hub-menu-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.tahlil-hub-menu-sub {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.tahlil-hub-menu-badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+
+.tahlil-badge-weekly-pos {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.tahlil-badge-weekly-neg {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.tahlil-badge-monthly {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.tahlil-badge-nasiya-pos {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.tahlil-badge-nasiya-zero {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.tahlil-badge-dokon-ok {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.tahlil-badge-dokon-warn {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.tahlil-hub-chevron {
+  font-size: 22px;
+  color: #cbd5e1;
+  font-weight: 300;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.tahlil-hub-summary {
+  margin: 8px 16px 24px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.tahlil-hub-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.tahlil-hub-summary-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.tahlil-hub-summary-link {
+  border: none;
+  background: none;
+  color: #1976d2;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.tahlil-hub-summary-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.tahlil-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tahlil-dot-blue {
+  background: #1976d2;
+}
+
+.tahlil-dot-green {
+  background: #43a047;
+}
+
+.tahlil-dot-orange {
+  background: #fb8c00;
+}
+
+.tahlil-hub-summary-label {
+  flex: 1;
+  font-size: 14px;
+  color: #334155;
+}
+
+.tahlil-hub-summary-val {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.tahlil-summary-profit {
+  color: #2e7d32;
+}
+
+.tahlil-hub-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 0;
+}
+
+.tahlil-back-inline {
+  border: none;
+  background: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #0f172a;
+  padding: 4px 8px 4px 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.tahlil-child-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #e8eaef;
+}
+
+.tahlil-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  color: #0f172a;
+}
+
+.tahlil-child-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  color: #0f172a;
+}
+
+.tahlil-child-body {
+  padding: 16px;
+}
+
+.tahlil-child-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.tahlil-child-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.tahlil-child-stat-label {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.tahlil-child-stat-val {
+  font-weight: 800;
+  font-size: 15px;
+  color: #0f172a;
+}
+
+.tahlil-stat-blue {
+  color: #1976d2;
+}
+
+.tahlil-child-pill-row {
+  margin-top: 12px;
+}
+
+.tahlil-child-loading,
+.tahlil-child-error,
+.tahlil-child-empty {
+  text-align: center;
+  padding: 24px;
+  color: #64748b;
+}
+
+.tahlil-child-error {
+  color: #c62828;
+}
+
+.tahlil-month-summary {
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #0f172a;
+}
+
+.tahlil-month-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+
+.tahlil-month-amt {
+  font-weight: 700;
+  color: #1976d2;
+}
+
+.tahlil-nasiya-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.tahlil-nasiya-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.tahlil-nasiya-amt {
+  font-weight: 800;
+  color: #e65100;
 }
 
 .analytics-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   margin: 14px 16px 0;
 }
 

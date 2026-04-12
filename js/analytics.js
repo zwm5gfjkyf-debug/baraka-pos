@@ -5,6 +5,13 @@
 
 let storeAnalysisListener = null
 
+function cleanupStoreAnalyticsListener(){
+  if(typeof storeAnalysisListener === 'function'){
+    storeAnalysisListener()
+    storeAnalysisListener = null
+  }
+}
+
 function formatNumberValue(value){
   return Number(value || 0).toLocaleString('ru-RU')
 }
@@ -236,3 +243,5 @@ function renderStoreStatus(products, averageMargin, lowStockProducts, outOfStock
     statusRows.appendChild(item)
   })
 }
+
+window.cleanupStoreAnalyticsListener = cleanupStoreAnalyticsListener

@@ -59,6 +59,26 @@ if(page){
     cleanupTodaySalesHistoryListeners()
   }
 
+  if(previousPage === 'tahlilHubPage' && pageId !== 'tahlilHubPage' && typeof cleanupTahlilHubListeners === 'function'){
+    cleanupTahlilHubListeners()
+  }
+
+  if(previousPage === 'weeklyTahliliPage' && pageId !== 'weeklyTahliliPage' && typeof cleanupWeeklyTahliliListeners === 'function'){
+    cleanupWeeklyTahliliListeners()
+  }
+
+  if(previousPage === 'monthlyTahliliPage' && pageId !== 'monthlyTahliliPage' && typeof cleanupMonthlyTahliliListeners === 'function'){
+    cleanupMonthlyTahliliListeners()
+  }
+
+  if(previousPage === 'nasiyaTahliliPage' && pageId !== 'nasiyaTahliliPage' && typeof cleanupNasiyaTahliliListeners === 'function'){
+    cleanupNasiyaTahliliListeners()
+  }
+
+  if(previousPage === 'dokonTahliliPage' && pageId !== 'dokonTahliliPage' && typeof cleanupStoreAnalyticsListener === 'function'){
+    cleanupStoreAnalyticsListener()
+  }
+
   if(previousPage === 'dashboardPage' && pageId !== 'dashboardPage' && pageId !== 'todaySalesHistoryPage' && typeof cleanupDashboardListeners === 'function'){
     cleanupDashboardListeners()
   }
@@ -91,7 +111,11 @@ if(page){
     dashboardPage: 0,
     salePage: 1,
     stockPage: 2,
-    analyticsPage: 3
+    tahlilHubPage: 3,
+    dokonTahliliPage: 3,
+    weeklyTahliliPage: 3,
+    monthlyTahliliPage: 3,
+    nasiyaTahliliPage: 3
   };
 
   const navButtons = document.querySelectorAll(".bottom-nav button");
@@ -105,8 +129,15 @@ if(page){
     navButtons[0].classList.add("active");
   }
 
+  let sidebarRoute = pageId
+  if(pageId === 'todaySalesHistoryPage'){
+    sidebarRoute = 'dashboardPage'
+  } else if(['tahlilHubPage','dokonTahliliPage','weeklyTahliliPage','monthlyTahliliPage','nasiyaTahliliPage'].includes(pageId)){
+    sidebarRoute = 'tahlilHubPage'
+  }
+
   if(typeof updateSidebarActive === 'function'){
-    updateSidebarActive(pageId === 'todaySalesHistoryPage' ? 'dashboardPage' : pageId)
+    updateSidebarActive(sidebarRoute)
   }
 
  /* ================================
@@ -154,15 +185,45 @@ if(pageId === "stockPage"){
   }
 }
 
-if(pageId === "analyticsPage"){
+if(pageId === "tahlilHubPage"){
+
+  if(typeof loadTahlilHub === "function"){
+    loadTahlilHub()
+  }
+
+}
+
+if(pageId === "dokonTahliliPage"){
 
   setTimeout(() => {
-
     if(typeof loadStoreAnalytics === "function"){
       loadStoreAnalytics()
     }
-
   }, 150)
+
+}
+
+if(pageId === "weeklyTahliliPage"){
+
+  if(typeof loadWeeklyTahliliPage === "function"){
+    loadWeeklyTahliliPage()
+  }
+
+}
+
+if(pageId === "monthlyTahliliPage"){
+
+  if(typeof loadMonthlyTahliliPage === "function"){
+    loadMonthlyTahliliPage()
+  }
+
+}
+
+if(pageId === "nasiyaTahliliPage"){
+
+  if(typeof loadNasiyaTahliliPage === "function"){
+    loadNasiyaTahliliPage()
+  }
 
 }
 
