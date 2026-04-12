@@ -6152,3 +6152,14 @@ Mobile-first responsive design
   .analytics-header { flex-direction: column; align-items: flex-start; }
   .stats-grid { grid-template-columns: 1fr; }
 }
+
+/* SKELETON LOADING */
+.skeleton {
+  background: #e0e0e0;
+  animation: pulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}

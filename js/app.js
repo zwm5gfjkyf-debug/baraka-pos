@@ -89,6 +89,13 @@ async function loadDashboard(){
   yesterdaySalesData = []
   nasiyaData = []
 
+  // Show loading, hide others
+  document.getElementById('loadingState').style.display = 'block'
+  document.getElementById('statsGrid').style.display = 'none'
+  document.getElementById('chartCard').style.display = 'none'
+  document.getElementById('recentSection').style.display = 'none'
+  document.getElementById('errorState').style.display = 'none'
+
   // Set up time updates
   updateTimeAndDate()
   timeUpdateInterval = setInterval(updateTimeAndDate, 60000) // Update every minute
@@ -199,6 +206,12 @@ function renderDashboard(){
 
   // Update recent sales
   updateRecentSales()
+
+  // Hide loading, show content
+  document.getElementById('loadingState').style.display = 'none'
+  document.getElementById('statsGrid').style.display = 'block'
+  document.getElementById('chartCard').style.display = 'block'
+  document.getElementById('recentSection').style.display = 'block'
 }
 
 function calculateTodayRevenue(){
@@ -216,26 +229,11 @@ function calculateRevenueChange(today, yesterday){
 }
 
 function calculateTodayProfit(){
-  return todaySalesData.reduce((sum, sale) => {
-    if(sale.type === 'debt_payment') return sum + (Number(sale.profitPart) || 0)
-    if((sale.type === 'cash' || sale.type === 'card') && sale.items){
-      return sum + sale.items.reduce((itemSum, item) => {
-        const qty = Number(item.qty) || 0
-        const price = Number(item.price) || 0
-        const cost = Number(item.cost) || 0
-        return itemSum + (price - cost) * qty
-      }, 0)
-    }
-    return sum
-  }, 0)
+  return todaySalesData.reduce((sum, sale) => sum + (Number(sale.profit) || 0), 0)
 }
 
 function calculateProductsSold(){
-  return todaySalesData.reduce((sum, sale) => {
-    if(sale.itemsCount) return sum + Number(sale.itemsCount)
-    if(sale.items) return sum + sale.items.length
-    return sum
-  }, 0)
+  return todaySalesData.reduce((sum, sale) => sum + (Number(sale.itemsCount) || 0), 0)
 }
 
 function calculateNasiyaTotal(){
@@ -310,27 +308,13 @@ function updateRevenueChart(todayRevenue){
   const ctx = canvas.getContext('2d')
   if(revenueChart) revenueChart.destroy()
 
-  // Build chart data points every 2 hours from 09:00 to now
   const now = new Date()
-  const dataPoints = []
-  let currentHour = 9
-  while(currentHour <= now.getHours() + 1){ // +1 to include current hour
-    const pointTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), currentHour)
-    if(pointTime <= now){
-      const cumulative = calculateCumulativeRevenueUpTo(pointTime)
-      const label = currentHour === now.getHours() + 1 ? 'Hozir' : `${currentHour.toString().padStart(2,'0')}:00`
-      dataPoints.push({ hour: label, cumulative })
-    }
-    currentHour += 2
-  }
-
-  // If no data, show flat line
-  if(dataPoints.length === 0 || todayRevenue === 0){
-    dataPoints.push({ hour: '09:00', cumulative: 0 }, { hour: 'Hozir', cumulative: 0 })
-  }
-
-  const labels = dataPoints.map(p => p.hour)
-  const values = dataPoints.map(p => p.cumulative)
+  const labels = ["09:00", "11:00", "13:00", "15:00", "Hozir"]
+  const labelHours = [9, 11, 13, 15, now.getHours()]
+  const values = labelHours.map(hour => {
+    const targetTime = hour === now.getHours() ? now : new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour)
+    return calculateCumulativeRevenueUpTo(targetTime)
+  })
 
   revenueChart = new Chart(ctx, {
     type: 'line',
@@ -413,7 +397,7 @@ function updateRecentSales(){
 
     const saleNumber = sale.saleNumber || '—'
     const timeStr = formatTime(sale.createdAt)
-    const itemCount = sale.itemsCount || (sale.items ? sale.items.length : 0)
+    const itemCount = sale.itemsCount || 0
 
     saleDiv.innerHTML = `
       <div style="width:46px; height:46px; border-radius:12px; background:${iconBg}; display:flex; align-items:center; justify-content:center; font-size:20px;">🛒</div>
@@ -429,8 +413,12 @@ function updateRecentSales(){
 }
 
 function showErrorState(){
-  // Implement error state if needed
-  console.error('Dashboard error state')
+  document.getElementById('loadingState').style.display = 'none'
+  document.getElementById('errorState').style.display = 'block'
+}
+
+function retryLoad(){
+  loadDashboard()
 }
 
 // ===============================
