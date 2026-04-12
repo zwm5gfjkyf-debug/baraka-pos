@@ -237,7 +237,7 @@ font-weight:700;
 /* 🔥 FLOAT BUTTON */
 #floatingAddBtn {
   position:fixed;
-  bottom:90px;
+  bottom:84px;
   right:20px;
   width:60px;
   height:60px;
@@ -248,6 +248,26 @@ font-weight:700;
   font-size:28px;
   box-shadow:0 10px 20px rgba(0,0,0,0.2);
   cursor:pointer;
+}
+
+#centerNavHandle {
+  position:fixed;
+  bottom:104px;
+  left:50%;
+  transform:translateX(-50%);
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:none;
+  background:rgba(28, 28, 30, 0.88);
+  color:white;
+  font-size:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 12px 24px rgba(0,0,0,0.24);
+  cursor:pointer;
+  z-index:1000;
 }
 
 

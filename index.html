@@ -1504,33 +1504,8 @@ Metr
     overflow:hidden;
   "></div>
 </div>
-<!-- NAVIGATION -->
-
-<nav class="bottom-nav glass">
-<button onclick="navigate('dashboardPage')" class="active">
-<div style="font-size:20px; margin-bottom:2px;">⊞</div>
-Asosiy
-</button>
-
-<button onclick="navigate('salePage')">
-<div style="font-size:20px; margin-bottom:2px;">🛒</div>
-Sotuv
-</button>
-
-<button onclick="navigate('stockPage')">
-<div style="font-size:20px; margin-bottom:2px;">📦</div>
-Zaxira
-</button>
-
-<button onclick="navigate('analyticsPage')">
-<div style="font-size:20px; margin-bottom:2px;">📊</div>
-Tahlil
-</button>
-
-</nav>
-
 <!-- FLOATING ACTION BUTTON -->
-<button id="floatingAddBtn" onclick="navigate('salePage')" style="position:fixed; bottom:90px; right:20px; width:56px; height:56px; background:#43A047; border-radius:18px; border:none; color:white; font-size:28px; font-weight:300; box-shadow:0 4px 12px rgba(0,0,0,0.3); cursor:pointer; z-index:1000;">+</button>
+<button id="floatingAddBtn" onclick="navigate('salePage')" style="position:fixed; bottom:84px; right:20px; width:56px; height:56px; background:#43A047; border-radius:18px; border:none; color:white; font-size:28px; font-weight:300; box-shadow:0 4px 12px rgba(0,0,0,0.3); cursor:pointer; z-index:1000;">+</button>
 
 </div>
 
@@ -1690,6 +1665,8 @@ Bekor qilish
     <div class="nav-label">Tahlil</div>
   </button>
 </nav>
+
+<button id="centerNavHandle" onclick="scrollToRecentSales()">↓</button>
 
 <!-- TOP BANNER -->
 

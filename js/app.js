@@ -421,6 +421,13 @@ function retryLoad(){
   loadDashboard()
 }
 
+function scrollToRecentSales(){
+  const section = document.getElementById('recentSection')
+  if(section){
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
 // ===============================
 // SYNC OFFLINE SALES
 // ===============================

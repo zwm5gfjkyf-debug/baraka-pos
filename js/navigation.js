@@ -43,6 +43,14 @@ if(page){
   }
 
   /* ================================
+     TOP HEADER CONTROL
+  ================================ */
+  const appHeader = document.querySelector('.app-header');
+  if(appHeader){
+    appHeader.style.display = pageId === 'dashboardPage' ? 'none' : 'flex';
+  }
+
+  /* ================================
      BOTTOM NAV CONTROL
   ================================ */
   const bottomNav = document.querySelector(".bottom-nav");
@@ -51,6 +59,11 @@ if(page){
     bottomNav.style.display = (
       pageId === "addProductPage" || pageId === "unitPage"
     ) ? "none" : "flex";
+  }
+
+  const centerHandle = document.getElementById('centerNavHandle');
+  if(centerHandle){
+    centerHandle.style.display = pageId === 'dashboardPage' ? 'flex' : 'none';
   }
 
   /* ================================
