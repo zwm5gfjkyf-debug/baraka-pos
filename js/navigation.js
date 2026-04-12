@@ -47,7 +47,7 @@ if(page){
   ================================ */
   const appHeader = document.querySelector('.app-header');
   if(appHeader){
-    appHeader.style.display = pageId === 'dashboardPage' ? 'none' : 'flex';
+    appHeader.style.display = 'flex';
   }
 
   /* ================================
