@@ -43,18 +43,16 @@ if(page){
   }
 
   /* ================================
-     TOP HEADER CONTROL
+     TOP HEADER CONTROL (always visible, including Asosiy)
   ================================ */
   const appHeader = document.querySelector('.app-header');
   if(appHeader){
-    const hideHeader = pageId === 'dashboardPage' || pageId === 'todaySalesHistoryPage';
-    appHeader.style.display = hideHeader ? 'none' : 'flex';
+    appHeader.style.display = 'flex';
   }
 
   const mainContent = document.querySelector('.main-content');
   if(mainContent){
-    const topPad = (pageId === 'dashboardPage' || pageId === 'todaySalesHistoryPage') ? '0' : '80px';
-    mainContent.style.paddingTop = topPad;
+    mainContent.style.paddingTop = '80px';
   }
 
   if(previousPage === 'todaySalesHistoryPage' && pageId !== 'todaySalesHistoryPage' && typeof cleanupTodaySalesHistoryListeners === 'function'){

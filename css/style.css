@@ -988,10 +988,11 @@ HEADER (TOP BAR)
 
   padding:0 16px;
 
-  background:rgba(255,255,255,0.85);
-  backdrop-filter:blur(12px);
+  background:#ffffff;
+  backdrop-filter:none;
 
-  border-bottom:1px solid var(--border);
+  border-bottom:1px solid #E8EAEF;
+  box-shadow:0 1px 3px rgba(15, 23, 42, 0.06);
 
   z-index:100;
 }
