@@ -40,9 +40,9 @@ const product = {
   id: doc.id,
   name: data.name || "",
   barcode: data.barcode || "",
-  price: data.price || 0,
-  cost: data.cost || 0,
-  stock: data.stock || 0,
+  price: data.sellPrice || 0,
+  cost: data.buyPrice || 0,
+  stock: data.quantity || 0,
   image: data.image || ""   // 🔥 ADD THIS
 }
 
@@ -703,7 +703,7 @@ if(product){
 
 const newStock = Math.max(0,(product.stock || 0) - item.qty)
 batch.update(ref,{
-stock: newStock
+quantity: newStock
 })
 
 product.stock = newStock

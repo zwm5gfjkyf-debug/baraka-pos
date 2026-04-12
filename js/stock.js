@@ -361,9 +361,9 @@ const cost = Number(document.getElementById("editCost").value)
 const price = Number(document.getElementById("editPrice").value)
 
 const updateData = {
-stock: newStock,
-cost: cost,
-price: price
+quantity: newStock,
+buyPrice: cost,
+sellPrice: price
 }
 
 if(add > 0){
