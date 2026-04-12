@@ -32,6 +32,11 @@ function formatDate(timestamp) {
   return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+function normalizeCustomerId(name) {
+  if (!name) return 'unknown_customer';
+  return name.trim().toLowerCase().replace(/\s+/g, '_');
+}
+
 function getInitials(name) {
   if (!name) return '??';
   const parts = name.trim().split(' ');
@@ -92,11 +97,12 @@ function processDebtData(records) {
   // 2. Group by customer
   const customerMap = {};
   activeRecords.forEach(r => {
-    const id = r.customerId;
+    const customerName = r.customerName || 'Noma\'lum mijoz';
+    const id = r.customerId || normalizeCustomerId(customerName);
     if (!customerMap[id]) {
       customerMap[id] = {
         customerId: id,
-        customerName: r.customerName,
+        customerName: customerName,
         totalDebt: 0,
         latestNasiyaDate: r.createdAt,
         earliestDueDate: r.dueDate,
@@ -168,6 +174,7 @@ function processDebtData(records) {
   sortDebtCustomers(customers);
 
   // 9. Update UI
+  hideDebtLoading();
   updateDebtSummary(totalDebt, customerCount, overdueCount, newThisMonthCustomers, largestDebt);
   renderDebtCustomers(customers, largestDebt);
 
@@ -222,7 +229,7 @@ function filterDebtCustomers() {
     filteredDebtCustomers = [...currentDebtCustomers];
   } else {
     filteredDebtCustomers = currentDebtCustomers.filter(customer =>
-      customer.customerName.toLowerCase().includes(searchTerm)
+      (customer.customerName || '').toLowerCase().includes(searchTerm)
     );
   }
 
@@ -308,7 +315,7 @@ function renderDebtCustomers(customers, largestDebt) {
             ${getInitials(customer.customerName)}
           </div>
           <div class="debt-customer-info">
-            <div class="debt-customer-name">${customer.customerName}</div>
+            <div class="debt-customer-name">${customer.customerName || 'Noma\'lum mijoz'}</div>
             <div class="debt-customer-date">Oxirgi nasiya: ${formatDate(customer.latestNasiyaDate)}</div>
           </div>
           <div class="debt-customer-amount" style="color: ${debtColor}">
@@ -466,7 +473,7 @@ async function submitNewDebt() {
   }
 
   try {
-    const customerId = customerName.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now();
+    const customerId = normalizeCustomerId(customerName);
     const dueDate = firebase.firestore.Timestamp.fromDate(new Date(dueDateValue));
 
     await db.collection('nasiya').add({

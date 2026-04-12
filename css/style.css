@@ -2427,19 +2427,21 @@ STOCK TABS
 
 .stock-stats-grid{
   display:grid;
-  grid-template-columns:repeat(3, minmax(0, 1fr));
-  gap:10px;
-  margin-bottom:12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:8px;
+  padding:8px 12px 0;
+  margin-bottom:10px;
 }
 
 .stock-stat-card{
-  border-radius:18px;
-  padding:16px;
+  border-radius:14px;
+  padding:10px 12px;
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
-  min-height:100px;
-  gap:8px;
+  justify-content:flex-start;
+  min-height:0;
+  height:auto;
+  gap:4px;
 }
 
 .stock-stat-card.neutral{
@@ -2461,7 +2463,7 @@ STOCK TABS
 }
 
 .stat-number{
-  font-size:24px;
+  font-size:20px;
   font-weight:700;
 }
 
