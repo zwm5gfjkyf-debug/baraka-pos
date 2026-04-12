@@ -5184,8 +5184,17 @@ BOTTOM NAVIGATION
 }
 
 .nav-icon {
-  font-size: 20px;
+  width: 24px;
+  height: 24px;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 .nav-label {
