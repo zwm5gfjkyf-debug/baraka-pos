@@ -23,11 +23,11 @@ const barcode = document.getElementById("stockBarcode")?.value.trim() || ""
 const artikul = document.getElementById("stockArtikul")?.value.trim() || ""
 const unit = document.getElementById("selectedUnit")?.innerText.toLowerCase() || "dona"
 const qty = Number(document.getElementById("stockQty")?.value || 0)
-let cost = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
+let buyPrice = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
 const currency = currentCurrency || "UZS"
-const price = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
+const sellPrice = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
 
-if(!name || price <= 0){
+if(!name || sellPrice <= 0){
   showTopBanner("Mahsulot nomi va narx kerak","error")
   stockProcessing = false
   return
@@ -62,7 +62,7 @@ if(selectedImageFile){
   // 💱 USD → UZS conversion (simple fast rate)
 if(currency === "USD"){
   const rate = window.usdRate || 12500
-  cost = Math.round(cost * rate)
+  buyPrice = Math.round(buyPrice * rate)
 }
 
 
@@ -87,10 +87,10 @@ barcode: barcode,
 artikul: artikul,
 unit: unit,
 
-stock: qty,
+quantity: qty,
 initialStock: qty, // ✅ ADD THIS LINE
-cost: cost || 0,
-price: price,
+buyPrice: buyPrice || 0,
+sellPrice: sellPrice,
 image: imageUrl || "",
 created: Date.now()
 })
@@ -105,12 +105,12 @@ await db.runTransaction(async (t) => {
 const freshDoc = await t.get(doc.ref)
 const freshData = freshDoc.data()
 
-const newStock = Math.max(0, (freshData.stock || 0) + (qty || 0))
+const newStock = Math.max(0, (freshData.quantity || 0) + (qty || 0))
 
 const updateData = {
-stock: newStock,
-cost: cost || freshData.cost,
-price: price,
+quantity: newStock,
+buyPrice: buyPrice || freshData.buyPrice,
+sellPrice: sellPrice,
 barcode: barcode || freshData.barcode,
 artikul: artikul || freshData.artikul,
 unit: unit || freshData.unit
@@ -147,7 +147,7 @@ if(unitEl) unitEl.innerText = "Dona"
 }
 finally{
 
-Processing = false
+stockProcessing = false
 
 }
 
@@ -202,28 +202,28 @@ function loadCurrent(){
         const p = doc.data()
         if(p.deleted === true) return
 
-        const stock = Number(p.stock || 0)
-        const initial = p.initialStock || stock || 1
-        const percent = Math.max(2, Math.min(100, (stock / initial) * 100))
+        const quantity = Number(p.quantity || 0)
+        const initial = p.initialStock || quantity || 1
+        const percent = Math.max(2, Math.min(100, (quantity / initial) * 100))
 
         // ✅ COUNTING
         countAll++
-        if(stock > 0) countActive++
-        if(stock <= 0){
+        if(quantity > 0) countActive++
+        if(quantity <= 0){
           countInactive++
           countOut++
         }
-        if(percent <= 20 && stock > 0){
+        if(percent <= 20 && quantity > 0){
           countLow++
         }
 
         // ✅ FILTERS
-        if(currentStockFilter === "active" && stock <= 0) return
-        if(currentStockFilter === "inactive" && stock > 0) return
-        if(currentStockFilter === "low" && !(percent <= 20 && stock > 0)) return
+        if(currentStockFilter === "active" && quantity <= 0) return
+        if(currentStockFilter === "inactive" && quantity > 0) return
+        if(currentStockFilter === "low" && !(percent <= 20 && quantity > 0)) return
 
         let level, badgeClass, badgeText, color;
-        if(stock === 0){
+        if(quantity === 0){
           level = "out";
           badgeClass = "out";
           badgeText = "Qolmadi";
@@ -231,16 +231,16 @@ function loadCurrent(){
         } else if(percent <= 20){
           level = "low";
           badgeClass = "low";
-          badgeText = `${stock} ${p.unit || "dona"}`;
+          badgeText = `${quantity} ${p.unit || "dona"}`;
           color = "#f59e0b";
         } else {
           level = "high";
           badgeClass = "high";
-          badgeText = `${stock} ${p.unit || "dona"}`;
+          badgeText = `${quantity} ${p.unit || "dona"}`;
           color = "#22c55e";
         }
 
-        const formattedPrice = formatMoney(p.price || 0)
+        const formattedPrice = formatMoney(p.sellPrice || 0)
 
         const div = document.createElement("div")
         div.className = `stock-card ${level}`
@@ -334,9 +334,9 @@ if(!doc.exists) return
 
 const p = doc.data()
 
-document.getElementById("currentStock").value = p.stock || 0
-document.getElementById("editCost").value = p.cost || 0
-document.getElementById("editPrice").value = p.price || 0
+document.getElementById("currentStock").value = p.quantity || 0
+document.getElementById("editCost").value = p.buyPrice || 0
+document.getElementById("editPrice").value = p.sellPrice || 0
 
 document.getElementById("addStockInput").value = ""
 
@@ -397,10 +397,10 @@ const updateData = {
 [field]: value
 }
 
-if(field === "stock"){
+if(field === "quantity"){
 const doc = await db.collection("shops").doc(currentShopId).collection("products").doc(id).get()
-const currentStock = doc.data().stock || 0
-if(value > currentStock){
+const currentQuantity = doc.data().quantity || 0
+if(value > currentQuantity){
 updateData.initialStock = value
 }
 }

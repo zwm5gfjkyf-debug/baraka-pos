@@ -42,8 +42,9 @@ function loadStoreAnalytics(){
   }
 
   const productsQuery = db
-    .collection('products')
-    .where('shopId', '==', currentShopId)
+    .collection("shops")
+    .doc(currentShopId)
+    .collection("products")
     .where('status', '==', 'active')
 
   storeAnalysisListener = productsQuery.onSnapshot(snapshot => {
@@ -98,7 +99,7 @@ function renderStoreAnalysis(products){
   if(healthPill){
     healthPill.classList.toggle('safe', outOfStockCount === 0)
     healthPill.classList.toggle('warning', outOfStockCount !== 0)
-    healthPill.innerText = outOfStockCount === 0 ? 'Sog'lom ✓' : 'Diqqat ⚠'
+    healthPill.innerText = outOfStockCount === 0 ? "Sog'lom ✓" : 'Diqqat ⚠'
   }
 
   const inventoryValueLabel = document.getElementById('inventoryValueLabel')
