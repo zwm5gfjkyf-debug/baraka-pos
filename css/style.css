@@ -2549,7 +2549,7 @@ LIST CONTAINER
 #currentStockList{
   display:flex;
   flex-direction:column;
-  gap:0;
+  gap:10px;
 }
 
 /* ======================
@@ -2789,7 +2789,7 @@ DESKTOP IMPROVEMENT
 @media (min-width:768px){
 
   #currentStockList{
-    gap:4px;
+    gap:10px;
   }
 
   .stock-row-item{
