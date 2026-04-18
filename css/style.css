@@ -6582,36 +6582,48 @@ Mobile-first responsive design
   text-transform: uppercase;
 }
 
-.tahlil-hub-menu {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: calc(100% - 32px);
-  margin: 0 16px 10px;
-  padding: 14px 14px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  cursor: pointer;
-  text-align: left;
-  box-sizing: border-box;
+.tahlil-hub-menu{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  width: calc(100% - 24px);
+  margin: 0 12px 18px;
+
+  padding: 18px 16px;
+
+  background:#ffffff;
+
+  border-radius:20px;
+  border:none;
+
+  box-shadow: 
+    0 4px 12px rgba(15,23,42,0.06),
+    0 12px 30px rgba(15,23,42,0.08);
+
+  transition:transform 0.15s ease, box-shadow 0.15s ease;
+}
+.tahlil-hub-menu:active{
+  transform:scale(0.97);
+  box-shadow:0 4px 12px rgba(0,0,0,0.1) inset;
 }
 
-.tahlil-hub-menu-left {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  min-width: 0;
+.tahlil-hub-menu-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
 }
 
-.tahlil-menu-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.tahlil-menu-icon{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  flex-shrink:0;
 }
 
 .tahlil-menu-icon-blue {
@@ -6634,25 +6646,19 @@ Mobile-first responsive design
   min-width: 0;
 }
 
-.tahlil-hub-menu-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #0f172a;
+.tahlil-hub-menu-title{
+  font-size:17px;
+  font-weight:700;
 }
-
-.tahlil-hub-menu-sub {
-  font-size: 13px;
-  color: #64748b;
-  margin-top: 2px;
+.tahlil-hub-menu-sub{
+  font-size:14px;
+  margin-top:3px;
 }
-
-.tahlil-hub-menu-badge {
-  display: inline-block;
-  margin-top: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 5px 10px;
-  border-radius: 999px;
+.tahlil-hub-menu-badge{
+  margin-top:10px;
+  font-size:12px;
+  padding:6px 12px;
+  border-radius:999px;
 }
 
 .tahlil-badge-weekly-pos {
