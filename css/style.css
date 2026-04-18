@@ -6475,17 +6475,18 @@ Mobile-first responsive design
 }
 
 .tahlil-hub-inner {
-  padding-bottom: 8px;
+  padding: 0;
+  padding-bottom: 100px;
 }
 
 .tahlil-hub-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px 12px;
-  background: #fff;
-  border-bottom: 1px solid #e8eaef;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+  padding: 16px 16px 24px;
+  background: transparent; /* 🔥 REMOVE BACKGROUND */
+  border-bottom: none; /* 🔥 REMOVE BORDER */
+  box-shadow: none; /* 🔥 REMOVE SHADOW */
 }
 
 .tahlil-hub-header-left {
@@ -6534,16 +6535,17 @@ Mobile-first responsive design
 .tahlil-hub-quick-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 12px 16px 0;
+  gap: 12px;
+  padding: 0 16px 24px; /* 🔥 ADD BOTTOM PADDING */
 }
 
 .tahlil-hub-mini-card {
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e8eaef;
   border-radius: 14px;
-  padding: 12px 8px;
+  padding: 14px 10px; /* 🔥 INCREASE PADDING */
   text-align: center;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.04);
 }
 
 .tahlil-mini-value {
@@ -6574,11 +6576,11 @@ Mobile-first responsive design
 }
 
 .tahlil-hub-section-title {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   color: #94a3b8;
-  padding: 18px 16px 10px;
+  padding: 24px 16px 16px; /* 🔥 INCREASE FROM 18px 16px 10px */
   text-transform: uppercase;
 }
 
@@ -6587,32 +6589,39 @@ Mobile-first responsive design
   align-items:center;
   justify-content:space-between;
 
-  width: calc(100% - 24px);
-  margin: 0 12px 18px;
+  width: calc(100% - 32px); /* 🔥 CHANGE FROM 24px */
+  margin: 0 16px 16px; /* 🔥 CHANGE: 16px horizontal, 16px bottom */
 
-  padding: 18px 16px;
+  padding: 20px 18px; /* 🔥 INCREASE PADDING */
 
   background:#ffffff;
 
-  border-radius:20px;
-  border:none;
+  border-radius:18px; /* 🔥 KEEP 18px */
+  border:1px solid #f0f0f0; /* 🔥 ADD SUBTLE BORDER */
 
   box-shadow: 
-    0 4px 12px rgba(15,23,42,0.06),
-    0 12px 30px rgba(15,23,42,0.08);
+    0 2px 8px rgba(15,23,42,0.05),
+    0 8px 16px rgba(15,23,42,0.04); /* 🔥 SOFTEN SHADOW */
 
   transition:transform 0.15s ease, box-shadow 0.15s ease;
 }
 .tahlil-hub-menu:active{
-  transform:scale(0.97);
-  box-shadow:0 4px 12px rgba(0,0,0,0.1) inset;
+  transform:scale(0.98);
+  box-shadow:0 2px 4px rgba(0,0,0,0.08);
 }
 
 .tahlil-hub-menu-left{
   display:flex;
-  align-items:center;
-  gap:14px;
+  align-items:flex-start; /* 🔥 CHANGE FROM center TO flex-start */
+  gap:16px; /* 🔥 INCREASE FROM 14px TO 16px */
+  flex:1;
+  min-width:0;
 }
+.tahlil-hub-menu-text {
+  flex: 1;
+  min-width: 0;
+}
+
 
 .tahlil-menu-icon{
   width:48px;
@@ -6647,12 +6656,15 @@ Mobile-first responsive design
 }
 
 .tahlil-hub-menu-title{
-  font-size:17px;
+  font-size:16px; /* 🔥 KEEP OR SLIGHT ADJUST */
   font-weight:700;
+  margin-bottom:4px;
+  color:#0f172a;
 }
 .tahlil-hub-menu-sub{
-  font-size:14px;
-  margin-top:3px;
+  font-size:13px; /* 🔥 SLIGHTLY LARGER */
+  margin-bottom:8px;
+  color:#64748b;
 }
 .tahlil-hub-menu-badge{
   margin-top:10px;
@@ -6705,13 +6717,8 @@ Mobile-first responsive design
 }
 
 .tahlil-hub-summary {
-  margin: 8px 16px 24px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 16px;
+  display: none; /* 🔥 HIDE THIS SECTION */
 }
-
 .tahlil-hub-summary-head {
   display: flex;
   align-items: center;
