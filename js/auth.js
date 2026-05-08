@@ -80,6 +80,41 @@ function showPasswordMatchHelp(message, isError){
   }
 }
 
+function clearAuthInputs(scope = 'all'){
+  const registerIds = ['shopName', 'registerUsername', 'registerPassword', 'registerPasswordConfirm']
+  const loginIds = ['loginUsername', 'loginPassword']
+  const ids = scope === 'register' ? registerIds : scope === 'login' ? loginIds : registerIds.concat(loginIds)
+
+  ids.forEach(id => {
+    const input = document.getElementById(id)
+    if(input){
+      input.value = ''
+      input.classList.remove('invalid', 'valid')
+      if(input.type === 'text' && id.toLowerCase().includes('password')){
+        input.type = 'password'
+      }
+    }
+  })
+
+  usernameAvailable = false
+  usernameChecked = false
+  showUsernameHelp('', false)
+  showPasswordMatchHelp('', false)
+
+  const loginError = document.getElementById('loginErrorMessage')
+  if(loginError) loginError.textContent = ''
+
+  ;['registerPasswordToggle', 'registerPasswordConfirmToggle', 'loginPasswordToggle'].forEach(id => {
+    const btn = document.getElementById(id)
+    if(btn){
+      btn.textContent = '👁'
+      btn.setAttribute('aria-label', 'Parolni ko‘rsatish')
+    }
+  })
+
+  setRegisterButtonState()
+}
+
 async function checkUsernameAvailable(username){
   const usernameLower = normalizeUsername(username)
   const usernameDoc = await db.collection('usernames').doc(usernameLower).get()
@@ -178,6 +213,10 @@ function handleRegisterPasswordInput(){
 }
 
 function togglePasswordVisibility(inputId, buttonId){
+  if(window.event && typeof window.event.preventDefault === 'function'){
+    window.event.preventDefault()
+  }
+
   const input = document.getElementById(inputId)
   const button = document.getElementById(buttonId)
 
@@ -186,11 +225,20 @@ function togglePasswordVisibility(inputId, buttonId){
   if(input.type === 'password'){
     input.type = 'text'
     button.textContent = '🙈'
+    button.setAttribute('aria-label', 'Parolni yashirish')
   } else {
     input.type = 'password'
     button.textContent = '👁'
+    button.setAttribute('aria-label', 'Parolni ko‘rsatish')
   }
+
+  input.focus()
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  clearAuthInputs('all')
+  setTimeout(() => clearAuthInputs('all'), 250)
+})
 
 async function hashPassword(password){
   if(!window.crypto || !window.crypto.subtle){
@@ -246,6 +294,11 @@ auth.onAuthStateChanged(async (user) => {
     if(loading) loading.classList.add("hidden")
     if(authScreen) authScreen.style.display = "flex"
     if(appScreen) appScreen.classList.add("hidden")
+
+    if(typeof clearAuthInputs === 'function'){
+      clearAuthInputs('all')
+      setTimeout(() => clearAuthInputs('all'), 250)
+    }
 
     updateNavVisibility(false)
   }

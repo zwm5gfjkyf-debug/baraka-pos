@@ -104,21 +104,21 @@
 
     <div id="registerForm" class="auth-form">
       <label class="auth-label" for="shopName">Do'kon nomi</label>
-      <input id="shopName" class="auth-input" placeholder="Baraka Do'koni" autocomplete="organization" required oninput="setRegisterButtonState()">
+      <input id="shopName" class="auth-input" placeholder="Baraka Do'koni" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore required oninput="setRegisterButtonState()">
 
       <label class="auth-label" for="registerUsername">Foydalanuvchi nomi</label>
-      <input id="registerUsername" class="auth-input" placeholder="@username" autocomplete="username" required oninput="handleRegisterUsernameInput()">
+      <input id="registerUsername" class="auth-input" placeholder="@username" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore required oninput="handleRegisterUsernameInput()">
       <div id="usernameHelp" class="auth-help-text"></div>
 
       <label class="auth-label" for="registerPassword">Parol yaratish</label>
       <div class="password-field">
-        <input type="password" id="registerPassword" class="auth-input" placeholder="Kamida 6 ta belgi" autocomplete="new-password" required oninput="handleRegisterPasswordInput()">
+        <input type="password" id="registerPassword" class="auth-input" placeholder="Kamida 6 ta belgi" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore required oninput="handleRegisterPasswordInput()">
         <button type="button" class="password-toggle" onclick="togglePasswordVisibility('registerPassword', 'registerPasswordToggle')" id="registerPasswordToggle">👁</button>
       </div>
 
       <label class="auth-label" for="registerPasswordConfirm">Parolni tasdiqlash</label>
       <div class="password-field">
-        <input type="password" id="registerPasswordConfirm" class="auth-input" placeholder="Parolni qayta kiriting" autocomplete="new-password" required oninput="handleRegisterPasswordInput()">
+        <input type="password" id="registerPasswordConfirm" class="auth-input" placeholder="Parolni qayta kiriting" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore required oninput="handleRegisterPasswordInput()">
         <button type="button" class="password-toggle" onclick="togglePasswordVisibility('registerPasswordConfirm', 'registerPasswordConfirmToggle')" id="registerPasswordConfirmToggle">👁</button>
       </div>
       <div id="passwordMatchHelp" class="auth-help-text"></div>
@@ -131,11 +131,11 @@
 
     <div id="loginForm" class="auth-form" style="display:none;">
       <label class="auth-label" for="loginUsername">Foydalanuvchi nomi</label>
-      <input id="loginUsername" class="auth-input" placeholder="@username" autocomplete="username" required>
+      <input id="loginUsername" class="auth-input" placeholder="@username" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore required>
 
       <label class="auth-label" for="loginPassword">Parol</label>
       <div class="password-field">
-        <input type="password" id="loginPassword" class="auth-input" placeholder="Parolingizni kiriting" autocomplete="current-password" required>
+        <input type="password" id="loginPassword" class="auth-input" placeholder="Parolingizni kiriting" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore required>
         <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPassword', 'loginPasswordToggle')" id="loginPasswordToggle">👁</button>
       </div>
       <div id="loginErrorMessage" class="auth-help-text auth-help-text-error"></div>
@@ -2119,6 +2119,10 @@ function switchAuth(type){
     tabR.classList.remove('auth-tab-inactive')
     tabL.classList.add('auth-tab-inactive')
     tabL.classList.remove('auth-tab-active')
+
+    if(typeof clearAuthInputs === 'function'){
+      clearAuthInputs('register')
+    }
   }
 
   if(type === "login"){
@@ -2129,6 +2133,10 @@ function switchAuth(type){
     tabL.classList.remove('auth-tab-inactive')
     tabR.classList.add('auth-tab-inactive')
     tabR.classList.remove('auth-tab-active')
+
+    if(typeof clearAuthInputs === 'function'){
+      clearAuthInputs('login')
+    }
   }
 
   if(typeof setRegisterButtonState === 'function'){
