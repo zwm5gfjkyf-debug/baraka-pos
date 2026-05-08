@@ -21,32 +21,46 @@ function toggleProfileMenu(){
 
 let confirmCallback = null
 
-function showConfirm(text, callback, title = "Tasdiqlash"){
+function showConfirm(text, callback, title = "Tasdiqlash", okText = "OK", cancelText = "Bekor qilish"){
 
   const modal = document.getElementById("confirmModal")
   const titleBox = document.getElementById("confirmTitle")
   const textBox = document.getElementById("confirmText")
   const okBtn = document.getElementById("confirmOkBtn")
+  const okTextNode = document.getElementById("confirmOkText")
+  const cancelBtn = document.getElementById("confirmCancelBtn")
+  const spinner = document.getElementById("confirmSpinner")
 
-  if(!modal || !textBox || !okBtn) return
+  if(!modal || !textBox || !okBtn || !okTextNode || !cancelBtn) return
 
   if(titleBox){
     titleBox.innerText = title
   }
 
   textBox.innerText = text
+  okTextNode.innerText = okText
+  cancelBtn.innerText = cancelText
 
-  confirmCallback = callback
+  const setLoading = (isLoading) => {
+    okBtn.disabled = isLoading
+    cancelBtn.disabled = isLoading
+    if(spinner){
+      spinner.classList.toggle("hidden", !isLoading)
+    }
+    okBtn.classList.toggle("loading", isLoading)
+  }
 
   okBtn.onclick = async () => {
-    if(confirmCallback){
-      try {
-        await confirmCallback()
-      } catch (error) {
-        console.error("Confirm callback failed:", error)
-      }
+    if(!callback) return
+    setLoading(true)
+    try {
+      await callback()
+      closeConfirm()
+    } catch (error) {
+      console.error("Confirm callback failed:", error)
+    } finally {
+      setLoading(false)
     }
-    closeConfirm()
   }
 
   modal.classList.remove("hidden")

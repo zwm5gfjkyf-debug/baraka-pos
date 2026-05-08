@@ -141,31 +141,100 @@ async function syncOfflineSales(){
 // DELETE SHOP DATA
 // ===============================
 
+async function deleteCollectionBatch(collectionRef){
+  while(true){
+    const snapshot = await collectionRef.limit(500).get()
+    if(snapshot.empty) break
+
+    const batch = db.batch()
+    snapshot.docs.forEach(doc => batch.delete(doc.ref))
+    await batch.commit()
+
+    if(snapshot.size < 500) break
+  }
+}
+
+function resetAppStateAfterDelete(){
+  salesCache = null
+  analyticsLoaded = false
+
+  sidebarData.revenue = 0
+  sidebarData.salesCount = 0
+  sidebarData.activeNasiyaCount = 0
+  sidebarData.lowStockCount = 0
+  sidebarData.outOfStockCount = 0
+  sidebarData.loading = false
+
+  if(typeof renderSidebar === 'function'){
+    renderSidebar()
+  }
+
+  const revenueEl = document.getElementById('sidebarRevenue')
+  const salesCountEl = document.getElementById('sidebarSalesCount')
+  const todayRevenueEl = document.getElementById('todayRevenueValue')
+  const todayTrendEl = document.getElementById('todayRevenueTrend')
+
+  if(revenueEl){
+    revenueEl.textContent = '0'
+    revenueEl.classList.remove('skeleton')
+  }
+
+  if(salesCountEl){
+    salesCountEl.textContent = '0 ta'
+    salesCountEl.classList.remove('skeleton')
+  }
+
+  if(todayRevenueEl){
+    todayRevenueEl.textContent = '0'
+  }
+
+  if(todayTrendEl){
+    todayTrendEl.textContent = '↑ +0% kechagidan'
+  }
+}
+
 async function deleteAllShopData(){
-    if(!currentShopId) return
+  if(!currentShopId) return
 
-    const shopRef = db.collection("shops").doc(currentShopId)
-    const collections = ["sales","nasiya","products"]
+  const shopRef = db.collection('shops').doc(currentShopId)
+  const collections = ['sales', 'nasiya', 'products']
 
+  try {
     for(const col of collections){
-        const snapshot = await shopRef.collection(col).get()
-        for(const doc of snapshot.docs){
-            await doc.ref.delete()
-        }
+      await deleteCollectionBatch(shopRef.collection(col))
     }
 
-    localStorage.removeItem("offlineSales")
-    showTopBanner("Barcha ma'lumotlar o'chirildi", "success")
+    localStorage.removeItem('offlineSales')
+    localStorage.removeItem('lastTransactionId')
+
+    resetAppStateAfterDelete()
+
+    if(typeof loadDashboard === 'function'){
+      loadDashboard()
+    }
+
+    if(typeof navigate === 'function'){
+      navigate('dashboardPage')
+    }
+
+    showTopBanner('Barcha ma'lumotlar muvaffaqiyatli o\'chirildi ✓', 'success')
+  } catch (error) {
+    console.error('Delete all shop data failed:', error)
+    showTopBanner('Xatolik yuz berdi. Qayta urinib ko\'ring.', 'error')
+    throw error
+  }
 }
 
 function confirmDeleteAllShopData(){
-    if(!currentShopId) return
+  if(!currentShopId) return
 
-    showConfirm(
-      "Ushbu amal qaytarib bo'lmaydi. Barcha savdo, mahsulot va nasiya ma'lumotlari o'chirilsinmi?",
-      deleteAllShopData,
-      "Barcha ma'lumotlarni o'chirish"
-    )
+  showConfirm(
+    'Barcha ma\'lumotlar o\'chiriladi. Bu amalni qaytarib bo\'lmaydi!',
+    deleteAllShopData,
+    'Ishonchingiz komilmi?',
+    'O\'chirish',
+    'Bekor qilish'
+  )
 }
 
 // =============================
