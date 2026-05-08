@@ -31,6 +31,10 @@ let usernameCheckTimeout = null
 let usernameAvailable = false
 let usernameChecked = false
 
+function normalizeUsername(value){
+  return String(value || '').trim().toLowerCase()
+}
+
 function validateUsernameFormat(username){
   const regex = /^[a-zA-Z0-9_]{3,20}$/
   return regex.test(username)
@@ -38,7 +42,7 @@ function validateUsernameFormat(username){
 
 function setRegisterButtonState(){
   const shopName = document.getElementById('shopName')?.value.trim() || ''
-  const username = document.getElementById('registerUsername')?.value.trim() || ''
+  const username = normalizeUsername(document.getElementById('registerUsername')?.value || '')
   const password = document.getElementById('registerPassword')?.value || ''
   const confirmPassword = document.getElementById('registerPasswordConfirm')?.value || ''
   const registerBtn = document.getElementById('registerBtn')
@@ -77,17 +81,22 @@ function showPasswordMatchHelp(message, isError){
 }
 
 async function checkUsernameAvailable(username){
-  const usernameLower = username.toLowerCase()
+  const usernameLower = normalizeUsername(username)
   const usernameDoc = await db.collection('usernames').doc(usernameLower).get()
   return usernameDoc.exists ? false : true
 }
 
 function handleRegisterUsernameInput(){
   const input = document.getElementById('registerUsername')
-  const username = input?.value.trim() || ''
+  const username = normalizeUsername(input?.value || '')
   usernameAvailable = false
   usernameChecked = false
   setRegisterButtonState()
+
+  if(usernameCheckTimeout){
+    clearTimeout(usernameCheckTimeout)
+    usernameCheckTimeout = null
+  }
 
   if(username === ''){
     showUsernameHelp('', false)
@@ -106,25 +115,34 @@ function handleRegisterUsernameInput(){
   input?.classList.add('valid')
   showUsernameHelp('Tekshirilmoqda…', false)
 
-  if(usernameCheckTimeout){
-    clearTimeout(usernameCheckTimeout)
-  }
-
   usernameCheckTimeout = setTimeout(async () => {
-    const available = await checkUsernameAvailable(username)
-    usernameAvailable = available
-    usernameChecked = true
+    try{
+      const currentValue = normalizeUsername(input?.value || '')
+      if(currentValue !== username) return
 
-    if(available){
-      showUsernameHelp('✅ Bu nom mavjud!', false)
-      input?.classList.add('valid')
-      input?.classList.remove('invalid')
-    } else {
-      showUsernameHelp('❌ Bu foydalanuvchi nomi band. Boshqa nom tanlang.', true)
+      const available = await checkUsernameAvailable(username)
+      usernameAvailable = available
+      usernameChecked = true
+
+      if(available){
+        showUsernameHelp('✅ Bu nom mavjud!', false)
+        input?.classList.add('valid')
+        input?.classList.remove('invalid')
+      } else {
+        showUsernameHelp('❌ Bu foydalanuvchi nomi band. Boshqa nom tanlang.', true)
+        input?.classList.add('invalid')
+        input?.classList.remove('valid')
+      }
+    }catch(e){
+      console.error('Username check failed:', e)
+      usernameAvailable = false
+      usernameChecked = false
+      showUsernameHelp('❌ Foydalanuvchi nomini tekshirib bo‘lmadi', true)
       input?.classList.add('invalid')
       input?.classList.remove('valid')
+    }finally{
+      setRegisterButtonState()
     }
-    setRegisterButtonState()
   }, 500)
 }
 
@@ -240,7 +258,7 @@ auth.onAuthStateChanged(async (user) => {
 
 async function register(){
   const shopName = document.getElementById('shopName')?.value.trim() || ''
-  const username = document.getElementById('registerUsername')?.value.trim() || ''
+  const username = normalizeUsername(document.getElementById('registerUsername')?.value || '')
   const password = document.getElementById('registerPassword')?.value || ''
   const confirmPassword = document.getElementById('registerPasswordConfirm')?.value || ''
   const loginError = document.getElementById('loginErrorMessage')
@@ -280,6 +298,14 @@ async function register(){
   const syntheticEmail = `${usernameLower}@baraka.local`
 
   try{
+    const availableNow = await checkUsernameAvailable(usernameLower)
+    if(!availableNow){
+      usernameAvailable = false
+      usernameChecked = true
+      showUsernameHelp('❌ Bu foydalanuvchi nomi band. Boshqa nom tanlang.', true)
+      return
+    }
+
     const passwordHash = await hashPassword(password)
 
     const cred = await auth.createUserWithEmailAndPassword(syntheticEmail, password)
@@ -290,6 +316,7 @@ async function register(){
       dokon_nomi: shopName,
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       uid: uid,
+      password: passwordHash,
       passwordHash: passwordHash
     })
 
@@ -318,7 +345,7 @@ async function register(){
     }
   } finally {
     showButtonSpinner('registerSpinner', false)
-    if(registerBtn) registerBtn.disabled = false
+    setRegisterButtonState()
   }
 }
 
@@ -327,7 +354,7 @@ async function register(){
 ========================================= */
 
 async function login(){
-  const username = document.getElementById('loginUsername')?.value.trim() || ''
+  const username = normalizeUsername(document.getElementById('loginUsername')?.value || '')
   const password = document.getElementById('loginPassword')?.value || ''
   const loginError = document.getElementById('loginErrorMessage')
   const loginBtn = document.getElementById('loginBtn')
@@ -352,6 +379,16 @@ async function login(){
       return
     }
 
+    const uid = userDoc.data()?.uid
+    const profileDoc = uid ? await db.collection('users').doc(uid).get() : null
+    const storedHash = profileDoc && profileDoc.exists ? (profileDoc.data().passwordHash || profileDoc.data().password) : ''
+    const enteredHash = await hashPassword(password)
+
+    if(storedHash && storedHash !== enteredHash){
+      if(loginError) loginError.textContent = "❌ Parol noto'g'ri"
+      return
+    }
+
     await auth.signInWithEmailAndPassword(syntheticEmail, password)
     showTopBanner('Xush kelibsiz!', 'success')
   }catch(e){
@@ -359,7 +396,7 @@ async function login(){
     if(loginError){
       if(e.code === 'auth/user-not-found'){
         loginError.textContent = '❌ Bunday foydalanuvchi topilmadi'
-      } else if(e.code === 'auth/wrong-password'){
+      } else if(e.code === 'auth/wrong-password' || e.code === 'auth/invalid-login-credentials' || e.code === 'auth/invalid-credential'){
         loginError.textContent = "❌ Parol noto'g'ri"
       } else {
         loginError.textContent = '❌ Kirishda xatolik yuz berdi'

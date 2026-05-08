@@ -888,11 +888,12 @@ AUTH SCREEN (LOGIN UI)
   width:90px;
   height:90px;
   border-radius:22px;
-  background:linear-gradient(135deg, #2563EB, #1d4ed8);
-  margin:0 auto 16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  background:transparent;
+  margin:0 auto 12px;
+  display:block;
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
 }
 
 .auth-logo-img{
@@ -903,7 +904,7 @@ AUTH SCREEN (LOGIN UI)
   outline:none !important;
   box-shadow:none !important;
   display:block;
-  margin:0 auto;
+  margin:0 auto 12px auto;
 }
 
 .auth-title{
@@ -987,6 +988,10 @@ AUTH SCREEN (LOGIN UI)
 
 .password-field{
   position:relative;
+}
+
+.password-field .auth-input{
+  padding-right:48px;
 }
 
 .password-toggle{
@@ -1152,10 +1157,11 @@ APP SCREEN WRAPPER
   min-height:100vh;
   z-index:1100;
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   justify-content:center;
   background:#f0f2f5;
   padding:24px;
+  overflow-y:auto;
 }
 
 body.auth-active .bottom-nav,
