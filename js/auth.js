@@ -1,4 +1,34 @@
 /* =========================================
+   NAVIGATION VISIBILITY HELPERS
+========================================= */
+
+function updateNavVisibility(isLoggedIn){
+  const body = document.body
+  const bottomNav = document.querySelector('.bottom-nav')
+  const fab = document.getElementById('floatingAddBtn')
+  const appHeader = document.querySelector('.app-header')
+  const sidebar = document.getElementById('sidebar')
+  const sidebarOverlay = document.getElementById('sidebarOverlay')
+
+  if(isLoggedIn){
+    body.classList.remove('auth-active')
+    if(bottomNav) bottomNav.style.display = ''
+    if(fab) fab.style.display = ''
+    if(appHeader) appHeader.style.display = ''
+    if(sidebar) sidebar.style.display = ''
+    if(sidebarOverlay) sidebarOverlay.style.display = ''
+  } else {
+    body.classList.add('auth-active')
+    if(bottomNav) bottomNav.style.display = 'none'
+    if(fab) fab.style.display = 'none'
+    if(appHeader) appHeader.style.display = 'none'
+    if(sidebar) sidebar.style.display = 'none'
+    if(sidebarOverlay) sidebarOverlay.style.display = 'none'
+  }
+}
+
+
+/* =========================================
    AUTH STATE LISTENER
 ========================================= */
 
@@ -16,6 +46,8 @@ auth.onAuthStateChanged(async (user) => {
     if(authScreen) authScreen.style.display = "none"
     if(appScreen) appScreen.classList.remove("hidden")
 
+    updateNavVisibility(true)
+
     // Navigate to dashboard
     if(typeof navigate === "function"){
       navigate('dashboardPage')
@@ -32,6 +64,7 @@ auth.onAuthStateChanged(async (user) => {
     if(authScreen) authScreen.style.display = "flex"
     if(appScreen) appScreen.classList.add("hidden")
 
+    updateNavVisibility(false)
   }
 
 })
@@ -185,7 +218,9 @@ function logout(){
 
   if(appScreen) appScreen.classList.add("hidden")
   if(authScreen) authScreen.style.display = "flex"
-if(typeof switchAuth === "function"){
-  switchAuth("register")
-}
+  if(typeof switchAuth === "function"){
+    switchAuth("register")
+  }
+
+  updateNavVisibility(false)
 }
