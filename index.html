@@ -88,7 +88,7 @@
 <div id="authScreen" class="hidden auth-page">
   <div class="auth-card">
     <div class="auth-logo">
-      <img src="icon.png" alt="Baraka logo">
+      <img class="auth-logo-img" src="icon.png" alt="Baraka logo">
     </div>
     <div class="auth-title">BARAKA</div>
     <div class="auth-subtitle">Biznesingiz uchun zamonaviy ilova</div>
@@ -104,29 +104,46 @@
 
     <div id="registerForm" class="auth-form">
       <label class="auth-label" for="shopName">Do'kon nomi</label>
-      <input id="shopName" class="auth-input" placeholder="Baraka Do'koni">
+      <input id="shopName" class="auth-input" placeholder="Baraka Do'koni" autocomplete="organization" required oninput="setRegisterButtonState()">
 
-      <label class="auth-label" for="email">Email</label>
-      <input id="email" class="auth-input" placeholder="email@example.com">
+      <label class="auth-label" for="registerUsername">Foydalanuvchi nomi</label>
+      <input id="registerUsername" class="auth-input" placeholder="@username" autocomplete="username" required oninput="handleRegisterUsernameInput()">
+      <div id="usernameHelp" class="auth-help-text"></div>
 
-      <label class="auth-label" for="password">Parol</label>
-      <input type="password" id="password" class="auth-input" placeholder="••••••••">
+      <label class="auth-label" for="registerPassword">Parol yaratish</label>
+      <div class="password-field">
+        <input type="password" id="registerPassword" class="auth-input" placeholder="Kamida 6 ta belgi" autocomplete="new-password" required oninput="handleRegisterPasswordInput()">
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('registerPassword', 'registerPasswordToggle')" id="registerPasswordToggle">👁</button>
+      </div>
 
-      <button class="auth-submit-btn" onclick="register()">
+      <label class="auth-label" for="registerPasswordConfirm">Parolni tasdiqlash</label>
+      <div class="password-field">
+        <input type="password" id="registerPasswordConfirm" class="auth-input" placeholder="Parolni qayta kiriting" autocomplete="new-password" required oninput="handleRegisterPasswordInput()">
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('registerPasswordConfirm', 'registerPasswordConfirmToggle')" id="registerPasswordConfirmToggle">👁</button>
+      </div>
+      <div id="passwordMatchHelp" class="auth-help-text"></div>
+
+      <button class="auth-submit-btn" id="registerBtn" onclick="register()" disabled>
+        <span id="registerSpinner" class="button-spinner hidden"></span>
         Ro'yxatdan o'tish →
       </button>
     </div>
 
     <div id="loginForm" class="auth-form" style="display:none;">
-      <label class="auth-label" for="emailLogin">Email</label>
-      <input id="emailLogin" class="auth-input" placeholder="baraka@email.com">
+      <label class="auth-label" for="loginUsername">Foydalanuvchi nomi</label>
+      <input id="loginUsername" class="auth-input" placeholder="@username" autocomplete="username" required>
 
-      <label class="auth-label" for="passwordLogin">Parol</label>
-      <input type="password" id="passwordLogin" class="auth-input" placeholder="••••••••">
+      <label class="auth-label" for="loginPassword">Parol</label>
+      <div class="password-field">
+        <input type="password" id="loginPassword" class="auth-input" placeholder="Parolingizni kiriting" autocomplete="current-password" required>
+        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('loginPassword', 'loginPasswordToggle')" id="loginPasswordToggle">👁</button>
+      </div>
+      <div id="loginErrorMessage" class="auth-help-text auth-help-text-error"></div>
 
       <div class="auth-forgot">Parolni unutdingizmi?</div>
 
-      <button class="auth-submit-btn" onclick="login()">
+      <button class="auth-submit-btn" id="loginBtn" onclick="login()">
+        <span id="loginSpinner" class="button-spinner hidden"></span>
         Kirish →
       </button>
     </div>
@@ -2086,6 +2103,14 @@ function switchAuth(type){
   const tabR = document.getElementById("tabRegister")
   const tabL = document.getElementById("tabLogin")
 
+  const usernameHelp = document.getElementById('usernameHelp')
+  const passwordHelp = document.getElementById('passwordMatchHelp')
+  const loginError = document.getElementById('loginErrorMessage')
+
+  if(usernameHelp) usernameHelp.textContent = ''
+  if(passwordHelp) passwordHelp.textContent = ''
+  if(loginError) loginError.textContent = ''
+
   if(type === "register"){
     register.style.display = "block"
     login.style.display = "none"
@@ -2104,6 +2129,10 @@ function switchAuth(type){
     tabL.classList.remove('auth-tab-inactive')
     tabR.classList.add('auth-tab-inactive')
     tabR.classList.remove('auth-tab-active')
+  }
+
+  if(typeof setRegisterButtonState === 'function'){
+    setRegisterButtonState()
   }
 }
 </script>

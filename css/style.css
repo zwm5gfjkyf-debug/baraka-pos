@@ -885,9 +885,9 @@ AUTH SCREEN (LOGIN UI)
 }
 
 .auth-logo{
-  width:72px;
-  height:72px;
-  border-radius:18px;
+  width:90px;
+  height:90px;
+  border-radius:22px;
   background:linear-gradient(135deg, #2563EB, #1d4ed8);
   margin:0 auto 16px;
   display:flex;
@@ -895,9 +895,15 @@ AUTH SCREEN (LOGIN UI)
   justify-content:center;
 }
 
-.auth-logo img{
-  width:40px;
-  height:40px;
+.auth-logo-img{
+  width:90px;
+  height:90px;
+  border-radius:22px;
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
+  display:block;
+  margin:0 auto;
 }
 
 .auth-title{
@@ -979,6 +985,45 @@ AUTH SCREEN (LOGIN UI)
   margin-bottom:16px;
 }
 
+.password-field{
+  position:relative;
+}
+
+.password-toggle{
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  font-size:16px;
+  color:#6b7280;
+  padding:4px;
+}
+
+.auth-help-text{
+  min-height:20px;
+  font-size:13px;
+  margin-bottom:12px;
+}
+
+.auth-help-text-error{
+  color:#dc2626;
+}
+
+.auth-help-text-success{
+  color:#16a34a;
+}
+
+.auth-input.invalid{
+  border-color:#dc2626;
+}
+
+.auth-input.valid{
+  border-color:#16a34a;
+}
+
 .auth-submit-btn{
   width:100%;
   background:linear-gradient(135deg, #2563EB, #1d4ed8);
@@ -991,10 +1036,37 @@ AUTH SCREEN (LOGIN UI)
   cursor:pointer;
   box-shadow:0 8px 24px rgba(37, 99, 235, 0.35);
   margin-top:8px;
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
 }
 
 .auth-submit-btn:hover{
   opacity:0.98;
+}
+
+.auth-submit-btn:disabled{
+  opacity:0.65;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+.button-spinner{
+  width:18px;
+  height:18px;
+  border:2px solid rgba(255,255,255,0.5);
+  border-top-color:white;
+  border-radius:50%;
+  animation:spin 0.9s linear infinite;
+}
+
+.hidden{
+  display:none !important;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg);}
 }
 
 .auth-divider{
