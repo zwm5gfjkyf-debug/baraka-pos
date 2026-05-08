@@ -218,7 +218,7 @@ async function deleteAllShopData(){
       navigate('dashboardPage')
     }
 
-    showTopBanner('Barcha ma'lumotlar muvaffaqiyatli o\'chirildi ✓', 'success')
+    showTopBanner(`Barcha ma'lumotlar muvaffaqiyatli o'chirildi ✓`, 'success')
   } catch (error) {
     console.error('Delete all shop data failed:', error)
     showTopBanner('Xatolik yuz berdi. Qayta urinib ko\'ring.', 'error')
