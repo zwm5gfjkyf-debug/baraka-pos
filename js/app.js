@@ -142,28 +142,30 @@ async function syncOfflineSales(){
 // ===============================
 
 async function deleteAllShopData(){
-
     if(!currentShopId) return
 
-    const confirmDelete = prompt("DELETE deb yozing")
-
-    if(confirmDelete !== "DELETE") return
-
     const shopRef = db.collection("shops").doc(currentShopId)
-
-    const collections = ["sales","debts","products"]
+    const collections = ["sales","nasiya","products"]
 
     for(const col of collections){
-
         const snapshot = await shopRef.collection(col).get()
-
         for(const doc of snapshot.docs){
             await doc.ref.delete()
         }
-
     }
 
-showTopBanner("Barcha ma'lumotlar o'chirildi", "success")
+    localStorage.removeItem("offlineSales")
+    showTopBanner("Barcha ma'lumotlar o'chirildi", "success")
+}
+
+function confirmDeleteAllShopData(){
+    if(!currentShopId) return
+
+    showConfirm(
+      "Ushbu amal qaytarib bo'lmaydi. Barcha savdo, mahsulot va nasiya ma'lumotlari o'chirilsinmi?",
+      deleteAllShopData,
+      "Barcha ma'lumotlarni o'chirish"
+    )
 }
 
 // =============================

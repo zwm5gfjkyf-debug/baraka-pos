@@ -34,6 +34,7 @@
 
   <div class="confirm-box glass">
 
+    <div id="confirmTitle" class="confirm-title">Tasdiqlash</div>
     <div id="confirmText" class="confirm-text"></div>
 
     <div class="confirm-buttons">
@@ -482,7 +483,7 @@
 Chiqish
 </button>
 
-<button onclick="deleteAllShopData()" class="danger-btn">
+<button onclick="confirmDeleteAllShopData()" class="danger-btn">
 Hammasini o'chirish
 </button>
 
@@ -1659,6 +1660,45 @@ Keyingisi
 </div>
   
 </div>
+
+<div id="settingsPage" class="page hidden">
+
+  <div style="padding:24px; min-height:calc(100vh - 160px); background:#0D1B2A; color:#E2E8F0;">
+
+    <button onclick="goBack()" style="color:#93C5FD; font-weight:600; margin-bottom:18px; background:transparent; border:none; cursor:pointer;">
+      ← Orqaga
+    </button>
+
+    <div style="margin-bottom:22px;">
+      <h1 style="margin:0 0 8px; font-size:28px; color:#F8FAFC;">Sozlamalar</h1>
+      <p style="margin:0; color:#94A3B8; max-width:680px; line-height:1.6;">Ilova sozlamalarini boshqarish, qorong'u mavzuni yoqish va barcha ma'lumotlarni o'chirish.</p>
+    </div>
+
+    <div style="background:#12263B; border:1px solid rgba(148,163,184,0.12); border-radius:24px; padding:22px; box-shadow:0 20px 80px rgba(4,11,27,0.22);">
+
+      <div style="margin-bottom:24px;">
+        <div style="font-size:14px; font-weight:700; color:#CBD5E1; margin-bottom:8px;">Tungi rejim</div>
+        <div style="font-size:18px; font-weight:700; color:#F8FAFC; margin-bottom:6px;">Qorong'u interfeys</div>
+        <p style="margin:0; color:#94A3B8; line-height:1.6;">Ilovani qorong'u #0D1B2A fon bilan ko'proq jim va professional ko'rinishda ishlating.</p>
+      </div>
+
+      <button class="btn-secondary" onclick="toggleTheme()" style="padding:14px 18px; border-radius:16px; width:100%; max-width:260px;">Temani almashtirish</button>
+
+      <div style="height:1px; background:rgba(148,163,184,0.14); margin:28px 0;"></div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:14px; font-weight:700; color:#FECACA; margin-bottom:6px;">Xavf zonasi</div>
+        <div style="font-size:16px; font-weight:600; color:#F8FAFC; margin-bottom:8px;">Hammasini o'chirish</div>
+        <p style="margin:0; color:#94A3B8; line-height:1.6;">Bu amal barcha savdo, mahsulot va nasiya ma'lumotlarini butunlay o'chiradi. Iltimos, davom etishdan oldin ishonch hosil qiling.</p>
+      </div>
+
+      <button class="danger-btn" onclick="confirmDeleteAllShopData()" style="width:100%; padding:16px 18px; border-radius:18px; font-size:16px;">Hammasini o'chirish</button>
+
+    </div>
+
+  </div>
+
+ </div>
  <!-- UNIT PAGE -->
 <div id="unitPage" class="page hidden">
 

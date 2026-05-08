@@ -21,21 +21,32 @@ function toggleProfileMenu(){
 
 let confirmCallback = null
 
-function showConfirm(text, callback){
+function showConfirm(text, callback, title = "Tasdiqlash"){
 
   const modal = document.getElementById("confirmModal")
+  const titleBox = document.getElementById("confirmTitle")
   const textBox = document.getElementById("confirmText")
   const okBtn = document.getElementById("confirmOkBtn")
 
   if(!modal || !textBox || !okBtn) return
 
+  if(titleBox){
+    titleBox.innerText = title
+  }
+
   textBox.innerText = text
 
   confirmCallback = callback
 
-  okBtn.onclick = ()=>{
-      if(confirmCallback) confirmCallback()
-      closeConfirm()
+  okBtn.onclick = async () => {
+    if(confirmCallback){
+      try {
+        await confirmCallback()
+      } catch (error) {
+        console.error("Confirm callback failed:", error)
+      }
+    }
+    closeConfirm()
   }
 
   modal.classList.remove("hidden")
