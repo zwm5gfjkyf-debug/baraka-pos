@@ -66,7 +66,7 @@ function loadStoreAnalytics(){
         sellPrice: Number(raw.sellPrice) || 0,
         quantity: Number(raw.quantity) || 0,
         unit: raw.unit || 'dona',
-        imageUrl: raw.imageUrl || ''
+        imageUrl: raw.image || raw.imageUrl || ''
       })
     })
 

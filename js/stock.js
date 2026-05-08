@@ -450,7 +450,7 @@ async function editProductPrompt(id){
 const value = prompt("Yangi miqdor")
 if(!value) return
 
-await editProduct(id,"stock",Number(value))
+await editProduct(id,"quantity",Number(value))
 
 }
 function openAddProductModal(){

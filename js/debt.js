@@ -69,8 +69,9 @@ async function loadDebtAnalytics() {
       debtAnalyticsListener();
     }
 
-    debtAnalyticsListener = db.collection('nasiya')
-      .where('shopId', '==', currentShopId)
+    const nasiyaRef = db.collection('shops').doc(currentShopId).collection('nasiya')
+
+    debtAnalyticsListener = nasiyaRef
       .where('status', '==', 'active')
       .onSnapshot(snapshot => {
         processDebtData(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -412,18 +413,21 @@ async function submitDebtPayment() {
     }
 
     // Execute updates
+    const nasiyaRef = db.collection('shops').doc(currentShopId).collection('nasiya')
+    const nasiyaPaymentsRef = db.collection('shops').doc(currentShopId).collection('nasiyaPayments')
+
     for (const update of updates) {
-      await db.collection('nasiya').doc(update.docId).update({
+      await nasiyaRef.doc(update.docId).update({
         paidAmount: firebase.firestore.FieldValue.increment(update.incrementAmount)
       });
 
       if (update.shouldMarkPaid) {
-        await db.collection('nasiya').doc(update.docId).update({ status: 'paid' });
+        await nasiyaRef.doc(update.docId).update({ status: 'paid' });
       }
     }
 
     // Log the payment
-    await db.collection('nasiyaPayments').add({
+    await nasiyaPaymentsRef.add({
       nasiyaId: updates[0]?.docId, // Use first record ID
       customerId: window.currentPaymentTarget.customerId,
       customerName: window.currentPaymentTarget.customerName,
@@ -476,7 +480,9 @@ async function submitNewDebt() {
     const customerId = normalizeCustomerId(customerName);
     const dueDate = firebase.firestore.Timestamp.fromDate(new Date(dueDateValue));
 
-    await db.collection('nasiya').add({
+    const nasiyaRef = db.collection('shops').doc(currentShopId).collection('nasiya')
+
+    await nasiyaRef.add({
       customerId: customerId,
       customerName: customerName,
       amount: amount,
