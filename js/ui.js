@@ -58,6 +58,7 @@ function showConfirm(text, callback, title = "Tasdiqlash", okText = "OK", cancel
       closeConfirm()
     } catch (error) {
       console.error("Confirm callback failed:", error)
+      showTopBanner('Xatolik yuz berdi. Qayta urinib ko\'ring.', 'error')
     } finally {
       setLoading(false)
     }

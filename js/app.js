@@ -197,7 +197,7 @@ async function deleteAllShopData(){
   if(!currentShopId) return
 
   const shopRef = db.collection('shops').doc(currentShopId)
-  const collections = ['sales', 'nasiya', 'products']
+  const collections = ['sales', 'nasiya', 'nasiyaPayments', 'products', 'settings']
 
   try {
     for(const col of collections){
@@ -206,6 +206,7 @@ async function deleteAllShopData(){
 
     localStorage.removeItem('offlineSales')
     localStorage.removeItem('lastTransactionId')
+    localStorage.removeItem('barcodeCounter')
 
     resetAppStateAfterDelete()
 
