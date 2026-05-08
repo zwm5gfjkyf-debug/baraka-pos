@@ -875,6 +875,7 @@ AUTH SCREEN (LOGIN UI)
 .auth-card{
   width:100%;
   max-width:390px;
+  min-height:650px;
   background:#ffffff;
   border-radius:22px;
   padding:20px 28px 18px;
@@ -1174,6 +1175,33 @@ APP SCREEN WRAPPER
   background:#f0f2f5;
   padding:12px;
   overflow:hidden;
+}
+
+@media (max-height: 760px){
+  .auth-card{
+    min-height:calc(100vh - 24px);
+  }
+}
+
+@media (max-height: 680px){
+  .auth-card{
+    padding-top:14px;
+    padding-bottom:14px;
+  }
+
+  .auth-subtitle{
+    margin-bottom:8px;
+  }
+
+  .auth-tabs{
+    margin-bottom:10px;
+  }
+
+  .auth-input{
+    min-height:40px;
+    padding-top:9px;
+    padding-bottom:9px;
+  }
 }
 
 body.auth-active .bottom-nav,

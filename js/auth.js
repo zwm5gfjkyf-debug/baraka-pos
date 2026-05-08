@@ -117,8 +117,27 @@ function clearAuthInputs(scope = 'all'){
 
 async function checkUsernameAvailable(username){
   const usernameLower = normalizeUsername(username)
-  const usernameDoc = await db.collection('usernames').doc(usernameLower).get()
-  return usernameDoc.exists ? false : true
+  try{
+    const usernameDoc = await Promise.race([
+      db.collection('usernames').doc(usernameLower).get(),
+      new Promise(resolve => setTimeout(() => resolve(null), 1400))
+    ])
+    if(usernameDoc === null) return true
+    return usernameDoc.exists ? false : true
+  }catch(e){
+    console.warn('Username Firestore lookup failed, falling back to auth lookup:', e)
+    const syntheticEmail = `${usernameLower}@baraka.local`
+    try{
+      const methods = await Promise.race([
+        auth.fetchSignInMethodsForEmail(syntheticEmail),
+        new Promise(resolve => setTimeout(() => resolve(null), 1600))
+      ])
+      return Array.isArray(methods) ? methods.length === 0 : true
+    }catch(error){
+      console.warn('Username auth lookup failed, allowing final register validation:', error)
+      return true
+    }
+  }
 }
 
 function handleRegisterUsernameInput(){
