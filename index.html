@@ -85,164 +85,57 @@
  
 <!-- AUTH -->
 
-<div id="authScreen" class="hidden" style="
-  min-height:100vh;
-  background:#1976D2;
-  display:flex;
-  flex-direction:column;
-">
-
-  <!-- 🔵 TOP BLUE AREA -->
-  <div style="
-    padding:60px 20px 80px;
-    text-align:center;
-    color:white;
-  ">
-
-    <img src="icon.png" style="
-      width:80px;
-      height:80px;
-      border-radius:20px;
-      margin-bottom:16px;
-    ">
-
-    <div style="
-      font-size:28px;
-      font-weight:800;
-      letter-spacing:1px;
-    ">
-      BARAKA
+<div id="authScreen" class="hidden auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img src="icon.png" alt="Baraka logo">
     </div>
+    <div class="auth-title">BARAKA</div>
+    <div class="auth-subtitle">Biznesingiz uchun zamonaviy ilova</div>
 
-    <div style="
-      font-size:14px;
-      opacity:0.9;
-      margin-top:6px;
-    ">
-      Biznesingiz uchun zamonaviy ilova
-    </div>
-
-  </div>
-
-  <!-- ⚪ WHITE CARD -->
-  <div style="
-    background:#F8FAFC;
-    border-radius:30px 30px 0 0;
-    margin-top:-40px;
-    padding:20px;
-    flex:1;
-  ">
-
-    <!-- 🔘 TABS -->
-    <div style="
-      display:flex;
-      background:#E5E7EB;
-      border-radius:14px;
-      padding:4px;
-      margin-bottom:20px;
-    ">
-
-      <div id="tabRegister"
-           onclick="switchAuth('register')"
-           style="
-             flex:1;
-             text-align:center;
-             padding:10px;
-             border-radius:12px;
-             font-weight:600;
-             background:white;
-             color:#1976D2;
-             cursor:pointer;
-           ">
+    <div class="auth-tabs">
+      <div id="tabRegister" class="auth-tab auth-tab-active" onclick="switchAuth('register')">
         Ro'yxatdan o'tish
       </div>
-
-      <div id="tabLogin"
-           onclick="switchAuth('login')"
-           style="
-             flex:1;
-             text-align:center;
-             padding:10px;
-             border-radius:12px;
-             font-weight:600;
-             color:#64748b;
-             cursor:pointer;
-           ">
+      <div id="tabLogin" class="auth-tab auth-tab-inactive" onclick="switchAuth('login')">
         Kirish
       </div>
-
     </div>
 
-    <!-- REGISTER -->
-    <div id="registerForm">
-
-      <div style="margin-bottom:12px; font-weight:600;">Do'kon nomi</div>
+    <div id="registerForm" class="auth-form">
+      <label class="auth-label" for="shopName">Do'kon nomi</label>
       <input id="shopName" class="auth-input" placeholder="Baraka Do'koni">
 
-      <div style="margin-top:12px; margin-bottom:6px; font-weight:600;">Email</div>
+      <label class="auth-label" for="email">Email</label>
       <input id="email" class="auth-input" placeholder="email@example.com">
 
-      <div style="margin-top:12px; margin-bottom:6px; font-weight:600;">Parol</div>
+      <label class="auth-label" for="password">Parol</label>
       <input type="password" id="password" class="auth-input" placeholder="••••••••">
 
-      <button class="btn-primary" onclick="register()" style="
-        margin-top:20px;
-        width:100%;
-        height:52px;
-        border-radius:14px;
-        font-size:16px;
-      ">
+      <button class="auth-submit-btn" onclick="register()">
         Ro'yxatdan o'tish →
       </button>
-
     </div>
 
-    <!-- LOGIN -->
-    <div id="loginForm" style="display:none;">
-
-      <div style="margin-bottom:6px; font-weight:600;">Email</div>
+    <div id="loginForm" class="auth-form" style="display:none;">
+      <label class="auth-label" for="emailLogin">Email</label>
       <input id="emailLogin" class="auth-input" placeholder="baraka@email.com">
 
-      <div style="margin-top:12px; margin-bottom:6px; font-weight:600;">Parol</div>
+      <label class="auth-label" for="passwordLogin">Parol</label>
       <input type="password" id="passwordLogin" class="auth-input" placeholder="••••••••">
 
-      <div style="
-        text-align:right;
-        font-size:13px;
-        color:#1976D2;
-        margin-top:6px;
-      ">
-        Parolni unutdingizmi?
-      </div>
+      <div class="auth-forgot">Parolni unutdingizmi?</div>
 
-      <button class="btn-primary" onclick="login()" style="
-        margin-top:20px;
-        width:100%;
-        height:52px;
-        border-radius:14px;
-        font-size:16px;
-      ">
+      <button class="auth-submit-btn" onclick="login()">
         Kirish →
       </button>
-
     </div>
 
-    <!-- 🔽 FOOTER -->
-    <div style="
-      text-align:center;
-      margin-top:20px;
-      font-size:13px;
-      color:#64748b;
-    ">
-      Davom etish orqali siz
-      <span style="color:#1976D2;">Foydalanish shartlari</span>
-      va
-      <span style="color:#1976D2;">Maxfiylik siyosati</span>
-      ga rozilik bildirasiz
+    <div class="auth-divider"></div>
+    <div class="auth-footer">
+      Davom etish orqali siz <span>Foydalanish shartlari</span> va <span>Maxfiylik siyosati</span> ga rozilik bildirasiz
     </div>
-
   </div>
-
 </div>
 <div id="sidebar" class="sidebar">
   <div class="sidebar-content">
@@ -2197,22 +2090,20 @@ function switchAuth(type){
     register.style.display = "block"
     login.style.display = "none"
 
-    tabR.style.background = "white"
-    tabR.style.color = "#1976D2"
-
-    tabL.style.background = "transparent"
-    tabL.style.color = "#64748b"
+    tabR.classList.add('auth-tab-active')
+    tabR.classList.remove('auth-tab-inactive')
+    tabL.classList.add('auth-tab-inactive')
+    tabL.classList.remove('auth-tab-active')
   }
 
   if(type === "login"){
     register.style.display = "none"
     login.style.display = "block"
 
-    tabL.style.background = "white"
-    tabL.style.color = "#1976D2"
-
-    tabR.style.background = "transparent"
-    tabR.style.color = "#64748b"
+    tabL.classList.add('auth-tab-active')
+    tabL.classList.remove('auth-tab-inactive')
+    tabR.classList.add('auth-tab-inactive')
+    tabR.classList.remove('auth-tab-active')
   }
 }
 </script>
