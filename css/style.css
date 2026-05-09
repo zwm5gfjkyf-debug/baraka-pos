@@ -5813,39 +5813,42 @@ BOTTOM NAVIGATION
 }
 
 /* Dynamic typography scaling based on container width */
-@container (max-width: 140px) {
-  .dashboard-card-value {
-    font-size: 20px;
+/* Feature detection for container queries */
+@supports (container-type: inline-size) {
+  @container (max-width: 140px) {
+    .dashboard-card-value {
+      font-size: 20px;
+    }
+    .dashboard-card-value span {
+      font-size: 14px;
+    }
   }
-  .dashboard-card-value span {
-    font-size: 14px;
-  }
-}
 
-@container (max-width: 120px) {
-  .dashboard-card-value {
-    font-size: 18px;
+  @container (max-width: 120px) {
+    .dashboard-card-value {
+      font-size: 18px;
+    }
+    .dashboard-card-value span {
+      font-size: 13px;
+    }
   }
-  .dashboard-card-value span {
-    font-size: 13px;
-  }
-}
 
-@container (max-width: 100px) {
-  .dashboard-card-value {
-    font-size: 16px;
+  @container (max-width: 100px) {
+    .dashboard-card-value {
+      font-size: 16px;
+    }
+    .dashboard-card-value span {
+      font-size: 12px;
+    }
   }
-  .dashboard-card-value span {
-    font-size: 12px;
-  }
-}
 
-@container (max-width: 85px) {
-  .dashboard-card-value {
-    font-size: 14px;
-  }
-  .dashboard-card-value span {
-    font-size: 11px;
+  @container (max-width: 85px) {
+    .dashboard-card-value {
+      font-size: 14px;
+    }
+    .dashboard-card-value span {
+      font-size: 11px;
+    }
   }
 }
 

@@ -32,22 +32,35 @@ let sidebarData = {
 // AUTH STATE
 // =============================
 
-auth.onAuthStateChanged(user => {
+// Wait for Firebase to be fully initialized
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof auth !== 'undefined') {
+    setupAuthListener()
+  } else {
+    console.warn('Firebase auth not initialized, retrying in 100ms')
+    setTimeout(setupAuthListener, 100)
+  }
+})
 
+function setupAuthListener() {
+  if (typeof auth === 'undefined') {
+    console.error('Firebase auth still not available')
+    return
+  }
+
+  auth.onAuthStateChanged(user => {
     const loading = document.getElementById("loadingScreen")
-
     if(loading) loading.classList.add("hidden")
 
     if(user){
+      currentShopId = user.uid
+      window.currentShopId = user.uid
+      document
+          .getElementById("authScreen")
+          .classList.add("hidden")
 
-currentShopId = user.uid
-window.currentShopId = user.uid
-        document
-            .getElementById("authScreen")
-            .classList.add("hidden")
-
-        document
-            .getElementById("appScreen")
+      document
+          .getElementById("appScreen")
             .classList.remove("hidden")
 
         const emailBox = document.getElementById("profileEmail")
@@ -69,9 +82,7 @@ if(typeof loadLowStock === "function"){
 }
 
 syncOfflineSales()
-    }
-    else{
-
+    } else {
         document
             .getElementById("appScreen")
             .classList.add("hidden")
@@ -79,10 +90,9 @@ syncOfflineSales()
         document
             .getElementById("authScreen")
             .classList.remove("hidden")
-
     }
-
-})
+  })
+}
 
 // Asosiy (dashboard) — js/home-asosiy.js
 

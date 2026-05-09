@@ -224,7 +224,9 @@
     }
 
     // Apply intelligent typography scaling
-    applyResponsiveTypography()
+    if (typeof applyResponsiveTypography === 'function') {
+      applyResponsiveTypography()
+    }
     const trendEl = document.getElementById('todayRevenueTrend')
     if (trendEl) {
       trendEl.textContent = `${trend.arrow} ${trend.text}`
@@ -621,24 +623,48 @@
   let resizeObserver = null
   
   function setupResizeObserver() {
+    // Feature detection for ResizeObserver
+    if (typeof ResizeObserver === 'undefined') {
+      console.warn('ResizeObserver not supported, using window resize fallback')
+      // Fallback to window resize listener
+      window.addEventListener('resize', () => {
+        clearTimeout(window.resizeTimeout)
+        window.resizeTimeout = setTimeout(() => {
+          applyResponsiveTypography()
+        }, 100)
+      })
+      return
+    }
+    
     if (resizeObserver) {
       resizeObserver.disconnect()
     }
     
-    resizeObserver = new ResizeObserver(entries => {
-      // Debounce resize events
-      clearTimeout(window.resizeTimeout)
-      window.resizeTimeout = setTimeout(() => {
-        applyResponsiveTypography()
-      }, 100)
-    })
-    
-    // Observe all dashboard cards
-    const statCards = document.querySelectorAll('.dashboard-card-value')
-    statCards.forEach(card => {
-      resizeObserver.observe(card)
-      resizeObserver.observe(card.parentElement)
-    })
+    try {
+      resizeObserver = new ResizeObserver(entries => {
+        // Debounce resize events
+        clearTimeout(window.resizeTimeout)
+        window.resizeTimeout = setTimeout(() => {
+          applyResponsiveTypography()
+        }, 100)
+      })
+      
+      // Observe all dashboard cards
+      const statCards = document.querySelectorAll('.dashboard-card-value')
+      statCards.forEach(card => {
+        resizeObserver.observe(card)
+        resizeObserver.observe(card.parentElement)
+      })
+    } catch (error) {
+      console.warn('ResizeObserver setup failed:', error)
+      // Fallback to window resize listener
+      window.addEventListener('resize', () => {
+        clearTimeout(window.resizeTimeout)
+        window.resizeTimeout = setTimeout(() => {
+          applyResponsiveTypography()
+        }, 100)
+      })
+    }
   }
   
   function cleanupResizeObserver() {
