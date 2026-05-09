@@ -72,7 +72,7 @@
     }
     const total = safeInt(raw.total ?? raw.amount)
     const profit = safeInt(raw.profit ?? raw.totalProfit)
-    const sn = raw.saleNumber
+    const sn = raw.saleNumberLabel ?? raw.saleNumber ?? raw.dailySequence
     const saleNumberLabel =
       sn !== undefined && sn !== null && String(sn).trim() !== '' && Number.isFinite(Number(sn))
         ? String(Number(sn))

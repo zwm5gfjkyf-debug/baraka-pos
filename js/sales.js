@@ -12,6 +12,15 @@ let saleType = "cash"
 let cart = []
 let cartMap = {}
 const scanSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg")
+
+function getTodayKey() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 // =======================================
 // LOAD PRODUCTS INTO MEMORY
 // =======================================
@@ -621,23 +630,63 @@ cartMap = {}
 renderCart()
 
 const salesRef = db
-.collection("shops")
-.doc(currentShopId)
-.collection("sales")
+    .collection("shops")
+    .doc(currentShopId)
+    .collection("sales")
 
-// 🔥 SHOW SUCCESS IMMEDIATELY
-openSuccessPage()
+  const counterRef = db
+    .collection("shops")
+    .doc(currentShopId)
+    .collection("counters")
+    .doc("dailySaleCounter")
 
-// 🔥 SAVE IN BACKGROUND (NO WAIT)
-salesRef.add(sale).catch(e => {
-  console.error("Sale save error:", e)
-})
+  const saveSalePromise = db.runTransaction(async t => {
+    const counterDoc = await t.get(counterRef)
+    const todayKey = getTodayKey()
+    let nextNumber = 1
 
-updateStockAfterSale(itemsToUpdate).catch(e => {
-  console.error("Stock update error:", e)
-})
+    if (counterDoc.exists) {
+      const counterData = counterDoc.data() || {}
+      const currentDate = String(counterData.date || "")
+      const currentSequence = Number(counterData.sequence) || 0
 
-}catch(e){
+      if (currentDate === todayKey && currentSequence > 0) {
+        nextNumber = currentSequence + 1
+        t.update(counterRef, { sequence: nextNumber })
+      } else {
+        nextNumber = 1
+        t.set(counterRef, { date: todayKey, sequence: nextNumber }, { merge: true })
+      }
+    } else {
+      nextNumber = 1
+      t.set(counterRef, { date: todayKey, sequence: nextNumber }, { merge: true })
+    }
+
+    const saleRef = salesRef.doc()
+    t.set(saleRef, {
+      ...sale,
+      saleNumber: nextNumber,
+      saleNumberLabel: String(nextNumber),
+      dailySequence: nextNumber
+    })
+  })
+
+  // 🔥 SHOW SUCCESS IMMEDIATELY
+  openSuccessPage()
+
+  saveSalePromise.catch(e => {
+    console.error("Sale save error:", e)
+    let offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
+    offline.push(sale)
+    localStorage.setItem("offlineSales", JSON.stringify(offline))
+    showTopBanner("Internet yo'q — offline saqlandi", "error")
+  })
+
+  updateStockAfterSale(itemsToUpdate).catch(e => {
+    console.error("Stock update error:", e)
+  })
+
+} catch (e) {
 
 let offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
 
