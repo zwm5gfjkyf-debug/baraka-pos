@@ -1393,29 +1393,28 @@ Narxlari
 </div>
 
 <!-- COST + CURRENCY TOGGLE -->
-<div style="position:relative; margin-bottom:8px; display:flex; align-items:center;">
-<input 
-id="stockCost"
-placeholder="Kelish narxi"
-oninput="handleCostInput()"
-style="padding-right:120px; height:48px;">
+<div class="input-with-btn currency-input-row" style="margin-bottom:8px;">
+  <input 
+    id="stockCost"
+    placeholder="Kelish narxi"
+    oninput="handleCostInput()"
+    style="height:44px;"
+  >
 
-<!-- 🔥 CURRENCY TOGGLE -->
-<div class="currency-switch">
-
-<button 
-id="btnUZS"
-class="active"
-onclick="selectCurrency('UZS')">
-UZS
-</button>
-<button 
-id="btnUSD"
-onclick="selectCurrency('USD')">
-USD
-</button>
-</div>
-
+  <!-- 🔥 CURRENCY TOGGLE -->
+  <div class="currency-switch">
+    <button 
+      id="btnUZS"
+      class="active"
+      onclick="selectCurrency('UZS')">
+      UZS
+    </button>
+    <button 
+      id="btnUSD"
+      onclick="selectCurrency('USD')">
+      USD
+    </button>
+  </div>
 </div>
 
 <!-- 🔥 USD → UZS PREVIEW -->
