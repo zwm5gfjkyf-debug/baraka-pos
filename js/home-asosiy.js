@@ -630,64 +630,48 @@
   function applyResponsiveTypography() {
     try {
       const statCards = document.querySelectorAll('.dashboard-card-value')
-      
-      if (statCards.length === 0) {
-        return
-      }
-      
+      if (statCards.length === 0) return
+
       statCards.forEach(card => {
         try {
-          // Remove existing size classes
           card.classList.remove('large-value', 'very-large-value', 'ultra-large-value')
-          
-          // Get the text content and measure it
-          const rawText = card.textContent || ''
-          // Normalize text for consistent measurement (add space between number and currency for blue card)
-          const text = rawText.replace(/(\d)(so'm)/, '$1 $2')
-          const textLength = text.length
-          
-          // Get container width with fallback
-          const containerWidth = card.offsetWidth || card.parentElement?.offsetWidth || 200
-          
-          // Prevent division by zero
-          if (containerWidth <= 0) return
-          
-          // Calculate character density (characters per pixel)
-          const charDensity = textLength / containerWidth
-          
-          // Much more conservative scaling - only for extremely long values
-          // Desktop: scale only when really necessary (>25 chars or very high density)
-          // Mobile: scale only when close to overflow (>20 chars or high density)
-          const isMobile = window.innerWidth <= 768
-          const scaleThreshold = isMobile ? 0.25 : 0.20
-          const lengthThreshold = isMobile ? 20 : 25
-          
-          if (charDensity > scaleThreshold || textLength > lengthThreshold) {
-            card.classList.add('ultra-large-value')
-          } else if (charDensity > (scaleThreshold * 0.8) || textLength > (lengthThreshold * 0.8)) {
-            card.classList.add('very-large-value')
-          } else if (charDensity > (scaleThreshold * 0.6) || textLength > (lengthThreshold * 0.6)) {
-            card.classList.add('large-value')
+          card.style.transform = ''
+          card.style.whiteSpace = 'nowrap'
+          card.style.wordBreak = 'normal'
+          card.style.lineHeight = '1'
+          card.style.fontSize = ''
+
+          const computedStyle = window.getComputedStyle(card)
+          const baseFontSize = Math.max(16, parseFloat(computedStyle.fontSize) || 28)
+          const isPrimary = card.closest('.dashboard-card-primary') !== null
+          const maxFontSize = isPrimary ? Math.max(baseFontSize, 32) : baseFontSize
+          const minFontSize = isPrimary ? 16 : 14
+
+          card.style.fontSize = `${maxFontSize}px`
+
+          const availableWidth = card.clientWidth - 6
+          if (availableWidth <= 0) return
+
+          const textLength = (card.textContent || '').replace(/\s+/g, ' ').trim().length
+          const textDensity = textLength / availableWidth
+
+          if (textDensity > 0.22 || textLength > (isPrimary ? 22 : 20)) {
+            card.style.fontSize = `${Math.max(minFontSize, maxFontSize - 4)}px`
           }
-          
-          // Additional safety check: if still overflowing, scale down further
-          setTimeout(() => {
-            try {
-              if (card.scrollWidth > card.offsetWidth) {
-                // Progressive scaling until it fits, but start higher
-                let scale = 0.95
-                while (card.scrollWidth > card.offsetWidth && scale > 0.7) {
-                  card.style.transform = `scale(${scale})`
-                  scale -= 0.02
-                }
-              } else {
-                // Reset transform if not needed
-                card.style.transform = ''
-              }
-            } catch (scaleError) {
-              console.warn('Error applying responsive typography scaling:', scaleError)
-            }
-          }, 0)
+
+          let currentSize = parseFloat(card.style.fontSize)
+          let tries = 0
+          while (card.scrollWidth > availableWidth && currentSize > minFontSize && tries < 10) {
+            currentSize = Math.max(minFontSize, currentSize - 1)
+            card.style.fontSize = `${currentSize}px`
+            tries += 1
+          }
+
+          if (card.scrollWidth > availableWidth) {
+            card.style.whiteSpace = 'normal'
+            card.style.wordBreak = 'break-word'
+            card.style.lineHeight = '1.05'
+          }
         } catch (cardError) {
           console.warn('Error processing card for responsive typography:', cardError)
         }

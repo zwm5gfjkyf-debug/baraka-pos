@@ -337,7 +337,20 @@ function loadCurrent(){
         fragment.appendChild(div)
       })
 
-      container.appendChild(fragment)
+      if (countAll === 0) {
+        const empty = document.createElement('div')
+        empty.className = 'stock-empty-state'
+        empty.innerHTML = `
+          <div class="stock-empty-state-icon" aria-hidden="true">📦</div>
+          <div class="stock-empty-state-copy">
+            <div class="stock-empty-state-title">Zaxirada hozircha mahsulot yo‘q</div>
+            <div class="stock-empty-state-subtitle">Mahsulot qo‘shish uchun + tugmasini bosing va zaxirani boshqaring.</div>
+          </div>
+        `
+        container.appendChild(empty)
+      } else {
+        container.appendChild(fragment)
+      }
 
       // ✅ COUNTS UI
       const elAll = document.getElementById("count-all")
