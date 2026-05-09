@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Typography Test</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f3f4f6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .test-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #0F172A;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .test-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: #1976D2;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .test-btn:hover {
+            background: #1565C0;
+        }
+        .resize-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="resize-indicator" id="resizeIndicator">400px</div>
+    
+    <div class="test-container">
+        <div class="test-section">
+            <div class="test-title">Dashboard Typography Test</div>
+            <div class="controls">
+                <button class="test-btn" onclick="testValue('0')">0</button>
+                <button class="test-btn" onclick="testValue('30')">30</button>
+                <button class="test-btn" onclick="testValue('600 000')">600 000</button>
+                <button class="test-btn" onclick="testValue('2 700 000')">2 700 000</button>
+                <button class="test-btn" onclick="testValue('99 999 999')">99 999 999</button>
+                <button class="test-btn" onclick="testValue('1 000 000 000')">1 000 000 000</button>
+                <button class="test-btn" onclick="randomTest()">Random</button>
+            </div>
+            
+            <div class="dashboard-stat-grid">
+                <div class="dashboard-card dashboard-card-primary">
+                    <div class="dashboard-card-label dashboard-card-label-on-primary">BUGUNGI TUSHUM</div>
+                    <div class="dashboard-card-value dashboard-revenue-line">
+                        <span id="todayRevenueValue">0</span><span class="som-suffix-on-primary">so'm</span>
+                    </div>
+                    <div id="todayRevenueTrend" class="dashboard-card-helper dashboard-helper-on-primary">↑ +0% kechagidan</div>
+                </div>
+
+                <div class="dashboard-card dashboard-card-secondary">
+                    <div class="dashboard-card-label">BUGUNGI FOYDA</div>
+                    <div id="todayProfitValue" class="dashboard-card-value dashboard-profit-amount">0 so'm</div>
+                    <div id="todayProfitStatus" class="dashboard-card-helper">Hozircha sotuv yo'q</div>
+                </div>
+
+                <div class="dashboard-card dashboard-card-secondary">
+                    <div class="dashboard-card-label">SOTILGAN MAHSULOT</div>
+                    <div id="productsSoldValue" class="dashboard-card-value dashboard-products-sold">0</div>
+                    <div class="dashboard-card-helper">Bugun</div>
+                </div>
+
+                <div class="dashboard-card dashboard-card-secondary">
+                    <div class="dashboard-card-label">NASIYA</div>
+                    <div id="nasiyaDebtValue" class="dashboard-card-value dashboard-nasiya-amount">0 so'm</div>
+                    <div id="nasiyaDebtStatus" class="dashboard-card-helper">Qarzdorlik yo'q</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">Container Width Test</div>
+            <div class="controls">
+                <button class="test-btn" onclick="setContainerWidth(320)">320px</button>
+                <button class="test-btn" onclick="setContainerWidth(360)">360px</button>
+                <button class="test-btn" onclick="setContainerWidth(390)">390px</button>
+                <button class="test-btn" onclick="setContainerWidth(414)">414px</button>
+                <button class="test-btn" onclick="setContainerWidth('100%')">100%</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock the applyResponsiveTypography function
+        function applyResponsiveTypography() {
+            const statCards = document.querySelectorAll('.dashboard-card-value')
+            
+            statCards.forEach(card => {
+                // Remove existing size classes
+                card.classList.remove('large-value', 'very-large-value', 'ultra-large-value')
+                
+                // Get the text content and measure it
+                const text = card.textContent || ''
+                const textLength = text.length
+                
+                // Get container width
+                const containerWidth = card.offsetWidth || card.parentElement.offsetWidth
+                
+                // Calculate character density (characters per pixel)
+                const charDensity = textLength / containerWidth
+                
+                // Apply appropriate class based on content analysis
+                if (charDensity > 0.15 || textLength > 12) {
+                    card.classList.add('ultra-large-value')
+                } else if (charDensity > 0.12 || textLength > 10) {
+                    card.classList.add('very-large-value')
+                } else if (charDensity > 0.09 || textLength > 8) {
+                    card.classList.add('large-value')
+                }
+                
+                // Additional safety check: if still overflowing, scale down further
+                setTimeout(() => {
+                    if (card.scrollWidth > card.offsetWidth) {
+                        // Progressive scaling until it fits
+                        let scale = 0.9
+                        while (card.scrollWidth > card.offsetWidth && scale > 0.5) {
+                            card.style.transform = `scale(${scale})`
+                            scale -= 0.05
+                        }
+                    } else {
+                        // Reset transform if not needed
+                        card.style.transform = ''
+                    }
+                }, 0)
+            })
+        }
+
+        function testValue(value) {
+            document.getElementById('todayRevenueValue').textContent = value
+            document.getElementById('todayProfitValue').textContent = value + ' so\'m'
+            document.getElementById('productsSoldValue').textContent = value
+            document.getElementById('nasiyaDebtValue').textContent = value + ' so\'m'
+            
+            setTimeout(applyResponsiveTypography, 100)
+        }
+
+        function randomTest() {
+            const values = ['0', '30', '600 000', '2 700 000', '99 999 999', '1 000 000 000']
+            const randomValue = values[Math.floor(Math.random() * values.length)]
+            testValue(randomValue)
+        }
+
+        function setContainerWidth(width) {
+            const container = document.querySelector('.test-container')
+            container.style.maxWidth = width
+            document.getElementById('resizeIndicator').textContent = width
+            
+            setTimeout(applyResponsiveTypography, 100)
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            applyResponsiveTypography()
+            
+            // Setup resize observer
+            const resizeObserver = new ResizeObserver(entries => {
+                clearTimeout(window.resizeTimeout)
+                window.resizeTimeout = setTimeout(() => {
+                    applyResponsiveTypography()
+                }, 100)
+            })
+            
+            document.querySelectorAll('.dashboard-card-value').forEach(card => {
+                resizeObserver.observe(card)
+                resizeObserver.observe(card.parentElement)
+            })
+        })
+    </script>
+</body>
+</html>

@@ -222,6 +222,9 @@
     if (revEl) {
       revEl.textContent = todayRev.toLocaleString('uz-UZ').replace(/,/g, ' ')
     }
+
+    // Apply intelligent typography scaling
+    applyResponsiveTypography()
     const trendEl = document.getElementById('todayRevenueTrend')
     if (trendEl) {
       trendEl.textContent = `${trend.arrow} ${trend.text}`
@@ -381,6 +384,10 @@
     const sorted = sortTodayNewestFirst(todaySalesRows)
     updateStatsAndRecent(sorted)
     updateChart(sorted)
+    // Setup resize observer after content is rendered
+    if (typeof setupResizeObserver === 'function') {
+      setupResizeObserver()
+    }
   }
 
   function markBoot(key) {
@@ -409,6 +416,10 @@
     if (revenueChart) {
       revenueChart.destroy()
       revenueChart = null
+    }
+    // Cleanup resize observer
+    if (typeof cleanupResizeObserver === 'function') {
+      cleanupResizeObserver()
     }
   }
 
@@ -562,10 +573,95 @@
     if (typeof navigate === 'function') navigate('salePage')
   }
 
+  // Intelligent responsive typography for dashboard cards
+  function applyResponsiveTypography() {
+    const statCards = document.querySelectorAll('.dashboard-card-value')
+    
+    statCards.forEach(card => {
+      // Remove existing size classes
+      card.classList.remove('large-value', 'very-large-value', 'ultra-large-value')
+      
+      // Get the text content and measure it
+      const text = card.textContent || ''
+      const textLength = text.length
+      
+      // Get container width
+      const containerWidth = card.offsetWidth || card.parentElement.offsetWidth
+      
+      // Calculate character density (characters per pixel)
+      const charDensity = textLength / containerWidth
+      
+      // Apply appropriate class based on content analysis
+      if (charDensity > 0.15 || textLength > 12) {
+        card.classList.add('ultra-large-value')
+      } else if (charDensity > 0.12 || textLength > 10) {
+        card.classList.add('very-large-value')
+      } else if (charDensity > 0.09 || textLength > 8) {
+        card.classList.add('large-value')
+      }
+      
+      // Additional safety check: if still overflowing, scale down further
+      setTimeout(() => {
+        if (card.scrollWidth > card.offsetWidth) {
+          // Progressive scaling until it fits
+          let scale = 0.9
+          while (card.scrollWidth > card.offsetWidth && scale > 0.5) {
+            card.style.transform = `scale(${scale})`
+            scale -= 0.05
+          }
+        } else {
+          // Reset transform if not needed
+          card.style.transform = ''
+        }
+      }, 0)
+    })
+  }
+
+  // Setup resize observer for dynamic typography
+  let resizeObserver = null
+  
+  function setupResizeObserver() {
+    if (resizeObserver) {
+      resizeObserver.disconnect()
+    }
+    
+    resizeObserver = new ResizeObserver(entries => {
+      // Debounce resize events
+      clearTimeout(window.resizeTimeout)
+      window.resizeTimeout = setTimeout(() => {
+        applyResponsiveTypography()
+      }, 100)
+    })
+    
+    // Observe all dashboard cards
+    const statCards = document.querySelectorAll('.dashboard-card-value')
+    statCards.forEach(card => {
+      resizeObserver.observe(card)
+      resizeObserver.observe(card.parentElement)
+    })
+  }
+  
+  function cleanupResizeObserver() {
+    if (resizeObserver) {
+      resizeObserver.disconnect()
+      resizeObserver = null
+    }
+    if (window.resizeTimeout) {
+      clearTimeout(window.resizeTimeout)
+    }
+  }
+
   window.loadDashboard = loadDashboard
   window.cleanupDashboardListeners = cleanupDashboardListeners
   window.retryLoad = retryLoad
   window.loadTodaySalesHistory = loadTodaySalesHistory
   window.cleanupTodaySalesHistoryListeners = cleanupTodaySalesHistoryListeners
   window.goToNewSaleFromFab = goToNewSaleFromFab
+<<<<<<< HEAD
 })()                                                                                
+=======
+  window.applyResponsiveTypography = applyResponsiveTypography
+  window.setupResizeObserver = setupResizeObserver
+  window.cleanupResizeObserver = cleanupResizeObserver
+})()
+>>>>>>> a4a15e4 (message)
