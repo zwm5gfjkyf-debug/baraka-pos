@@ -641,7 +641,9 @@
           card.classList.remove('large-value', 'very-large-value', 'ultra-large-value')
           
           // Get the text content and measure it
-          const text = card.textContent || ''
+          const rawText = card.textContent || ''
+          // Normalize text for consistent measurement (add space between number and currency for blue card)
+          const text = rawText.replace(/(\d)(so'm)/, '$1 $2')
           const textLength = text.length
           
           // Get container width with fallback

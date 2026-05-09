@@ -5896,6 +5896,31 @@ BOTTOM NAVIGATION
   font-size: 14px !important;
 }
 
+/* Specific overrides for blue revenue card to ensure responsive classes work */
+.dashboard-card-primary .dashboard-card-value.large-value #todayRevenueValue {
+  font-size: 30px !important;
+}
+
+.dashboard-card-primary .dashboard-card-value.large-value .som-suffix-on-primary {
+  font-size: 20px !important;
+}
+
+.dashboard-card-primary .dashboard-card-value.very-large-value #todayRevenueValue {
+  font-size: 28px !important;
+}
+
+.dashboard-card-primary .dashboard-card-value.very-large-value .som-suffix-on-primary {
+  font-size: 18px !important;
+}
+
+.dashboard-card-primary .dashboard-card-value.ultra-large-value #todayRevenueValue {
+  font-size: 24px !important;
+}
+
+.dashboard-card-primary .dashboard-card-value.ultra-large-value .som-suffix-on-primary {
+  font-size: 16px !important;
+}
+
 .dashboard-card-helper {
   margin-top: 12px;
   font-size: 13px;
@@ -6182,12 +6207,12 @@ BOTTOM NAVIGATION
 }
 
 .dashboard-revenue-line #todayRevenueValue {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 800;
 }
 
 .som-suffix-on-primary {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   opacity: 0.95;
 }
@@ -6244,6 +6269,15 @@ BOTTOM NAVIGATION
 
   .dashboard-card-value span {
     font-size: 16px;
+  }
+
+  /* Specific mobile styles for blue revenue card */
+  .dashboard-card-primary .dashboard-card-value #todayRevenueValue {
+    font-size: 28px;
+  }
+
+  .dashboard-card-primary .dashboard-card-value .som-suffix-on-primary {
+    font-size: 18px;
   }
 
   .dashboard-card-helper {
@@ -6369,6 +6403,15 @@ BOTTOM NAVIGATION
 
   .dashboard-card-value span {
     font-size: 15px;
+  }
+
+  /* Specific extra small mobile styles for blue revenue card */
+  .dashboard-card-primary .dashboard-card-value #todayRevenueValue {
+    font-size: 26px;
+  }
+
+  .dashboard-card-primary .dashboard-card-value .som-suffix-on-primary {
+    font-size: 16px;
   }
 
   .dashboard-card-helper {
