@@ -5890,6 +5890,27 @@ BOTTOM NAVIGATION
   font-size: 30px;
 }
 
+/* Dynamic stat card overflow prevention */
+.stat-number {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  display: block;
+  width: 100%;
+  transition: font-size 0.2s ease;
+}
+
+.stat-card {
+  overflow: hidden;
+  word-break: keep-all;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  min-height: 90px; /* fixed height — never grows */
+  max-height: 90px; /* never expands to fit large text */
+}
+
 .dashboard-card-helper {
   margin-top: 12px;
   font-size: 13px;

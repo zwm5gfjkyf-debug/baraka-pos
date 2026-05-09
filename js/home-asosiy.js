@@ -221,6 +221,7 @@
     const revEl = document.getElementById('todayRevenueValue')
     if (revEl) {
       revEl.textContent = todayRev.toLocaleString('uz-UZ').replace(/,/g, ' ')
+
     }
     const trendEl = document.getElementById('todayRevenueTrend')
     if (trendEl) {
@@ -232,6 +233,7 @@
     if (profitVal) {
       profitVal.textContent = formatSom(todayProfit)
       profitVal.style.color = todayProfit > 0 ? '#16A34A' : '#94A3B8'
+      adjustFontSize(profitVal)
     }
     const profitStatus = document.getElementById('todayProfitStatus')
     if (profitStatus) {
@@ -245,12 +247,16 @@
     }
 
     const prodEl = document.getElementById('productsSoldValue')
-    if (prodEl) prodEl.textContent = String(productsSold)
+    if (prodEl) {
+      prodEl.textContent = String(productsSold)
+      adjustFontSize(prodEl)
+    }
 
     const nasiyaVal = document.getElementById('nasiyaDebtValue')
     if (nasiyaVal) {
       nasiyaVal.textContent = formatSom(nasiyaTotal)
       nasiyaVal.style.color = '#FB8C00'
+      adjustFontSize(nasiyaVal)
     }
     const nasiyaStatus = document.getElementById('nasiyaDebtStatus')
     if (nasiyaStatus) {
@@ -420,6 +426,8 @@
     const sorted = sortTodayNewestFirst(todaySalesRows)
     updateStatsAndRecent(sorted)
     updateChart(sorted)
+    // Adjust font sizes after data updates
+    adjustAllStatNumbers()
     // Setup resize observer after content is rendered
     if (typeof setupResizeObserver === 'function') {
       setupResizeObserver()
@@ -626,6 +634,35 @@
     if (typeof navigate === 'function') navigate('salePage')
   }
 
+  // Dynamic font sizing for stat cards to prevent overflow
+  function adjustFontSize(element) {
+    if (!element) return
+    
+    const length = element.textContent.replace(/\s/g, '').length
+    
+    if (length <= 6) {
+      element.style.fontSize = '28px'
+    } else if (length <= 8) {
+      element.style.fontSize = '24px'
+    } else if (length <= 10) {
+      element.style.fontSize = '20px'
+    } else if (length <= 13) {
+      element.style.fontSize = '16px'
+    } else {
+      element.style.fontSize = '13px'
+    }
+  }
+
+  function adjustAllStatNumbers() {
+    try {
+      document.querySelectorAll('.stat-number').forEach(el => {
+        adjustFontSize(el)
+      })
+    } catch (error) {
+      console.warn('Error adjusting stat numbers:', error)
+    }
+  }
+
   // Intelligent responsive typography for dashboard cards
   function applyResponsiveTypography() {
     try {
@@ -750,6 +787,13 @@
     }
   }
 
+  // Initialize font sizing on page load
+  if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(adjustAllStatNumbers, 100) // Small delay to ensure DOM is ready
+    })
+  }
+
   window.loadDashboard = loadDashboard
   window.cleanupDashboardListeners = cleanupDashboardListeners
   window.retryLoad = retryLoad
@@ -759,4 +803,6 @@
   window.applyResponsiveTypography = applyResponsiveTypography
   window.setupResizeObserver = setupResizeObserver
   window.cleanupResizeObserver = cleanupResizeObserver
+  window.adjustFontSize = adjustFontSize
+  window.adjustAllStatNumbers = adjustAllStatNumbers
 })()
