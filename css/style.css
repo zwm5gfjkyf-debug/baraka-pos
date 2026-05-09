@@ -1156,11 +1156,23 @@ APP SCREEN WRAPPER
 #appScreen{
   display:flex;
   flex-direction:column;
+  position:relative;
   height:100vh;       /* 🔥 IMPORTANT */
+  min-height:100vh;
   overflow:hidden;    /* 🔥 IMPORTANT */
-  max-width:430px;
-  margin:0 auto;
+  max-width:none;
+  margin:0;
   width:100%;
+  min-width:100%;
+  background:var(--bg-main);
+}
+
+#appScreen .page,
+#appScreen .main-content,
+#appScreen .dashboard-page-inner,
+#appScreen .page-asosiy {
+  width:100%;
+  max-width:100%;
 }
 
 #authScreen{
@@ -1224,7 +1236,8 @@ HEADER (TOP BAR)
   position:fixed;
   top:0;
   left:0;
-  width:100%;
+  right:0;
+  width:100vw;
   top:0;
 
   height:64px;
@@ -1348,8 +1361,9 @@ BOTTOM NAVIGATION (iPhone style)
   position:fixed !important;
   bottom:0;
   left:0;
+  right:0;
 
-  width:100%;
+  width:100vw;
   height:70px;
 
   display:flex;
