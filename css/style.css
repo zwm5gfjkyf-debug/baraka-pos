@@ -6013,6 +6013,38 @@ BOTTOM NAVIGATION
   margin-bottom: 10px;
 }
 
+@media (max-width: 768px) {
+  .dashboard-skeleton-card {
+    height: 100px;
+  }
+
+  .dashboard-skeleton-chart {
+    height: 150px;
+    margin-bottom: 10px;
+  }
+
+  .dashboard-skeleton-row {
+    height: 60px;
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-skeleton-card {
+    height: 88px;
+  }
+
+  .dashboard-skeleton-chart {
+    height: 140px;
+    margin-bottom: 8px;
+  }
+
+  .dashboard-skeleton-row {
+    height: 54px;
+    margin-bottom: 5px;
+  }
+}
+
 @keyframes skeletonPulse {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
@@ -6023,6 +6055,18 @@ BOTTOM NAVIGATION
   background: #F4F6FA !important;
   min-height: 100%;
   padding-bottom: 120px;
+}
+
+@media (max-width: 768px) {
+  .page-asosiy {
+    padding-bottom: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-asosiy {
+    padding-bottom: 115px;
+  }
 }
 
 .dashboard-card-secondary .dashboard-card-label {
@@ -6070,6 +6114,233 @@ BOTTOM NAVIGATION
   font-size: 28px;
   font-weight: 800;
   color: #1976D2;
+}
+
+/* ========== MOBILE OPTIMIZATION ========== */
+@media (max-width: 768px) {
+  .dashboard-page-inner {
+    padding: 12px 10px 20px;
+  }
+
+  .dashboard-stat-grid {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .dashboard-card {
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  }
+
+  .dashboard-card-label {
+    font-size: 9px;
+    margin-bottom: 8px;
+    letter-spacing: 0.12em;
+  }
+
+  .dashboard-card-value {
+    font-size: 22px;
+    gap: 4px;
+  }
+
+  .dashboard-card-value span {
+    font-size: 16px;
+  }
+
+  .dashboard-card-helper {
+    margin-top: 8px;
+    font-size: 12px;
+  }
+
+  .dashboard-chart-card {
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+  }
+
+  .dashboard-chart-header {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .dashboard-chart-title {
+    font-size: 15px;
+  }
+
+  .dashboard-live-pill {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  .dashboard-chart-wrapper {
+    height: 140px;
+  }
+
+  .dashboard-chart-xlabels {
+    margin-top: 10px;
+    font-size: 11px;
+  }
+
+  .dashboard-section-title-row {
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+
+  .dashboard-section-title {
+    font-size: 15px;
+  }
+
+  .dashboard-link-btn {
+    font-size: 13px;
+  }
+
+  .dashboard-recent-card {
+    gap: 10px;
+    padding: 12px;
+    border-radius: 14px;
+    margin-bottom: 6px;
+  }
+
+  .dashboard-recent-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .dashboard-recent-title {
+    font-size: 13px;
+  }
+
+  .dashboard-recent-meta {
+    margin-top: 2px;
+    font-size: 11px;
+  }
+
+  .dashboard-recent-amount {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .dashboard-empty-state {
+    padding: 24px 16px;
+  }
+
+  .dashboard-empty-state-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  .dashboard-empty-state-title {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .dashboard-empty-state-sub {
+    font-size: 12px;
+  }
+}
+
+/* ========== EXTRA SMALL MOBILE (320px-390px) ========== */
+@media (max-width: 480px) {
+  .dashboard-page-inner {
+    padding: 10px 8px 16px;
+  }
+
+  .dashboard-stat-grid {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .dashboard-card {
+    border-radius: 14px;
+    padding: 12px;
+  }
+
+  .dashboard-card-label {
+    font-size: 8px;
+    margin-bottom: 6px;
+  }
+
+  .dashboard-card-value {
+    font-size: 20px;
+    gap: 3px;
+  }
+
+  .dashboard-card-value span {
+    font-size: 15px;
+  }
+
+  .dashboard-card-helper {
+    margin-top: 6px;
+    font-size: 11px;
+  }
+
+  .dashboard-chart-card {
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+
+  .dashboard-chart-header {
+    margin-bottom: 10px;
+  }
+
+  .dashboard-chart-title {
+    font-size: 14px;
+  }
+
+  .dashboard-chart-wrapper {
+    height: 120px;
+  }
+
+  .dashboard-section-title {
+    font-size: 14px;
+  }
+
+  .dashboard-recent-card {
+    gap: 8px;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 5px;
+  }
+
+  .dashboard-recent-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  .dashboard-recent-title {
+    font-size: 12px;
+  }
+
+  .dashboard-recent-meta {
+    font-size: 10px;
+  }
+
+  .dashboard-recent-amount {
+    font-size: 13px;
+  }
+
+  .dashboard-empty-state {
+    padding: 20px 12px;
+  }
+
+  .dashboard-empty-state-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+
+  .dashboard-empty-state-title {
+    font-size: 13px;
+  }
+
+  .dashboard-empty-state-sub {
+    font-size: 11px;
+  }
 }
 
 .asosiy-skeleton-stats {
@@ -6120,6 +6391,17 @@ BOTTOM NAVIGATION
   cursor: pointer;
   z-index: 1000;
   padding: 0;
+}
+
+@media (max-width: 480px) {
+  .fab-new-sale {
+    bottom: 90px;
+    right: 12px;
+    width: 52px;
+    height: 52px;
+    font-size: 28px;
+    border-radius: 14px;
+  }
 }
 
 .page-today-sales {
