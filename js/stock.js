@@ -5,6 +5,27 @@
 let productsListener = null;
 let stockContainer = null;
 let currentStockFilter = "all"; // all | active | inactive | low
+
+async function checkBarcodeExists(barcode, excludeId = null){
+  const productsRef = db.collection("shops").doc(currentShopId).collection("products")
+  let query = productsRef.where("barcode", "==", barcode)
+  if(excludeId){
+    query = query.where(firebase.firestore.FieldPath.documentId(), "!=", excludeId)
+  }
+  const snapshot = await query.limit(1).get()
+  return !snapshot.empty
+}
+
+async function checkArtikulExists(artikul, excludeId = null){
+  const productsRef = db.collection("shops").doc(currentShopId).collection("products")
+  let query = productsRef.where("artikul", "==", artikul)
+  if(excludeId){
+    query = query.where(firebase.firestore.FieldPath.documentId(), "!=", excludeId)
+  }
+  const snapshot = await query.limit(1).get()
+  return !snapshot.empty
+}
+
 // ===============================
 // ADD PRODUCT
 // ===============================
@@ -26,6 +47,24 @@ const qty = Number(document.getElementById("stockQty")?.value || 0)
 let buyPrice = Number((document.getElementById("stockCost")?.value || "0").replace(/\s/g,""))
 const currency = currentCurrency || "UZS"
 const sellPrice = Number((document.getElementById("stockSellingPrice")?.value || "0").replace(/\s/g,""))
+
+if(barcode){
+  const barcodeExists = await checkBarcodeExists(barcode)
+  if(barcodeExists){
+    showTopBanner("Bu barkod allaqachon mavjud","error")
+    stockProcessing = false
+    return
+  }
+}
+
+if(artikul){
+  const artikulExists = await checkArtikulExists(artikul)
+  if(artikulExists){
+    showTopBanner("Bu artikul allaqachon mavjud","error")
+    stockProcessing = false
+    return
+  }
+}
 
 if(!name || sellPrice <= 0){
   showTopBanner("Mahsulot nomi va narx kerak","error")
@@ -95,10 +134,32 @@ image: imageUrl || "",
 created: Date.now()
 })
 
+showTopBanner("Mahsulot qo'shildi", "success")
+document.getElementById("barcodeError").textContent = ""
+document.getElementById("artikulError").textContent = ""
+
 }else{
 
 const doc = existing.docs[0]
 const data = doc.data()
+
+if(barcode && barcode !== data.barcode){
+  const barcodeExists = await checkBarcodeExists(barcode, doc.id)
+  if(barcodeExists){
+    showTopBanner("Bu barkod allaqachon mavjud","error")
+    stockProcessing = false
+    return
+  }
+}
+
+if(artikul && artikul !== data.artikul){
+  const artikulExists = await checkArtikulExists(artikul, doc.id)
+  if(artikulExists){
+    showTopBanner("Bu artikul allaqachon mavjud","error")
+    stockProcessing = false
+    return
+  }
+}
 
 await db.runTransaction(async (t) => {
 
@@ -126,6 +187,8 @@ t.update(doc.ref, updateData)
 }
 
 showTopBanner("Zaxira yangilandi", "success") 
+document.getElementById("barcodeError").textContent = ""
+document.getElementById("artikulError").textContent = "" 
 }catch(e){
 
 console.error("SAVE ERROR:", e)
@@ -502,20 +565,49 @@ let localBarcodeCounter = Number(localStorage.getItem("barcodeCounter") || 10000
 
 function generateBarcode(){
 
-localBarcodeCounter++
+  generateUniqueBarcode()
 
-localStorage.setItem("barcodeCounter", localBarcodeCounter)
-
-const barcode = String(localBarcodeCounter).padStart(9,"0")
-
-const input = document.getElementById("stockBarcode")
-
-if(input){
-input.value = barcode
 }
 
-// 🔥 OPTIONAL: sync in background (no waiting)
-syncBarcodeCounter(localBarcodeCounter)
+async function generateUniqueBarcode(){
+
+  let attempts = 0
+
+  while(attempts < 10){
+
+    localBarcodeCounter++
+
+    const barcode = String(localBarcodeCounter).padStart(9,"0")
+
+    const exists = await checkBarcodeExists(barcode)
+
+    if(!exists){
+
+      localStorage.setItem("barcodeCounter", localBarcodeCounter)
+
+      const input = document.getElementById("stockBarcode")
+
+      if(input){
+
+        input.value = barcode
+
+        document.getElementById("barcodeError").textContent = ""
+
+      }
+
+      // 🔥 OPTIONAL: sync in background (no waiting)
+
+      syncBarcodeCounter(localBarcodeCounter)
+
+      return
+
+    }
+
+    attempts++
+
+  }
+
+  showTopBanner("Barkod yaratib bo'lmadi","error")
 
 }
 function syncBarcodeCounter(counter){
@@ -647,15 +739,43 @@ return `
 }
 function generateArtikul(){
 
-const random = Math.floor(100000 + Math.random() * 900000)
+  generateUniqueArtikul()
 
-const artikul = "ART-" + random
-
-const input = document.getElementById("stockArtikul")
-
-if(input){
-input.value = artikul
 }
+
+async function generateUniqueArtikul(){
+
+  let attempts = 0
+
+  while(attempts < 10){
+
+    const random = Math.floor(100000 + Math.random() * 900000)
+
+    const artikul = "ART-" + random
+
+    const exists = await checkArtikulExists(artikul)
+
+    if(!exists){
+
+      const input = document.getElementById("stockArtikul")
+
+      if(input){
+
+        input.value = artikul
+
+        document.getElementById("artikulError").textContent = ""
+
+      }
+
+      return
+
+    }
+
+    attempts++
+
+  }
+
+  showTopBanner("Artikul yaratib bo'lmadi","error")
 
 }
 let selectedImageFile = null
@@ -767,4 +887,36 @@ function goBack(){
 document.addEventListener("DOMContentLoaded", () => {
   const defaultCheck = document.getElementById("check-dona")
   if(defaultCheck) defaultCheck.classList.remove("hidden")
+})
+
+// Add event listeners for uniqueness validation
+document.addEventListener("DOMContentLoaded", () => {
+  const barcodeInput = document.getElementById("stockBarcode")
+  const artikulInput = document.getElementById("stockArtikul")
+
+  if(barcodeInput){
+    barcodeInput.addEventListener("blur", async () => {
+      const val = barcodeInput.value.trim()
+      const errorEl = document.getElementById("barcodeError")
+      if(val){
+        const exists = await checkBarcodeExists(val)
+        errorEl.textContent = exists ? "Bu barkod allaqachon mavjud" : ""
+      }else{
+        errorEl.textContent = ""
+      }
+    })
+  }
+
+  if(artikulInput){
+    artikulInput.addEventListener("blur", async () => {
+      const val = artikulInput.value.trim()
+      const errorEl = document.getElementById("artikulError")
+      if(val){
+        const exists = await checkArtikulExists(val)
+        errorEl.textContent = exists ? "Bu artikul allaqachon mavjud" : ""
+      }else{
+        errorEl.textContent = ""
+      }
+    })
+  }
 })
