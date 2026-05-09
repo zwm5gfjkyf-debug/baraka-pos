@@ -222,11 +222,6 @@
     if (revEl) {
       revEl.textContent = todayRev.toLocaleString('uz-UZ').replace(/,/g, ' ')
     }
-
-    // Apply intelligent typography scaling
-    if (typeof applyResponsiveTypography === 'function') {
-      applyResponsiveTypography()
-    }
     const trendEl = document.getElementById('todayRevenueTrend')
     if (trendEl) {
       trendEl.textContent = `${trend.arrow} ${trend.text}`
@@ -269,6 +264,11 @@
     }
 
     renderRecentSales(sortedToday.slice(0, 3))
+
+    // Apply intelligent typography scaling after all values are set
+    if (typeof applyResponsiveTypography === 'function') {
+      applyResponsiveTypography()
+    }
   }
 
   function renderRecentSales(top3) {
@@ -653,12 +653,18 @@
           // Calculate character density (characters per pixel)
           const charDensity = textLength / containerWidth
           
-          // Apply appropriate class based on content analysis
-          if (charDensity > 0.15 || textLength > 12) {
+          // Much more conservative scaling - only for extremely long values
+          // Desktop: scale only when really necessary (>25 chars or very high density)
+          // Mobile: scale only when close to overflow (>20 chars or high density)
+          const isMobile = window.innerWidth <= 768
+          const scaleThreshold = isMobile ? 0.25 : 0.20
+          const lengthThreshold = isMobile ? 20 : 25
+          
+          if (charDensity > scaleThreshold || textLength > lengthThreshold) {
             card.classList.add('ultra-large-value')
-          } else if (charDensity > 0.12 || textLength > 10) {
+          } else if (charDensity > (scaleThreshold * 0.8) || textLength > (lengthThreshold * 0.8)) {
             card.classList.add('very-large-value')
-          } else if (charDensity > 0.09 || textLength > 8) {
+          } else if (charDensity > (scaleThreshold * 0.6) || textLength > (lengthThreshold * 0.6)) {
             card.classList.add('large-value')
           }
           
@@ -666,11 +672,11 @@
           setTimeout(() => {
             try {
               if (card.scrollWidth > card.offsetWidth) {
-                // Progressive scaling until it fits
-                let scale = 0.9
-                while (card.scrollWidth > card.offsetWidth && scale > 0.5) {
+                // Progressive scaling until it fits, but start higher
+                let scale = 0.95
+                while (card.scrollWidth > card.offsetWidth && scale > 0.7) {
                   card.style.transform = `scale(${scale})`
-                  scale -= 0.05
+                  scale -= 0.02
                 }
               } else {
                 // Reset transform if not needed

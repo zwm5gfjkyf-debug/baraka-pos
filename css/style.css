@@ -5746,14 +5746,14 @@ BOTTOM NAVIGATION
 }
 
 .dashboard-page-inner {
-  padding: 20px 16px 24px;
+  padding: 16px 12px 20px;
 }
 
 .dashboard-stat-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
 .dashboard-card {
@@ -5871,29 +5871,29 @@ BOTTOM NAVIGATION
   }
 }
 
-/* Special handling for very large values */
+/* Special handling for very large values - more conservative scaling */
 .dashboard-card-value.large-value {
-  font-size: 20px !important;
+  font-size: 26px !important;
 }
 
 .dashboard-card-value.large-value span {
-  font-size: 14px !important;
+  font-size: 18px !important;
 }
 
 .dashboard-card-value.very-large-value {
-  font-size: 16px !important;
+  font-size: 24px !important;
 }
 
 .dashboard-card-value.very-large-value span {
-  font-size: 12px !important;
+  font-size: 16px !important;
 }
 
 .dashboard-card-value.ultra-large-value {
-  font-size: 14px !important;
+  font-size: 20px !important;
 }
 
 .dashboard-card-value.ultra-large-value span {
-  font-size: 11px !important;
+  font-size: 14px !important;
 }
 
 .dashboard-card-helper {
@@ -6217,12 +6217,12 @@ BOTTOM NAVIGATION
 /* ========== MOBILE OPTIMIZATION ========== */
 @media (max-width: 768px) {
   .dashboard-page-inner {
-    padding: 12px 10px 20px;
+    padding: 8px 6px 16px;
   }
 
   .dashboard-stat-grid {
-    gap: 8px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 8px;
   }
 
   .dashboard-card {
@@ -6254,7 +6254,7 @@ BOTTOM NAVIGATION
   .dashboard-chart-card {
     border-radius: 16px;
     padding: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
   }
 
@@ -6282,7 +6282,7 @@ BOTTOM NAVIGATION
   }
 
   .dashboard-section-title-row {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     gap: 8px;
   }
 
@@ -6344,12 +6344,12 @@ BOTTOM NAVIGATION
 /* ========== EXTRA SMALL MOBILE (320px-390px) ========== */
 @media (max-width: 480px) {
   .dashboard-page-inner {
-    padding: 10px 8px 16px;
+    padding: 6px 4px 12px;
   }
 
   .dashboard-stat-grid {
-    gap: 6px;
-    margin-bottom: 8px;
+    gap: 4px;
+    margin-bottom: 6px;
   }
 
   .dashboard-card {
@@ -6379,7 +6379,7 @@ BOTTOM NAVIGATION
   .dashboard-chart-card {
     border-radius: 14px;
     padding: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .dashboard-chart-header {
