@@ -5845,12 +5845,12 @@ BOTTOM NAVIGATION
   font-size: 28px;
   font-weight: 800;
   line-height: 1;
-  /* Responsive typography container */
-  container-type: inline-size;
   position: relative;
   min-height: 40px;
   white-space: nowrap;
-  overflow: visible;
+  overflow: hidden;
+  transition: font-size 0.2s ease;
+  width: 100%;
 }
 
 .dashboard-card-value span,
@@ -5859,61 +5859,31 @@ BOTTOM NAVIGATION
   font-weight: 600;
   opacity: 0.95;
   display: inline-flex;
+  white-space: nowrap;
 }
 
-/* Dynamic typography scaling based on container width */
-/* Feature detection for container queries */
-@supports (container-type: inline-size) {
-  @container (max-width: 140px) {
-    .dashboard-card-value {
-      font-size: 22px;
-    }
-  }
-
-  @container (max-width: 120px) {
-    .dashboard-card-value {
-      font-size: 20px;
-    }
-  }
-
-  @container (max-width: 100px) {
-    .dashboard-card-value {
-      font-size: 18px;
-    }
-  }
-
-  @container (max-width: 85px) {
-    .dashboard-card-value {
-      font-size: 16px;
-    }
-  }
+/* Stat number base class */
+.stat-number {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  display: block;
+  width: 100%;
+  transition: font-size 0.2s ease;
 }
 
-/* Fallback for browsers without container queries */
-@media (max-width: 360px) {
-  .dashboard-card-value {
-    font-size: 22px;
-  }
+/* Stat card container */
+.stat-card {
+  overflow: hidden;
+  word-break: keep-all;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-height: 90px;
+  max-height: 90px;
 }
 
-@media (max-width: 320px) {
-  .dashboard-card-value {
-    font-size: 20px;
-  }
-}
-
-/* Special handling for very large values - more conservative scaling */
-.dashboard-card-value.large-value {
-  font-size: 26px !important;
-}
-
-.dashboard-card-value.very-large-value {
-  font-size: 24px !important;
-}
-
-.dashboard-card-value.ultra-large-value {
-  font-size: 22px !important;
-}
+/* Removed old container query approach in favor of JavaScript-based sizing */
 
 /* Blue revenue card base sizing */
 .dashboard-card-primary .dashboard-card-value {
