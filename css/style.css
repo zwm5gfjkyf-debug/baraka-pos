@@ -3933,14 +3933,14 @@ SIDEBAR
   max-width:380px;
   height:100%;
   transform:translateX(-100%);
-  background:#0F172A;
+  background:#ffffff;
   padding:24px 20px 18px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
   transition:transform 0.25s ease;
   z-index:1000;
-  box-shadow:2px 0 24px rgba(15, 23, 42, 0.24);
+  box-shadow:2px 0 24px rgba(0, 0, 0, 0.08);
 }
 
 /* OPEN */
@@ -3948,11 +3948,27 @@ SIDEBAR
   transform:translateX(0);
 }
 
+/* BODY SCROLL LOCK WHEN SIDEBAR OPEN */
+body.sidebar-open{
+  overflow:hidden;
+  position:fixed;
+  width:100%;
+}
+
 .sidebar-content{
   display:flex;
   flex-direction:column;
   gap:24px;
   height:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+
+.sidebar-content::-webkit-scrollbar{
+  display:none;
 }
 
 .sidebar-top{
@@ -3988,18 +4004,18 @@ SIDEBAR
 .sidebar-shop-name{
   font-size:16px;
   font-weight:700;
-  color:#F8FAFC;
+  color:#0f172a;
 }
 
 .sidebar-shop-email{
   margin-top:2px;
   font-size:13px;
-  color:#94A3B8;
+  color:#64748b;
 }
 
 .sidebar-edit-btn{
   border:none;
-  background:rgba(148, 163, 184, 0.12);
+  background:#f1f5f9;
   width:40px;
   height:40px;
   border-radius:12px;
@@ -4007,6 +4023,11 @@ SIDEBAR
   align-items:center;
   justify-content:center;
   cursor:pointer;
+  transition:background 0.15s ease;
+}
+
+.sidebar-edit-btn:hover{
+  background:#e2e8f0;
 }
 
 .sidebar-edit-btn svg {
@@ -4020,8 +4041,8 @@ SIDEBAR
 }
 
 .sidebar-stat-card{
-  background:rgba(148, 163, 184, 0.08);
-  border:1px solid rgba(148, 163, 184, 0.16);
+  background:#f8fafc;
+  border:1px solid #e2e8f0;
   border-radius:16px;
   padding:16px;
   min-height:100px;
@@ -4033,13 +4054,13 @@ SIDEBAR
 .sidebar-stat-number{
   font-size:20px;
   font-weight:700;
-  color:#F8FAFC;
+  color:#0f172a;
   letter-spacing:0.01em;
 }
 
 .sidebar-stat-label{
   font-size:12px;
-  color:#94A3B8;
+  color:#64748b;
   text-transform:uppercase;
   letter-spacing:0.14em;
 }
@@ -4053,7 +4074,7 @@ SIDEBAR
 .sidebar-section-label{
   font-size:12px;
   font-weight:700;
-  color:#94A3B8;
+  color:#64748b;
   letter-spacing:0.18em;
   text-transform:uppercase;
 }
@@ -4068,7 +4089,7 @@ SIDEBAR
   border-radius:16px;
   background:transparent;
   border:none;
-  color:#E2E8F0;
+  color:#334155;
   text-align:left;
   cursor:pointer;
   transition:background 0.18s ease, transform 0.18s ease;
@@ -4076,7 +4097,7 @@ SIDEBAR
 
 .sidebar-item:hover,
 .sidebar-item.active {
-  background:rgba(148, 163, 184, 0.12);
+  background:#f1f5f9;
 }
 
 .sidebar-item-icon{
@@ -4110,16 +4131,16 @@ SIDEBAR
 .sidebar-item-title{
   font-size:15px;
   font-weight:600;
-  color:#F8FAFC;
+  color:#0f172a;
 }
 
 .sidebar-item-title-active{
-  color:#EFF6FF;
+  color:#1e293b;
 }
 
 .sidebar-item-subtitle{
   font-size:12px;
-  color:#94A3B8;
+  color:#64748b;
 }
 
 .sidebar-item-right{
@@ -4129,7 +4150,7 @@ SIDEBAR
 }
 
 .sidebar-chevron{
-  color:#94A3B8;
+  color:#94a3b8;
   font-size:18px;
   line-height:1;
 }
@@ -4138,7 +4159,7 @@ SIDEBAR
   width:8px;
   height:8px;
   border-radius:50%;
-  background:#60A5FA;
+  background:#2563eb;
 }
 
 .sidebar-badge{
@@ -4146,8 +4167,8 @@ SIDEBAR
   padding:0 10px;
   height:24px;
   border-radius:999px;
-  background:rgba(148, 163, 184, 0.18);
-  color:#E2E8F0;
+  background:#f1f5f9;
+  color:#475569;
   font-size:12px;
   display:flex;
   align-items:center;
@@ -4156,7 +4177,7 @@ SIDEBAR
 
 .sidebar-divider{
   height:1px;
-  background:rgba(148, 163, 184, 0.12);
+  background:#e2e8f0;
   margin:12px 0;
 }
 
@@ -4169,21 +4190,26 @@ SIDEBAR
 .sidebar-logout{
   width:100%;
   border:none;
-  background:rgba(240, 63, 63, 0.08);
-  color:#F8FAFC;
+  background:#fef2f2;
+  color:#dc2626;
   display:flex;
   align-items:center;
   gap:12px;
   padding:14px;
   border-radius:16px;
   cursor:pointer;
+  transition:background 0.15s ease;
+}
+
+.sidebar-logout:hover{
+  background:#fee2e2;
 }
 
 .sidebar-logout-icon{
   width:42px;
   height:42px;
   border-radius:14px;
-  background:rgba(220, 38, 38, 0.16);
+  background:#fecaca;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -4196,7 +4222,7 @@ SIDEBAR
 
 .sidebar-version{
   font-size:12px;
-  color:#94A3B8;
+  color:#64748b;
 }
 
 body{

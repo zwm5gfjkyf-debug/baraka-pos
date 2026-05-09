@@ -255,11 +255,13 @@ function confirmDeleteAllShopData(){
 function openSidebar(){
   document.getElementById("sidebar").classList.add("open")
   document.getElementById("sidebarOverlay").classList.add("show")
+  document.body.classList.add("sidebar-open")
 }
 
 function closeMenu(){
   document.getElementById("sidebar").classList.remove("open")
   document.getElementById("sidebarOverlay").classList.remove("show")
+  document.body.classList.remove("sidebar-open")
 }
 
 // used in HTML (menuClick)
