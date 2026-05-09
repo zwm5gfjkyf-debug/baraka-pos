@@ -1352,9 +1352,9 @@ Format: JPG yoki PNG
 <div onclick="navigate('unitPage')" style="
 margin-top:6px;
 height:44px;
-border-radius:12px;
-background:white;
-border:1px solid var(--border);
+border-radius:10px;
+background:#ffffff;
+border:1px solid #e5e7eb;
 display:flex;
 align-items:center;
 justify-content:space-between;
@@ -1393,28 +1393,16 @@ Narxlari
 </div>
 
 <!-- COST + CURRENCY TOGGLE -->
-<div class="input-with-btn currency-input-row" style="margin-bottom:8px;">
+<div class="price-input-wrap" style="margin-bottom:8px;">
   <input 
     id="stockCost"
+    type="number"
     placeholder="Kelish narxi"
     oninput="handleCostInput()"
-    style="height:44px;"
   >
-
-  <!-- 🔥 CURRENCY TOGGLE -->
-  <div class="currency-switch">
-    <button 
-      id="btnUZS"
-      class="active"
-      onclick="selectCurrency('UZS')">
-      UZS
-    </button>
-    <button 
-      id="btnUSD"
-      onclick="selectCurrency('USD')">
-      USD
-    </button>
-  </div>
+  <button id="currencyToggleBtn" class="uzs-inline-btn" onclick="toggleCurrency()">
+    UZS
+  </button>
 </div>
 
 <!-- 🔥 USD → UZS PREVIEW -->

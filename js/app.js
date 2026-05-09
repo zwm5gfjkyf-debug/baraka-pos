@@ -601,24 +601,16 @@ let currentCurrency = "UZS"
 function selectCurrency(type){
   currentCurrency = type
 
-  const uzsBtn = document.getElementById("btnUZS")
-  const usdBtn = document.getElementById("btnUSD")
-
-  if(type === "UZS"){
-    uzsBtn.style.background = "#2563eb"
-    uzsBtn.style.color = "#fff"
-
-    usdBtn.style.background = "transparent"
-    usdBtn.style.color = "#111"
-  }else{
-    usdBtn.style.background = "#2563eb"
-    usdBtn.style.color = "#fff"
-
-    uzsBtn.style.background = "transparent"
-    uzsBtn.style.color = "#111"
+  const currencyBtn = document.getElementById("currencyToggleBtn")
+  if(currencyBtn){
+    currencyBtn.innerText = type
   }
 
   handleCostInput()
+}
+
+function toggleCurrency(){
+  selectCurrency(currentCurrency === "UZS" ? "USD" : "UZS")
 }
 
 function handleCostInput(){
