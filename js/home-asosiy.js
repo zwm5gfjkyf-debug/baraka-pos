@@ -4,7 +4,7 @@
  */
 (function () {
   let todaySalesUnsub = null
-  let yesterdaySalesUnsub = null
+  let yesterdaySalesUnsub = null  
   let nasiyaUnsub = null
   let todayHistoryUnsub = null
 
@@ -250,7 +250,7 @@
     const nasiyaVal = document.getElementById('nasiyaDebtValue')
     if (nasiyaVal) {
       nasiyaVal.textContent = formatSom(nasiyaTotal)
-      nasiyaVal.style.color = '#FB8C00'
+      nasiyaVal.style.color = '#fb8a00f2'
     }
     const nasiyaStatus = document.getElementById('nasiyaDebtStatus')
     if (nasiyaStatus) {
@@ -542,7 +542,7 @@
           if (list) {
             list.innerHTML =
               '<div class="today-sales-history-empty">Ma\'lumotlarni yuklashda xato</div>'
-          }
+         }
         }
       )
   }
@@ -568,4 +568,4 @@
   window.loadTodaySalesHistory = loadTodaySalesHistory
   window.cleanupTodaySalesHistoryListeners = cleanupTodaySalesHistoryListeners
   window.goToNewSaleFromFab = goToNewSaleFromFab
-})()
+})()                                                                                
