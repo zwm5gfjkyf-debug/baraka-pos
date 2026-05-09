@@ -1326,55 +1326,25 @@ Format: JPG yoki PNG
 <input id="stockName" placeholder="Tovar nomi" style="margin-bottom:8px;">
 
 <!-- ARTIKUL -->
-<div style="position:relative; margin-bottom:10px;">
-<input 
-  id="stockArtikul" 
-  placeholder="Artikul"
-  style="padding-right:80px;"
->
-<button 
-onclick="generateArtikul()" 
-style="
-position:absolute;
-right:6px;
-top:50%;
-transform:translateY(-50%);
-border:none;
-background:transparent;
-color:#2563eb;
-padding:6px 10px;
-font-size:12px;
-font-weight:600;
-cursor:pointer;
-">
-Yaratish
-</button>
+<div class="input-with-btn" style="margin-bottom:10px;">
+  <input 
+    id="stockArtikul" 
+    placeholder="Artikul"
+  >
+  <button class="input-btn" onclick="generateArtikul()">
+    Yaratish
+  </button>
 </div>
 
 <!-- BARCODE -->
-<div style="position:relative; margin-bottom:10px;">
-<input 
-  id="stockBarcode" 
-  placeholder="Barkod"
-  style="padding-right:80px;"
->
-<button 
-onclick="generateBarcode()" 
-style="
-position:absolute;
-right:6px;
-top:50%;
-transform:translateY(-50%);
-border:none;
-background:transparent;
-color:#2563eb;
-padding:6px 10px;
-font-size:12px;
-font-weight:600;
-cursor:pointer;
-">
-Yaratish
-</button>
+<div class="input-with-btn" style="margin-bottom:10px;">
+  <input 
+    id="stockBarcode" 
+    placeholder="Barkod"
+  >
+  <button class="input-btn" onclick="generateBarcode()">
+    Yaratish
+  </button>
 </div>
 
 <!-- UNIT -->
