@@ -667,7 +667,18 @@
             tries += 1
           }
 
-          if (card.scrollWidth > availableWidth) {
+          // For blue revenue card, NEVER allow wrapping - keep single line
+          if (isPrimary) {
+            card.style.whiteSpace = 'nowrap'
+            card.style.wordBreak = 'normal'
+            card.style.lineHeight = '1'
+            // If still overflowing after max scaling, continue scaling down
+            while (card.scrollWidth > availableWidth && currentSize > 12 && tries < 20) {
+              currentSize = Math.max(12, currentSize - 1)
+              card.style.fontSize = `${currentSize}px`
+              tries += 1
+            }
+          } else if (card.scrollWidth > availableWidth) {
             card.style.whiteSpace = 'normal'
             card.style.wordBreak = 'break-word'
             card.style.lineHeight = '1.05'
