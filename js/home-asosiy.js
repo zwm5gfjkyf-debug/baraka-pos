@@ -255,7 +255,7 @@
     const nasiyaVal = document.getElementById('nasiyaDebtValue')
     if (nasiyaVal) {
       nasiyaVal.textContent = formatSom(nasiyaTotal)
-      nasiyaVal.style.color = '#fb8a00f2'
+      nasiyaVal.style.color = '#FB8C00'
     }
     const nasiyaStatus = document.getElementById('nasiyaDebtStatus')
     if (nasiyaStatus) {
@@ -323,19 +323,42 @@
 
   function updateChart(sortedToday) {
     const canvas = document.getElementById('revenueChart')
-    if (!canvas || typeof Chart === 'undefined') return
+    if (!canvas) {
+      console.warn('Revenue chart canvas not found')
+      return
+    }
 
-    const { now } = getTodayBounds()
-    const { values, withSale } = buildMonotonicChartValues(sortedToday, now)
-    const ctx = canvas.getContext('2d')
-    if (revenueChart) revenueChart.destroy()
+    if (typeof Chart === 'undefined') {
+      console.warn('Chart.js not available')
+      return
+    }
 
-    const lastIdx = values.length - 1
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
-    gradient.addColorStop(0, 'rgba(34, 197, 94, 0.22)')
-    gradient.addColorStop(1, 'rgba(34, 197, 94, 0)')
+    try {
+      const { now } = getTodayBounds()
+      const { values, withSale } = buildMonotonicChartValues(sortedToday, now)
+      const ctx = canvas.getContext('2d')
+      
+      if (!ctx) {
+        console.warn('Could not get canvas context')
+        return
+      }
 
-    revenueChart = new Chart(ctx, {
+      // Destroy existing chart
+      if (revenueChart) {
+        try {
+          revenueChart.destroy()
+        } catch (error) {
+          console.warn('Error destroying existing chart:', error)
+        }
+        revenueChart = null
+      }
+
+      const lastIdx = values.length - 1
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
+      gradient.addColorStop(0, 'rgba(34, 197, 94, 0.22)')
+      gradient.addColorStop(1, 'rgba(34, 197, 94, 0)')
+
+      revenueChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: CHART_LABELS.slice(),
@@ -379,6 +402,17 @@
         }
       }
     })
+    } catch (error) {
+      console.error('Error creating revenue chart:', error)
+      if (revenueChart) {
+        try {
+          revenueChart.destroy()
+        } catch (destroyError) {
+          console.warn('Error destroying chart after creation failure:', destroyError)
+        }
+        revenueChart = null
+      }
+    }
   }
 
   function renderDashboardFromCache() {
@@ -432,7 +466,17 @@
 
   function loadDashboard() {
     const shopId = typeof currentShopId !== 'undefined' ? currentShopId : window.currentShopId
-    if (!shopId) return
+    if (!shopId) {
+      console.warn('No shopId available for dashboard loading')
+      return
+    }
+
+    // Validate Firebase is available
+    if (typeof db === 'undefined') {
+      console.error('Firebase Firestore not available')
+      showDashboardError()
+      return
+    }
 
     cleanupDashboardListeners()
     showDashboardLoading()
@@ -440,8 +484,15 @@
     const { todayStart, tomorrowStart } = getTodayBounds()
     const { yesterdayStart, todayStart: yEnd } = getYesterdayBounds()
 
-    const salesCol = db.collection('shops').doc(shopId).collection('sales')
-    const nasiyaCol = db.collection('shops').doc(shopId).collection('nasiya')
+    let salesCol, nasiyaCol
+    try {
+      salesCol = db.collection('shops').doc(shopId).collection('sales')
+      nasiyaCol = db.collection('shops').doc(shopId).collection('nasiya')
+    } catch (error) {
+      console.error('Failed to create Firestore collection references:', error)
+      showDashboardError()
+      return
+    }
 
     todaySalesUnsub = salesCol
       .where('createdAt', '>=', todayStart)
@@ -577,46 +628,65 @@
 
   // Intelligent responsive typography for dashboard cards
   function applyResponsiveTypography() {
-    const statCards = document.querySelectorAll('.dashboard-card-value')
-    
-    statCards.forEach(card => {
-      // Remove existing size classes
-      card.classList.remove('large-value', 'very-large-value', 'ultra-large-value')
+    try {
+      const statCards = document.querySelectorAll('.dashboard-card-value')
       
-      // Get the text content and measure it
-      const text = card.textContent || ''
-      const textLength = text.length
-      
-      // Get container width
-      const containerWidth = card.offsetWidth || card.parentElement.offsetWidth
-      
-      // Calculate character density (characters per pixel)
-      const charDensity = textLength / containerWidth
-      
-      // Apply appropriate class based on content analysis
-      if (charDensity > 0.15 || textLength > 12) {
-        card.classList.add('ultra-large-value')
-      } else if (charDensity > 0.12 || textLength > 10) {
-        card.classList.add('very-large-value')
-      } else if (charDensity > 0.09 || textLength > 8) {
-        card.classList.add('large-value')
+      if (statCards.length === 0) {
+        return
       }
       
-      // Additional safety check: if still overflowing, scale down further
-      setTimeout(() => {
-        if (card.scrollWidth > card.offsetWidth) {
-          // Progressive scaling until it fits
-          let scale = 0.9
-          while (card.scrollWidth > card.offsetWidth && scale > 0.5) {
-            card.style.transform = `scale(${scale})`
-            scale -= 0.05
+      statCards.forEach(card => {
+        try {
+          // Remove existing size classes
+          card.classList.remove('large-value', 'very-large-value', 'ultra-large-value')
+          
+          // Get the text content and measure it
+          const text = card.textContent || ''
+          const textLength = text.length
+          
+          // Get container width with fallback
+          const containerWidth = card.offsetWidth || card.parentElement?.offsetWidth || 200
+          
+          // Prevent division by zero
+          if (containerWidth <= 0) return
+          
+          // Calculate character density (characters per pixel)
+          const charDensity = textLength / containerWidth
+          
+          // Apply appropriate class based on content analysis
+          if (charDensity > 0.15 || textLength > 12) {
+            card.classList.add('ultra-large-value')
+          } else if (charDensity > 0.12 || textLength > 10) {
+            card.classList.add('very-large-value')
+          } else if (charDensity > 0.09 || textLength > 8) {
+            card.classList.add('large-value')
           }
-        } else {
-          // Reset transform if not needed
-          card.style.transform = ''
+          
+          // Additional safety check: if still overflowing, scale down further
+          setTimeout(() => {
+            try {
+              if (card.scrollWidth > card.offsetWidth) {
+                // Progressive scaling until it fits
+                let scale = 0.9
+                while (card.scrollWidth > card.offsetWidth && scale > 0.5) {
+                  card.style.transform = `scale(${scale})`
+                  scale -= 0.05
+                }
+              } else {
+                // Reset transform if not needed
+                card.style.transform = ''
+              }
+            } catch (scaleError) {
+              console.warn('Error applying responsive typography scaling:', scaleError)
+            }
+          }, 0)
+        } catch (cardError) {
+          console.warn('Error processing card for responsive typography:', cardError)
         }
-      }, 0)
-    })
+      })
+    } catch (error) {
+      console.error('Error in applyResponsiveTypography:', error)
+    }
   }
 
   // Setup resize observer for dynamic typography
@@ -683,11 +753,7 @@
   window.loadTodaySalesHistory = loadTodaySalesHistory
   window.cleanupTodaySalesHistoryListeners = cleanupTodaySalesHistoryListeners
   window.goToNewSaleFromFab = goToNewSaleFromFab
-<<<<<<< HEAD
-})()                                                                                
-=======
   window.applyResponsiveTypography = applyResponsiveTypography
   window.setupResizeObserver = setupResizeObserver
   window.cleanupResizeObserver = cleanupResizeObserver
 })()
->>>>>>> a4a15e4 (message)
