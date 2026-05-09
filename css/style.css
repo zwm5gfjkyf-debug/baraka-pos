@@ -5785,32 +5785,31 @@ BOTTOM NAVIGATION
 
 .dashboard-card-value {
   display: flex;
-  align-items: flex-end;
+  flex-wrap: wrap;
+  align-items: baseline;
   gap: 8px;
   font-size: 28px;
   font-weight: 800;
-  line-height: 1;
+  line-height: 1.05;
   /* Responsive typography container */
   container-type: inline-size;
   position: relative;
-  overflow: hidden;
   min-height: 32px;
-  /* Ensure text never overflows */
-  word-break: keep-all;
-  overflow-wrap: normal;
-  white-space: nowrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .dashboard-card-value span {
   font-size: 20px;
   font-weight: 600;
   opacity: 0.95;
-  /* Enable individual scaling */
-  display: inline-block;
+  display: inline;
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  text-overflow: clip;
 }
+
 
 /* Dynamic typography scaling based on container width */
 /* Feature detection for container queries */
