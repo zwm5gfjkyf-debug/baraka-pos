@@ -4883,38 +4883,7 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
   color:#d1d5db;
 }
 
-.price-input-wrap{
-  position:relative;
-  width:100%;
-}
 
-.price-input-wrap input{
-  width:100%;
-  height:44px;
-  padding-left:14px;
-  padding-right:70px;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  background:#ffffff;
-  font-size:14px;
-  outline:none;
-}
-
-.uzs-inline-btn{
-  position:absolute;
-  right:8px;
-  top:50%;
-  transform:translateY(-50%);
-  height:28px;
-  padding:0 10px;
-  background:#2563eb;
-  color:#fff;
-  border:none;
-  border-radius:6px;
-  font-size:12px;
-  font-weight:600;
-  cursor:pointer;
-}
 
 /* INPUT WITH RIGHT BUTTON */
 #addProductPage .input-with-btn{
@@ -5100,15 +5069,15 @@ ADD PRODUCT — CLEAN IOS STYLE (FINAL)
 
 #addProductPage .unit-row,
 #addProductPage div[onclick*="navigate"]{
-  height:52px;
-  border-radius:14px;
+  height:44px;
+  border-radius:10px;
   background:#ffffff;
   padding:0 14px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   margin-bottom:10px;
-  border:1px solid var(--border);
+  border:1px solid #e5e7eb;
 }
 /* =====================================================
 SALE PAGE — NEW CLEAN IOS DESIGN
