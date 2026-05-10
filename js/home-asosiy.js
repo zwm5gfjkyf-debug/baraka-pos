@@ -23,26 +23,30 @@
      DYNAMIC FONT SIZING FOR STAT CARDS
      ======================================== */
   
-  function adjustFontSize(element) {
+  function formatNumberWithSpaces(amount) {
+    const n = safeInt(amount)
+    return n.toLocaleString('uz-UZ').replace(/,/g, ' ')
+  }
+  
+  function adjustFontSizeForStatNumber(element) {
     if (!element) return
-    const length = element.textContent.replace(/\s/g, '').length
+    const text = element.textContent.replace(/\s/g, '')
+    const length = text.length
     
-    if (length <= 6) {
-      element.style.fontSize = '28px'
-    } else if (length <= 8) {
-      element.style.fontSize = '24px'
-    } else if (length <= 10) {
-      element.style.fontSize = '20px'
-    } else if (length <= 13) {
-      element.style.fontSize = '16px'
+    if (length <= 7) {
+      element.style.fontSize = '26px'
+    } else if (length <= 9) {
+      element.style.fontSize = '22px'
+    } else if (length <= 11) {
+      element.style.fontSize = '18px'
     } else {
-      element.style.fontSize = '13px'
+      element.style.fontSize = '15px'
     }
   }
 
   function adjustAllStatNumbers() {
     document.querySelectorAll('.stat-number').forEach(el => {
-      adjustFontSize(el)
+      adjustFontSizeForStatNumber(el)
     })
   }
 
@@ -247,43 +251,39 @@
 
     const revEl = document.getElementById('todayRevenueValue')
     if (revEl) {
-      revEl.textContent = todayRev.toLocaleString('uz-UZ').replace(/,/g, ' ')
-
+      revEl.textContent = formatNumberWithSpaces(todayRev)
+      adjustFontSizeForStatNumber(revEl)
     }
     const trendEl = document.getElementById('todayRevenueTrend')
     if (trendEl) {
       trendEl.textContent = `${trend.arrow} ${trend.text}`
-      trendEl.style.color = 'rgba(255,255,255,0.95)'
     }
 
     const profitVal = document.getElementById('todayProfitValue')
     if (profitVal) {
-      profitVal.textContent = formatSom(todayProfit)
-      profitVal.style.color = todayProfit > 0 ? '#16A34A' : '#94A3B8'
-      adjustFontSize(profitVal)
+      profitVal.textContent = formatNumberWithSpaces(todayProfit)
+      adjustFontSizeForStatNumber(profitVal)
     }
     const profitStatus = document.getElementById('todayProfitStatus')
     if (profitStatus) {
       if (todayProfit > 0) {
         profitStatus.textContent = "↑ Yaxshi ko'rsatkich"
-        profitStatus.style.color = '#16A34A'
+        profitStatus.style.color = '#43A047'
       } else {
         profitStatus.textContent = "Hozircha sotuv yo'q"
-        profitStatus.style.color = '#94A3B8'
+        profitStatus.style.color = '#9E9E9E'
       }
     }
 
     const prodEl = document.getElementById('productsSoldValue')
     if (prodEl) {
       prodEl.textContent = String(productsSold)
-      adjustFontSize(prodEl)
     }
 
     const nasiyaVal = document.getElementById('nasiyaDebtValue')
     if (nasiyaVal) {
-      nasiyaVal.textContent = formatSom(nasiyaTotal)
-      nasiyaVal.style.color = '#FB8C00'
-      adjustFontSize(nasiyaVal)
+      nasiyaVal.textContent = formatNumberWithSpaces(nasiyaTotal)
+      adjustFontSizeForStatNumber(nasiyaVal)
     }
     const nasiyaStatus = document.getElementById('nasiyaDebtStatus')
     if (nasiyaStatus) {
@@ -292,7 +292,7 @@
         nasiyaStatus.style.color = '#FB8C00'
       } else {
         nasiyaStatus.textContent = "Qarzdorlik yo'q"
-        nasiyaStatus.style.color = '#94A3B8'
+        nasiyaStatus.style.color = '#9E9E9E'
       }
     }
 
@@ -303,7 +303,7 @@
       applyResponsiveTypography()
     }
     
-    // Apply dynamic font sizing to prevent overflow
+    // Final pass to ensure all stat numbers are sized correctly
     adjustAllStatNumbers()
   }
 
@@ -664,35 +664,6 @@
     if (typeof navigate === 'function') navigate('salePage')
   }
 
-  // Dynamic font sizing for stat cards to prevent overflow
-  function adjustFontSize(element) {
-    if (!element) return
-    
-    const length = element.textContent.replace(/\s/g, '').length
-    
-    if (length <= 6) {
-      element.style.fontSize = '28px'
-    } else if (length <= 8) {
-      element.style.fontSize = '24px'
-    } else if (length <= 10) {
-      element.style.fontSize = '20px'
-    } else if (length <= 13) {
-      element.style.fontSize = '16px'
-    } else {
-      element.style.fontSize = '13px'
-    }
-  }
-
-  function adjustAllStatNumbers() {
-    try {
-      document.querySelectorAll('.stat-number').forEach(el => {
-        adjustFontSize(el)
-      })
-    } catch (error) {
-      console.warn('Error adjusting stat numbers:', error)
-    }
-  }
-
   // Intelligent responsive typography for dashboard cards
   function applyResponsiveTypography() {
     try {
@@ -833,11 +804,8 @@
   window.applyResponsiveTypography = applyResponsiveTypography
   window.setupResizeObserver = setupResizeObserver
   window.cleanupResizeObserver = cleanupResizeObserver
-  window.adjustFontSize = adjustFontSize
+  window.adjustFontSizeForStatNumber = adjustFontSizeForStatNumber
   window.adjustAllStatNumbers = adjustAllStatNumbers
-  window.adjustAllStatNumbers = adjustAllStatNumbers
-  window.adjustFontSize = adjustFontSize
-
-  // Initialize stat card font sizing on page load
-  document.addEventListener('DOMContentLoaded', adjustAllStatNumbers)
+  window.formatNumberWithSpaces = formatNumberWithSpaces
 })()
+

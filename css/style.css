@@ -5809,106 +5809,130 @@ BOTTOM NAVIGATION
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 14px;
+  padding: 0 16px;
 }
 
-.dashboard-card {
-  border-radius: 24px;
-  padding: 20px;
-  border: 1px solid #E5E7EB;
-  background: white;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+/* STAT CARD BASE */
+.stat-card {
+  height: 110px;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.dashboard-card-primary {
+/* STAT CARD PRIMARY (BLUE) */
+.stat-card-primary {
   background: #1976D2;
-  color: white;
-  border-color: transparent;
+  border: none;
 }
 
-.dashboard-card-secondary {
+/* STAT CARD SECONDARY (WHITE) */
+.stat-card-secondary {
   background: white;
+  border: 0.5px solid #E8EAF0;
 }
 
-.dashboard-card-label {
+/* STAT LABEL */
+.stat-label {
   font-size: 10px;
+  font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  font-weight: 700;
-  opacity: 0.85;
-  margin-bottom: 14px;
+  margin-bottom: 6px;
 }
 
-.dashboard-card-value {
+.stat-card-primary .stat-label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stat-card-secondary .stat-label {
+  color: #9E9E9E;
+}
+
+/* STAT VALUE CONTAINER */
+.stat-value-container {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-  font-size: 28px;
-  font-weight: 800;
-  line-height: 1;
-  position: relative;
-  min-height: 40px;
+  gap: 4px;
+  margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
-  transition: font-size 0.2s ease;
-  width: 100%;
 }
 
-.dashboard-card-value span,
-.dashboard-card-value .som-suffix-on-primary {
-  font-size: 0.72em;
+/* STAT NUMBER */
+.stat-number {
+  font-weight: 700;
+  transition: font-size 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  display: inline;
+}
+
+/* STAT NUMBER BASE SIZING */
+.stat-card-primary .stat-number {
+  font-size: 26px;
+  color: white;
+}
+
+.stat-card-secondary .stat-number {
+  font-size: 26px;
+}
+
+/* Products sold count - always blue, never scales */
+.stat-count {
+  font-size: 32px !important;
+  color: #1976D2 !important;
+}
+
+.stat-card-secondary .stat-number:not(.stat-count) {
+  color: #43A047;
+}
+
+#nasiyaDebtValue {
+  color: #FB8C00 !important;
+}
+
+/* STAT SOM SUFFIX */
+.stat-som {
+  font-size: 0.73em;
+  font-weight: 500;
+  display: inline;
+}
+
+.stat-card-primary .stat-som {
+  color: white;
+}
+
+.stat-card-secondary .stat-som {
+  color: inherit;
+}
+
+#todayProfitValue + .stat-som {
+  color: #43A047;
+}
+
+#nasiyaDebtValue + .stat-som {
+  color: #FB8C00;
+}
+
+/* STAT HELPER (trend/status) */
+.stat-helper {
+  font-size: 12px;
   font-weight: 600;
-  opacity: 0.95;
-  display: inline-flex;
-  white-space: nowrap;
+  color: #9E9E9E;
 }
 
-/* Stat number base class */
-.stat-number {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  display: block;
-  width: 100%;
-  transition: font-size 0.2s ease;
+.stat-card-primary .stat-helper {
+  color: rgba(255, 255, 255, 0.85);
 }
 
-/* Stat card container */
-.stat-card {
-  overflow: hidden;
-  word-break: keep-all;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  min-height: 90px;
-  max-height: 90px;
-}
-
-/* Removed old container query approach in favor of JavaScript-based sizing */
-
-/* Blue revenue card base sizing */
-.dashboard-card-primary .dashboard-card-value {
-  font-size: 30px;
-}
-
-/* Dynamic stat card overflow prevention */
-.stat-number {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: clip;
-  display: block;
-  width: 100%;
-  transition: font-size 0.2s ease;
-}
-
-.stat-card {
-  overflow: hidden;
-  word-break: keep-all;
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-  min-height: 90px; /* fixed height — never grows */
-  max-height: 90px; /* never expands to fit large text */
+#todayProfitStatus[style*="color"],
+#nasiyaDebtStatus[style*="color"] {
+  font-weight: 600;
 }
 
 .dashboard-card-helper {

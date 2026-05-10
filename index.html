@@ -424,30 +424,43 @@ Hammasini o'chirish
 
       <!-- STATS GRID -->
       <div id="statsGrid" class="dashboard-stat-grid hidden">
-        <div class="dashboard-card dashboard-card-primary stat-card">
-          <div class="dashboard-card-label dashboard-card-label-on-primary">BUGUNGI TUSHUM</div>
-          <div class="dashboard-card-value dashboard-revenue-line">
-            <span id="todayRevenueValue" class="stat-number">0</span><span class="som-suffix-on-primary">so'm</span>
+        <!-- CARD 1: BUGUNGI TUSHUM -->
+        <div class="stat-card stat-card-primary">
+          <div class="stat-label">BUGUNGI TUSHUM</div>
+          <div class="stat-value-container">
+            <span id="todayRevenueValue" class="stat-number">0</span>
+            <span class="stat-som">so'm</span>
           </div>
-          <div id="todayRevenueTrend" class="dashboard-card-helper dashboard-helper-on-primary">↑ +0% kechagidan</div>
+          <div id="todayRevenueTrend" class="stat-helper">↑ +0% kechagidan</div>
         </div>
 
-        <div class="dashboard-card dashboard-card-secondary stat-card">
-          <div class="dashboard-card-label">BUGUNGI FOYDA</div>
-          <div id="todayProfitValue" class="dashboard-card-value dashboard-profit-amount stat-number">0 so'm</div>
-          <div id="todayProfitStatus" class="dashboard-card-helper">Hozircha sotuv yo'q</div>
+        <!-- CARD 2: BUGUNGI FOYDA -->
+        <div class="stat-card stat-card-secondary">
+          <div class="stat-label">BUGUNGI FOYDA</div>
+          <div class="stat-value-container">
+            <span id="todayProfitValue" class="stat-number">0</span>
+            <span class="stat-som">so'm</span>
+          </div>
+          <div id="todayProfitStatus" class="stat-helper">Hozircha sotuv yo'q</div>
         </div>
 
-        <div class="dashboard-card dashboard-card-secondary stat-card">
-          <div class="dashboard-card-label">SOTILGAN MAHSULOT</div>
-          <div id="productsSoldValue" class="dashboard-card-value dashboard-products-sold stat-number">0</div>
-          <div class="dashboard-card-helper">Bugun</div>
+        <!-- CARD 3: SOTILGAN MAHSULOT -->
+        <div class="stat-card stat-card-secondary">
+          <div class="stat-label">SOTILGAN MAHSULOT</div>
+          <div class="stat-value-container">
+            <span id="productsSoldValue" class="stat-number stat-count">0</span>
+          </div>
+          <div class="stat-helper">Bugun</div>
         </div>
 
-        <div class="dashboard-card dashboard-card-secondary stat-card">
-          <div class="dashboard-card-label">NASIYA</div>
-          <div id="nasiyaDebtValue" class="dashboard-card-value dashboard-nasiya-amount stat-number">0 so'm</div>
-          <div id="nasiyaDebtStatus" class="dashboard-card-helper">Qarzdorlik yo'q</div>
+        <!-- CARD 4: NASIYA -->
+        <div class="stat-card stat-card-secondary">
+          <div class="stat-label">NASIYA</div>
+          <div class="stat-value-container">
+            <span id="nasiyaDebtValue" class="stat-number">0</span>
+            <span class="stat-som">so'm</span>
+          </div>
+          <div id="nasiyaDebtStatus" class="stat-helper">Qarzdorlik yo'q</div>
         </div>
       </div>
 
