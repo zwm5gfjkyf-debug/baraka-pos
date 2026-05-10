@@ -7167,23 +7167,24 @@ Mobile-first responsive design
   }
 }
 
+
 #dokonTahliliPage,
 #tahlilHubPage,
 #weeklyTahliliPage,
 #monthlyTahliliPage,
 #nasiyaTahliliPage {
-  background: #f2f2f2;
+  background: #ffffff; /* Changed from #f2f2f2 to white for cleaner, more open feel */
   min-height: calc(100vh - 68px);
-  padding-bottom: 100px;
+  padding-bottom: 120px; /* Increased from 100px for better bottom spacing */
 }
 
 .tahlil-page-bg {
-  background: #f2f2f2;
+  background: #ffffff; /* Changed from #f2f2f2 to white */
 }
 
 /* ----- Tahlil hub ----- */
 .tahlil-hub-skeleton-wrap {
-  padding: 16px;
+  padding: 20px 12px; /* Adjusted padding to match new layout */
 }
 
 .tahlil-skel-quick {
@@ -7245,18 +7246,21 @@ Mobile-first responsive design
 }
 
 .tahlil-hub-inner {
-  padding: 0;
-  padding-bottom: 100px;
+  padding: 0 8px; /* Reduced from 0 to add minimal horizontal padding, removed bottom padding */
+  padding-bottom: 120px; /* Added bottom padding for proper spacing */
+  max-width: none; /* Ensure full width usage */
 }
 
 .tahlil-hub-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 16px 24px;
-  background: transparent; /* 🔥 REMOVE BACKGROUND */
-  border-bottom: none; /* 🔥 REMOVE BORDER */
-  box-shadow: none; /* 🔥 REMOVE SHADOW */
+  padding: 20px 16px 28px; /* Increased top/bottom padding for better breathing room */
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
+  margin: 0 -8px; /* Extend to full width by compensating for parent padding */
+  margin-bottom: 8px; /* Add space below header */
 }
 
 .tahlil-hub-header-left {
@@ -7305,8 +7309,9 @@ Mobile-first responsive design
 .tahlil-hub-quick-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  padding: 0 16px 24px; /* 🔥 ADD BOTTOM PADDING */
+  gap: 16px; /* Increased gap for better spacing */
+  padding: 0 16px 32px; /* Increased bottom padding for more breathing room */
+  margin: 0 -8px; /* Extend to full width */
 }
 
 .tahlil-hub-mini-card {
@@ -7350,8 +7355,9 @@ Mobile-first responsive design
   font-weight: 700;
   letter-spacing: 0.15em;
   color: #94a3b8;
-  padding: 24px 16px 16px; /* 🔥 INCREASE FROM 18px 16px 10px */
+  padding: 32px 16px 20px; /* Increased top padding for more separation */
   text-transform: uppercase;
+  margin: 0 -8px; /* Extend to full width */
 }
 
 .tahlil-hub-menu{
@@ -7359,19 +7365,19 @@ Mobile-first responsive design
   align-items:center;
   justify-content:space-between;
 
-  width: calc(100% - 32px); /* 🔥 CHANGE FROM 24px */
-  margin: 0 16px 16px; /* 🔥 CHANGE: 16px horizontal, 16px bottom */
+  width: calc(100% - 16px); /* Reduced side margins for more width */
+  margin: 0 8px 20px; /* Reduced horizontal margins, increased bottom margin */
 
-  padding: 20px 18px; /* 🔥 INCREASE PADDING */
+  padding: 24px 20px; /* Increased padding for better touch targets */
 
   background:#ffffff;
 
-  border-radius:18px; /* 🔥 KEEP 18px */
-  border:1px solid #f0f0f0; /* 🔥 ADD SUBTLE BORDER */
+  border-radius:20px; /* Slightly increased border radius for modern feel */
+  border:1px solid #f1f5f9; /* Lighter border color */
 
-  box-shadow: 
-    0 2px 8px rgba(15,23,42,0.05),
-    0 8px 16px rgba(15,23,42,0.04); /* 🔥 SOFTEN SHADOW */
+  box-shadow:
+    0 1px 3px rgba(15,23,42,0.04),
+    0 4px 12px rgba(15,23,42,0.03); /* Softer, more subtle shadow */
 
   transition:transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -7598,14 +7604,16 @@ Mobile-first responsive design
 }
 
 .tahlil-child-body {
-  padding: 16px;
+  padding: 20px 12px; /* Reduced horizontal padding, increased vertical padding */
 }
 
 .tahlil-child-card {
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #f1f5f9; /* Lighter border */
   border-radius: 16px;
-  padding: 16px;
+  padding: 20px; /* Increased padding */
+  margin-bottom: 16px; /* Add margin between cards */
+  box-shadow: 0 1px 3px rgba(15,23,42,0.04); /* Subtle shadow */
 }
 
 .tahlil-child-stat-row {
@@ -7692,7 +7700,11 @@ Mobile-first responsive design
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin: 14px 16px 0;
+  margin: 20px 12px 0; /* Reduced horizontal margins, increased top margin */
+  padding: 16px; /* Added padding for better spacing */
+  background: #fff;
+  border-radius: 16px; /* Added border radius for modern feel */
+  box-shadow: 0 1px 3px rgba(15,23,42,0.04); /* Subtle shadow */
 }
 
 .analytics-title-wrapper {
@@ -7758,10 +7770,11 @@ Mobile-first responsive design
 }
 
 .blue-hero-card {
-  margin: 12px 16px 0;
-  padding: 20px;
+  margin: 20px 12px 0; /* Reduced horizontal margins, increased top margin for better separation */
+  padding: 24px; /* Increased padding for better breathing room */
   background: #1976D2;
   color: white;
+  border-radius: 16px; /* Slightly increased border radius for modern feel */
 }
 
 .blue-hero-label {
@@ -7785,8 +7798,9 @@ Mobile-first responsive design
 }
 
 .qiyma-card {
-  margin: 16px 16px 0;
-  padding: 16px;
+  margin: 20px 12px 0; /* Reduced horizontal margins, increased top margin */
+  padding: 20px; /* Increased padding */
+  border-radius: 16px; /* Increased border radius */
 }
 
 .qiyma-title {
@@ -7857,8 +7871,8 @@ Mobile-first responsive design
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 10px 16px;
+  gap: 12px; /* Increased gap for better spacing */
+  margin: 16px 12px 0; /* Reduced horizontal margins */
 }
 
 .stats-card {
@@ -7903,8 +7917,9 @@ Mobile-first responsive design
 }
 
 .products-card {
-  margin: 0 16px 0;
-  padding: 16px;
+  margin: 20px 12px 0; /* Reduced horizontal margins, increased top margin */
+  padding: 20px; /* Increased padding */
+  border-radius: 16px; /* Increased border radius */
 }
 
 .products-header {
@@ -8009,8 +8024,9 @@ Mobile-first responsive design
 }
 
 .status-card {
-  margin: 0 16px 16px;
-  padding: 16px;
+  margin: 20px 12px 20px; /* Reduced horizontal margins, increased vertical margins */
+  padding: 20px; /* Increased padding */
+  border-radius: 16px; /* Increased border radius */
 }
 
 .status-title {
@@ -8082,9 +8098,10 @@ Mobile-first responsive design
 
 .error-state,
 .empty-state {
-  margin: 24px 16px;
+  margin: 20px 12px; /* Reduced horizontal margins to match other cards */
   padding: 24px;
   text-align: center;
+  border-radius: 16px; /* Increased border radius */
 }
 
 .error-state-title,
