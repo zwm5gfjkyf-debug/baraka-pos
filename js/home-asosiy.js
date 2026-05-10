@@ -30,17 +30,18 @@
   
   function adjustFontSizeForRevenueCard(element) {
     if (!element) return
-    const formattedText = element.textContent
-    const length = formattedText.length
+    const text = element.textContent
+    // Count actual digits (excluding spaces)
+    const digitCount = text.replace(/\s/g, '').length
     
     let numberFontSize
-    if (length <= 5) {
+    if (digitCount <= 5) {
       numberFontSize = 28
-    } else if (length <= 7) {
+    } else if (digitCount <= 7) {
       numberFontSize = 26
-    } else if (length <= 9) {
+    } else if (digitCount <= 9) {
       numberFontSize = 22
-    } else if (length <= 11) {
+    } else if (digitCount <= 11) {
       numberFontSize = 18
     } else {
       numberFontSize = 14
@@ -57,17 +58,18 @@
   
   function adjustFontSizeForProfitCard(element) {
     if (!element) return
-    const formattedText = element.textContent
-    const length = formattedText.length
+    const text = element.textContent
+    // Count actual digits (excluding spaces)
+    const digitCount = text.replace(/\s/g, '').length
     
     let numberFontSize
-    if (length <= 5) {
+    if (digitCount <= 5) {
       numberFontSize = 28
-    } else if (length <= 7) {
+    } else if (digitCount <= 7) {
       numberFontSize = 26
-    } else if (length <= 9) {
+    } else if (digitCount <= 9) {
       numberFontSize = 22
-    } else if (length <= 11) {
+    } else if (digitCount <= 11) {
       numberFontSize = 18
     } else {
       numberFontSize = 14

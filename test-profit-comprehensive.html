@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit Card Font Sizing Test</title>
+    <style>
+        .test-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .stat-card {
+            width: 160px;
+            height: 110px;
+            background: #43A047;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .stat-value-container {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .stat-number {
+            font-size: 26px;
+            font-weight: 600;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .stat-som {
+            font-size: 0.73em;
+            font-weight: 500;
+            color: #43A047;
+        }
+
+        .test-info {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Profit Card Font Sizing Test - All Scenarios</h1>
+    <div class="test-container" id="testContainer"></div>
+
+    <script>
+        function formatNumberWithSpaces(amount) {
+            const n = Math.round(Number(amount))
+            return n.toLocaleString('uz-UZ').replace(/,/g, ' ')
+        }
+
+        function adjustFontSizeForProfitCard(element) {
+            if (!element) return
+            const text = element.textContent
+            // Count actual digits (excluding spaces)
+            const digitCount = text.replace(/\s/g, '').length
+            
+            let numberFontSize
+            if (digitCount <= 5) {
+                numberFontSize = 28
+            } else if (digitCount <= 7) {
+                numberFontSize = 26
+            } else if (digitCount <= 9) {
+                numberFontSize = 22
+            } else if (digitCount <= 11) {
+                numberFontSize = 14
+            }
+
+            element.style.fontSize = numberFontSize + 'px'
+
+            // Set "so'm" to be 6px smaller
+            const somSuffix = element.parentElement.querySelector('.stat-som')
+            if (somSuffix) {
+                somSuffix.style.fontSize = (numberFontSize - 6) + 'px'
+            }
+        }
+
+        // Test cases covering all scenarios
+        const testCases = [
+            { value: 0, expected: '28px', desc: 'Zero value (1 digit)' },
+            { value: 100, expected: '28px', desc: 'Small number (3 digits)' },
+            { value: 1000, expected: '28px', desc: '4 digits' },
+            { value: 10000, expected: '28px', desc: '5 digits' },
+            { value: 100000, expected: '26px', desc: '6 digits' },
+            { value: 1000000, expected: '26px', desc: '7 digits' },
+            { value: 10000000, expected: '22px', desc: '8 digits' },
+            { value: 100000000, expected: '22px', desc: '9 digits' },
+            { value: 1000000000, expected: '18px', desc: '10 digits' },
+            { value: 45750000, expected: '22px', desc: 'Test case: 45 750 000 (8 digits)' },
+            { value: 10000000000, expected: '18px', desc: '11 digits' },
+            { value: 100000000000, expected: '14px', desc: '12 digits' },
+            { value: 1000000000000, expected: '14px', desc: '13 digits' },
+            { value: 999999999999999, expected: '14px', desc: 'Very large number (15 digits)' }
+        ]
+
+        const container = document.getElementById('testContainer')
+
+        testCases.forEach((testCase, index) => {
+            const card = document.createElement('div')
+            card.className = 'stat-card'
+
+            const formattedValue = formatNumberWithSpaces(testCase.value)
+
+            card.innerHTML = `
+                <div class="stat-label">BUGUNGI FOYDA</div>
+                <div class="stat-value-container">
+                    <span class="stat-number" id="test${index}">${formattedValue}</span>
+                    <span class="stat-som">so'm</span>
+                </div>
+                <div class="test-info">${testCase.desc}<br>Expected: ${testCase.expected}</div>
+            `
+
+            container.appendChild(card)
+
+            // Apply font sizing
+            const numberEl = document.getElementById(`test${index}`)
+            adjustFontSizeForProfitCard(numberEl)
+
+            // Verify result
+            setTimeout(() => {
+                const actualFontSize = window.getComputedStyle(numberEl).fontSize
+                const infoEl = card.querySelector('.test-info')
+                if (actualFontSize === testCase.expected) {
+                    infoEl.innerHTML += `<br><span style="color: green;">✓ PASS: ${actualFontSize}</span>`
+                } else {
+                    infoEl.innerHTML += `<br><span style="color: red;">✗ FAIL: ${actualFontSize} (expected ${testCase.expected})</span>`
+                }
+            }, 100)
+        })
+    </script>
+</body>
+</html>
