@@ -5856,8 +5856,8 @@ BOTTOM NAVIGATION
 .stat-value-container {
   display: flex;
   align-items: baseline;
-  gap: 4px;
-  margin-bottom: 4px;
+  gap: 5px;
+  margin-bottom: 5px;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -5870,6 +5870,8 @@ BOTTOM NAVIGATION
   overflow: hidden;
   text-overflow: clip;
   display: inline;
+  flex: 1;
+  min-width: 0;
 }
 
 /* STAT NUMBER BASE SIZING */

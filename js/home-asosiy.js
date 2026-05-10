@@ -28,6 +28,33 @@
     return n.toLocaleString('uz-UZ').replace(/,/g, ' ')
   }
   
+  function adjustFontSizeForRevenueCard(element) {
+    if (!element) return
+    const formattedText = element.textContent
+    const length = formattedText.length
+    
+    let numberFontSize
+    if (length <= 5) {
+      numberFontSize = 28
+    } else if (length <= 7) {
+      numberFontSize = 26
+    } else if (length <= 9) {
+      numberFontSize = 22
+    } else if (length <= 11) {
+      numberFontSize = 18
+    } else {
+      numberFontSize = 14
+    }
+    
+    element.style.fontSize = numberFontSize + 'px'
+    
+    // Set "so'm" to be 6px smaller
+    const somSuffix = element.parentElement.querySelector('.stat-som')
+    if (somSuffix) {
+      somSuffix.style.fontSize = (numberFontSize - 6) + 'px'
+    }
+  }
+  
   function adjustFontSizeForStatNumber(element) {
     if (!element) return
     const text = element.textContent.replace(/\s/g, '')
@@ -45,7 +72,14 @@
   }
 
   function adjustAllStatNumbers() {
-    document.querySelectorAll('.stat-number').forEach(el => {
+    // Special handling for revenue card
+    const revenueEl = document.getElementById('todayRevenueValue')
+    if (revenueEl) {
+      adjustFontSizeForRevenueCard(revenueEl)
+    }
+    
+    // Handle other stat numbers
+    document.querySelectorAll('.stat-number:not(#todayRevenueValue)').forEach(el => {
       adjustFontSizeForStatNumber(el)
     })
   }
@@ -252,7 +286,7 @@
     const revEl = document.getElementById('todayRevenueValue')
     if (revEl) {
       revEl.textContent = formatNumberWithSpaces(todayRev)
-      adjustFontSizeForStatNumber(revEl)
+      adjustFontSizeForRevenueCard(revEl)
     }
     const trendEl = document.getElementById('todayRevenueTrend')
     if (trendEl) {
@@ -804,6 +838,7 @@
   window.applyResponsiveTypography = applyResponsiveTypography
   window.setupResizeObserver = setupResizeObserver
   window.cleanupResizeObserver = cleanupResizeObserver
+  window.adjustFontSizeForRevenueCard = adjustFontSizeForRevenueCard
   window.adjustFontSizeForStatNumber = adjustFontSizeForStatNumber
   window.adjustAllStatNumbers = adjustAllStatNumbers
   window.formatNumberWithSpaces = formatNumberWithSpaces
