@@ -55,6 +55,33 @@
     }
   }
   
+  function adjustFontSizeForProfitCard(element) {
+    if (!element) return
+    const formattedText = element.textContent
+    const length = formattedText.length
+    
+    let numberFontSize
+    if (length <= 5) {
+      numberFontSize = 28
+    } else if (length <= 7) {
+      numberFontSize = 26
+    } else if (length <= 9) {
+      numberFontSize = 22
+    } else if (length <= 11) {
+      numberFontSize = 18
+    } else {
+      numberFontSize = 14
+    }
+    
+    element.style.fontSize = numberFontSize + 'px'
+    
+    // Set "so'm" to be 6px smaller
+    const somSuffix = element.parentElement.querySelector('.stat-som')
+    if (somSuffix) {
+      somSuffix.style.fontSize = (numberFontSize - 6) + 'px'
+    }
+  }
+  
   function adjustFontSizeForStatNumber(element) {
     if (!element) return
     const text = element.textContent.replace(/\s/g, '')
@@ -78,8 +105,14 @@
       adjustFontSizeForRevenueCard(revenueEl)
     }
     
+    // Special handling for profit card
+    const profitEl = document.getElementById('todayProfitValue')
+    if (profitEl) {
+      adjustFontSizeForProfitCard(profitEl)
+    }
+    
     // Handle other stat numbers
-    document.querySelectorAll('.stat-number:not(#todayRevenueValue)').forEach(el => {
+    document.querySelectorAll('.stat-number:not(#todayRevenueValue):not(#todayProfitValue)').forEach(el => {
       adjustFontSizeForStatNumber(el)
     })
   }
@@ -296,7 +329,7 @@
     const profitVal = document.getElementById('todayProfitValue')
     if (profitVal) {
       profitVal.textContent = formatNumberWithSpaces(todayProfit)
-      adjustFontSizeForStatNumber(profitVal)
+      adjustFontSizeForProfitCard(profitVal)
     }
     const profitStatus = document.getElementById('todayProfitStatus')
     if (profitStatus) {
@@ -839,6 +872,7 @@
   window.setupResizeObserver = setupResizeObserver
   window.cleanupResizeObserver = cleanupResizeObserver
   window.adjustFontSizeForRevenueCard = adjustFontSizeForRevenueCard
+  window.adjustFontSizeForProfitCard = adjustFontSizeForProfitCard
   window.adjustFontSizeForStatNumber = adjustFontSizeForStatNumber
   window.adjustAllStatNumbers = adjustAllStatNumbers
   window.formatNumberWithSpaces = formatNumberWithSpaces
