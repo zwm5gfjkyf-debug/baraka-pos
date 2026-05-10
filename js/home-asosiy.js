@@ -19,6 +19,33 @@
   const CHART_LINE = '#166534'
   const CHART_LABELS = ['09:00', '11:00', '13:00', '15:00', 'Hozir']
 
+  /* ========================================
+     DYNAMIC FONT SIZING FOR STAT CARDS
+     ======================================== */
+  
+  function adjustFontSize(element) {
+    if (!element) return
+    const length = element.textContent.replace(/\s/g, '').length
+    
+    if (length <= 6) {
+      element.style.fontSize = '28px'
+    } else if (length <= 8) {
+      element.style.fontSize = '24px'
+    } else if (length <= 10) {
+      element.style.fontSize = '20px'
+    } else if (length <= 13) {
+      element.style.fontSize = '16px'
+    } else {
+      element.style.fontSize = '13px'
+    }
+  }
+
+  function adjustAllStatNumbers() {
+    document.querySelectorAll('.stat-number').forEach(el => {
+      adjustFontSize(el)
+    })
+  }
+
   function safeInt(v) {
     const n = Math.round(Number(v))
     return Number.isFinite(n) ? n : 0
@@ -275,6 +302,9 @@
     if (typeof applyResponsiveTypography === 'function') {
       applyResponsiveTypography()
     }
+    
+    // Apply dynamic font sizing to prevent overflow
+    adjustAllStatNumbers()
   }
 
   function renderRecentSales(top3) {
@@ -805,4 +835,9 @@
   window.cleanupResizeObserver = cleanupResizeObserver
   window.adjustFontSize = adjustFontSize
   window.adjustAllStatNumbers = adjustAllStatNumbers
+  window.adjustAllStatNumbers = adjustAllStatNumbers
+  window.adjustFontSize = adjustFontSize
+
+  // Initialize stat card font sizing on page load
+  document.addEventListener('DOMContentLoaded', adjustAllStatNumbers)
 })()
