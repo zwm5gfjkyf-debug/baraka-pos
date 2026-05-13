@@ -1214,8 +1214,12 @@ function openPaymentPage(){
     paymentPage.style.display = "block"
   }
 
+  let lastId = Number(localStorage.getItem("lastTransactionId") || 0)
+  lastId += 1
+  localStorage.setItem("lastTransactionId", String(lastId))
+
   const idEl = document.getElementById("paymentTransactionId")
-  if(idEl) idEl.textContent = "#" + String(Date.now())
+  if(idEl) idEl.textContent = "#" + String(lastId).padStart(6, "0")
 
   // 🔥 CALCULATE TOTAL
   let total = 0

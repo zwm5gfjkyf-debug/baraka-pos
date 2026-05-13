@@ -85,10 +85,11 @@ function loadStoreAnalytics(){
 
     renderStoreAnalysis(products)
     }catch(e){
+      console.error('Store analysis render error:', e)
       if(loading) loading.classList.add('hidden')
       if(content) content.classList.add('hidden')
-      if(error) error.classList.add('hidden')
-      if(empty) empty.classList.remove('hidden')
+      if(empty) empty.classList.add('hidden')
+      if(error) error.classList.remove('hidden')
     }
   }, () => {
     if(loading) loading.classList.add('hidden')
