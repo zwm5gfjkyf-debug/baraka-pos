@@ -140,7 +140,7 @@
       </div>
       <div id="loginErrorMessage" class="auth-help-text auth-help-text-error"></div>
 
-      <div class="auth-forgot">Parolni unutdingizmi?</div>
+      <div class="auth-forgot" style="opacity:0.5; cursor:not-allowed; display:none;"><!-- TODO: Implement password reset --></div>
 
       <button class="auth-submit-btn" id="loginBtn" onclick="login()">
         <span id="loginSpinner" class="button-spinner hidden"></span>
@@ -734,10 +734,6 @@ Hammasini o'chirish
     gap:10px;
     box-shadow:0 -2px 10px rgba(0,0,0,0.05);
   ">
-
-<button id="delayBtn" class="btn-secondary" style="flex:1;" onclick="closePaymentPage()">
-  Kechiktirish
-    </button>
 
  <button id="savePaymentBtn" class="btn-primary" style="flex:1;" onclick="handlePaymentSave()">
   Saqlash
@@ -1573,7 +1569,25 @@ Keyingisi
         <p style="margin:0; color:#94A3B8; line-height:1.6;">Bu amal barcha savdo, mahsulot va nasiya ma'lumotlarini butunlay o'chiradi. Iltimos, davom etishdan oldin ishonch hosil qiling.</p>
       </div>
 
-      <button class="danger-btn" onclick="confirmDeleteAllShopData()" style="width:100%; padding:16px 18px; border-radius:18px; font-size:16px;">Hammasini o'chirish</button>
+      <div id="deleteConfirmContainer" style="display:none;">
+        <label style="display:block; margin-bottom:12px; font-size:14px; color:#F8FAFC;">
+          Tasdiqlashtirish uchun "o'chirish" so'zini kiriting:
+        </label>
+        <input id="deleteConfirmInput" type="text" placeholder="o'chirish" style="
+          width:100%;
+          padding:12px 14px;
+          border:1px solid #475569;
+          border-radius:12px;
+          background:#1a1f2e;
+          color:#F8FAFC;
+          font-size:14px;
+          margin-bottom:12px;
+          box-sizing:border-box;
+        ">
+        <button class="danger-btn" id="deleteConfirmBtn" disabled onclick="executeDeleteAllShopData()" style="width:100%; padding:16px 18px; border-radius:18px; font-size:16px; opacity:0.5; cursor:not-allowed; margin-bottom:8px;">Hammasini o'chirish</button>
+        <button class="btn-secondary" onclick="cancelDeleteAll()" style="width:100%; padding:16px 18px; border-radius:18px; font-size:16px;">Bekor qilish</button>
+      </div>
+      <button class="danger-btn" id="deleteInitBtn" onclick="initDeleteAllShopData()" style="width:100%; padding:16px 18px; border-radius:18px; font-size:16px;">Hammasini o'chirish</button>
 
     </div>
 
@@ -1914,6 +1928,7 @@ Bekor qilish
   <!-- ADD PRODUCT ACTION BAR -->
 
 <div id="imagePickerModal" class="hidden" style="
+display:none;
 position:fixed;
 bottom:0;
 left:0;

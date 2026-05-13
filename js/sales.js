@@ -211,22 +211,39 @@ function updateSaleButtons(){
 
   const actions = document.getElementById("saleActions")
   const nextBtn = document.getElementById("nextBtn")
+  const paymentMethods = document.querySelectorAll(".sale-type-btn")
 
   if(!actions || !nextBtn) return
 
   if(cart.length === 0){
 
     nextBtn.classList.add("hidden")
+    nextBtn.disabled = true
 
     actions.classList.remove("split")
     actions.classList.add("center")
 
+    // Disable payment method buttons
+    paymentMethods.forEach(btn => {
+      btn.disabled = true
+      btn.style.opacity = "0.5"
+      btn.style.pointerEvents = "none"
+    })
+
   }else{
 
     nextBtn.classList.remove("hidden")
+    nextBtn.disabled = false
 
     actions.classList.remove("center")
     actions.classList.add("split")
+
+    // Enable payment method buttons
+    paymentMethods.forEach(btn => {
+      btn.disabled = false
+      btn.style.opacity = "1"
+      btn.style.pointerEvents = "auto"
+    })
 
   }
 }

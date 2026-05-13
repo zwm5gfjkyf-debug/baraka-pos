@@ -794,11 +794,19 @@ async function generateUniqueArtikul(){
 let selectedImageFile = null
 
 function selectProductImage(){
-  document.getElementById("imagePickerModal").classList.remove("hidden")
+  const sheet = document.getElementById("imagePickerModal")
+  if(sheet) {
+    sheet.classList.remove("hidden")
+    sheet.style.display = "block"
+  }
 }
 
 function closeImagePicker(){
-  document.getElementById("imagePickerModal").classList.add("hidden")
+  const sheet = document.getElementById("imagePickerModal")
+  if(sheet) {
+    sheet.classList.add("hidden")
+    sheet.style.display = "none"
+  }
 }
 
 function pickImage(type){

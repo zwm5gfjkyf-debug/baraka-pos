@@ -20,7 +20,7 @@ let sidebarLoaded = {
 }
 let sidebarData = {
   shopName: 'Do\'kon',
-  ownerEmail: 'No email',
+  ownerEmail: 'Foydalanuvchi',
   revenue: 0,
   salesCount: 0,
   lowStockCount: 0,
@@ -28,6 +28,7 @@ let sidebarData = {
   activeNasiyaCount: 0,
   loading: true
 }
+let lastTransactionId = parseInt(localStorage.getItem('lastTransactionId') || '0', 10)
 // =============================
 // AUTH STATE
 // =============================
@@ -55,19 +56,31 @@ function setupAuthListener() {
     if(user){
       currentShopId = user.uid
       window.currentShopId = user.uid
-      document
-          .getElementById("authScreen")
-          .classList.add("hidden")
+      
+      // Hide auth screen completely
+      const authScreen = document.getElementById("authScreen")
+      if(authScreen) {
+        authScreen.classList.add("hidden")
+        authScreen.style.display = "none"
+      }
 
-      document
-          .getElementById("appScreen")
-            .classList.remove("hidden")
+      // Show app screen completely
+      const appScreen = document.getElementById("appScreen")
+      if(appScreen) {
+        appScreen.classList.remove("hidden")
+        appScreen.style.display = "block"
+      }
 
-        const emailBox = document.getElementById("profileEmail")
+      // Update sidebar user email
+      const emailBox = document.getElementById("sidebarShopEmail")
+      if(emailBox && user.email){
+        emailBox.innerText = user.email
+      }
 
-        if(emailBox){
-            emailBox.innerText = user.email
-        }
+      const profileEmailBox = document.getElementById("profileEmail")
+      if(profileEmailBox && user.email){
+        profileEmailBox.innerText = user.email
+      }
 
 loadProducts()
 loadDashboard()
@@ -83,13 +96,19 @@ if(typeof loadLowStock === "function"){
 
 syncOfflineSales()
     } else {
-        document
-            .getElementById("appScreen")
-            .classList.add("hidden")
+        // Hide app screen completely
+        const appScreen = document.getElementById("appScreen")
+        if(appScreen) {
+          appScreen.classList.add("hidden")
+          appScreen.style.display = "none"
+        }
 
-        document
-            .getElementById("authScreen")
-            .classList.remove("hidden")
+        // Show auth screen completely
+        const authScreen = document.getElementById("authScreen")
+        if(authScreen) {
+          authScreen.classList.remove("hidden")
+          authScreen.style.display = "block"
+        }
     }
   })
 }

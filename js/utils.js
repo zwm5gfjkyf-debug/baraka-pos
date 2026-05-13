@@ -99,6 +99,57 @@ return d
 
 }
 
+// ===============================
+// DELETE ALL CONFIRMATION
+// ===============================
+
+function initDeleteAllShopData() {
+  const container = document.getElementById('deleteConfirmContainer')
+  const initBtn = document.getElementById('deleteInitBtn')
+  const input = document.getElementById('deleteConfirmInput')
+  
+  if(container && initBtn) {
+    container.style.display = 'block'
+    initBtn.style.display = 'none'
+    if(input) input.focus()
+  }
+}
+
+function cancelDeleteAll() {
+  const container = document.getElementById('deleteConfirmContainer')
+  const initBtn = document.getElementById('deleteInitBtn')
+  const input = document.getElementById('deleteConfirmInput')
+  
+  if(container && initBtn) {
+    container.style.display = 'none'
+    initBtn.style.display = 'block'
+    if(input) input.value = ''
+  }
+}
+
+// Listen for input changes to enable/disable delete button
+setTimeout(() => {
+  const input = document.getElementById('deleteConfirmInput')
+  if(input) {
+    input.addEventListener('input', (e) => {
+      const btn = document.getElementById('deleteConfirmBtn')
+      if(btn) {
+        const isMatch = e.target.value === 'o\'chirish'
+        btn.disabled = !isMatch
+        btn.style.opacity = isMatch ? '1' : '0.5'
+        btn.style.cursor = isMatch ? 'pointer' : 'not-allowed'
+      }
+    })
+  }
+}, 500)
+
+function executeDeleteAllShopData() {
+  const btn = document.getElementById('deleteConfirmBtn')
+  if(btn && !btn.disabled) {
+    confirmDeleteAllShopData()
+  }
+}
+
 /* ===============================
 START OF MONTH
 =============================== */

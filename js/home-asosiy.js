@@ -134,7 +134,7 @@
     const n = safeInt(pct)
     if (n > 0) return { arrow: '↑', text: `+${n}% kechagidan`, pos: true }
     if (n < 0) return { arrow: '↓', text: `−${Math.abs(n)}% kechagidan`, pos: false }
-    return { arrow: '↑', text: '+0% kechagidan', pos: true }
+    return { arrow: '—', text: 'O\'zgarish yo\'q', pos: null }
   }
 
   function getTodayBounds() {
