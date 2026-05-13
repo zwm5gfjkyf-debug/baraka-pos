@@ -449,7 +449,10 @@ function clearSearch(){
     input.value = ""
   }
 
-  document.getElementById("searchResults").innerHTML = ""
+  const resultsBox = document.getElementById("searchResults")
+  if(resultsBox){
+    resultsBox.innerHTML = ""
+  }
 
   if(noResults) noResults.classList.add("hidden")
 }
@@ -457,6 +460,9 @@ function clearSearch(){
 function renderSelectedProduct(p){
 
   const resultsBox = document.getElementById("searchResults")
+  if(!resultsBox){
+    return
+  }
 
   const qty = cartMap[p.id]?.qty || 0
 
@@ -1020,7 +1026,10 @@ function clearCart(){
     cartMap = {}
     renderCart()
 
-    document.getElementById("searchResults").innerHTML = ""
+    const resultsBox = document.getElementById("searchResults")
+    if(resultsBox){
+      resultsBox.innerHTML = ""
+    }
 
     const input = document.getElementById("saleSearch")
     if(input) input.value = ""
@@ -1050,6 +1059,10 @@ function openDiscountModal(){
   const actions = document.getElementById("saleActions")
   const nav = document.querySelector(".bottom-nav")
 
+  if(!modal){
+    return
+  }
+
   modal.classList.remove("hidden")
 
   // 🔥 HIDE UI BEHIND
@@ -1072,7 +1085,9 @@ function closeDiscountModal(){
   const actions = document.getElementById("saleActions")
   const nav = document.querySelector(".bottom-nav")
 
-  modal.classList.add("hidden")
+  if(modal){
+    modal.classList.add("hidden")
+  }
 
   // 🔥 RESTORE UI
   if(actions) actions.style.display = ""
@@ -1091,6 +1106,10 @@ function setDiscountType(type){
 
   const btnP = document.getElementById("btnPercent")
   const btnU = document.getElementById("btnUZS")
+
+  if(!input || !quick || !btnP || !btnU){
+    return
+  }
 
   // clear active
   btnP.classList.remove("active")
@@ -1215,6 +1234,9 @@ function openPaymentPage(){
   }
 
   let lastId = Number(localStorage.getItem("lastTransactionId") || 0)
+  if(!Number.isFinite(lastId) || lastId < 0){
+    lastId = 0
+  }
   lastId += 1
   localStorage.setItem("lastTransactionId", String(lastId))
 

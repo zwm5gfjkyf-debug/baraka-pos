@@ -237,6 +237,15 @@ function setStockFilter(type){
 // ✅ MAIN LOADER
 function loadCurrent(){
 
+  if(!currentShopId){
+    return
+  }
+
+  if(typeof productsListener === "function"){
+    productsListener()
+    productsListener = null
+  }
+
   productsListener = db
     .collection("shops")
     .doc(currentShopId)
