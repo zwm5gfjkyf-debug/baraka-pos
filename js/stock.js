@@ -243,6 +243,7 @@ function loadCurrent(){
     .collection("products")
     .orderBy("created","desc")
     .onSnapshot(snapshot => {
+      try{
 
       if(!stockContainer){
         stockContainer = document.getElementById("currentStockList")
@@ -386,7 +387,23 @@ if(countOut > 0){
     warningBox.style.display = "none"
   }
 }
-    })
+      }catch(processErr){
+        const container = stockContainer || document.getElementById("currentStockList")
+        if(container){
+          container.innerHTML =
+            '<div class="stock-empty-state"><div class="stock-empty-state-copy"><div class="stock-empty-state-title">Hali ma\'lumot yo\'q</div><div class="stock-empty-state-subtitle">Zaxira ro\'yxati hozircha bo\'sh.</div></div></div>'
+        }
+      }
+    },
+    err => {
+      const container = document.getElementById("currentStockList")
+      if(container){
+        container.innerHTML =
+          '<div class="stock-empty-state"><div class="stock-empty-state-copy"><div class="stock-empty-state-title">Ma\'lumotlarni yuklashda xato</div><div class="stock-empty-state-subtitle">Internet ulanishini tekshirib, sahifani yangilang.</div></div></div>'
+      }
+      console.error("Stock listener error:", err)
+    }
+    )
 }
 
 // ✅ FIX FOR navigation.js CALL
@@ -794,19 +811,11 @@ async function generateUniqueArtikul(){
 let selectedImageFile = null
 
 function selectProductImage(){
-  const sheet = document.getElementById("imagePickerModal")
-  if(sheet) {
-    sheet.classList.remove("hidden")
-    sheet.style.display = "block"
-  }
+  document.getElementById("imagePickerModal").classList.remove("hidden")
 }
 
 function closeImagePicker(){
-  const sheet = document.getElementById("imagePickerModal")
-  if(sheet) {
-    sheet.classList.add("hidden")
-    sheet.style.display = "none"
-  }
+  document.getElementById("imagePickerModal").classList.add("hidden")
 }
 
 function pickImage(type){

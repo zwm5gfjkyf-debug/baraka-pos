@@ -30,19 +30,47 @@ let sidebarData = {
 }
 let lastTransactionId = parseInt(localStorage.getItem('lastTransactionId') || '0', 10)
 // =============================
-// AUTH STATE
+// POST-AUTH DATA (single entry)
 // =============================
+
+function bootstrapShopAfterAuth(user){
+  if(!user) return
+
+  currentShopId = user.uid
+  window.currentShopId = user.uid
+
+  if(typeof loadProducts === "function"){
+    loadProducts()
+  }
+  if(typeof loadCurrentStock === "function"){
+    loadCurrentStock()
+  }
+  if(typeof loadSidebarData === "function"){
+    loadSidebarData()
+  }
+  if(typeof loadLowStock === "function"){
+    loadLowStock()
+  }
+  if(typeof syncOfflineSales === "function"){
+    try{
+      syncOfflineSales()
+    }catch(e){
+      /* ignore */
+    }
+  }
+}
 
 // Wait for Firebase to be fully initialized
 document.addEventListener('DOMContentLoaded', () => {
-  if (typeof auth !== 'undefined') {
-    setupAuthListener()
-  } else {
-    console.warn('Firebase auth not initialized, retrying in 100ms')
-    setTimeout(setupAuthListener, 100)
+  if(typeof updateCamera === "function"){
+    updateCamera()
+  }
+  if(typeof selectCurrency === "function"){
+    selectCurrency("UZS")
   }
 })
 
+<<<<<<< HEAD
 function setupAuthListener() {
   if (typeof auth === 'undefined') {
     console.error('Firebase auth still not available')
@@ -115,6 +143,8 @@ syncOfflineSales()
 
 // Asosiy (dashboard) — js/home-asosiy.js
 
+=======
+>>>>>>> 381b2ba (Refactor authentication and navigation logic for improved user experience and error handling)
 
 
 
@@ -127,7 +157,12 @@ async function syncOfflineSales(){
 
     if(!currentShopId) return
 
-    const offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
+    let offline = []
+    try{
+      offline = JSON.parse(localStorage.getItem("offlineSales") || "[]")
+    }catch(parseErr){
+      offline = []
+    }
 
     if(offline.length === 0) return
 
@@ -218,7 +253,7 @@ function resetAppStateAfterDelete(){
   }
 
   if(todayTrendEl){
-    todayTrendEl.textContent = '↑ +0% kechagidan'
+    todayTrendEl.textContent = '— O\'zgarish yo\'q'
   }
 }
 
@@ -436,7 +471,13 @@ function renderSidebar(){
   const shopEditBtn = document.getElementById('sidebarEditBtn')
 
   if(shopNameEl) shopNameEl.textContent = sidebarData.shopName || 'Do\'kon'
-  if(shopEmailEl) shopEmailEl.textContent = sidebarData.ownerEmail || 'No email'
+
+  const authUser = typeof auth !== 'undefined' ? auth.currentUser : null
+  const authLabel = authUser && typeof formatAuthDisplayEmail === 'function'
+    ? formatAuthDisplayEmail(authUser)
+    : null
+  const shopEmail = authLabel || (sidebarData.ownerEmail && sidebarData.ownerEmail !== 'No email' ? sidebarData.ownerEmail : null)
+  if(shopEmailEl) shopEmailEl.textContent = shopEmail || 'Foydalanuvchi'
 
   if(revenueEl){
     revenueEl.textContent = sidebarData.loading ? '' : formatPlainNumber(sidebarData.revenue)
@@ -623,10 +664,6 @@ window.usdRate = 12500
 }
 
 
-document.addEventListener("DOMContentLoaded", () => {
-  updateCamera()
-  selectCurrency("UZS")
-})
 let currentCurrency = "UZS"
 
 function selectCurrency(type){
@@ -664,7 +701,8 @@ function handleCostInput(){
   updateProfitPreview()
 }
 window.addEventListener("load", () => {
-  document.getElementById("appScreen").classList.add("loaded")
+  const appScreen = document.getElementById("appScreen")
+  if(appScreen) appScreen.classList.add("loaded")
 })
 window.addEventListener("load", () => {
 
@@ -673,9 +711,6 @@ window.addEventListener("load", () => {
     const loading = document.getElementById("loadingScreen")
     if(loading) loading.style.display = "none"
 
-    const auth = document.getElementById("authScreen")
-    if(auth) auth.classList.remove("hidden")
-
-  }, 800)
+  }, 400)
 
 })

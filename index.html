@@ -21,7 +21,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 </head>
-<body>
+<body class="auth-active">
 <input 
   id="hiddenScannerInput" 
   type="text" 
@@ -102,7 +102,7 @@
       </div>
     </div>
 
-    <div id="registerForm" class="auth-form">
+    <div id="registerForm" class="auth-form auth-form-panel">
       <label class="auth-label" for="shopName">Do'kon nomi</label>
       <input id="shopName" class="auth-input" placeholder="Baraka Do'koni" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore required oninput="setRegisterButtonState()">
 
@@ -129,7 +129,7 @@
       </button>
     </div>
 
-    <div id="loginForm" class="auth-form" style="display:none;">
+    <div id="loginForm" class="auth-form auth-form-panel hidden">
       <label class="auth-label" for="loginUsername">Foydalanuvchi nomi</label>
       <input id="loginUsername" class="auth-input" placeholder="@username" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore required>
 
@@ -169,7 +169,7 @@
           </div>
           <div>
             <div id="sidebarShopName" class="sidebar-shop-name">BARAKA Do'koni</div>
-            <div id="sidebarShopEmail" class="sidebar-shop-email">No email</div>
+            <div id="sidebarShopEmail" class="sidebar-shop-email">Foydalanuvchi</div>
           </div>
         </div>
         <button id="sidebarEditBtn" class="sidebar-edit-btn" onclick="sidebarNavigate('settingsPage')" aria-label="Edit shop">
@@ -321,7 +321,7 @@
 <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeMenu()"></div>
 <!-- APP -->
 
-<div id="appScreen">
+<div id="appScreen" class="hidden">
 
 <!-- HEADER -->
 
@@ -405,9 +405,9 @@ Hammasini o'chirish
 
 
 <!-- MAIN -->
-<main class="main-content" style="padding-top:80px; padding-bottom:120px;">
+<main class="main-content baraka-main-scroll">
   <!-- DASHBOARD -->
-  <div id="dashboardPage" class="page page-asosiy">
+  <div id="dashboardPage" class="page page-asosiy hidden">
     <div class="dashboard-page-inner">
 
       <!-- LOADING STATE -->
@@ -431,7 +431,11 @@ Hammasini o'chirish
             <span id="todayRevenueValue" class="stat-number">0</span>
             <span class="stat-som">so'm</span>
           </div>
+<<<<<<< HEAD
           <div id="todayRevenueTrend" class="stat-helper">↑ +0% kechagidan</div>
+=======
+          <div id="todayRevenueTrend" class="dashboard-card-helper dashboard-helper-on-primary">— O'zgarish yo'q</div>
+>>>>>>> 381b2ba (Refactor authentication and navigation logic for improved user experience and error handling)
         </div>
 
         <!-- CARD 2: BUGUNGI FOYDA -->
@@ -707,12 +711,7 @@ Hammasini o'chirish
   </div>
 
   <!-- PAYMENT METHODS -->
-  <div style="
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-bottom:100px;
-  ">
+  <div id="paymentMethodsPanel" class="payment-methods-panel">
 
 <button id="payCash" class="payment-card" onclick="selectPayment('cash')">Naqd</button>
 
@@ -723,19 +722,13 @@ Hammasini o'chirish
   </div>
 
   <!-- ACTIONS -->
-  <div style="
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    padding:12px;
-    background:white;
-    display:flex;
-    gap:10px;
-    box-shadow:0 -2px 10px rgba(0,0,0,0.05);
-  ">
+  <div class="payment-footer-actions">
 
+<<<<<<< HEAD
  <button id="savePaymentBtn" class="btn-primary" style="flex:1;" onclick="handlePaymentSave()">
+=======
+ <button id="savePaymentBtn" type="button" class="btn-primary payment-save-full" onclick="handlePaymentSave()">
+>>>>>>> 381b2ba (Refactor authentication and navigation logic for improved user experience and error handling)
   Saqlash
 </button>
 
@@ -1189,7 +1182,7 @@ Hammasini o'chirish
 
   <div id="storeAnalysisEmpty" class="empty-state hidden">
     <div class="empty-state-icon">🏠</div>
-    <div class="empty-state-title">Mahsulotlar yo'q</div>
+    <div class="empty-state-title">Hali ma'lumot yo'q</div>
     <div class="empty-state-subtitle">Zaxira bo'limidan mahsulot qo'shing</div>
     <button class="empty-state-button" onclick="navigate('stockPage')">Zaxiraga o'tish</button>
   </div>
@@ -1927,6 +1920,7 @@ Bekor qilish
 </div>
   <!-- ADD PRODUCT ACTION BAR -->
 
+<<<<<<< HEAD
 <div id="imagePickerModal" class="hidden" style="
 display:none;
 position:fixed;
@@ -1940,6 +1934,10 @@ padding:16px;
 box-shadow:0 -5px 20px rgba(0,0,0,0.2);
 z-index:999;
 ">
+=======
+<div id="imagePickerBackdrop" class="image-picker-backdrop hidden" onclick="closeImagePicker()" aria-hidden="true"></div>
+<div id="imagePickerModal" class="image-picker-sheet hidden">
+>>>>>>> 381b2ba (Refactor authentication and navigation logic for improved user experience and error handling)
 
   <div style="text-align:center;font-weight:600;margin-bottom:10px;">
     Rasm tanlash
@@ -2010,10 +2008,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadUsdRate()
   }
 
-  if(typeof navigate === "function"){
-    navigate("dashboardPage")
-  }
-
   if(typeof showAnalyticsTab === "function"){
     window.showAnalyticsTab = showAnalyticsTab
   }
@@ -2077,58 +2071,6 @@ function updateDateTime(){
   if(timeEl) timeEl.textContent = time
 }
 
-updateDateTime()
-setInterval(updateDateTime, 1000)
-</script>
-<script>
-function switchAuth(type){
-
-  const register = document.getElementById("registerForm")
-  const login = document.getElementById("loginForm")
-
-  const tabR = document.getElementById("tabRegister")
-  const tabL = document.getElementById("tabLogin")
-
-  const usernameHelp = document.getElementById('usernameHelp')
-  const passwordHelp = document.getElementById('passwordMatchHelp')
-  const loginError = document.getElementById('loginErrorMessage')
-
-  if(usernameHelp) usernameHelp.textContent = ''
-  if(passwordHelp) passwordHelp.textContent = ''
-  if(loginError) loginError.textContent = ''
-
-  if(type === "register"){
-    register.style.display = "block"
-    login.style.display = "none"
-
-    tabR.classList.add('auth-tab-active')
-    tabR.classList.remove('auth-tab-inactive')
-    tabL.classList.add('auth-tab-inactive')
-    tabL.classList.remove('auth-tab-active')
-
-    if(typeof clearAuthInputs === 'function'){
-      clearAuthInputs('register')
-    }
-  }
-
-  if(type === "login"){
-    register.style.display = "none"
-    login.style.display = "block"
-
-    tabL.classList.add('auth-tab-active')
-    tabL.classList.remove('auth-tab-inactive')
-    tabR.classList.add('auth-tab-inactive')
-    tabR.classList.remove('auth-tab-active')
-
-    if(typeof clearAuthInputs === 'function'){
-      clearAuthInputs('login')
-    }
-  }
-
-  if(typeof setRegisterButtonState === 'function'){
-    setRegisterButtonState()
-  }
-}
 </script>
 
 </body>

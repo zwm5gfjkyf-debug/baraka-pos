@@ -12,7 +12,7 @@ function updateNavVisibility(isLoggedIn){
 
   if(isLoggedIn){
     body.classList.remove('auth-active')
-    if(bottomNav) bottomNav.style.display = ''
+    if(bottomNav) bottomNav.style.display = 'flex'
     if(fab) fab.style.display = ''
     if(appHeader) appHeader.style.display = ''
     if(sidebar) sidebar.style.display = ''
@@ -254,6 +254,17 @@ function togglePasswordVisibility(inputId, buttonId){
   input.focus()
 }
 
+function formatAuthDisplayEmail(user){
+  if(!user) return "Foydalanuvchi"
+  const email = user.email || ''
+  if(!email) return "Foydalanuvchi"
+  if(email.endsWith('@baraka.local')){
+    const local = email.split('@')[0]
+    return local || "Foydalanuvchi"
+  }
+  return email
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   clearAuthInputs('all')
   setTimeout(() => clearAuthInputs('all'), 250)
@@ -282,47 +293,110 @@ async function showButtonSpinner(buttonId, show){
    AUTH STATE LISTENER
 ========================================= */
 
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged(user => {
 
   const loading = document.getElementById("loadingScreen")
   const authScreen = document.getElementById("authScreen")
   const appScreen = document.getElementById("appScreen")
 
+  document.body.classList.toggle("auth-active", !user)
+
   if(user){
 
     currentShopId = user.uid
+    window.currentShopId = user.uid
 
     if(loading) loading.classList.add("hidden")
-    if(authScreen) authScreen.style.display = "none"
+    if(authScreen){
+      authScreen.classList.add("hidden")
+      authScreen.style.removeProperty("display")
+    }
     if(appScreen) appScreen.classList.remove("hidden")
 
     updateNavVisibility(true)
 
-    // Navigate to dashboard
-    if(typeof navigate === "function"){
-      navigate('dashboardPage')
+    const emailBox = document.getElementById("profileEmail")
+    if(emailBox){
+      emailBox.textContent = formatAuthDisplayEmail(user)
     }
 
-    // load inventory
-    if(typeof loadCurrentStock === "function"){
-      loadCurrentStock()
+    if(typeof bootstrapShopAfterAuth === "function"){
+      bootstrapShopAfterAuth(user)
+    }
+
+    if(typeof navigate === "function"){
+      navigate("dashboardPage")
     }
 
   }else{
 
     if(loading) loading.classList.add("hidden")
-    if(authScreen) authScreen.style.display = "flex"
+    if(authScreen) authScreen.classList.remove("hidden")
     if(appScreen) appScreen.classList.add("hidden")
 
-    if(typeof clearAuthInputs === 'function'){
-      clearAuthInputs('all')
-      setTimeout(() => clearAuthInputs('all'), 250)
+    if(typeof clearAuthInputs === "function"){
+      clearAuthInputs("all")
+      setTimeout(() => clearAuthInputs("all"), 250)
     }
 
     updateNavVisibility(false)
   }
 
 })
+
+let authMode = "register"
+
+window.switchAuth = function(type){
+
+  authMode = type === "login" ? "login" : "register"
+
+  const registerForm = document.getElementById("registerForm")
+  const loginForm = document.getElementById("loginForm")
+  const tabR = document.getElementById("tabRegister")
+  const tabL = document.getElementById("tabLogin")
+  const usernameHelp = document.getElementById("usernameHelp")
+  const passwordHelp = document.getElementById("passwordMatchHelp")
+  const loginError = document.getElementById("loginErrorMessage")
+
+  if(usernameHelp) usernameHelp.textContent = ""
+  if(passwordHelp) passwordHelp.textContent = ""
+  if(loginError) loginError.textContent = ""
+
+  if(registerForm && loginForm){
+    if(authMode === "register"){
+      registerForm.classList.remove("hidden")
+      loginForm.classList.add("hidden")
+    }else{
+      loginForm.classList.remove("hidden")
+      registerForm.classList.add("hidden")
+    }
+  }
+
+  if(tabR && tabL){
+    if(authMode === "register"){
+      tabR.classList.add("auth-tab-active")
+      tabR.classList.remove("auth-tab-inactive")
+      tabL.classList.add("auth-tab-inactive")
+      tabL.classList.remove("auth-tab-active")
+    }else{
+      tabL.classList.add("auth-tab-active")
+      tabL.classList.remove("auth-tab-inactive")
+      tabR.classList.add("auth-tab-inactive")
+      tabR.classList.remove("auth-tab-active")
+    }
+  }
+
+  if(authMode === "register" && typeof clearAuthInputs === "function"){
+    clearAuthInputs("register")
+  }
+  if(authMode === "login" && typeof clearAuthInputs === "function"){
+    clearAuthInputs("login")
+  }
+
+  if(typeof setRegisterButtonState === "function"){
+    setRegisterButtonState()
+  }
+}
 
 /* =========================================
    REGISTER
@@ -526,7 +600,8 @@ function logout(){
   const authScreen = document.getElementById("authScreen")
 
   if(appScreen) appScreen.classList.add("hidden")
-  if(authScreen) authScreen.style.display = "flex"
+  if(authScreen) authScreen.classList.remove("hidden")
+  document.body.classList.add("auth-active")
   if(typeof switchAuth === "function"){
     switchAuth("register")
   }

@@ -55,6 +55,7 @@ function loadStoreAnalytics(){
     .where('status', '==', 'active')
 
   storeAnalysisListener = productsQuery.onSnapshot(snapshot => {
+    try{
     const products = []
 
     snapshot.forEach(doc => {
@@ -83,6 +84,12 @@ function loadStoreAnalytics(){
     if(content) content.classList.remove('hidden')
 
     renderStoreAnalysis(products)
+    }catch(e){
+      if(loading) loading.classList.add('hidden')
+      if(content) content.classList.add('hidden')
+      if(error) error.classList.add('hidden')
+      if(empty) empty.classList.remove('hidden')
+    }
   }, () => {
     if(loading) loading.classList.add('hidden')
     if(content) content.classList.add('hidden')

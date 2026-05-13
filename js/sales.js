@@ -357,6 +357,7 @@ if(!list){
 
       updateCartUI()
 updateSaleButtons()
+      updatePaymentEmptyState()
       return
     }
 
@@ -436,6 +437,7 @@ totalEl.innerText = "Jami: " + formatMoney(total).replace(" so'm", "")
 
 updateCartUI()
 updateSaleButtons()
+updatePaymentEmptyState()
   })
 }
 function clearSearch(){
@@ -1028,7 +1030,20 @@ function clearCart(){
 let discountType = "percent"
 let discountValue = 0
 
+function updatePaymentEmptyState(){
+  const panel = document.getElementById("paymentMethodsPanel")
+  const saveBtn = document.getElementById("savePaymentBtn")
+  const empty = !cart || cart.length === 0
+  if(panel) panel.classList.toggle("is-disabled", empty)
+  if(saveBtn) saveBtn.disabled = empty
+}
+
 function openDiscountModal(){
+
+  if(!cart || cart.length === 0){
+    showTopBanner("Savatcha bo'sh", "error")
+    return
+  }
 
   const modal = document.getElementById("discountModal")
   const input = document.getElementById("discountInput")
@@ -1061,7 +1076,7 @@ function closeDiscountModal(){
 
   // 🔥 RESTORE UI
   if(actions) actions.style.display = ""
-  if(nav) nav.style.display = ""
+  if(nav) nav.style.display = (typeof auth !== "undefined" && auth.currentUser) ? "flex" : "none"
 
   // 🔥 UNLOCK SCROLL
   document.body.style.overflow = ""
@@ -1178,6 +1193,11 @@ function applyDiscount(){
 }
 function openPaymentPage(){
 
+  if(!cart || cart.length === 0){
+    showTopBanner("Savatcha bo'sh", "error")
+    return
+  }
+
   const salePage = document.getElementById("salePage")
   const paymentPage = document.getElementById("paymentPage")
   const actions = document.getElementById("saleActions")
@@ -1194,14 +1214,8 @@ function openPaymentPage(){
     paymentPage.style.display = "block"
   }
 
-  // 🔥 TRANSACTION ID
-  let lastId = Number(localStorage.getItem("lastTransactionId") || 0)
-  lastId++
-  localStorage.setItem("lastTransactionId", lastId)
-
-  const idStr = String(lastId).padStart(6, "0")
   const idEl = document.getElementById("paymentTransactionId")
-  if(idEl) idEl.innerText = "#" + idStr
+  if(idEl) idEl.textContent = "#" + String(Date.now())
 
   // 🔥 CALCULATE TOTAL
   let total = 0
@@ -1236,6 +1250,8 @@ function openPaymentPage(){
   if(finalEl){
     finalEl.innerText = formatMoney(final)
   }
+
+  updatePaymentEmptyState()
 }
 function closePaymentPage(){
 
@@ -1244,11 +1260,14 @@ function closePaymentPage(){
   const actions = document.getElementById("saleActions")
   const nav = document.querySelector(".bottom-nav")
 
-  if(paymentPage) paymentPage.classList.add("hidden")
+  if(paymentPage){
+    paymentPage.classList.add("hidden")
+    paymentPage.style.removeProperty("display")
+  }
 
   if(salePage) salePage.classList.remove("hidden")
   if(actions) actions.style.display = ""
-  if(nav) nav.style.display = ""
+  if(nav) nav.style.display = (typeof auth !== "undefined" && auth.currentUser) ? "flex" : "none"
 }
 function selectPayment(type){
 
@@ -1269,6 +1288,11 @@ function selectPayment(type){
   if(type === "debt" && debt) debt.classList.add("active")
 }
 function handlePaymentSave(){
+
+  if(!cart || cart.length === 0){
+    showTopBanner("Savatcha bo'sh", "error")
+    return
+  }
 
   if(!selectedPaymentType){
     showTopBanner("To'lov turini tanlang", "error")
@@ -1346,7 +1370,7 @@ function finishSaleFlow(){
   if(sale) sale.classList.remove("hidden")
 
   // ✅ RESTORE NAVIGATION
-  if(nav) nav.style.display = ""
+  if(nav) nav.style.display = (typeof auth !== "undefined" && auth.currentUser) ? "flex" : "none"
 
   // ✅ RESTORE SALE ACTIONS (scanner + button)
   if(actions) actions.style.display = ""
@@ -1358,4 +1382,5 @@ function finishSaleFlow(){
   discountType = "percent"
 
   renderCart()
+  updatePaymentEmptyState()
 }

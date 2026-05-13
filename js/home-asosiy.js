@@ -132,9 +132,14 @@
 
   function formatTrendPercent(pct) {
     const n = safeInt(pct)
+    if (n === 0) return { arrow: '', text: "— O'zgarish yo'q", pos: true }
     if (n > 0) return { arrow: '↑', text: `+${n}% kechagidan`, pos: true }
     if (n < 0) return { arrow: '↓', text: `−${Math.abs(n)}% kechagidan`, pos: false }
+<<<<<<< HEAD
     return { arrow: '—', text: 'O\'zgarish yo\'q', pos: null }
+=======
+    return { arrow: '', text: "— O'zgarish yo'q", pos: true }
+>>>>>>> 381b2ba (Refactor authentication and navigation logic for improved user experience and error handling)
   }
 
   function getTodayBounds() {
@@ -325,7 +330,12 @@
     }
     const trendEl = document.getElementById('todayRevenueTrend')
     if (trendEl) {
+<<<<<<< HEAD
       trendEl.textContent = `${trend.arrow} ${trend.text}`
+=======
+      trendEl.textContent = trend.arrow ? `${trend.arrow} ${trend.text}` : trend.text
+      trendEl.style.color = 'rgba(255,255,255,0.95)'
+>>>>>>> 381b2ba (Refactor authentication and navigation logic for improved user experience and error handling)
     }
 
     const profitVal = document.getElementById('todayProfitValue')
@@ -392,7 +402,7 @@
       wrap.className = 'dashboard-empty-state'
       wrap.innerHTML =
         '<div class="dashboard-empty-state-icon" aria-hidden="true">🛒</div>' +
-        '<div class="dashboard-empty-state-title">Bugun hali sotuv yo\'q</div>' +
+        '<div class="dashboard-empty-state-title">Hali ma\'lumot yo\'q</div>' +
         '<div class="dashboard-empty-state-sub">Sotuv qo\'shish uchun + tugmasini bosing</div>'
       container.appendChild(wrap)
       return
@@ -604,12 +614,15 @@
     todaySalesUnsub = salesCol
       .where('createdAt', '>=', todayStart)
       .where('createdAt', '<', tomorrowStart)
-      .orderBy('createdAt', 'desc')
       .onSnapshot(
         snap => {
-          todaySalesRows = []
-          snap.forEach(doc => todaySalesRows.push(normalizeSaleDoc(doc)))
-          markBoot('today')
+          try {
+            todaySalesRows = []
+            snap.forEach(doc => todaySalesRows.push(normalizeSaleDoc(doc)))
+            markBoot('today')
+          } catch (e) {
+            onListenerError(e)
+          }
         },
         err => onListenerError(err)
       )
@@ -619,12 +632,16 @@
       .where('createdAt', '<', yEnd)
       .onSnapshot(
         snap => {
-          yesterdaySalesRows = []
-          snap.forEach(doc => {
-            const raw = doc.data() || {}
-            yesterdaySalesRows.push({ total: safeInt(raw.total ?? raw.amount) })
-          })
-          markBoot('yesterday')
+          try {
+            yesterdaySalesRows = []
+            snap.forEach(doc => {
+              const raw = doc.data() || {}
+              yesterdaySalesRows.push({ total: safeInt(raw.total ?? raw.amount) })
+            })
+            markBoot('yesterday')
+          } catch (e) {
+            onListenerError(e)
+          }
         },
         err => onListenerError(err)
       )
@@ -633,9 +650,13 @@
       .where('status', '==', 'active')
       .onSnapshot(
         snap => {
-          nasiyaRows = []
-          snap.forEach(doc => nasiyaRows.push(normalizeNasiyaDoc(doc)))
-          markBoot('nasiya')
+          try {
+            nasiyaRows = []
+            snap.forEach(doc => nasiyaRows.push(normalizeNasiyaDoc(doc)))
+            markBoot('nasiya')
+          } catch (e) {
+            onListenerError(e)
+          }
         },
         err => onListenerError(err)
       )
@@ -653,7 +674,7 @@
     list.innerHTML = ''
     if (sorted.length === 0) {
       list.innerHTML =
-        '<div class="today-sales-history-empty">Bugun hali sotuv yo\'q</div>'
+        '<div class="today-sales-history-empty">Hali ma\'lumot yo\'q</div>'
       return
     }
     sorted.forEach((sale, index) => {
@@ -700,20 +721,28 @@
     todayHistoryUnsub = salesCol
       .where('createdAt', '>=', todayStart)
       .where('createdAt', '<', tomorrowStart)
-      .orderBy('createdAt', 'desc')
       .onSnapshot(
         snap => {
-          const rows = []
-          snap.forEach(doc => rows.push(normalizeSaleDoc(doc)))
-          renderTodaySalesHistoryList(rows)
+          try {
+            const rows = []
+            snap.forEach(doc => rows.push(normalizeSaleDoc(doc)))
+            renderTodaySalesHistoryList(rows)
+          } catch (e) {
+            console.error('Today sales history parse error:', e)
+            const list = document.getElementById('todaySalesHistoryList')
+            if (list) {
+              list.innerHTML =
+                '<div class="today-sales-history-empty">Ma\'lumotlarni yuklashda xato. Qayta urinib ko\'ring.</div>'
+            }
+          }
         },
         err => {
           console.error('Today sales history error:', err)
           const list = document.getElementById('todaySalesHistoryList')
           if (list) {
             list.innerHTML =
-              '<div class="today-sales-history-empty">Ma\'lumotlarni yuklashda xato</div>'
-         }
+              '<div class="today-sales-history-empty">Ma\'lumotlarni yuklashda xato. Qayta urinib ko\'ring.</div>'
+          }
         }
       )
   }
