@@ -135,11 +135,7 @@
     if (n === 0) return { arrow: '', text: "— O'zgarish yo'q", pos: true }
     if (n > 0) return { arrow: '↑', text: `+${n}% kechagidan`, pos: true }
     if (n < 0) return { arrow: '↓', text: `−${Math.abs(n)}% kechagidan`, pos: false }
-<<<<<<< HEAD
-    return { arrow: '—', text: 'O\'zgarish yo\'q', pos: null }
-=======
     return { arrow: '', text: "— O'zgarish yo'q", pos: true }
->>>>>>> 381b2ba (Refactor authentication and navigation logic for improved user experience and error handling)
   }
 
   function getTodayBounds() {
@@ -330,12 +326,8 @@
     }
     const trendEl = document.getElementById('todayRevenueTrend')
     if (trendEl) {
-<<<<<<< HEAD
-      trendEl.textContent = `${trend.arrow} ${trend.text}`
-=======
       trendEl.textContent = trend.arrow ? `${trend.arrow} ${trend.text}` : trend.text
       trendEl.style.color = 'rgba(255,255,255,0.95)'
->>>>>>> 381b2ba (Refactor authentication and navigation logic for improved user experience and error handling)
     }
 
     const profitVal = document.getElementById('todayProfitValue')
