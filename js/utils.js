@@ -12,8 +12,10 @@ function formatMoney(value){
 }
 
 function formatPercent(value){
-  if (value >= 0) return `+${Math.round(value)}% kechagidan`;
-  return `−${Math.round(Math.abs(value))}% kechagidan`;
+  const rounded = Math.round(value)
+  if (rounded === 0) return "— O'zgarish yo'q"
+  if (rounded > 0) return `+${rounded}% kechagidan`
+  return `−${Math.abs(rounded)}% kechagidan`
 }
 
 function formatTime(timestamp){

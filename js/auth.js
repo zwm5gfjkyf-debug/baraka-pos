@@ -12,7 +12,11 @@ function updateNavVisibility(isLoggedIn){
 
   if(isLoggedIn){
     body.classList.remove('auth-active')
-    if(bottomNav) bottomNav.style.display = 'flex'
+    if(bottomNav) {
+      bottomNav.style.display = 'flex'
+      bottomNav.style.visibility = 'visible'
+      bottomNav.style.removeProperty('opacity')
+    }
     if(fab) fab.style.display = ''
     if(appHeader) appHeader.style.display = ''
     if(sidebar) sidebar.style.display = ''
@@ -309,15 +313,22 @@ auth.onAuthStateChanged(user => {
     if(loading) loading.classList.add("hidden")
     if(authScreen){
       authScreen.classList.add("hidden")
-      authScreen.style.removeProperty("display")
+      authScreen.style.display = 'none'
     }
-    if(appScreen) appScreen.classList.remove("hidden")
+    if(appScreen) {
+      appScreen.classList.remove("hidden")
+      appScreen.style.removeProperty('display')
+    }
 
     updateNavVisibility(true)
 
-    const emailBox = document.getElementById("profileEmail")
-    if(emailBox){
-      emailBox.textContent = formatAuthDisplayEmail(user)
+    const profileEmailBox = document.getElementById("profileEmail")
+    const sidebarEmailBox = document.getElementById("sidebarShopEmail")
+    if(profileEmailBox && typeof formatAuthDisplayEmail === "function"){
+      profileEmailBox.textContent = formatAuthDisplayEmail(user)
+    }
+    if(sidebarEmailBox && typeof formatAuthDisplayEmail === "function"){
+      sidebarEmailBox.textContent = formatAuthDisplayEmail(user)
     }
 
     if(typeof bootstrapShopAfterAuth === "function"){
@@ -331,8 +342,14 @@ auth.onAuthStateChanged(user => {
   }else{
 
     if(loading) loading.classList.add("hidden")
-    if(authScreen) authScreen.classList.remove("hidden")
-    if(appScreen) appScreen.classList.add("hidden")
+    if(authScreen) {
+      authScreen.classList.remove("hidden")
+      authScreen.style.removeProperty('display')
+    }
+    if(appScreen) {
+      appScreen.classList.add("hidden")
+      appScreen.style.display = 'none'
+    }
 
     if(typeof clearAuthInputs === "function"){
       clearAuthInputs("all")

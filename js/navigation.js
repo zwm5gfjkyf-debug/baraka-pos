@@ -93,6 +93,8 @@ function navigate(pageId){
       bottomNav.style.display = 'none'
     }else{
       bottomNav.style.display = 'flex'
+      bottomNav.style.visibility = 'visible'
+      bottomNav.style.opacity = '1'
     }
   }
 

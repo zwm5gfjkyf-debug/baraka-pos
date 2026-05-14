@@ -314,8 +314,9 @@ function loadSidebarData(){
     .onSnapshot(doc => {
       const data = doc.data() || {}
       const shopName = data.name || data.shopName || data.title || 'Do\'kon'
-      const ownerEmail = data.ownerEmail || data.email || 'No email'
-      sidebarData.shopName = `${shopName} Do'koni`
+      const ownerEmail = data.ownerEmail || data.email || ''
+      const cleanName = shopName.replace(/\s*do['']?koni\s*$/i, '').trim()
+      sidebarData.shopName = cleanName || shopName
       sidebarData.ownerEmail = ownerEmail
       sidebarLoaded.shop = true
       sidebarData.loading = Object.values(sidebarLoaded).some(v => v === false)
@@ -397,11 +398,19 @@ function renderSidebar(){
   if(shopNameEl) shopNameEl.textContent = sidebarData.shopName || 'Do\'kon'
 
   const authUser = typeof auth !== 'undefined' ? auth.currentUser : null
-  const authLabel = authUser && typeof formatAuthDisplayEmail === 'function'
-    ? formatAuthDisplayEmail(authUser)
-    : null
-  const shopEmail = authLabel || (sidebarData.ownerEmail && sidebarData.ownerEmail !== 'No email' ? sidebarData.ownerEmail : null)
-  if(shopEmailEl) shopEmailEl.textContent = shopEmail || 'Foydalanuvchi'
+  let displayLabel = 'Foydalanuvchi'
+
+  if (authUser && typeof formatAuthDisplayEmail === 'function') {
+    const formatted = formatAuthDisplayEmail(authUser)
+    if (formatted && formatted !== 'Foydalanuvchi') {
+      displayLabel = formatted
+    }
+  } else if (sidebarData.ownerEmail && sidebarData.ownerEmail !== '' && sidebarData.ownerEmail !== 'No email') {
+    const raw = sidebarData.ownerEmail
+    displayLabel = raw.endsWith('@baraka.local') ? raw.split('@')[0] : raw
+  }
+
+  if (shopEmailEl) shopEmailEl.textContent = displayLabel
 
   if(revenueEl){
     revenueEl.textContent = sidebarData.loading ? '' : formatPlainNumber(sidebarData.revenue)

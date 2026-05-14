@@ -22,6 +22,21 @@ function getTodayKey() {
 }
 
 // =======================================
+// TRANSACTION ID HELPERS
+// =======================================
+
+function getNextTransactionId() {
+  let last = parseInt(localStorage.getItem('lastTransactionId') || '0', 10)
+  last += 1
+  localStorage.setItem('lastTransactionId', String(last))
+  return last
+}
+
+function formatTransactionId(id) {
+  return '#' + String(id).padStart(6, '0')
+}
+
+// =======================================
 // LOAD PRODUCTS INTO MEMORY
 // =======================================
 

@@ -820,11 +820,19 @@ async function generateUniqueArtikul(){
 let selectedImageFile = null
 
 function selectProductImage(){
-  document.getElementById("imagePickerModal").classList.remove("hidden")
+  const backdrop = document.getElementById("imagePickerBackdrop")
+  const modal = document.getElementById("imagePickerModal")
+  if(backdrop) backdrop.classList.remove("hidden")
+  if(modal) modal.classList.remove("hidden")
+  document.body.style.overflow = 'hidden'
 }
 
 function closeImagePicker(){
-  document.getElementById("imagePickerModal").classList.add("hidden")
+  const backdrop = document.getElementById("imagePickerBackdrop")
+  const modal = document.getElementById("imagePickerModal")
+  if(backdrop) backdrop.classList.add("hidden")
+  if(modal) modal.classList.add("hidden")
+  document.body.style.overflow = ''
 }
 
 function pickImage(type){
