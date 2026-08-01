@@ -162,3 +162,63 @@ document.addEventListener("DOMContentLoaded", ()=>{
     banner.style.transition = "all 0.2s ease"
   }
 })
+
+/* =========================================
+   SOFT KEYBOARD — hide fixed bottom nav
+   (prevents mid-screen float on mobile)
+========================================= */
+
+function isEditableFocusTarget(el){
+  if(!el || el === document.body || el === document.documentElement) return false
+  if(el.id === "hiddenScannerInput") return false /* scanner keeps inputmode=none; don't hide nav */
+  const tag = el.tagName
+  if(tag === "TEXTAREA" || tag === "SELECT") return true
+  if(tag === "INPUT"){
+    const type = String(el.type || "text").toLowerCase()
+    if(["button", "submit", "reset", "checkbox", "radio", "file", "hidden", "image"].includes(type)){
+      return false
+    }
+    return true
+  }
+  if(el.isContentEditable) return true
+  return false
+}
+
+function isTouchLikeDevice(){
+  try{
+    return window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window
+  }catch(e){
+    return "ontouchstart" in window
+  }
+}
+
+function syncKeyboardOpenClass(){
+  const focused = isEditableFocusTarget(document.activeElement)
+  if(!focused){
+    document.body.classList.remove("keyboard-open")
+    return
+  }
+
+  let keyboardLikely = false
+  if(window.visualViewport && typeof window.innerHeight === "number"){
+    /* Soft keyboard shrinks the visual viewport on mobile browsers */
+    keyboardLikely = window.visualViewport.height < window.innerHeight - 120
+  }
+  if(!keyboardLikely && isTouchLikeDevice()){
+    /* iOS often focuses before viewport resize — hide nav proactively on touch */
+    keyboardLikely = true
+  }
+
+  document.body.classList.toggle("keyboard-open", keyboardLikely)
+}
+
+document.addEventListener("focusin", syncKeyboardOpenClass)
+
+document.addEventListener("focusout", () => {
+  setTimeout(syncKeyboardOpenClass, 80)
+})
+
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize", syncKeyboardOpenClass)
+  window.visualViewport.addEventListener("scroll", syncKeyboardOpenClass)
+}

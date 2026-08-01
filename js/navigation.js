@@ -53,8 +53,9 @@ function navigate(pageId){
 
   const mainContent = document.querySelector('.main-content')
   if(mainContent){
+    // Keep top offset for fixed header; bottom clearance comes from CSS --bottom-content-pad
     mainContent.style.paddingTop = '80px'
-    mainContent.style.paddingBottom = '70px'
+    mainContent.style.removeProperty('padding-bottom')
   }
 
   if(previousPage === 'todaySalesHistoryPage' && pageId !== 'todaySalesHistoryPage' && typeof cleanupTodaySalesHistoryListeners === 'function'){
