@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // Username → uid mapping.
+    // No public / client writes (accounts are provisioned by the shop owner
+    // via Firebase Console or Admin SDK). Authenticated users may only read
+    // their own username mapping.
+    match /usernames/{username} {
+      allow read: if isSignedIn()
+        && resource.data.uid == request.auth.uid;
+      allow create, update, delete: if false;
+    }
+
+    // User profiles — authenticated owner only. No public registration writes.
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Shop root + subcollections (products, sales, nasiya, etc.)
+    match /shops/{shopId} {
+      allow read, write: if isOwner(shopId);
+
+      match /{subcollection}/{docId} {
+        allow read, write: if isOwner(shopId);
+      }
+    }
+  }
+}
