@@ -31,65 +31,12 @@ function updateNavVisibility(isLoggedIn){
   }
 }
 
-let usernameCheckTimeout = null
-let usernameAvailable = false
-let usernameChecked = false
-
 function normalizeUsername(value){
   return String(value || '').trim().toLowerCase()
 }
 
-function validateUsernameFormat(username){
-  const regex = /^[a-zA-Z0-9_]{3,20}$/
-  return regex.test(username)
-}
-
-function setRegisterButtonState(){
-  const shopName = document.getElementById('shopName')?.value.trim() || ''
-  const username = normalizeUsername(document.getElementById('registerUsername')?.value || '')
-  const password = document.getElementById('registerPassword')?.value || ''
-  const confirmPassword = document.getElementById('registerPasswordConfirm')?.value || ''
-  const registerBtn = document.getElementById('registerBtn')
-
-  const canRegister = shopName !== '' && username !== '' && usernameAvailable && password.length >= 6 && password === confirmPassword
-
-  if(registerBtn){
-    registerBtn.disabled = !canRegister
-  }
-}
-
-function showUsernameHelp(message, isError){
-  const help = document.getElementById('usernameHelp')
-  if(help){
-    help.textContent = message
-    if(message === ''){
-      help.classList.remove('auth-help-text-error', 'auth-help-text-success')
-    } else {
-      help.classList.toggle('auth-help-text-error', isError)
-      help.classList.toggle('auth-help-text-success', !isError)
-    }
-  }
-}
-
-function showPasswordMatchHelp(message, isError){
-  const help = document.getElementById('passwordMatchHelp')
-  if(help){
-    help.textContent = message
-    if(message === ''){
-      help.classList.remove('auth-help-text-error', 'auth-help-text-success')
-    } else {
-      help.classList.toggle('auth-help-text-error', isError)
-      help.classList.toggle('auth-help-text-success', !isError)
-    }
-  }
-}
-
-function clearAuthInputs(scope = 'all'){
-  const registerIds = ['shopName', 'registerUsername', 'registerPassword', 'registerPasswordConfirm']
-  const loginIds = ['loginUsername', 'loginPassword']
-  const ids = scope === 'register' ? registerIds : scope === 'login' ? loginIds : registerIds.concat(loginIds)
-
-  ids.forEach(id => {
+function clearAuthInputs(){
+  ;['loginUsername', 'loginPassword'].forEach(id => {
     const input = document.getElementById(id)
     if(input){
       input.value = ''
@@ -100,139 +47,14 @@ function clearAuthInputs(scope = 'all'){
     }
   })
 
-  usernameAvailable = false
-  usernameChecked = false
-  showUsernameHelp('', false)
-  showPasswordMatchHelp('', false)
-
   const loginError = document.getElementById('loginErrorMessage')
   if(loginError) loginError.textContent = ''
 
-  ;['registerPasswordToggle', 'registerPasswordConfirmToggle', 'loginPasswordToggle'].forEach(id => {
-    const btn = document.getElementById(id)
-    if(btn){
-      btn.textContent = '👁'
-      btn.setAttribute('aria-label', 'Parolni ko‘rsatish')
-    }
-  })
-
-  setRegisterButtonState()
-}
-
-async function checkUsernameAvailable(username){
-  const usernameLower = normalizeUsername(username)
-  try{
-    const usernameDoc = await Promise.race([
-      db.collection('usernames').doc(usernameLower).get(),
-      new Promise(resolve => setTimeout(() => resolve(null), 1400))
-    ])
-    if(usernameDoc === null) return true
-    return usernameDoc.exists ? false : true
-  }catch(e){
-    console.warn('Username Firestore lookup failed, falling back to auth lookup:', e)
-    const syntheticEmail = `${usernameLower}@baraka.local`
-    try{
-      const methods = await Promise.race([
-        auth.fetchSignInMethodsForEmail(syntheticEmail),
-        new Promise(resolve => setTimeout(() => resolve(null), 1600))
-      ])
-      return Array.isArray(methods) ? methods.length === 0 : true
-    }catch(error){
-      console.warn('Username auth lookup failed, allowing final register validation:', error)
-      return true
-    }
+  const btn = document.getElementById('loginPasswordToggle')
+  if(btn){
+    btn.textContent = '👁'
+    btn.setAttribute('aria-label', 'Parolni ko‘rsatish')
   }
-}
-
-function handleRegisterUsernameInput(){
-  const input = document.getElementById('registerUsername')
-  const username = normalizeUsername(input?.value || '')
-  usernameAvailable = false
-  usernameChecked = false
-  setRegisterButtonState()
-
-  if(usernameCheckTimeout){
-    clearTimeout(usernameCheckTimeout)
-    usernameCheckTimeout = null
-  }
-
-  if(username === ''){
-    showUsernameHelp('', false)
-    input?.classList.remove('invalid', 'valid')
-    return
-  }
-
-  if(!validateUsernameFormat(username)){
-    showUsernameHelp('❌ Faqat harf, raqam va _ ishlatish mumkin (3-20 belgi)', true)
-    input?.classList.add('invalid')
-    input?.classList.remove('valid')
-    return
-  }
-
-  input?.classList.remove('invalid')
-  input?.classList.add('valid')
-  showUsernameHelp('Tekshirilmoqda…', false)
-
-  usernameCheckTimeout = setTimeout(async () => {
-    try{
-      const currentValue = normalizeUsername(input?.value || '')
-      if(currentValue !== username) return
-
-      const available = await checkUsernameAvailable(username)
-      usernameAvailable = available
-      usernameChecked = true
-
-      if(available){
-        showUsernameHelp('✅ Bu nom mavjud!', false)
-        input?.classList.add('valid')
-        input?.classList.remove('invalid')
-      } else {
-        showUsernameHelp('❌ Bu foydalanuvchi nomi band. Boshqa nom tanlang.', true)
-        input?.classList.add('invalid')
-        input?.classList.remove('valid')
-      }
-    }catch(e){
-      console.error('Username check failed:', e)
-      usernameAvailable = false
-      usernameChecked = false
-      showUsernameHelp('❌ Foydalanuvchi nomini tekshirib bo‘lmadi', true)
-      input?.classList.add('invalid')
-      input?.classList.remove('valid')
-    }finally{
-      setRegisterButtonState()
-    }
-  }, 500)
-}
-
-function handleRegisterPasswordInput(){
-  const password = document.getElementById('registerPassword')?.value || ''
-  const confirmPassword = document.getElementById('registerPasswordConfirm')?.value || ''
-  const passwordInput = document.getElementById('registerPassword')
-  const confirmInput = document.getElementById('registerPasswordConfirm')
-
-  if(password.length > 0){
-    passwordInput?.classList.toggle('invalid', password.length < 6)
-    passwordInput?.classList.toggle('valid', password.length >= 6)
-  } else {
-    passwordInput?.classList.remove('invalid', 'valid')
-  }
-
-  if(confirmPassword.length > 0){
-    if(password !== confirmPassword){
-      showPasswordMatchHelp('❌ Parollar mos kelmadi', true)
-      confirmInput?.classList.add('invalid')
-      confirmInput?.classList.remove('valid')
-    } else {
-      showPasswordMatchHelp('✅ Parollar mos keldi', false)
-      confirmInput?.classList.add('valid')
-      confirmInput?.classList.remove('invalid')
-    }
-  } else {
-    showPasswordMatchHelp('', false)
-    confirmInput?.classList.remove('invalid', 'valid')
-  }
-
-  setRegisterButtonState()
 }
 
 function togglePasswordVisibility(inputId, buttonId){
@@ -270,21 +92,9 @@ function formatAuthDisplayEmail(user){
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  clearAuthInputs('all')
-  setTimeout(() => clearAuthInputs('all'), 250)
+  clearAuthInputs()
+  setTimeout(() => clearAuthInputs(), 250)
 })
-
-async function hashPassword(password){
-  if(!window.crypto || !window.crypto.subtle){
-    return password
-  }
-
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password)
-  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-}
 
 async function showButtonSpinner(buttonId, show){
   const spinner = document.getElementById(buttonId)
@@ -352,8 +162,8 @@ auth.onAuthStateChanged(user => {
     }
 
     if(typeof clearAuthInputs === "function"){
-      clearAuthInputs("all")
-      setTimeout(() => clearAuthInputs("all"), 250)
+      clearAuthInputs()
+      setTimeout(() => clearAuthInputs(), 250)
     }
 
     updateNavVisibility(false)
@@ -361,159 +171,8 @@ auth.onAuthStateChanged(user => {
 
 })
 
-let authMode = "register"
-
-window.switchAuth = function(type){
-
-  authMode = type === "login" ? "login" : "register"
-
-  const registerForm = document.getElementById("registerForm")
-  const loginForm = document.getElementById("loginForm")
-  const tabR = document.getElementById("tabRegister")
-  const tabL = document.getElementById("tabLogin")
-  const usernameHelp = document.getElementById("usernameHelp")
-  const passwordHelp = document.getElementById("passwordMatchHelp")
-  const loginError = document.getElementById("loginErrorMessage")
-
-  if(usernameHelp) usernameHelp.textContent = ""
-  if(passwordHelp) passwordHelp.textContent = ""
-  if(loginError) loginError.textContent = ""
-
-  if(registerForm && loginForm){
-    if(authMode === "register"){
-      registerForm.classList.remove("hidden")
-      loginForm.classList.add("hidden")
-    }else{
-      loginForm.classList.remove("hidden")
-      registerForm.classList.add("hidden")
-    }
-  }
-
-  if(tabR && tabL){
-    if(authMode === "register"){
-      tabR.classList.add("auth-tab-active")
-      tabR.classList.remove("auth-tab-inactive")
-      tabL.classList.add("auth-tab-inactive")
-      tabL.classList.remove("auth-tab-active")
-    }else{
-      tabL.classList.add("auth-tab-active")
-      tabL.classList.remove("auth-tab-inactive")
-      tabR.classList.add("auth-tab-inactive")
-      tabR.classList.remove("auth-tab-active")
-    }
-  }
-
-  if(authMode === "register" && typeof clearAuthInputs === "function"){
-    clearAuthInputs("register")
-  }
-  if(authMode === "login" && typeof clearAuthInputs === "function"){
-    clearAuthInputs("login")
-  }
-
-  if(typeof setRegisterButtonState === "function"){
-    setRegisterButtonState()
-  }
-}
-
 /* =========================================
-   REGISTER
-========================================= */
-
-async function register(){
-  const shopName = document.getElementById('shopName')?.value.trim() || ''
-  const username = normalizeUsername(document.getElementById('registerUsername')?.value || '')
-  const password = document.getElementById('registerPassword')?.value || ''
-  const confirmPassword = document.getElementById('registerPasswordConfirm')?.value || ''
-  const loginError = document.getElementById('loginErrorMessage')
-
-  if(loginError) loginError.textContent = ''
-
-  if(!shopName || !username || !password || !confirmPassword){
-    showTopBanner("Ma'lumotlarni to'ldiring", "error")
-    return
-  }
-
-  if(!validateUsernameFormat(username)){
-    showTopBanner("Username formati noto‘g‘ri", "error")
-    return
-  }
-
-  if(password.length < 6){
-    showTopBanner("Parol kamida 6 ta belgi bo'lishi kerak", "error")
-    return
-  }
-
-  if(password !== confirmPassword){
-    showTopBanner("Parollar mos kelmadi", "error")
-    return
-  }
-
-  if(!usernameAvailable || !usernameChecked){
-    showTopBanner("Foydalanuvchi nomi mavjudligini tekshiring", "error")
-    return
-  }
-
-  const registerBtn = document.getElementById('registerBtn')
-  if(registerBtn) registerBtn.disabled = true
-  showButtonSpinner('registerSpinner', true)
-
-  const usernameLower = username.toLowerCase()
-  const syntheticEmail = `${usernameLower}@baraka.local`
-
-  try{
-    const availableNow = await checkUsernameAvailable(usernameLower)
-    if(!availableNow){
-      usernameAvailable = false
-      usernameChecked = true
-      showUsernameHelp('❌ Bu foydalanuvchi nomi band. Boshqa nom tanlang.', true)
-      return
-    }
-
-    const passwordHash = await hashPassword(password)
-
-    const cred = await auth.createUserWithEmailAndPassword(syntheticEmail, password)
-    const uid = cred.user.uid
-
-    await db.collection('users').doc(uid).set({
-      username: usernameLower,
-      dokon_nomi: shopName,
-      created_at: firebase.firestore.FieldValue.serverTimestamp(),
-      uid: uid,
-      password: passwordHash,
-      passwordHash: passwordHash
-    })
-
-    await db.collection('usernames').doc(usernameLower).set({
-      uid: uid,
-      created_at: firebase.firestore.FieldValue.serverTimestamp()
-    })
-
-    await db.collection('shops').doc(uid).set({
-      shopName: shopName,
-      ownerEmail: syntheticEmail,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      username: usernameLower
-    })
-
-    showTopBanner("Ro'yxatdan o'tish muvaffaqiyatli", "success")
-
-  }catch(e){
-    console.error(e)
-    if(e.code === 'auth/email-already-in-use'){
-      showTopBanner("Bu foydalanuvchi nomi allaqachon ishlatilgan", "error")
-    } else if(e.code === 'auth/weak-password'){
-      showTopBanner("Parol juda oddiy", "error")
-    } else {
-      showTopBanner("Ro'yxatdan o'tishda xatolik", "error")
-    }
-  } finally {
-    showButtonSpinner('registerSpinner', false)
-    setRegisterButtonState()
-  }
-}
-
-/* =========================================
-   LOGIN
+   LOGIN (Auth-first — no pre-login Firestore reads)
 ========================================= */
 
 async function login(){
@@ -529,29 +188,12 @@ async function login(){
     return
   }
 
-  const usernameLower = username.toLowerCase()
-  const syntheticEmail = `${usernameLower}@baraka.local`
+  const syntheticEmail = `${username}@baraka.local`
 
   if(loginBtn) loginBtn.disabled = true
   showButtonSpinner('loginSpinner', true)
 
   try{
-    const userDoc = await db.collection('usernames').doc(usernameLower).get()
-    if(!userDoc.exists){
-      if(loginError) loginError.textContent = '❌ Bunday foydalanuvchi topilmadi'
-      return
-    }
-
-    const uid = userDoc.data()?.uid
-    const profileDoc = uid ? await db.collection('users').doc(uid).get() : null
-    const storedHash = profileDoc && profileDoc.exists ? (profileDoc.data().passwordHash || profileDoc.data().password) : ''
-    const enteredHash = await hashPassword(password)
-
-    if(storedHash && storedHash !== enteredHash){
-      if(loginError) loginError.textContent = "❌ Parol noto'g'ri"
-      return
-    }
-
     await auth.signInWithEmailAndPassword(syntheticEmail, password)
     showTopBanner('Xush kelibsiz!', 'success')
   }catch(e){
@@ -619,9 +261,6 @@ function logout(){
   if(appScreen) appScreen.classList.add("hidden")
   if(authScreen) authScreen.classList.remove("hidden")
   document.body.classList.add("auth-active")
-  if(typeof switchAuth === "function"){
-    switchAuth("register")
-  }
 
   updateNavVisibility(false)
 }
