@@ -157,7 +157,7 @@ function renderStoreAnalysis(products){
   const productTypesValue = document.getElementById('productTypesValue')
   const outOfStockValue = document.getElementById('outOfStockValue')
 
-  if(potentialProfitValue) potentialProfitValue.innerText = formatNumberValue(potentialProfit)
+  if(potentialProfitValue) potentialProfitValue.innerText = typeof formatMoney === 'function' ? formatMoney(potentialProfit) : (formatNumberValue(potentialProfit) + ' UZS')
   if(averageMarginValue) averageMarginValue.innerText = `${averageMargin}%`
   if(productTypesValue) productTypesValue.innerText = `${formatNumberValue(totalProducts)} ta`
   if(outOfStockValue) outOfStockValue.innerText = `${formatNumberValue(outOfStockCount)} ta`
@@ -174,8 +174,8 @@ function renderStoreAnalysis(products){
         `<div class="product-emoji">${getProductEmoji(product.name)}</div>`
 
       const quantityLabel = product.quantity === 0 ?
-        `0 ta · ${formatNumberValue(product.sellPrice)} so'm/dona · <span class="product-meta-out">× tugagan</span>` :
-        `${product.quantity} ta · ${formatNumberValue(product.sellPrice)} so'm/dona${product.quantity > 0 && product.quantity <= 5 ? ' · <span class="product-meta-warning">△ kam</span>' : ''}`
+        `0 ta · ${formatNumberValue(product.sellPrice)} UZS/dona · <span class="product-meta-out">× tugagan</span>` :
+        `${product.quantity} ta · ${formatNumberValue(product.sellPrice)} UZS/dona${product.quantity > 0 && product.quantity <= 5 ? ' · <span class="product-meta-warning">△ kam</span>' : ''}`
 
       const sellValue = product.quantity > 0 ? product.sellPrice * product.quantity : 0
       const productMargin = product.sellPrice === 0 ? 0 : Math.round(((product.sellPrice - product.buyPrice) / product.sellPrice) * 100)
@@ -187,7 +187,7 @@ function renderStoreAnalysis(products){
           <div class="product-meta">${quantityLabel}</div>
         </div>
         <div class="product-right">
-          ${product.quantity > 0 ? `<div class="product-value">${formatMoney(sellValue)}</div><div class="product-margin">↑ ${formatNumberValue(productMargin)}% foyda</div>` : `<div class="product-value product-out">0 so'm</div><div class="product-out-small">Qolmadi</div>`}
+          ${product.quantity > 0 ? `<div class="product-value">${formatMoney(sellValue)}</div><div class="product-margin">↑ ${formatNumberValue(productMargin)}% foyda</div>` : `<div class="product-value product-out">0 UZS</div><div class="product-out-small">Qolmadi</div>`}
         </div>
       `
 

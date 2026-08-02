@@ -445,7 +445,7 @@ if(discountValue > 0){
 // 🔥 TOTAL (ONLY HERE, ONLY ONCE)
 // ===================================
 if(totalEl){
-totalEl.innerText = "Jami: " + formatMoney(total).replace(" so'm", "")
+totalEl.innerText = "Jami: " + formatMoney(total)
   totalEl.style.display = "block"
 
 }
@@ -1201,7 +1201,7 @@ function updateDiscountPreview(){
 
   if(final < 0) final = 0
 
-preview.innerText = "Jami: " + formatMoney(final).replace(" so'm", "")
+preview.innerText = "Jami: " + formatMoney(final)
 }
 function applyDiscount(){
 

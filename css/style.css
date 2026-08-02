@@ -5954,11 +5954,14 @@ SALE HEADER ACTIONS (NEW)
 
 /* STAT CARD BASE */
 .stat-card {
-  height: 110px;
+  min-height: 88px;
+  height: auto;
   border-radius: 16px;
-  padding: 14px;
+  padding: 16px 14px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  gap: 6px;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -5996,8 +5999,10 @@ SALE HEADER ACTIONS (NEW)
 .stat-value-container {
   display: flex;
   align-items: baseline;
-  gap: 5px;
-  margin-bottom: 5px;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 6px;
+  margin-bottom: 0;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -6010,7 +6015,7 @@ SALE HEADER ACTIONS (NEW)
   overflow: hidden;
   text-overflow: clip;
   display: inline;
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
 }
 
@@ -6025,38 +6030,25 @@ SALE HEADER ACTIONS (NEW)
   color: #43A047;
 }
 
-/* STAT SOM SUFFIX */
-.stat-som {
+/* STAT CURRENCY SUFFIX (inline next to amount) */
+.stat-currency {
+  flex: 0 0 auto;
   font-size: 0.73em;
-  font-weight: 500;
+  font-weight: 600;
   display: inline;
+  white-space: nowrap;
 }
 
-.stat-card-primary .stat-som {
-  color: white;
+.stat-card-primary .stat-currency {
+  color: rgba(255, 255, 255, 0.92);
 }
 
-.stat-card-secondary .stat-som {
-  color: inherit;
-}
-
-#todayProfitValue + .stat-som {
+.stat-card-secondary .stat-currency {
   color: #43A047;
 }
 
-/* STAT HELPER (trend/status) */
-.stat-helper {
-  font-size: 12px;
-  font-weight: 600;
-  color: #9E9E9E;
-}
-
-.stat-card-primary .stat-helper {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-#todayProfitStatus[style*="color"] {
-  font-weight: 600;
+#todayProfitValue + .stat-currency {
+  color: #43A047;
 }
 
 .dashboard-card-helper {
@@ -7091,12 +7083,14 @@ Mobile-first responsive design
   font-size: 18px;
   font-weight: 700;
   color: #E65100;
+  white-space: nowrap;
 }
 
 .debt-customer-unit {
   font-size: 11px;
   color: #AAA;
   margin-top: 2px;
+  font-weight: 500;
 }
 
 .debt-customer-progress {

@@ -680,7 +680,7 @@ function openLabelPreview(){
 
   // ✅ PRICE (FIXED — no &nbsp bug)
   document.getElementById("previewPrice").innerText =
-    price.toLocaleString("ru-RU") + " so'm"
+    (typeof formatMoney === 'function' ? formatMoney(price) : (price.toLocaleString("ru-RU") + " UZS"))
 
   // ✅ SMALL CODE (NEW 🔥)
   const shortCode = barcode.slice(-4)   // last 4 digits

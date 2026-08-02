@@ -13,8 +13,8 @@ let debtSortByNewest = false;
 // ===============================
 
 function formatMoney(value) {
-  if (!value || isNaN(value)) return '0 so\'m';
-  return Math.round(value).toLocaleString('uz-UZ').replace(/,/g, ' ') + ' so\'m';
+  if (!value || isNaN(value)) return '0 UZS'
+  return Math.round(value).toLocaleString('uz-UZ').replace(/,/g, ' ') + ' UZS'
 }
 
 function formatMoneyShort(value) {
@@ -253,11 +253,11 @@ function filterDebtCustomers() {
 // ===============================
 
 function updateDebtSummary(totalDebt, customerCount, overdueCount, newThisMonthCount, largestDebt) {
-  document.getElementById('totalDebtAmount').textContent = formatMoneyShort(totalDebt) + ' so\'m';
+  document.getElementById('totalDebtAmount').textContent = formatMoneyShort(totalDebt) + ' UZS';
   document.getElementById('totalDebtSubtitle').textContent = `${customerCount} ta mijoz · ${getTodayLabel()} holatiga`;
   document.getElementById('overdueCount').textContent = `${overdueCount} ta`;
   document.getElementById('newThisMonthCount').textContent = `${newThisMonthCount} ta`;
-  document.getElementById('largestDebtAmount').textContent = formatMoneyShort(largestDebt);
+  document.getElementById('largestDebtAmount').textContent = formatMoneyShort(largestDebt) + ' UZS';
   document.getElementById('customersTitle').textContent = `Mijozlar (${customerCount} ta)`;
 }
 
@@ -320,8 +320,8 @@ function renderDebtCustomers(customers, largestDebt) {
             <div class="debt-customer-date">Oxirgi nasiya: ${formatDate(customer.latestNasiyaDate)}</div>
           </div>
           <div class="debt-customer-amount" style="color: ${debtColor}">
-            ${formatMoneyShort(customer.totalDebt)}
-            <div class="debt-customer-unit">so'm qarz</div>
+            ${formatMoneyShort(customer.totalDebt)} UZS
+            <div class="debt-customer-unit">qarz</div>
           </div>
         </div>
         <div class="debt-customer-progress">

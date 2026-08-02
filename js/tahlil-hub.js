@@ -59,8 +59,9 @@
   }
 
   function formatFullSom(n) {
+    if (typeof formatMoney === 'function') return formatMoney(n)
     const v = safeInt(n)
-    return v.toLocaleString('uz-UZ').replace(/,/g, ' ') + " so'm"
+    return v.toLocaleString('uz-UZ').replace(/,/g, ' ') + ' UZS'
   }
 
   function monthYearLabel() {

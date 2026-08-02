@@ -6,9 +6,16 @@
 FORMAT MONEY
 =============================== */
 
+const CURRENCY_LABEL = 'UZS'
+
+function formatMoneyAmount(value){
+  const n = Math.round(Number(value))
+  const amount = Number.isFinite(n) ? n : 0
+  return amount.toLocaleString('uz-UZ').replace(/,/g, ' ')
+}
+
 function formatMoney(value){
-  if (!value || isNaN(value)) return '0 so\'m';
-  return Math.round(value).toLocaleString('uz-UZ').replace(/,/g, ' ') + ' so\'m';
+  return formatMoneyAmount(value) + ' ' + CURRENCY_LABEL
 }
 
 function formatPercent(value){
