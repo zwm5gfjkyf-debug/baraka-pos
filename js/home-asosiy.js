@@ -7,17 +7,24 @@
   let yesterdaySalesUnsub = null  
   let nasiyaUnsub = null
   let todayHistoryUnsub = null
+  let chartRangeUnsub = null
 
   let revenueChart = null
   let todaySalesRows = []
   let yesterdaySalesRows = []
   let nasiyaRows = []
+  let chartSalesRows = []
+  let chartFilter = 'bugun'
+  let chartRequestId = 0
+  let chartTabsBound = false
 
   let dashboardBoot = { today: false, yesterday: false, nasiya: false }
   let dashboardHadError = false
 
   const CHART_LINE = '#166534'
-  const CHART_LABELS = ['09:00', '11:00', '13:00', '15:00', 'Hozir']
+  const CHART_FILTERS = ['kecha', 'bugun', 'hafta', 'oy', 'yil']
+  const MONTH_LABELS_UZ = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn', 'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek']
+  const DAY_LABELS_UZ = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan']
 
   /* ========================================
      DYNAMIC FONT SIZING FOR STAT CARDS
@@ -221,38 +228,176 @@
     return safeInt(todayRev) / n
   }
 
-  function cumulativeUpTo(sortedSales, endMs) {
-    if (endMs == null || !Number.isFinite(endMs)) return 0
-    let sum = 0
-    for (let i = 0; i < sortedSales.length; i++) {
-      const row = sortedSales[i]
-      const ms = row._sortMs
-      if (ms == null) continue
-      if (ms <= endMs) sum += safeInt(row.total)
-    }
-    return sum
+  function startOfDay(d) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0)
   }
 
-  function buildMonotonicChartValues(sortedToday, now) {
-    const y = now.getFullYear()
-    const m = now.getMonth()
-    const d = now.getDate()
-    const slotEnds = [
-      new Date(y, m, d, 9, 0, 0, 0).getTime(),
-      new Date(y, m, d, 11, 0, 0, 0).getTime(),
-      new Date(y, m, d, 13, 0, 0, 0).getTime(),
-      new Date(y, m, d, 15, 0, 0, 0).getTime(),
-      now.getTime()
-    ]
-    const withSale = sortedToday.some(r => r._sortMs != null && safeInt(r.total) > 0)
-    const values = slotEnds.map(end => {
-      const cap = Math.min(end, now.getTime())
-      return cumulativeUpTo(sortedToday, cap)
-    })
-    for (let i = 1; i < values.length; i++) {
-      if (values[i] < values[i - 1]) values[i] = values[i - 1]
+  function addDays(d, n) {
+    const x = new Date(d.getTime())
+    x.setDate(x.getDate() + n)
+    return x
+  }
+
+  function pad2(n) {
+    return String(n).padStart(2, '0')
+  }
+
+  function getChartRange(filter) {
+    const now = new Date()
+    const todayStart = startOfDay(now)
+    const tomorrowStart = addDays(todayStart, 1)
+
+    if (filter === 'kecha') {
+      const yesterdayStart = addDays(todayStart, -1)
+      return { start: yesterdayStart, end: todayStart, mode: 'hourly', dayAnchor: yesterdayStart }
     }
-    return { values, withSale }
+    if (filter === 'bugun') {
+      return { start: todayStart, end: tomorrowStart, mode: 'hourly', dayAnchor: todayStart, live: true }
+    }
+    if (filter === 'hafta') {
+      const start = addDays(todayStart, -6)
+      return { start, end: tomorrowStart, mode: 'daily' }
+    }
+    if (filter === 'oy') {
+      const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0)
+      return { start, end: tomorrowStart, mode: 'daily' }
+    }
+    // yil
+    const start = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0)
+    return { start, end: tomorrowStart, mode: 'monthly' }
+  }
+
+  function groupingLabelFor(filter) {
+    if (filter === 'yil') return "Tafsilotlar: oylar bo'yicha"
+    if (filter === 'hafta' || filter === 'oy') return "Tafsilotlar: kunlar bo'yicha"
+    return "Tafsilotlar: soatlar bo'yicha"
+  }
+
+  function formatAxisAmount(value) {
+    const n = Number(value) || 0
+    if (Math.abs(n) >= 1000000) {
+      const m = n / 1000000
+      const text = (Math.abs(m) >= 10 ? m.toFixed(0) : m.toFixed(1)).replace(/\.0$/, '')
+      return text + 'M'
+    }
+    if (Math.abs(n) >= 1000) {
+      return Math.round(n / 1000) + 'K'
+    }
+    return String(Math.round(n))
+  }
+
+  function buildHourlyBuckets(rows, dayAnchor, isLiveToday) {
+    const y = dayAnchor.getFullYear()
+    const m = dayAnchor.getMonth()
+    const d = dayAnchor.getDate()
+    const now = new Date()
+    const dayStartMs = new Date(y, m, d, 0, 0, 0, 0).getTime()
+    const dayEndMs = new Date(y, m, d, 23, 59, 59, 999).getTime()
+    // 2-hour shop-day buckets; first bucket includes pre-08:00 sales
+    const hours = [8, 10, 12, 14, 16, 18, 20, 22]
+    const labels = []
+    const values = []
+
+    hours.forEach((hour, idx) => {
+      const slotStartMs = idx === 0
+        ? dayStartMs
+        : new Date(y, m, d, hour, 0, 0, 0).getTime()
+      const nextHour = hours[idx + 1]
+      let slotEndMs = nextHour != null
+        ? new Date(y, m, d, nextHour, 0, 0, 0).getTime()
+        : dayEndMs + 1
+
+      if (isLiveToday && slotStartMs > now.getTime()) return
+
+      let label = pad2(hour) + ':00'
+      const isCurrentSlot = isLiveToday &&
+        slotStartMs <= now.getTime() &&
+        now.getTime() < slotEndMs
+
+      if (isCurrentSlot) {
+        slotEndMs = Math.min(slotEndMs, now.getTime() + 1)
+        label = 'Hozir'
+      }
+
+      const sum = rows.reduce((acc, row) => {
+        const ms = row._sortMs
+        if (ms == null) return acc
+        if (ms >= slotStartMs && ms < slotEndMs) return acc + safeInt(row.total)
+        return acc
+      }, 0)
+
+      labels.push(label)
+      values.push(sum)
+    })
+
+    if (!labels.length) {
+      labels.push('08:00', '12:00', '16:00', '20:00')
+      values.push(0, 0, 0, 0)
+    }
+
+    return { labels, values }
+  }
+
+  function buildDailyBuckets(rows, start, end) {
+    const labels = []
+    const values = []
+    let cursor = startOfDay(start)
+    const endMs = end.getTime()
+
+    while (cursor.getTime() < endMs) {
+      const next = addDays(cursor, 1)
+      const sum = rows.reduce((acc, row) => {
+        const ms = row._sortMs
+        if (ms == null) return acc
+        if (ms >= cursor.getTime() && ms < next.getTime()) return acc + safeInt(row.total)
+        return acc
+      }, 0)
+
+      // Hafta: weekday short name; Oy: day number
+      const daySpan = Math.round((endMs - start.getTime()) / 86400000)
+      if (daySpan <= 8) {
+        labels.push(DAY_LABELS_UZ[cursor.getDay()])
+      } else {
+        labels.push(String(cursor.getDate()))
+      }
+      values.push(sum)
+      cursor = next
+    }
+
+    return { labels, values }
+  }
+
+  function buildMonthlyBuckets(rows, year) {
+    const labels = MONTH_LABELS_UZ.slice()
+    const values = new Array(12).fill(0)
+    const now = new Date()
+    const maxMonth = year === now.getFullYear() ? now.getMonth() : 11
+
+    rows.forEach(row => {
+      const ms = row._sortMs
+      if (ms == null) return
+      const d = new Date(ms)
+      if (d.getFullYear() !== year) return
+      const m = d.getMonth()
+      if (m < 0 || m > 11) return
+      values[m] += safeInt(row.total)
+    })
+
+    return {
+      labels: labels.slice(0, maxMonth + 1),
+      values: values.slice(0, maxMonth + 1)
+    }
+  }
+
+  function buildChartSeries(rows, filter) {
+    const range = getChartRange(filter)
+    if (range.mode === 'hourly') {
+      return buildHourlyBuckets(rows, range.dayAnchor, !!range.live)
+    }
+    if (range.mode === 'daily') {
+      return buildDailyBuckets(rows, range.start, range.end)
+    }
+    return buildMonthlyBuckets(rows, range.start.getFullYear())
   }
 
   function sortTodayNewestFirst(rows) {
@@ -428,105 +573,285 @@
     })
   }
 
-  function updateChart(sortedToday) {
+  function setChartLoading(on) {
+    const overlay = document.getElementById('chartLoadingOverlay')
+    if (!overlay) return
+    if (on) {
+      overlay.classList.remove('hidden')
+      overlay.setAttribute('aria-hidden', 'false')
+    } else {
+      overlay.classList.add('hidden')
+      overlay.setAttribute('aria-hidden', 'true')
+    }
+  }
+
+  function updateChartStatusPill(filter) {
+    const pill = document.getElementById('chartStatusPill')
+    if (!pill) return
+    if (filter === 'bugun') {
+      pill.textContent = 'Jonli'
+      pill.classList.remove('is-historical')
+    } else {
+      pill.textContent = 'Yangilangan'
+      pill.classList.add('is-historical')
+    }
+  }
+
+  function updateGroupingLabel(filter) {
+    const el = document.getElementById('chartGroupingLabel')
+    if (el) el.textContent = groupingLabelFor(filter)
+  }
+
+  function setActiveChartTab(filter) {
+    const tabs = document.querySelectorAll('#chartFilterTabs [data-chart-filter]')
+    tabs.forEach(btn => {
+      const active = btn.getAttribute('data-chart-filter') === filter
+      btn.classList.toggle('is-active', active)
+      btn.setAttribute('aria-selected', active ? 'true' : 'false')
+    })
+  }
+
+  function renderChartXLabels(labels) {
+    const el = document.getElementById('chartXLabels')
+    if (!el) return
+    el.innerHTML = ''
+    const n = labels.length
+    if (!n) return
+    let showEvery = 1
+    if (n > 16) showEvery = Math.ceil(n / 8)
+    else if (n > 10) showEvery = 2
+
+    labels.forEach((label, i) => {
+      const span = document.createElement('span')
+      const show = i === 0 || i === n - 1 || i % showEvery === 0
+      span.textContent = show ? label : ''
+      el.appendChild(span)
+    })
+  }
+
+  function destroyRevenueChart() {
+    if (!revenueChart) return
+    try {
+      revenueChart.destroy()
+    } catch (error) {
+      console.warn('Error destroying existing chart:', error)
+    }
+    revenueChart = null
+  }
+
+  function renderRevenueChart(series) {
     const canvas = document.getElementById('revenueChart')
     if (!canvas) {
       console.warn('Revenue chart canvas not found')
       return
     }
-
     if (typeof Chart === 'undefined') {
       console.warn('Chart.js not available')
       return
     }
 
+    const labels = series.labels || []
+    const values = series.values || []
+    const withSale = values.some(v => safeInt(v) > 0)
+    const lastIdx = values.length - 1
+
     try {
-      const { now } = getTodayBounds()
-      const { values, withSale } = buildMonotonicChartValues(sortedToday, now)
       const ctx = canvas.getContext('2d')
-      
       if (!ctx) {
         console.warn('Could not get canvas context')
         return
       }
 
-      // Destroy existing chart
-      if (revenueChart) {
-        try {
-          revenueChart.destroy()
-        } catch (error) {
-          console.warn('Error destroying existing chart:', error)
-        }
-        revenueChart = null
-      }
+      destroyRevenueChart()
 
-      const lastIdx = values.length - 1
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 240)
       gradient.addColorStop(0, 'rgba(34, 197, 94, 0.22)')
       gradient.addColorStop(1, 'rgba(34, 197, 94, 0)')
 
       revenueChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: CHART_LABELS.slice(),
-        datasets: [
-          {
-            data: values,
-            borderColor: CHART_LINE,
-            backgroundColor: withSale ? gradient : 'transparent',
-            borderWidth: 2.5,
-            fill: withSale,
-            tension: 0.42,
-            cubicInterpolationMode: 'monotone',
-            pointRadius(ctx) {
-              const i = ctx.dataIndex
-              if (!withSale) return i === 0 ? 5 : 0
-              if (i === 0) return 5
-              if (i === lastIdx) return 7
-              return 0
+        type: 'line',
+        data: {
+          labels: labels.slice(),
+          datasets: [
+            {
+              data: values,
+              borderColor: CHART_LINE,
+              backgroundColor: withSale ? gradient : 'transparent',
+              borderWidth: 2.5,
+              fill: withSale,
+              tension: 0.35,
+              cubicInterpolationMode: 'monotone',
+              pointRadius(ctxPt) {
+                const i = ctxPt.dataIndex
+                if (!withSale) return i === 0 ? 4 : 0
+                if (i === 0) return 4
+                if (i === lastIdx) return 6
+                return 0
+              },
+              pointBackgroundColor: CHART_LINE,
+              pointBorderColor: CHART_LINE,
+              pointHoverRadius: 5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 350 },
+          interaction: { mode: 'index', intersect: false },
+          layout: {
+            padding: { top: 4, right: 6, bottom: 0, left: 0 }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              enabled: true,
+              displayColors: false,
+              callbacks: {
+                label(ctxTip) {
+                  return formatSom(ctxTip.parsed.y)
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              display: false,
+              grid: { display: false }
             },
-            pointBackgroundColor: CHART_LINE,
-            pointBorderColor: CHART_LINE,
-            pointHoverRadius: 0
+            y: {
+              display: true,
+              min: 0,
+              grace: '8%',
+              border: { display: false },
+              grid: {
+                color: 'rgba(148, 163, 184, 0.22)',
+                drawBorder: false
+              },
+              ticks: {
+                maxTicksLimit: 5,
+                padding: 6,
+                color: '#94A3B8',
+                font: { size: 11, weight: '500' },
+                callback(value) {
+                  return formatAxisAmount(value)
+                }
+              }
+            }
+          },
+          elements: {
+            line: { borderJoinStyle: 'round' }
           }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 400 },
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false }
-        },
-        scales: {
-          x: { display: false, grid: { display: false } },
-          y: { display: false, grid: { display: false }, min: 0 }
-        },
-        elements: {
-          line: { borderJoinStyle: 'round' }
         }
-      }
-    })
+      })
+
+      renderChartXLabels(labels)
     } catch (error) {
       console.error('Error creating revenue chart:', error)
-      if (revenueChart) {
-        try {
-          revenueChart.destroy()
-        } catch (destroyError) {
-          console.warn('Error destroying chart after creation failure:', destroyError)
-        }
-        revenueChart = null
-      }
+      destroyRevenueChart()
     }
+  }
+
+  function stopChartRangeFetch() {
+    if (typeof chartRangeUnsub === 'function') {
+      try { chartRangeUnsub() } catch (e) { /* ignore */ }
+    }
+    chartRangeUnsub = null
+  }
+
+  function paintChartFromRows(rows) {
+    updateChartStatusPill(chartFilter)
+    updateGroupingLabel(chartFilter)
+    const series = buildChartSeries(rows || [], chartFilter)
+    renderRevenueChart(series)
+    setChartLoading(false)
+  }
+
+  function fetchChartRange(filter) {
+    const shopId = typeof currentShopId !== 'undefined' ? currentShopId : window.currentShopId
+    if (!shopId || typeof db === 'undefined') {
+      paintChartFromRows([])
+      return
+    }
+
+    const requestId = ++chartRequestId
+    setChartLoading(true)
+    stopChartRangeFetch()
+
+    const range = getChartRange(filter)
+    let query
+    try {
+      query = db.collection('shops').doc(shopId).collection('sales')
+        .where('createdAt', '>=', range.start)
+        .where('createdAt', '<', range.end)
+    } catch (error) {
+      console.error('Failed to build chart range query:', error)
+      if (requestId === chartRequestId) {
+        paintChartFromRows([])
+      }
+      return
+    }
+
+    query.get()
+      .then(snap => {
+        if (requestId !== chartRequestId || chartFilter !== filter) return
+        const rows = []
+        snap.forEach(doc => rows.push(normalizeSaleDoc(doc)))
+        chartSalesRows = rows
+        paintChartFromRows(rows)
+      })
+      .catch(err => {
+        console.error('Chart range fetch failed:', err)
+        if (requestId !== chartRequestId || chartFilter !== filter) return
+        chartSalesRows = []
+        paintChartFromRows([])
+      })
+  }
+
+  function refreshChart({ showLoading } = {}) {
+    if (chartFilter === 'bugun') {
+      stopChartRangeFetch()
+      chartRequestId += 1
+      if (showLoading) setChartLoading(true)
+      chartSalesRows = todaySalesRows
+      paintChartFromRows(chartSalesRows)
+      return
+    }
+    if (showLoading !== false) setChartLoading(true)
+    fetchChartRange(chartFilter)
+  }
+
+  function bindChartFilterTabs() {
+    if (chartTabsBound) return
+    const tabs = document.getElementById('chartFilterTabs')
+    if (!tabs) return
+    chartTabsBound = true
+    tabs.addEventListener('click', e => {
+      const btn = e.target.closest('[data-chart-filter]')
+      if (!btn || !tabs.contains(btn)) return
+      const filter = btn.getAttribute('data-chart-filter')
+      if (!CHART_FILTERS.includes(filter) || filter === chartFilter) return
+      chartFilter = filter
+      setActiveChartTab(filter)
+      refreshChart({ showLoading: true })
+    })
+  }
+
+  function resetChartFilterUi() {
+    chartFilter = 'bugun'
+    setActiveChartTab('bugun')
+    updateChartStatusPill('bugun')
+    updateGroupingLabel('bugun')
+    setChartLoading(false)
   }
 
   function renderDashboardFromCache() {
     if (dashboardHadError) return
     const sorted = sortTodayNewestFirst(todaySalesRows)
     updateStatsAndRecent(sorted)
-    updateChart(sorted)
+    if (chartFilter === 'bugun') {
+      refreshChart({ showLoading: false })
+    }
     // Adjust font sizes after data updates
     adjustAllStatNumbers()
     // Setup resize observer after content is rendered
@@ -558,10 +883,10 @@
     todaySalesUnsub = null
     yesterdaySalesUnsub = null
     nasiyaUnsub = null
-    if (revenueChart) {
-      revenueChart.destroy()
-      revenueChart = null
-    }
+    stopChartRangeFetch()
+    chartRequestId += 1
+    chartSalesRows = []
+    destroyRevenueChart()
     // Cleanup resize observer
     if (typeof cleanupResizeObserver === 'function') {
       cleanupResizeObserver()
@@ -589,6 +914,8 @@
 
     cleanupDashboardListeners()
     showDashboardLoading()
+    bindChartFilterTabs()
+    resetChartFilterUi()
 
     const { todayStart, tomorrowStart } = getTodayBounds()
     const { yesterdayStart, todayStart: yEnd } = getYesterdayBounds()

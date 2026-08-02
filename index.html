@@ -429,19 +429,30 @@ Hammasini o'chirish
       <!-- CHART CARD -->
       <div id="chartCard" class="dashboard-chart-card hidden">
         <div class="dashboard-chart-header">
-          <div class="dashboard-chart-title">Bugungi savdo grafigi</div>
-          <span class="dashboard-live-pill">Jonli</span>
+          <div class="dashboard-chart-title">Savdo grafigi</div>
+          <span id="chartStatusPill" class="dashboard-live-pill">Jonli</span>
         </div>
-        <div class="dashboard-chart-wrapper">
+
+        <div class="dashboard-chart-tabs" id="chartFilterTabs" role="tablist" aria-label="Grafik filtri">
+          <button type="button" class="dashboard-chart-tab" data-chart-filter="kecha" role="tab">Kecha</button>
+          <button type="button" class="dashboard-chart-tab is-active" data-chart-filter="bugun" role="tab" aria-selected="true">Bugun</button>
+          <button type="button" class="dashboard-chart-tab" data-chart-filter="hafta" role="tab">Hafta</button>
+          <button type="button" class="dashboard-chart-tab" data-chart-filter="oy" role="tab">Oy</button>
+          <button type="button" class="dashboard-chart-tab" data-chart-filter="yil" role="tab">Yil</button>
+        </div>
+
+        <div class="dashboard-chart-subheader">
+          <div class="dashboard-chart-series-title">Sotuvlar</div>
+          <div id="chartGroupingLabel" class="dashboard-chart-grouping">Tafsilotlar: soatlar bo'yicha</div>
+        </div>
+
+        <div class="dashboard-chart-wrapper" id="chartPlotWrap">
+          <div id="chartLoadingOverlay" class="dashboard-chart-loading hidden" aria-hidden="true">
+            <div class="dashboard-chart-loading-spinner"></div>
+          </div>
           <canvas id="revenueChart"></canvas>
         </div>
-        <div class="dashboard-chart-xlabels">
-          <span>09:00</span>
-          <span>11:00</span>
-          <span>13:00</span>
-          <span>15:00</span>
-          <span>Hozir</span>
-        </div>
+        <div class="dashboard-chart-xlabels" id="chartXLabels"></div>
       </div>
 
       <!-- RECENT SALES -->

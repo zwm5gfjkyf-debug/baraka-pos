@@ -6080,7 +6080,7 @@ SALE HEADER ACTIONS (NEW)
 
 .dashboard-chart-card {
   border-radius: 24px;
-  padding: 20px;
+  padding: 18px 18px 16px;
   border: 1px solid #E5E7EB;
   background: white;
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
@@ -6092,7 +6092,7 @@ SALE HEADER ACTIONS (NEW)
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .dashboard-chart-title {
@@ -6113,9 +6113,73 @@ SALE HEADER ACTIONS (NEW)
   font-weight: 700;
 }
 
+.dashboard-live-pill.is-historical {
+  background: #F1F5F9;
+  color: #64748B;
+}
+
+.dashboard-chart-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  background: #F1F5F9;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.dashboard-chart-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.dashboard-chart-tab {
+  flex: 1 1 0;
+  min-width: max-content;
+  border: none;
+  background: transparent;
+  color: #64748B;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 10px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dashboard-chart-tab.is-active {
+  background: #FFFFFF;
+  color: #0F172A;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.10);
+}
+
+.dashboard-chart-subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.dashboard-chart-series-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.dashboard-chart-grouping {
+  font-size: 12px;
+  font-weight: 500;
+  color: #94A3B8;
+  white-space: nowrap;
+}
+
 .dashboard-chart-wrapper {
   position: relative;
-  height: 160px;
+  height: 240px;
 }
 
 .dashboard-chart-wrapper canvas {
@@ -6123,12 +6187,51 @@ SALE HEADER ACTIONS (NEW)
   height: 100% !important;
 }
 
+.dashboard-chart-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 12px;
+}
+
+.dashboard-chart-loading.hidden {
+  display: none !important;
+}
+
+.dashboard-chart-loading-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid #E2E8F0;
+  border-top-color: #166534;
+  animation: dashboardChartSpin 0.7s linear infinite;
+}
+
+@keyframes dashboardChartSpin {
+  to { transform: rotate(360deg); }
+}
+
 .dashboard-chart-xlabels {
   display: flex;
   justify-content: space-between;
-  margin-top: 14px;
+  gap: 4px;
+  margin-top: 10px;
   color: #94A3B8;
-  font-size: 12px;
+  font-size: 11px;
+  overflow: hidden;
+}
+
+.dashboard-chart-xlabels span {
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dashboard-section-title-row {
@@ -6433,7 +6536,7 @@ SALE HEADER ACTIONS (NEW)
 
   .dashboard-chart-header {
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .dashboard-chart-title {
@@ -6445,13 +6548,22 @@ SALE HEADER ACTIONS (NEW)
     font-size: 11px;
   }
 
+  .dashboard-chart-tabs {
+    margin-bottom: 12px;
+  }
+
+  .dashboard-chart-tab {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+
   .dashboard-chart-wrapper {
-    height: 140px;
+    height: 210px;
   }
 
   .dashboard-chart-xlabels {
-    margin-top: 10px;
-    font-size: 11px;
+    margin-top: 8px;
+    font-size: 10px;
   }
 
   .dashboard-section-title-row {
@@ -6573,7 +6685,7 @@ SALE HEADER ACTIONS (NEW)
   }
 
   .dashboard-chart-wrapper {
-    height: 120px;
+    height: 200px;
   }
 
   .dashboard-section-title {
