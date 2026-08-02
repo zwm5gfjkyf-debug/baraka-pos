@@ -51,7 +51,8 @@ ROOT VARIABLES
   --transition-normal:0.25s ease;
 
   /* BOTTOM NAV (fixed bar clearance) */
-  --bottom-nav-height:70px;
+  --bottom-nav-height:60px;
+  --bottom-nav-icon:clamp(1.375rem, 3.6vw, 1.625rem); /* ~22–26px */
   --bottom-nav-safe:env(safe-area-inset-bottom, 0px);
   --bottom-nav-total:calc(var(--bottom-nav-height) + var(--bottom-nav-safe));
   --bottom-content-pad:calc(var(--bottom-nav-total) + 16px);
@@ -1396,22 +1397,21 @@ BOTTOM NAVIGATION (iPhone style)
   right:0 !important;
   top:auto !important;
   width:100%;
-  max-width:100vw;
-  height:auto;
-  min-height:var(--bottom-nav-height);
+  max-width:min(100vw, 720px);
+  margin:0 auto;
+  height:var(--bottom-nav-total);
+  min-height:var(--bottom-nav-total);
+  max-height:var(--bottom-nav-total);
   display:flex;
   justify-content:space-around;
-  align-items:center;
+  align-items:stretch;
   background:rgba(255,255,255,0.95);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   border-top:1px solid var(--border);
   z-index:10050;
   box-sizing:border-box;
-  padding-top:0;
-  padding-bottom:var(--bottom-nav-safe);
-  /* Keep bar out of document flow / scroll containers */
-  margin:0;
+  padding:4px 4px var(--bottom-nav-safe);
   transform:none !important;
   transition:transform 0.18s ease, opacity 0.18s ease, visibility 0.18s ease;
 }
@@ -1423,44 +1423,84 @@ body.keyboard-open .bottom-nav{
   visibility:hidden;
   pointer-events:none;
 }
-/* NAV BUTTON */
-.bottom-nav button{
-  flex:1;
 
+/* NAV BUTTON — compact tap target, icon + label stacked */
+.bottom-nav button,
+.bottom-nav .nav-btn{
+  flex:1 1 0;
+  min-width:0;
+  max-width:100%;
+  height:100%;
+  min-height:0;
+  max-height:100%;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-
-  gap:4px;
-  min-height:var(--bottom-nav-height);
-  padding:8px 4px;
-
-  font-size:11px;
-
+  gap:2px;
+  padding:4px 2px 2px;
+  margin:0;
+  font-size:0.6875rem; /* 11px */
+  line-height:1.1;
   color:var(--text-soft);
-
   background:transparent;
   border:none;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+
+/* Icon wrapper — hard-cap size so SVG cannot inflate flex layout */
+.bottom-nav .nav-icon{
+  width:var(--bottom-nav-icon);
+  height:var(--bottom-nav-icon);
+  min-width:var(--bottom-nav-icon);
+  min-height:var(--bottom-nav-icon);
+  max-width:var(--bottom-nav-icon);
+  max-height:var(--bottom-nav-icon);
+  flex:0 0 var(--bottom-nav-icon);
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  line-height:0;
+}
+
+.bottom-nav .nav-icon svg{
+  width:var(--bottom-nav-icon) !important;
+  height:var(--bottom-nav-icon) !important;
+  max-width:var(--bottom-nav-icon) !important;
+  max-height:var(--bottom-nav-icon) !important;
+  display:block;
+  flex:none;
+}
+
+.bottom-nav .nav-label{
+  font-size:inherit;
+  font-weight:500;
+  line-height:1.15;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
 }
 
 /* ACTIVE TAB */
-.bottom-nav button.active{
+.bottom-nav button.active,
+.bottom-nav .nav-btn.active{
   color:var(--blue);
 }
 
 /* ACTIVE INDICATOR DOT */
-.bottom-nav button.active::after{
+.bottom-nav button.active::after,
+.bottom-nav .nav-btn.active::after{
   content:"";
-
-  width:6px;
-  height:6px;
-
+  width:5px;
+  height:5px;
   border-radius:50%;
-
-  background:var(--blue);
-
-  margin-top:2px;
+  background:currentColor;
+  margin-top:1px;
+  flex:0 0 auto;
 }
 
 .payment-methods-panel{
@@ -1572,6 +1612,7 @@ RESPONSIVE (TABLET + DESKTOP)
 
   :root{
     --bottom-nav-height:64px;
+    --bottom-nav-icon:clamp(1.5rem, 2.2vw, 1.75rem); /* ~24–28px */
   }
 
   .main-content{
@@ -1581,10 +1622,28 @@ RESPONSIVE (TABLET + DESKTOP)
     padding-bottom:var(--bottom-content-pad);
   }
 
-  .bottom-nav button{
-    font-size:13px;
+  .bottom-nav{
+    max-width:min(100vw, 840px);
   }
 
+  .bottom-nav button,
+  .bottom-nav .nav-btn{
+    font-size:0.75rem; /* 12px */
+  }
+
+}
+
+@media (min-width:1440px){
+  .bottom-nav{
+    max-width:min(100vw, 960px);
+    left:50%;
+    right:auto;
+    transform:translateX(-50%) !important;
+  }
+
+  body.keyboard-open .bottom-nav{
+    transform:translate(-50%, 110%) !important;
+  }
 }
 
 /* ======================
@@ -4682,6 +4741,18 @@ NO OVERFLOW BUGS
 *{
   max-width:100%;
 }
+
+/* Prevent SVG / img flex blow-up from the global max-width rule above */
+svg, img{
+  max-width:100%;
+  height:auto;
+}
+
+.bottom-nav svg,
+.bottom-nav img{
+  height:auto;
+  max-height:var(--bottom-nav-icon);
+}
 /* =====================================================
 FIX — REMOVE SIDE SPACES ON LAPTOP
 KEEP MOBILE PERFECT
@@ -5862,33 +5933,7 @@ SALE HEADER ACTIONS (NEW)
   margin-bottom:2px;
 }
 
-/* =====================================================
-BOTTOM NAVIGATION (redundant - consolidated at line 1364)
-===================================================== */
-
-  border-radius: 50%;
-  background: #1976D2;
-  margin-top: 4px;
-}
-
-.nav-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.nav-icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.nav-label {
-  font-size: 11px;
-  font-weight: 500;
-}
+/* .nav-icon / .nav-label sizing lives with .bottom-nav above */
 
 .dashboard-page-inner {
   padding: 16px 12px 20px;
