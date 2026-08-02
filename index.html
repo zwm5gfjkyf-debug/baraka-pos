@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#020617">
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Baraka</title>
 
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2838/2838895.png">
@@ -914,10 +914,11 @@ Hammasini o'chirish
     </div>
   </div>
 
- 
+  <div id="tahlilHubContent" class="tahlil-hub-inner hidden">
     <div class="tahlil-hub-header">
       <div class="tahlil-hub-header-left">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <div class="tahlil-hub-icon-blue" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M4 19V5" stroke="white" stroke-width="2" stroke-linecap="round"/>
             <path d="M4 19H20" stroke="white" stroke-width="2" stroke-linecap="round"/>
             <path d="M8 16V10" stroke="white" stroke-width="2" stroke-linecap="round"/>
@@ -925,11 +926,11 @@ Hammasini o'chirish
             <path d="M16 16V13" stroke="white" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
-   
-         
+        <div>
+          <div class="tahlil-hub-eyebrow">Tahlil</div>
+          <div class="tahlil-hub-heading">Hisobotlar</div>
         </div>
       </div>
-     
     </div>
 
     <div class="tahlil-hub-quick-stats">
@@ -1005,29 +1006,29 @@ Hammasini o'chirish
       <span class="tahlil-hub-chevron">›</span>
     </button>
 
-      <div class="tahlil-hub-summary-head">
-        <span class="tahlil-hub-summary-title">Bugungi ko'rsatkichlar</span>
-        <button type="button" class="tahlil-hub-summary-link" onclick="navigate('weeklyTahliliPage')">Batafsil →</button>
-      </div>
-      <div class="tahlil-hub-summary-row">
-        <span class="tahlil-dot tahlil-dot-blue"></span>
-        <span class="tahlil-hub-summary-label">Jami tushum</span>
-        <span id="tahlilSummaryRevenue" class="tahlil-hub-summary-val">0 so'm</span>
-      </div>
-      <div class="tahlil-hub-divider"></div>
-      <div class="tahlil-hub-summary-row">
-        <span class="tahlil-dot tahlil-dot-green"></span>
-        <span class="tahlil-hub-summary-label">Jami foyda</span>
-        <span id="tahlilSummaryProfit" class="tahlil-hub-summary-val tahlil-summary-profit">0 so'm</span>
-      </div>
-      <div class="tahlil-hub-divider"></div>
-      <div class="tahlil-hub-summary-row">
-        <span class="tahlil-dot tahlil-dot-orange"></span>
-        <span class="tahlil-hub-summary-label">Sotuvlar soni</span>
-        <span id="tahlilSummaryCount" class="tahlil-hub-summary-val">0 ta</span>
-      </div>
+    <div class="tahlil-hub-summary-head">
+      <span class="tahlil-hub-summary-title">Bugungi ko'rsatkichlar</span>
+      <button type="button" class="tahlil-hub-summary-link" onclick="navigate('weeklyTahliliPage')">Batafsil →</button>
+    </div>
+    <div class="tahlil-hub-summary-row">
+      <span class="tahlil-dot tahlil-dot-blue"></span>
+      <span class="tahlil-hub-summary-label">Jami tushum</span>
+      <span id="tahlilSummaryRevenue" class="tahlil-hub-summary-val">0 so'm</span>
+    </div>
+    <div class="tahlil-hub-divider"></div>
+    <div class="tahlil-hub-summary-row">
+      <span class="tahlil-dot tahlil-dot-green"></span>
+      <span class="tahlil-hub-summary-label">Jami foyda</span>
+      <span id="tahlilSummaryProfit" class="tahlil-hub-summary-val tahlil-summary-profit">0 so'm</span>
+    </div>
+    <div class="tahlil-hub-divider"></div>
+    <div class="tahlil-hub-summary-row">
+      <span class="tahlil-dot tahlil-dot-orange"></span>
+      <span class="tahlil-hub-summary-label">Sotuvlar soni</span>
+      <span id="tahlilSummaryCount" class="tahlil-hub-summary-val">0 ta</span>
     </div>
   </div>
+</div>
 
 <!-- DOKON TAHLILI (child) -->
 <div id="dokonTahliliPage" class="page hidden tahlil-page-bg">
@@ -1908,6 +1909,8 @@ Bekor qilish
   </button>
 
 </div>
+
+</div><!-- /#appScreen -->
 
 <!-- ✅ CHART.JS FIRST (NO DEFER) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -49,6 +49,12 @@ ROOT VARIABLES
   /* TRANSITIONS */
   --transition-fast:0.15s ease;
   --transition-normal:0.25s ease;
+
+  /* BOTTOM NAV (fixed bar clearance) */
+  --bottom-nav-height:70px;
+  --bottom-nav-safe:env(safe-area-inset-bottom, 0px);
+  --bottom-nav-total:calc(var(--bottom-nav-height) + var(--bottom-nav-safe));
+  --bottom-content-pad:calc(var(--bottom-nav-total) + 16px);
 }
 
 /* ======================
@@ -110,15 +116,22 @@ h2{ font-size:20px; }
 h3{ font-size:16px; }
 
 /* =====================================================
-PAGE VISIBILITY SAFETY RULES (BUG #2 FIX)
-All pages hidden by default, JS shows the correct one
+PAGE VISIBILITY SAFETY RULES
+All .page elements hidden by default; only the active
+page (without .hidden) is shown. Use display:none so
+inactive pages take no layout / click / scroll space.
 ===================================================== */
-.page {
+.page,
+.page.hidden {
   display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .page:not(.hidden) {
   display: block !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 /* 🔥 DISCOUNT MODAL FIX */
@@ -249,7 +262,7 @@ font-weight:700;
 /* 🔥 FLOAT BUTTON */
 #floatingAddBtn {
   position:fixed;
-  bottom:84px;
+  bottom:calc(var(--bottom-nav-total) + 14px);
   right:20px;
   width:60px;
   height:60px;
@@ -264,7 +277,7 @@ font-weight:700;
 
 #centerNavHandle {
   position:fixed;
-  bottom:104px;
+  bottom:calc(var(--bottom-nav-total) + 34px);
   left:50%;
   transform:translateX(-50%);
   width:44px;
@@ -1170,9 +1183,11 @@ APP SCREEN WRAPPER
   flex-direction:column;
   position:relative;
   height:100vh;
+  height:100dvh;
   min-height:100vh;
+  min-height:100dvh;
   overflow-x:hidden;
-  overflow-y:auto;
+  overflow-y:hidden; /* scroll lives in .main-content — keeps fixed nav viewport-pinned */
   max-width:none;
   margin:0;
   width:100%;
@@ -1340,14 +1355,15 @@ MAIN CONTENT
   flex:1;
   min-height:0;
   overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
   padding:12px;
   padding-top:80px;
-  padding-bottom:70px;
+  padding-bottom:var(--bottom-content-pad);
   width:100%;
 }
 
 .baraka-main-scroll{
-  padding-bottom:70px;
+  padding-bottom:var(--bottom-content-pad);
 }
 
 /* ======================
@@ -1375,21 +1391,37 @@ BOTTOM NAVIGATION (iPhone style)
 
 .bottom-nav{
   position:fixed !important;
-  bottom:0;
-  left:0;
-  right:0;
+  bottom:0 !important;
+  left:0 !important;
+  right:0 !important;
+  top:auto !important;
   width:100%;
   max-width:100vw;
-  height:70px;
+  height:auto;
+  min-height:var(--bottom-nav-height);
   display:flex;
   justify-content:space-around;
   align-items:center;
   background:rgba(255,255,255,0.95);
   backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   border-top:1px solid var(--border);
-  z-index:9999;
+  z-index:10050;
   box-sizing:border-box;
-  padding-bottom:env(safe-area-inset-bottom, 0px);
+  padding-top:0;
+  padding-bottom:var(--bottom-nav-safe);
+  /* Keep bar out of document flow / scroll containers */
+  margin:0;
+  transform:none !important;
+  transition:transform 0.18s ease, opacity 0.18s ease, visibility 0.18s ease;
+}
+
+/* Hide fixed nav while soft keyboard is open (avoids mid-screen float on iOS/Android) */
+body.keyboard-open .bottom-nav{
+  transform:translateY(110%) !important;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
 }
 /* NAV BUTTON */
 .bottom-nav button{
@@ -1401,12 +1433,15 @@ BOTTOM NAVIGATION (iPhone style)
   justify-content:center;
 
   gap:4px;
+  min-height:var(--bottom-nav-height);
+  padding:8px 4px;
 
   font-size:11px;
 
   color:var(--text-soft);
 
   background:transparent;
+  border:none;
 }
 
 /* ACTIVE TAB */
@@ -1535,12 +1570,15 @@ RESPONSIVE (TABLET + DESKTOP)
 
 @media (min-width:768px){
 
-  .main-content{
-    padding:20px;
+  :root{
+    --bottom-nav-height:64px;
   }
 
-  .bottom-nav{
-    height:64px;
+  .main-content{
+    padding-top:80px;
+    padding-left:20px;
+    padding-right:20px;
+    padding-bottom:var(--bottom-content-pad);
   }
 
   .bottom-nav button{
@@ -4659,6 +4697,7 @@ KEEP MOBILE PERFECT
 
     padding-left:24px;
     padding-right:24px;
+    padding-bottom:var(--bottom-content-pad);
   }
 
 }
@@ -5323,8 +5362,11 @@ SALE PAGE — NEW CLEAN IOS DESIGN
 
 
 
+/* Keep page isolation even if later rules target #pageIds */
 .page.hidden{
   display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
 }
 
 
@@ -5361,7 +5403,7 @@ FINAL — CLEAN BUTTON SYSTEM (NO BUGS)
 #stockPage #cameraSection{
   position: fixed;
 
-  bottom: calc(70px + 15px); /* 🔥 NAV HEIGHT + GAP */
+  bottom: calc(var(--bottom-nav-total) + 15px); /* 🔥 NAV HEIGHT + GAP */
   left: 50%;
   transform: translateX(-50%);
 
@@ -6241,19 +6283,7 @@ BOTTOM NAVIGATION (redundant - consolidated at line 1364)
 .page-asosiy {
   background: #F4F6FA !important;
   min-height: 100%;
-  padding-bottom: 120px;
-}
-
-@media (max-width: 768px) {
-  .page-asosiy {
-    padding-bottom: 120px;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-asosiy {
-    padding-bottom: 115px;
-  }
+  padding-bottom: var(--bottom-content-pad);
 }
 
 .dashboard-card-secondary .dashboard-card-label {
@@ -6578,7 +6608,7 @@ BOTTOM NAVIGATION (redundant - consolidated at line 1364)
 
 .fab-new-sale {
   position: fixed;
-  bottom: 88px;
+  bottom: calc(var(--bottom-nav-total) + 18px);
   right: 20px;
   width: 56px;
   height: 56px;
@@ -6600,7 +6630,7 @@ BOTTOM NAVIGATION (redundant - consolidated at line 1364)
 
 @media (max-width: 480px) {
   .fab-new-sale {
-    bottom: 90px;
+    bottom: calc(var(--bottom-nav-total) + 20px);
     right: 12px;
     width: 52px;
     height: 52px;
@@ -6612,7 +6642,7 @@ BOTTOM NAVIGATION (redundant - consolidated at line 1364)
 .page-today-sales {
   background: #F4F6FA;
   min-height: 100%;
-  padding-bottom: 120px;
+  padding-bottom: var(--bottom-content-pad);
 }
 
 .today-sales-history-inner {
@@ -7215,9 +7245,14 @@ Mobile-first responsive design
 #weeklyTahliliPage,
 #monthlyTahliliPage,
 #nasiyaTahliliPage {
-  background: #ffffff; /* Changed from #f2f2f2 to white for cleaner, more open feel */
+  background: #ffffff;
   min-height: calc(100vh - 68px);
-  padding-bottom: 120px; /* Increased from 100px for better bottom spacing */
+  padding-bottom: var(--bottom-content-pad);
+}
+
+#salePage,
+#stockPage {
+  padding-bottom: var(--bottom-content-pad);
 }
 
 .tahlil-page-bg {
@@ -7288,9 +7323,9 @@ Mobile-first responsive design
 }
 
 .tahlil-hub-inner {
-  padding: 0 8px; /* Reduced from 0 to add minimal horizontal padding, removed bottom padding */
-  padding-bottom: 120px; /* Added bottom padding for proper spacing */
-  max-width: none; /* Ensure full width usage */
+  padding: 0 8px;
+  padding-bottom: var(--bottom-content-pad);
+  max-width: none;
 }
 
 .tahlil-hub-header {

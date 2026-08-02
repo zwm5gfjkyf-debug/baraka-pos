@@ -14,6 +14,17 @@ function hideSaleFlowPages(){
   })
 }
 
+function hideAllPagesExcept(activePageId){
+  document.querySelectorAll('.page').forEach(p => {
+    const isActive = !!activePageId && p.id === activePageId
+    p.classList.toggle('hidden', !isActive)
+    // Clear any leftover inline display from overlay flows (e.g. paymentPage)
+    p.style.removeProperty('display')
+    p.style.removeProperty('visibility')
+    p.style.removeProperty('pointer-events')
+  })
+}
+
 function navigate(pageId){
   const previousPage = currentPage
   currentPage = pageId
@@ -21,13 +32,10 @@ function navigate(pageId){
 
   const loggedIn = typeof auth !== 'undefined' && auth.currentUser
 
-  document.querySelectorAll('.page').forEach(p => {
-    p.classList.add('hidden')
-    p.style.removeProperty('display')
-  })
-
   const page = document.getElementById(pageId)
-  if(page){
+  hideAllPagesExcept(page ? pageId : null)
+  if(page && !page.classList.contains('page')){
+    // Safety: targets without .page still get shown explicitly
     page.classList.remove('hidden')
   }
 
@@ -53,8 +61,9 @@ function navigate(pageId){
 
   const mainContent = document.querySelector('.main-content')
   if(mainContent){
+    // Keep top offset for fixed header; bottom clearance comes from CSS --bottom-content-pad
     mainContent.style.paddingTop = '80px'
-    mainContent.style.paddingBottom = '70px'
+    mainContent.style.removeProperty('padding-bottom')
   }
 
   if(previousPage === 'todaySalesHistoryPage' && pageId !== 'todaySalesHistoryPage' && typeof cleanupTodaySalesHistoryListeners === 'function'){

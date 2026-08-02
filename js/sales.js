@@ -1237,15 +1237,16 @@ function openPaymentPage(){
   const actions = document.getElementById("saleActions")
   const nav = document.querySelector(".bottom-nav")
 
-  // ✅ HIDE SALE UI
-  if(salePage) salePage.classList.add("hidden")
+  // ✅ HIDE SALE UI / SHOW ONLY PAYMENT
   if(actions) actions.style.display = "none"
   if(nav) nav.style.display = "none"
 
-  // ✅ SHOW PAYMENT PAGE FULL
-  if(paymentPage){
+  if(typeof hideAllPagesExcept === "function"){
+    hideAllPagesExcept("paymentPage")
+  } else if(paymentPage){
+    if(salePage) salePage.classList.add("hidden")
     paymentPage.classList.remove("hidden")
-    paymentPage.style.display = "block"
+    paymentPage.style.removeProperty("display")
   }
 
   let lastId = Number(localStorage.getItem("lastTransactionId") || 0)
@@ -1295,18 +1296,21 @@ function openPaymentPage(){
   updatePaymentEmptyState()
 }
 function closePaymentPage(){
-
-  const salePage = document.getElementById("salePage")
-  const paymentPage = document.getElementById("paymentPage")
   const actions = document.getElementById("saleActions")
   const nav = document.querySelector(".bottom-nav")
 
-  if(paymentPage){
-    paymentPage.classList.add("hidden")
-    paymentPage.style.removeProperty("display")
+  if(typeof hideAllPagesExcept === "function"){
+    hideAllPagesExcept("salePage")
+  } else {
+    const salePage = document.getElementById("salePage")
+    const paymentPage = document.getElementById("paymentPage")
+    if(paymentPage){
+      paymentPage.classList.add("hidden")
+      paymentPage.style.removeProperty("display")
+    }
+    if(salePage) salePage.classList.remove("hidden")
   }
 
-  if(salePage) salePage.classList.remove("hidden")
   if(actions) actions.style.display = ""
   if(nav) nav.style.display = (typeof auth !== "undefined" && auth.currentUser) ? "flex" : "none"
 }
@@ -1350,18 +1354,22 @@ function handlePaymentSave(){
   completeSale()
 }
 function openDebtPage(){
-
+  if(typeof hideAllPagesExcept === "function"){
+    hideAllPagesExcept("debtCustomerPage")
+    return
+  }
   const paymentPage = document.getElementById("paymentPage")
   const debtPage = document.getElementById("debtCustomerPage")
-
   if(paymentPage) paymentPage.classList.add("hidden")
   if(debtPage) debtPage.classList.remove("hidden")
 }
 function closeDebtPage(){
-
+  if(typeof hideAllPagesExcept === "function"){
+    hideAllPagesExcept("paymentPage")
+    return
+  }
   const debtPage = document.getElementById("debtCustomerPage")
   const paymentPage = document.getElementById("paymentPage")
-
   if(debtPage) debtPage.classList.add("hidden")
   if(paymentPage) paymentPage.classList.remove("hidden")
 }
@@ -1383,32 +1391,38 @@ function saveDebtSale(){
   completeSale()
 }
 function openSuccessPage(){
-
-  const payment = document.getElementById("paymentPage")
-  const debt = document.getElementById("debtCustomerPage")
-  const success = document.getElementById("successPage")
   const nav = document.querySelector(".bottom-nav")
   const actions = document.getElementById("saleActions")
 
-  if(payment) payment.classList.add("hidden")
-  if(debt) debt.classList.add("hidden")
+  if(typeof hideAllPagesExcept === "function"){
+    hideAllPagesExcept("successPage")
+  } else {
+    const payment = document.getElementById("paymentPage")
+    const debt = document.getElementById("debtCustomerPage")
+    const success = document.getElementById("successPage")
+    if(payment) payment.classList.add("hidden")
+    if(debt) debt.classList.add("hidden")
+    if(success) success.classList.remove("hidden")
+  }
 
   // 🔥 hide UI behind
   if(nav) nav.style.display = "none"
   if(actions) actions.style.display = "none"
-
-  if(success) success.classList.remove("hidden")
 }
 function finishSaleFlow(){
 
-  const success = document.getElementById("successPage")
-  const sale = document.getElementById("salePage")
   const nav = document.querySelector(".bottom-nav")
   const actions = document.getElementById("saleActions")
 
-  // ✅ SHOW SALE PAGE
-  if(success) success.classList.add("hidden")
-  if(sale) sale.classList.remove("hidden")
+  // ✅ SHOW SALE PAGE ONLY
+  if(typeof hideAllPagesExcept === "function"){
+    hideAllPagesExcept("salePage")
+  } else {
+    const success = document.getElementById("successPage")
+    const sale = document.getElementById("salePage")
+    if(success) success.classList.add("hidden")
+    if(sale) sale.classList.remove("hidden")
+  }
 
   // ✅ RESTORE NAVIGATION
   if(nav) nav.style.display = (typeof auth !== "undefined" && auth.currentUser) ? "flex" : "none"
