@@ -116,15 +116,22 @@ h2{ font-size:20px; }
 h3{ font-size:16px; }
 
 /* =====================================================
-PAGE VISIBILITY SAFETY RULES (BUG #2 FIX)
-All pages hidden by default, JS shows the correct one
+PAGE VISIBILITY SAFETY RULES
+All .page elements hidden by default; only the active
+page (without .hidden) is shown. Use display:none so
+inactive pages take no layout / click / scroll space.
 ===================================================== */
-.page {
+.page,
+.page.hidden {
   display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 .page:not(.hidden) {
   display: block !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 /* 🔥 DISCOUNT MODAL FIX */
@@ -5355,8 +5362,11 @@ SALE PAGE — NEW CLEAN IOS DESIGN
 
 
 
+/* Keep page isolation even if later rules target #pageIds */
 .page.hidden{
   display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
 }
 
 
