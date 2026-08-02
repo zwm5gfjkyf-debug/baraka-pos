@@ -160,7 +160,6 @@ function resetAppStateAfterDelete(){
   const revenueEl = document.getElementById('sidebarRevenue')
   const salesCountEl = document.getElementById('sidebarSalesCount')
   const todayRevenueEl = document.getElementById('todayRevenueValue')
-  const todayTrendEl = document.getElementById('todayRevenueTrend')
 
   if(revenueEl){
     revenueEl.textContent = '0'
@@ -174,10 +173,6 @@ function resetAppStateAfterDelete(){
 
   if(todayRevenueEl){
     todayRevenueEl.textContent = '0'
-  }
-
-  if(todayTrendEl){
-    todayTrendEl.textContent = '— O\'zgarish yo\'q'
   }
 }
 

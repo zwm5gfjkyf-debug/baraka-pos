@@ -4,19 +4,17 @@
  */
 (function () {
   let todaySalesUnsub = null
-  let yesterdaySalesUnsub = null
   let todayHistoryUnsub = null
   let chartRangeUnsub = null
 
   let revenueChart = null
   let todaySalesRows = []
-  let yesterdaySalesRows = []
   let chartSalesRows = []
   let chartFilter = 'bugun'
   let chartRequestId = 0
   let chartTabsBound = false
 
-  let dashboardBoot = { today: false, yesterday: false }
+  let dashboardBoot = { today: false }
   let dashboardHadError = false
 
   const CHART_LINE = '#166534'
@@ -54,10 +52,9 @@
     
     element.style.fontSize = numberFontSize + 'px'
     
-    // Set "so'm" to be 6px smaller
-    const somSuffix = element.parentElement.querySelector('.stat-som')
-    if (somSuffix) {
-      somSuffix.style.fontSize = (numberFontSize - 6) + 'px'
+    const currencySuffix = element.parentElement && element.parentElement.querySelector('.stat-currency')
+    if (currencySuffix) {
+      currencySuffix.style.fontSize = (numberFontSize - 6) + 'px'
     }
   }
   
@@ -82,10 +79,9 @@
     
     element.style.fontSize = numberFontSize + 'px'
     
-    // Set "so'm" to be 6px smaller
-    const somSuffix = element.parentElement.querySelector('.stat-som')
-    if (somSuffix) {
-      somSuffix.style.fontSize = (numberFontSize - 6) + 'px'
+    const currencySuffix = element.parentElement && element.parentElement.querySelector('.stat-currency')
+    if (currencySuffix) {
+      currencySuffix.style.fontSize = (numberFontSize - 6) + 'px'
     }
   }
   
@@ -130,17 +126,10 @@
   }
 
   function formatSom(amount) {
+    if (typeof formatMoney === 'function') return formatMoney(amount)
     const n = safeInt(amount)
     const s = n.toLocaleString('uz-UZ').replace(/,/g, ' ')
-    return `${s} so'm`
-  }
-
-  function formatTrendPercent(pct) {
-    const n = safeInt(pct)
-    if (n === 0) return { arrow: '', text: "— O'zgarish yo'q", pos: true }
-    if (n > 0) return { arrow: '↑', text: `+${n}% kechagidan`, pos: true }
-    if (n < 0) return { arrow: '↓', text: `−${Math.abs(n)}% kechagidan`, pos: false }
-    return { arrow: '', text: "— O'zgarish yo'q", pos: true }
+    return `${s} UZS`
   }
 
   function getTodayBounds() {
@@ -149,13 +138,6 @@
     const tomorrowStart = new Date(todayStart)
     tomorrowStart.setDate(tomorrowStart.getDate() + 1)
     return { todayStart, tomorrowStart, now }
-  }
-
-  function getYesterdayBounds() {
-    const { todayStart } = getTodayBounds()
-    const yesterdayStart = new Date(todayStart)
-    yesterdayStart.setDate(yesterdayStart.getDate() - 1)
-    return { yesterdayStart, todayStart }
   }
 
   function saleCreatedAtMs(raw) {
@@ -196,19 +178,6 @@
       createdAt: raw.createdAt || null,
       _sortMs: saleCreatedAtMs(raw)
     }
-  }
-
-  function sumYesterdayRevenue(rows) {
-    return rows.reduce((s, r) => s + safeInt(r.total ?? r.amount), 0)
-  }
-
-  function revenueChangePercent(todayRev, yesterdayRev) {
-    const t = safeInt(todayRev)
-    const y = safeInt(yesterdayRev)
-    if (t === 0 && y === 0) return 0
-    if (y === 0 && t > 0) return 100
-    if (y === 0) return 0
-    return Math.round(((t - y) / y) * 100)
   }
 
   function startOfDay(d) {
@@ -396,7 +365,7 @@
 
   function showDashboardLoading() {
     dashboardHadError = false
-    dashboardBoot = { today: false, yesterday: false }
+    dashboardBoot = { today: false }
     const loading = document.getElementById('loadingState')
     const stats = document.getElementById('statsGrid')
     const chart = document.getElementById('chartCard')
@@ -439,35 +408,17 @@
   function updateStatsAndRecent(sortedToday) {
     const todayRev = sortedToday.reduce((s, r) => s + safeInt(r.total), 0)
     const todayProfit = sortedToday.reduce((s, r) => s + safeInt(r.profit), 0)
-    const yesterdayRev = sumYesterdayRevenue(yesterdaySalesRows)
-    const pct = revenueChangePercent(todayRev, yesterdayRev)
-    const trend = formatTrendPercent(pct)
 
     const revEl = document.getElementById('todayRevenueValue')
     if (revEl) {
       revEl.textContent = formatNumberWithSpaces(todayRev)
       adjustFontSizeForRevenueCard(revEl)
     }
-    const trendEl = document.getElementById('todayRevenueTrend')
-    if (trendEl) {
-      trendEl.textContent = trend.arrow ? `${trend.arrow} ${trend.text}` : trend.text
-      trendEl.style.color = 'rgba(255,255,255,0.95)'
-    }
 
     const profitVal = document.getElementById('todayProfitValue')
     if (profitVal) {
       profitVal.textContent = formatNumberWithSpaces(todayProfit)
       adjustFontSizeForProfitCard(profitVal)
-    }
-    const profitStatus = document.getElementById('todayProfitStatus')
-    if (profitStatus) {
-      if (todayProfit > 0) {
-        profitStatus.textContent = "↑ Yaxshi ko'rsatkich"
-        profitStatus.style.color = '#43A047'
-      } else {
-        profitStatus.textContent = "Hozircha sotuv yo'q"
-        profitStatus.style.color = '#9E9E9E'
-      }
     }
 
     renderRecentSales(sortedToday.slice(0, 3))
@@ -821,7 +772,7 @@
   function markBoot(key) {
     if (dashboardHadError) return
     if (!dashboardBoot[key]) dashboardBoot[key] = true
-    if (dashboardBoot.today && dashboardBoot.yesterday) {
+    if (dashboardBoot.today) {
       showDashboardContent()
     }
     renderDashboardFromCache()
@@ -830,15 +781,13 @@
   function onListenerError(err) {
     console.error('Asosiy listener error:', err)
     dashboardHadError = true
-    dashboardBoot = { today: true, yesterday: true }
+    dashboardBoot = { today: true }
     showDashboardError()
   }
 
   function cleanupDashboardListeners() {
     if (typeof todaySalesUnsub === 'function') todaySalesUnsub()
-    if (typeof yesterdaySalesUnsub === 'function') yesterdaySalesUnsub()
     todaySalesUnsub = null
-    yesterdaySalesUnsub = null
     stopChartRangeFetch()
     chartRequestId += 1
     chartSalesRows = []
@@ -874,7 +823,6 @@
     resetChartFilterUi()
 
     const { todayStart, tomorrowStart } = getTodayBounds()
-    const { yesterdayStart, todayStart: yEnd } = getYesterdayBounds()
 
     let salesCol
     try {
@@ -894,25 +842,6 @@
             todaySalesRows = []
             snap.forEach(doc => todaySalesRows.push(normalizeSaleDoc(doc)))
             markBoot('today')
-          } catch (e) {
-            onListenerError(e)
-          }
-        },
-        err => onListenerError(err)
-      )
-
-    yesterdaySalesUnsub = salesCol
-      .where('createdAt', '>=', yesterdayStart)
-      .where('createdAt', '<', yEnd)
-      .onSnapshot(
-        snap => {
-          try {
-            yesterdaySalesRows = []
-            snap.forEach(doc => {
-              const raw = doc.data() || {}
-              yesterdaySalesRows.push({ total: safeInt(raw.total ?? raw.amount) })
-            })
-            markBoot('yesterday')
           } catch (e) {
             onListenerError(e)
           }
