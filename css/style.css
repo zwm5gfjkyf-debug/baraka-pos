@@ -5947,6 +5947,11 @@ SALE HEADER ACTIONS (NEW)
   padding: 0 16px;
 }
 
+.dashboard-stat-grid > .stat-card {
+  min-width: 0;
+  width: 100%;
+}
+
 /* STAT CARD BASE */
 .stat-card {
   height: 110px;
@@ -6017,20 +6022,7 @@ SALE HEADER ACTIONS (NEW)
 
 .stat-card-secondary .stat-number {
   font-size: 26px;
-}
-
-/* Products sold count - always blue, never scales */
-.stat-count {
-  font-size: 32px !important;
-  color: #1976D2 !important;
-}
-
-.stat-card-secondary .stat-number:not(.stat-count) {
   color: #43A047;
-}
-
-#nasiyaDebtValue {
-  color: #FB8C00 !important;
 }
 
 /* STAT SOM SUFFIX */
@@ -6052,10 +6044,6 @@ SALE HEADER ACTIONS (NEW)
   color: #43A047;
 }
 
-#nasiyaDebtValue + .stat-som {
-  color: #FB8C00;
-}
-
 /* STAT HELPER (trend/status) */
 .stat-helper {
   font-size: 12px;
@@ -6067,8 +6055,7 @@ SALE HEADER ACTIONS (NEW)
   color: rgba(255, 255, 255, 0.85);
 }
 
-#todayProfitStatus[style*="color"],
-#nasiyaDebtStatus[style*="color"] {
+#todayProfitStatus[style*="color"] {
   font-weight: 600;
 }
 
