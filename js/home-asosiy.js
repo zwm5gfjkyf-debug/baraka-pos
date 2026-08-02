@@ -1,24 +1,22 @@
 /**
  * Asosiy (Home) — real-time Firestore dashboard
- * Paths: shops/{shopId}/sales, shops/{shopId}/nasiya
+ * Paths: shops/{shopId}/sales
  */
 (function () {
   let todaySalesUnsub = null
-  let yesterdaySalesUnsub = null  
-  let nasiyaUnsub = null
+  let yesterdaySalesUnsub = null
   let todayHistoryUnsub = null
   let chartRangeUnsub = null
 
   let revenueChart = null
   let todaySalesRows = []
   let yesterdaySalesRows = []
-  let nasiyaRows = []
   let chartSalesRows = []
   let chartFilter = 'bugun'
   let chartRequestId = 0
   let chartTabsBound = false
 
-  let dashboardBoot = { today: false, yesterday: false, nasiya: false }
+  let dashboardBoot = { today: false, yesterday: false }
   let dashboardHadError = false
 
   const CHART_LINE = '#166534'
@@ -200,15 +198,6 @@
     }
   }
 
-  function normalizeNasiyaDoc(doc) {
-    const raw = doc.data() || {}
-    const amount = safeInt(raw.amount)
-    const paid = safeInt(raw.paidAmount)
-    let remaining = amount - paid
-    if (!Number.isFinite(remaining) || remaining < 0) remaining = 0
-    return { id: doc.id, remaining }
-  }
-
   function sumYesterdayRevenue(rows) {
     return rows.reduce((s, r) => s + safeInt(r.total ?? r.amount), 0)
   }
@@ -220,12 +209,6 @@
     if (y === 0 && t > 0) return 100
     if (y === 0) return 0
     return Math.round(((t - y) / y) * 100)
-  }
-
-  function averageCheck(todayRev, saleCount) {
-    const n = safeInt(saleCount)
-    if (n <= 0) return 0
-    return safeInt(todayRev) / n
   }
 
   function startOfDay(d) {
@@ -413,7 +396,7 @@
 
   function showDashboardLoading() {
     dashboardHadError = false
-    dashboardBoot = { today: false, yesterday: false, nasiya: false }
+    dashboardBoot = { today: false, yesterday: false }
     const loading = document.getElementById('loadingState')
     const stats = document.getElementById('statsGrid')
     const chart = document.getElementById('chartCard')
@@ -456,13 +439,9 @@
   function updateStatsAndRecent(sortedToday) {
     const todayRev = sortedToday.reduce((s, r) => s + safeInt(r.total), 0)
     const todayProfit = sortedToday.reduce((s, r) => s + safeInt(r.profit), 0)
-    const productsSold = sortedToday.reduce((s, r) => s + safeInt(r.itemsCount), 0)
     const yesterdayRev = sumYesterdayRevenue(yesterdaySalesRows)
     const pct = revenueChangePercent(todayRev, yesterdayRev)
     const trend = formatTrendPercent(pct)
-
-    const nasiyaTotal = nasiyaRows.reduce((s, r) => s + safeInt(r.remaining), 0)
-    void averageCheck(todayRev, sortedToday.length)
 
     const revEl = document.getElementById('todayRevenueValue')
     if (revEl) {
@@ -488,27 +467,6 @@
       } else {
         profitStatus.textContent = "Hozircha sotuv yo'q"
         profitStatus.style.color = '#9E9E9E'
-      }
-    }
-
-    const prodEl = document.getElementById('productsSoldValue')
-    if (prodEl) {
-      prodEl.textContent = String(productsSold)
-    }
-
-    const nasiyaVal = document.getElementById('nasiyaDebtValue')
-    if (nasiyaVal) {
-      nasiyaVal.textContent = formatNumberWithSpaces(nasiyaTotal)
-      adjustFontSizeForStatNumber(nasiyaVal)
-    }
-    const nasiyaStatus = document.getElementById('nasiyaDebtStatus')
-    if (nasiyaStatus) {
-      if (nasiyaTotal > 0) {
-        nasiyaStatus.textContent = 'Faol qarzdorlik'
-        nasiyaStatus.style.color = '#FB8C00'
-      } else {
-        nasiyaStatus.textContent = "Qarzdorlik yo'q"
-        nasiyaStatus.style.color = '#9E9E9E'
       }
     }
 
@@ -863,7 +821,7 @@
   function markBoot(key) {
     if (dashboardHadError) return
     if (!dashboardBoot[key]) dashboardBoot[key] = true
-    if (dashboardBoot.today && dashboardBoot.yesterday && dashboardBoot.nasiya) {
+    if (dashboardBoot.today && dashboardBoot.yesterday) {
       showDashboardContent()
     }
     renderDashboardFromCache()
@@ -872,17 +830,15 @@
   function onListenerError(err) {
     console.error('Asosiy listener error:', err)
     dashboardHadError = true
-    dashboardBoot = { today: true, yesterday: true, nasiya: true }
+    dashboardBoot = { today: true, yesterday: true }
     showDashboardError()
   }
 
   function cleanupDashboardListeners() {
     if (typeof todaySalesUnsub === 'function') todaySalesUnsub()
     if (typeof yesterdaySalesUnsub === 'function') yesterdaySalesUnsub()
-    if (typeof nasiyaUnsub === 'function') nasiyaUnsub()
     todaySalesUnsub = null
     yesterdaySalesUnsub = null
-    nasiyaUnsub = null
     stopChartRangeFetch()
     chartRequestId += 1
     chartSalesRows = []
@@ -920,10 +876,9 @@
     const { todayStart, tomorrowStart } = getTodayBounds()
     const { yesterdayStart, todayStart: yEnd } = getYesterdayBounds()
 
-    let salesCol, nasiyaCol
+    let salesCol
     try {
       salesCol = db.collection('shops').doc(shopId).collection('sales')
-      nasiyaCol = db.collection('shops').doc(shopId).collection('nasiya')
     } catch (error) {
       console.error('Failed to create Firestore collection references:', error)
       showDashboardError()
@@ -958,21 +913,6 @@
               yesterdaySalesRows.push({ total: safeInt(raw.total ?? raw.amount) })
             })
             markBoot('yesterday')
-          } catch (e) {
-            onListenerError(e)
-          }
-        },
-        err => onListenerError(err)
-      )
-
-    nasiyaUnsub = nasiyaCol
-      .where('status', '==', 'active')
-      .onSnapshot(
-        snap => {
-          try {
-            nasiyaRows = []
-            snap.forEach(doc => nasiyaRows.push(normalizeNasiyaDoc(doc)))
-            markBoot('nasiya')
           } catch (e) {
             onListenerError(e)
           }
