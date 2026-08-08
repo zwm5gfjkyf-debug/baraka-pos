@@ -110,29 +110,46 @@ const productsRef = db
 .doc(currentShopId)
 .collection("products")
 
+const forOrder = !!window.__creatingProductForOrder
+
 // check if product exists
 const existing = await productsRef
 .where("nameKey","==",nameKey).limit(1)
 .get()
 
+let savedProduct = null
+
 try{
 
 if(existing.empty){
 
-await productsRef.add({
+// From Buyurtma: create product at qty 0 — stock is applied on order finalize
+const createQty = forOrder ? 0 : qty
+const docRef = await productsRef.add({
 name: name,
 nameKey: nameKey,
 barcode: barcode,
 artikul: artikul,
 unit: unit,
 
-quantity: qty,
-initialStock: qty, // ✅ ADD THIS LINE
+quantity: createQty,
+initialStock: createQty,
 buyPrice: buyPrice || 0,
 sellPrice: sellPrice,
 image: imageUrl || "",
 created: Date.now()
 })
+
+savedProduct = {
+  productId: docRef.id,
+  name,
+  artikul,
+  barcode,
+  buyPrice: buyPrice || 0,
+  sellPrice,
+  orderQty: forOrder ? qty : 0,
+  currentQty: createQty
+}
 
 showTopBanner("Mahsulot qo'shildi", "success")
 document.getElementById("barcodeError").textContent = ""
@@ -148,7 +165,7 @@ if(barcode && barcode !== data.barcode){
   if(barcodeExists){
     showTopBanner("Bu barkod allaqachon mavjud","error")
     stockProcessing = false
-    return
+    return null
   }
 }
 
@@ -157,9 +174,31 @@ if(artikul && artikul !== data.artikul){
   if(artikulExists){
     showTopBanner("Bu artikul allaqachon mavjud","error")
     stockProcessing = false
-    return
+    return null
   }
 }
+
+if(forOrder){
+  // Don't mutate stock here — finalize will increment; just refresh prices/meta
+  await doc.ref.update({
+    buyPrice: buyPrice || data.buyPrice || 0,
+    sellPrice: sellPrice,
+    barcode: barcode || data.barcode || "",
+    artikul: artikul || data.artikul || "",
+    unit: unit || data.unit || "dona"
+  })
+  savedProduct = {
+    productId: doc.id,
+    name: data.name || name,
+    artikul: artikul || data.artikul || "",
+    barcode: barcode || data.barcode || "",
+    buyPrice: buyPrice || data.buyPrice || 0,
+    sellPrice,
+    orderQty: qty,
+    currentQty: Number(data.quantity || 0)
+  }
+  showTopBanner("Mahsulot buyurtmaga tayyor", "success")
+}else{
 
 await db.runTransaction(async (t) => {
 
@@ -184,29 +223,46 @@ updateData.initialStock = newStock
 t.update(doc.ref, updateData)
 
 })
+
+savedProduct = {
+  productId: doc.id,
+  name: data.name || name,
+  artikul: artikul || data.artikul || "",
+  barcode: barcode || data.barcode || "",
+  buyPrice: buyPrice || data.buyPrice || 0,
+  sellPrice,
+  orderQty: 0,
+  currentQty: Math.max(0, (data.quantity || 0) + (qty || 0))
 }
 
-showTopBanner("Zaxira yangilandi", "success") 
+showTopBanner("Zaxira yangilandi", "success")
+}
+
 document.getElementById("barcodeError").textContent = ""
-document.getElementById("artikulError").textContent = "" 
+document.getElementById("artikulError").textContent = ""
+}
 }catch(e){
 
 console.error("SAVE ERROR:", e)
 showTopBanner("Xatolik yuz berdi", "error")
+savedProduct = null
 }
 
-document.getElementById("stockName").value = ""
-document.getElementById("stockBarcode").value = ""
-document.getElementById("stockArtikul").value = ""
-document.getElementById("stockCost").value = ""
-document.getElementById("stockSellingPrice").value = ""
-document.getElementById("stockQty").value = ""
-const preview = document.getElementById("profitPreview")
-if(preview) preview.innerText = ""
+if(savedProduct){
+  document.getElementById("stockName").value = ""
+  document.getElementById("stockBarcode").value = ""
+  document.getElementById("stockArtikul").value = ""
+  document.getElementById("stockCost").value = ""
+  document.getElementById("stockSellingPrice").value = ""
+  document.getElementById("stockQty").value = ""
+  const preview = document.getElementById("profitPreview")
+  if(preview) preview.innerText = ""
   selectedImageFile = null
-  // ✅ ADD THIS HERE
-const unitEl = document.getElementById("selectedUnit")
-if(unitEl) unitEl.innerText = "Dona"
+  const unitEl = document.getElementById("selectedUnit")
+  if(unitEl) unitEl.innerText = "Dona"
+}
+
+return savedProduct
 }
 finally{
 
@@ -354,7 +410,7 @@ function loadCurrent(){
           <div class="stock-empty-state-icon" aria-hidden="true">📦</div>
           <div class="stock-empty-state-copy">
             <div class="stock-empty-state-title">Zaxirada hozircha mahsulot yo‘q</div>
-            <div class="stock-empty-state-subtitle">Mahsulot qo‘shish uchun + tugmasini bosing va zaxirani boshqaring.</div>
+            <div class="stock-empty-state-subtitle">Buyurtma yaratish uchun + tugmasini bosing.</div>
           </div>
         `
         container.appendChild(empty)
@@ -888,12 +944,28 @@ function pickImage(type){
   input.click()
 }
 async function saveAndGoBack(){
-  await addStock()
+  const saved = await addStock()
+  if(window.__creatingProductForOrder && typeof finishAddProductForOrder === "function"){
+    if(saved && saved.productId){
+      await finishAddProductForOrder(saved)
+    }else{
+      if(typeof cancelAddProductForOrder === "function") cancelAddProductForOrder()
+    }
+    return
+  }
   navigate("stockPage")
 }
 async function confirmSaveWithLabel(){
-  await addStock()
+  const saved = await addStock()
   closeLabelPreview()
+  if(window.__creatingProductForOrder && typeof finishAddProductForOrder === "function"){
+    if(saved && saved.productId){
+      await finishAddProductForOrder(saved)
+    }else{
+      if(typeof cancelAddProductForOrder === "function") cancelAddProductForOrder()
+    }
+    return
+  }
   navigate("stockPage")
 }
 function goToLabelPreview(){
@@ -929,6 +1001,19 @@ function selectUnit(unit){
   goBack();
 }
 function goBack(){
+  const page = (typeof currentPage !== "undefined" && currentPage) || window.__barakaCurrentPage
+  if(page === "unitPage"){
+    navigate("addProductPage")
+    return
+  }
+  if(page === "addProductPage" && window.__creatingProductForOrder){
+    if(typeof cancelAddProductForOrder === "function"){
+      cancelAddProductForOrder()
+    }else{
+      navigate("buyurtmaPage")
+    }
+    return
+  }
   navigate("stockPage")
 }
 document.addEventListener("DOMContentLoaded", () => {
