@@ -2911,6 +2911,12 @@ STOCK TABS
   border:1px solid #e5e7eb;
 }
 
+.stock-stat-card.value{
+  background:#eff6ff;
+  color:#1e3a8a;
+  border:1px solid #bfdbfe;
+}
+
 .stock-stat-card.low{
   background:#fff7ed;
   color:#b45309;
@@ -2928,9 +2934,23 @@ STOCK TABS
   font-weight:700;
 }
 
+.stat-number-money{
+  font-size:14px;
+  font-weight:800;
+  line-height:1.25;
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+
 .stat-label{
   font-size:12px;
   opacity:.85;
+}
+
+.stock-stat-card.value .stat-label{
+  font-size:11px;
+  line-height:1.25;
+  font-weight:600;
 }
 
 .stock-warning-card{
