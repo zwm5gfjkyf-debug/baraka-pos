@@ -145,24 +145,7 @@ inactive pages take no layout / click / scroll space.
   z-index: 9999; /* ABOVE EVERYTHING */
 }
 
-/* overlay */
-.discount-overlay{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
-}
-
-/* bottom sheet */
-.discount-sheet{
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: white;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  padding: 16px;
-}
+/* Discount sheet styles: see .discount-sheet-billz block near end of file */
 
 /* 🔥 SALE ACTIONS SHOULD BE LOWER */
 .sale-actions{
@@ -5656,23 +5639,29 @@ SALE HEADER ACTIONS (NEW)
 .discount-modal{
   position:fixed;
   inset:0;
-  z-index:999;
+  z-index:9999;
 }
 
 .discount-overlay{
   position:absolute;
   inset:0;
-  background:rgba(0,0,0,0.3);
+  background:rgba(15, 23, 42, 0.35);
 }
 
-.discount-sheet{
+.discount-sheet,
+.discount-sheet-billz{
   position:absolute;
   bottom:0;
+  left:0;
+  right:0;
   width:100%;
-  background:white;
+  max-width:560px;
+  margin:0 auto;
+  background:#fff;
   border-radius:20px 20px 0 0;
-  padding:18px;
+  padding:18px 16px calc(18px + env(safe-area-inset-bottom, 0px));
   animation:slideUp .25s ease;
+  box-sizing:border-box;
 }
 
 @keyframes slideUp{
@@ -5680,69 +5669,165 @@ SALE HEADER ACTIONS (NEW)
   to{transform:translateY(0)}
 }
 
-.discount-title{
-  font-size:18px;
-  font-weight:600;
-  text-align:center;
+.discount-header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
 }
 
-.discount-sub{
+.discount-title{
+  margin:0;
+  font-size:18px;
+  font-weight:800;
+  color:#0F172A;
+  text-align:left;
+}
+
+.discount-code-link{
+  border:none;
+  background:transparent;
+  color:#2563EB;
   font-size:13px;
-  text-align:center;
-  color:#64748b;
-  margin-bottom:12px;
+  font-weight:700;
+  cursor:pointer;
+  padding:0;
+  white-space:nowrap;
 }
 
 .discount-input-row{
   display:flex;
+  align-items:center;
   gap:8px;
 }
 
-.discount-input-row input{
+.discount-main-input{
   flex:1;
-  height:44px;
+  min-width:0;
+  height:46px;
   border-radius:12px;
-  border:1px solid #ddd;
+  border:1px solid #E2E8F0;
   padding:0 12px;
-  font-size:14px;
+  font-size:15px;
+  font-weight:600;
+  color:#0F172A;
+  background:#F8FAFC;
+  box-sizing:border-box;
 }
 
-.discount-toggle{
+.discount-main-input:focus{
+  outline:none;
+  border-color:#93C5FD;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.discount-seg-toggle{
   display:flex;
-  background:#f1f5f9;
-  border-radius:12px;
-  overflow:hidden;
+  flex:0 0 auto;
+  background:#E2E8F0;
+  border-radius:999px;
+  padding:3px;
+  gap:2px;
 }
 
-.discount-toggle button{
+.discount-seg-btn{
+  min-width:48px;
+  height:38px;
   padding:0 12px;
   border:none;
+  border-radius:999px;
   background:transparent;
+  color:#64748B;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.discount-seg-btn.active{
+  background:#fff;
+  color:#0F172A;
+  box-shadow:0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
+.discount-inline-error{
+  margin-top:8px;
+  font-size:12px;
+  font-weight:700;
+  color:#DC2626;
+}
+
+.discount-preview-line{
+  margin-top:8px;
+  font-size:13px;
+  font-weight:700;
+  color:#64748B;
+}
+
+.discount-presets{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:2px;
+}
+
+.discount-preset-btn{
+  flex:0 0 auto;
+  min-width:64px;
+  height:36px;
+  padding:0 14px;
+  border-radius:999px;
+  border:1px solid #E2E8F0;
+  background:#F1F5F9;
+  color:#475569;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.discount-preset-btn.is-active{
+  background:#fff;
+  border-color:#BFDBFE;
+  color:#1D4ED8;
+  box-shadow:0 1px 3px rgba(37, 99, 235, 0.15);
+}
+
+.discount-code-panel{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.discount-code-hint{
+  margin:0;
+  font-size:12px;
+  color:#94A3B8;
   font-weight:600;
 }
 
-.discount-toggle .active{
-  background:white;
-}
-
-.discount-quick{
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-}
-
-.discount-quick button{
-  flex:1;
-  height:34px;
-  border-radius:10px;
+.discount-code-back{
   border:none;
-  background:#f1f5f9;
+  background:transparent;
+  color:#2563EB;
+  font-size:13px;
+  font-weight:700;
+  text-align:left;
+  padding:0;
+  cursor:pointer;
 }
 
 .discount-actions{
   display:flex;
   gap:10px;
-  margin-top:14px;
+  margin-top:16px;
+}
+
+.discount-actions .btn-secondary,
+.discount-actions .btn-primary{
+  flex:1;
 }
 /* NEW DASHBOARD GRID */
 .dashboard-grid-new{
