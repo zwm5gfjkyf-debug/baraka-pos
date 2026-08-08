@@ -588,8 +588,16 @@ return
 // 🔥 VALIDATE DEBT CUSTOMER (NEW SYSTEM)
 if(selectedPaymentType === "debt"){
 
-  if(!window.debtCustomerName){
-    showTopBanner("Mijoz ismini kiriting","error")
+  if(!window.debtCustomerId || !window.debtCustomerName){
+    showTopBanner("Mijozni tanlang","error")
+    return
+  }
+  if(!(Number(window.debtAmount) > 0)){
+    showTopBanner("Qarz summasini kiriting","error")
+    return
+  }
+  if(!window.debtDueDate){
+    showTopBanner("To'lov muddatini tanlang","error")
     return
   }
 
@@ -702,12 +710,37 @@ phone: selectedPaymentType === "debt"
   ? window.debtCustomerPhone || ""
   : null,
 
-createdAt: firebase.firestore.FieldValue.serverTimestamp()
+createdAt: firebase.firestore.Timestamp.now()
 }
+
+const debtAmountForNasiya = selectedPaymentType === "debt"
+  ? (Number(window.debtAmount) > 0 ? Number(window.debtAmount) : total)
+  : 0
+const debtProfitForNasiya = selectedPaymentType === "debt" && total > 0
+  ? Math.round(totalProfit * (debtAmountForNasiya / total))
+  : (selectedPaymentType === "debt" ? totalProfit : 0)
+const debtDueDateTs = selectedPaymentType === "debt" && window.debtDueDate
+  ? firebase.firestore.Timestamp.fromDate(window.debtDueDate instanceof Date
+      ? window.debtDueDate
+      : new Date(window.debtDueDate))
+  : null
+const debtNote = selectedPaymentType === "debt"
+  ? String(window.debtNote || "").trim()
+  : ""
+const debtCustomerId = selectedPaymentType === "debt"
+  ? window.debtCustomerId
+  : null
+const debtCustomerNameSnap = selectedPaymentType === "debt"
+  ? (window.debtCustomerName || "Noma'lum")
+  : null
+const debtCustomerPhoneSnap = selectedPaymentType === "debt"
+  ? (window.debtCustomerPhone || "")
+  : null
   
 try{
 
 const itemsToUpdate = [...cart]
+const paymentTypeAtSave = selectedPaymentType || "cash"
 
 // 🔥 INSTANT UI UPDATE
 cart = []
@@ -731,9 +764,22 @@ const salesRef = db
     .collection("counters")
     .doc("yearlySaleCounter")
 
+  const customersRef = db.collection("shops").doc(currentShopId).collection("customers")
+  const nasiyaRefCol = db.collection("shops").doc(currentShopId).collection("nasiya")
+  const paymentsRefCol = db.collection("shops").doc(currentShopId).collection("payments")
+
   const saveSalePromise = db.runTransaction(async t => {
     const counterDoc = await t.get(counterRef)
     const yearlyDoc = await t.get(yearlyCounterRef)
+    let customerDoc = null
+    let customerRef = null
+    if(paymentTypeAtSave === "debt"){
+      if(!debtCustomerId) throw new Error("Mijoz tanlanmagan")
+      customerRef = customersRef.doc(debtCustomerId)
+      customerDoc = await t.get(customerRef)
+      if(!customerDoc.exists) throw new Error("Mijoz topilmadi")
+    }
+
     const todayKey = getTodayKey()
     const year = new Date().getFullYear()
     let nextNumber = 1
@@ -772,6 +818,8 @@ const salesRef = db
 
     const transactionNumber = year + '-' + String(yearSeq).padStart(6, '0')
     const saleRef = salesRef.doc()
+    const saleId = saleRef.id
+    const createdAt = sale.createdAt
     t.set(saleRef, {
       ...sale,
       saleNumber: nextNumber,
@@ -780,6 +828,43 @@ const salesRef = db
       transactionNumber,
       transaction_number: transactionNumber
     })
+
+    // Phase 2: cash/card → payments ledger (not for nasiya)
+    if(paymentTypeAtSave === "cash" || paymentTypeAtSave === "card"){
+      const payRef = paymentsRefCol.doc()
+      t.set(payRef, {
+        saleId,
+        customerId: null,
+        amount: total,
+        profit: totalProfit,
+        source: "sale",
+        paymentType: paymentTypeAtSave,
+        createdAt
+      })
+    }
+
+    // Phase 2: debt → nasiya + customer.totalDebt (no payments row)
+    if(paymentTypeAtSave === "debt" && customerRef){
+      const nasiyaRef = nasiyaRefCol.doc()
+      const custData = customerDoc.data() || {}
+      t.set(nasiyaRef, {
+        saleId,
+        customerId: debtCustomerId,
+        customerName: debtCustomerNameSnap || custData.name || "",
+        phone: debtCustomerPhoneSnap || custData.phone || "",
+        originalAmount: debtAmountForNasiya,
+        originalProfit: debtProfitForNasiya,
+        paidAmount: 0,
+        remainingAmount: debtAmountForNasiya,
+        status: "active",
+        dueDate: debtDueDateTs,
+        note: debtNote,
+        createdAt
+      })
+      t.update(customerRef, {
+        totalDebt: firebase.firestore.FieldValue.increment(debtAmountForNasiya)
+      })
+    }
   })
 
   // 🔥 SHOW SUCCESS IMMEDIATELY
@@ -815,8 +900,12 @@ btn.innerText = "Sotuvni yakunlash"
 }
 // 🔥 RESET PAYMENT STATE (PUT HERE)
 selectedPaymentType = null
+window.debtCustomerId = null
 window.debtCustomerName = null
 window.debtCustomerPhone = null
+window.debtAmount = null
+window.debtDueDate = null
+window.debtNote = null
 
 cartMap = {}
 saleType = "cash"
@@ -1506,7 +1595,255 @@ function handlePaymentSave(){
   // 🔥 CASH / CARD → COMPLETE SALE
   completeSale()
 }
+/* =========================================
+   YANGI QARZ (Billz debt entry)
+========================================= */
+let yangiQarzCustomersCache = []
+let yangiQarzCustomersLoaded = false
+let yangiQarzSearchTimer = null
+let yangiQarzSelected = null // { id, name, phone }
+
+function getCheckoutFinalTotal(){
+  let total = cartSubtotal()
+  if(discountValue > 0){
+    if(discountType === "percent"){
+      total = total - (total * discountValue / 100)
+    }else{
+      total = total - discountValue
+    }
+  }
+  if(total < 0) total = 0
+  return Math.round(total)
+}
+
+function setYangiQarzError(msg){
+  const el = document.getElementById("yangiQarzError")
+  if(!el) return
+  if(!msg){
+    el.textContent = ""
+    el.classList.add("hidden")
+    return
+  }
+  el.textContent = msg
+  el.classList.remove("hidden")
+}
+
+function updateYangiQarzSubmitState(){
+  const btn = document.getElementById("yangiQarzSubmitBtn")
+  if(!btn) return
+  const amount = Number(document.getElementById("yangiQarzAmount")?.value || 0)
+  const dueRaw = document.getElementById("yangiQarzDueDate")?.value || ""
+  const ok = !!(yangiQarzSelected && yangiQarzSelected.id && amount > 0 && dueRaw)
+  btn.disabled = !ok
+}
+
+async function ensureYangiQarzCustomersLoaded(){
+  if(!currentShopId) return []
+  if(yangiQarzCustomersLoaded) return yangiQarzCustomersCache
+  const snap = await db.collection("shops").doc(currentShopId).collection("customers").get()
+  yangiQarzCustomersCache = []
+  snap.forEach(doc => {
+    const d = doc.data() || {}
+    yangiQarzCustomersCache.push({
+      id: doc.id,
+      name: String(d.name || ""),
+      phone: String(d.phone || ""),
+      totalDebt: Number(d.totalDebt) || 0
+    })
+  })
+  yangiQarzCustomersLoaded = true
+  return yangiQarzCustomersCache
+}
+
+function renderYangiQarzSelected(){
+  const box = document.getElementById("yangiQarzSelectedCustomer")
+  const search = document.getElementById("yangiQarzCustomerSearch")
+  if(!box) return
+  if(!yangiQarzSelected){
+    box.classList.add("hidden")
+    box.innerHTML = ""
+    return
+  }
+  box.classList.remove("hidden")
+  box.innerHTML =
+    '<div class="yangi-qarz-selected-text">' +
+      '<div class="yangi-qarz-selected-name">' + String(yangiQarzSelected.name || "").replace(/</g, "&lt;") + '</div>' +
+      '<div class="yangi-qarz-selected-phone">' + String(yangiQarzSelected.phone || "—").replace(/</g, "&lt;") + '</div>' +
+    '</div>' +
+    '<button type="button" class="yangi-qarz-selected-clear" onclick="clearYangiQarzSelected()" aria-label="Tozalash">×</button>'
+  if(search) search.value = yangiQarzSelected.name || ""
+  updateYangiQarzSubmitState()
+}
+
+function clearYangiQarzSelected(){
+  yangiQarzSelected = null
+  const search = document.getElementById("yangiQarzCustomerSearch")
+  if(search) search.value = ""
+  renderYangiQarzSelected()
+  hideYangiQarzDropdown()
+  updateYangiQarzSubmitState()
+}
+
+function hideYangiQarzDropdown(){
+  const dd = document.getElementById("yangiQarzCustomerDropdown")
+  if(dd) dd.classList.add("hidden")
+}
+
+function selectYangiQarzCustomer(customer){
+  yangiQarzSelected = {
+    id: customer.id,
+    name: customer.name || "",
+    phone: customer.phone || ""
+  }
+  hideYangiQarzDropdown()
+  const createPanel = document.getElementById("yangiQarzCreatePanel")
+  if(createPanel) createPanel.classList.add("hidden")
+  renderYangiQarzSelected()
+  setYangiQarzError("")
+}
+
+function onYangiQarzCustomerSearchInput(){
+  clearTimeout(yangiQarzSearchTimer)
+  const input = document.getElementById("yangiQarzCustomerSearch")
+  const q = String(input?.value || "").trim().toLowerCase()
+  if(yangiQarzSelected && q !== String(yangiQarzSelected.name || "").toLowerCase()){
+    yangiQarzSelected = null
+    const box = document.getElementById("yangiQarzSelectedCustomer")
+    if(box){ box.classList.add("hidden"); box.innerHTML = "" }
+    updateYangiQarzSubmitState()
+  }
+  if(q.length < 2){
+    hideYangiQarzDropdown()
+    return
+  }
+  yangiQarzSearchTimer = setTimeout(async () => {
+    try{
+      const list = await ensureYangiQarzCustomersLoaded()
+      const matches = list.filter(c => {
+        const name = String(c.name || "").toLowerCase()
+        const phone = String(c.phone || "").toLowerCase().replace(/\s+/g, "")
+        const qq = q.replace(/\s+/g, "")
+        return name.includes(q) || phone.includes(qq)
+      }).slice(0, 12)
+      const dd = document.getElementById("yangiQarzCustomerDropdown")
+      if(!dd) return
+      if(!matches.length){
+        dd.innerHTML = '<div class="yangi-qarz-dropdown-empty">Mijoz topilmadi — «Yaratish» ni bosing</div>'
+        dd.classList.remove("hidden")
+        return
+      }
+      dd.innerHTML = matches.map(c => (
+        '<button type="button" class="yangi-qarz-dropdown-item" data-id="' + String(c.id).replace(/"/g, "") + '">' +
+          '<span class="yangi-qarz-dropdown-name">' + String(c.name || "").replace(/</g, "&lt;") + '</span>' +
+          '<span class="yangi-qarz-dropdown-phone">' + String(c.phone || "—").replace(/</g, "&lt;") + '</span>' +
+        '</button>'
+      )).join("")
+      dd.querySelectorAll("[data-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-id")
+          const hit = matches.find(m => m.id === id)
+          if(hit) selectYangiQarzCustomer(hit)
+        })
+      })
+      dd.classList.remove("hidden")
+    }catch(err){
+      console.error("Customer search failed:", err)
+    }
+  }, 280)
+}
+
+function toggleYangiQarzCreate(){
+  const panel = document.getElementById("yangiQarzCreatePanel")
+  if(!panel) return
+  const open = panel.classList.contains("hidden")
+  panel.classList.toggle("hidden", !open)
+  if(open){
+    hideYangiQarzDropdown()
+    const nameEl = document.getElementById("yangiQarzNewName")
+    const search = document.getElementById("yangiQarzCustomerSearch")
+    if(nameEl && search && search.value.trim() && !yangiQarzSelected){
+      nameEl.value = search.value.trim()
+    }
+    nameEl?.focus()
+  }
+}
+
+async function saveYangiQarzNewCustomer(){
+  if(!currentShopId){
+    showTopBanner("Do'kon topilmadi", "error")
+    return
+  }
+  const name = String(document.getElementById("yangiQarzNewName")?.value || "").trim()
+  const phone = String(document.getElementById("yangiQarzNewPhone")?.value || "").trim()
+  if(!name){
+    setYangiQarzError("Mijoz ismini kiriting")
+    return
+  }
+  if(!phone){
+    setYangiQarzError("Telefon raqamini kiriting")
+    return
+  }
+  try{
+    const list = await ensureYangiQarzCustomersLoaded()
+    const phoneKey = phone.replace(/\s+/g, "")
+    const existing = list.find(c => String(c.phone || "").replace(/\s+/g, "") === phoneKey)
+    if(existing){
+      selectYangiQarzCustomer(existing)
+      setYangiQarzError("")
+      showTopBanner("Mavjud mijoz tanlandi", "success")
+      return
+    }
+    const createdAt = firebase.firestore.Timestamp.now()
+    const ref = await db.collection("shops").doc(currentShopId).collection("customers").add({
+      name,
+      phone,
+      createdAt,
+      totalDebt: 0,
+      creditLimit: null
+    })
+    const customer = { id: ref.id, name, phone, totalDebt: 0 }
+    yangiQarzCustomersCache.push(customer)
+    selectYangiQarzCustomer(customer)
+    const panel = document.getElementById("yangiQarzCreatePanel")
+    if(panel) panel.classList.add("hidden")
+    document.getElementById("yangiQarzNewName").value = ""
+    document.getElementById("yangiQarzNewPhone").value = ""
+    setYangiQarzError("")
+    showTopBanner("Mijoz yaratildi", "success")
+  }catch(err){
+    console.error("Create customer failed:", err)
+    setYangiQarzError("Mijozni saqlab bo'lmadi")
+  }
+}
+
+function resetYangiQarzForm(){
+  yangiQarzSelected = null
+  yangiQarzCustomersLoaded = false
+  yangiQarzCustomersCache = []
+  setYangiQarzError("")
+  const search = document.getElementById("yangiQarzCustomerSearch")
+  const amount = document.getElementById("yangiQarzAmount")
+  const due = document.getElementById("yangiQarzDueDate")
+  const note = document.getElementById("yangiQarzNote")
+  const createPanel = document.getElementById("yangiQarzCreatePanel")
+  if(search) search.value = ""
+  if(amount) amount.value = String(getCheckoutFinalTotal())
+  if(due){
+    due.value = ""
+    const min = new Date()
+    min.setDate(min.getDate() + 1)
+    due.min = min.toISOString().slice(0, 10)
+  }
+  if(note) note.value = ""
+  if(createPanel) createPanel.classList.add("hidden")
+  hideYangiQarzDropdown()
+  renderYangiQarzSelected()
+  updateYangiQarzSubmitState()
+  ensureYangiQarzCustomersLoaded().catch(() => {})
+}
+
 function openDebtPage(){
+  resetYangiQarzForm()
   if(typeof hideAllPagesExcept === "function"){
     hideAllPagesExcept("debtCustomerPage")
     return
@@ -1517,6 +1854,7 @@ function openDebtPage(){
   if(debtPage) debtPage.classList.remove("hidden")
 }
 function closeDebtPage(){
+  hideYangiQarzDropdown()
   if(typeof hideAllPagesExcept === "function"){
     hideAllPagesExcept("paymentPage")
     return
@@ -1528,19 +1866,41 @@ function closeDebtPage(){
 }
 
 function saveDebtSale(){
+  setYangiQarzError("")
 
-  const name = (document.getElementById("debtName")?.value || "").trim()
-  const phone = (document.getElementById("debtPhone")?.value || "").trim()
-
-  if(!name){
-    showTopBanner("Mijoz ismini kiriting", "error")
+  if(!yangiQarzSelected || !yangiQarzSelected.id){
+    setYangiQarzError("Mijozni tanlang yoki yarating")
     return
   }
 
-  // save into global (for completeSale)
-  window.debtCustomerName = name
-  window.debtCustomerPhone = phone
+  const amount = Number(document.getElementById("yangiQarzAmount")?.value || 0)
+  if(!(amount > 0)){
+    setYangiQarzError("Qarz summasi 0 dan katta bo'lishi kerak")
+    return
+  }
 
+  const dueRaw = document.getElementById("yangiQarzDueDate")?.value || ""
+  if(!dueRaw){
+    setYangiQarzError("To'lov muddatini tanlang")
+    return
+  }
+  const dueDate = new Date(dueRaw + "T00:00:00")
+  const startTomorrow = new Date()
+  startTomorrow.setHours(0, 0, 0, 0)
+  startTomorrow.setDate(startTomorrow.getDate() + 1)
+  if(!(dueDate instanceof Date) || isNaN(dueDate.getTime()) || dueDate < startTomorrow){
+    setYangiQarzError("To'lov muddati kelajakdagi sana bo'lishi kerak")
+    return
+  }
+
+  window.debtCustomerId = yangiQarzSelected.id
+  window.debtCustomerName = yangiQarzSelected.name
+  window.debtCustomerPhone = yangiQarzSelected.phone || ""
+  window.debtAmount = amount
+  window.debtDueDate = dueDate
+  window.debtNote = String(document.getElementById("yangiQarzNote")?.value || "").trim()
+
+  selectedPaymentType = "debt"
   completeSale()
 }
 function openSuccessPage(){
