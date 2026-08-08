@@ -1,5 +1,6 @@
 /**
  * Tahlil v2 — period analytics hub (Firestore via AnalyticsAPI).
+ * Tab switches update local state only — no full-page skeleton flash.
  */
 ;(function () {
   let activePeriod = 'day'
@@ -7,6 +8,16 @@
   let productTab = 'quantity'
   let trendChart = null
   let loadToken = 0
+  let refreshTimer = null
+  let hasLoadedOnce = false
+
+  const animatedValues = {
+    revenue: 0,
+    profit: 0,
+    sales_count: 0,
+    returns_count: 0
+  }
+  const animFrames = {}
 
   function todayInputValue() {
     const d = new Date()
@@ -33,16 +44,51 @@
     const p = Math.round(Number(pct) || 0)
     const pos = p >= 0
     el.className = 'tahlil-hub-menu-badge ' + (pos ? 'tahlil-badge-weekly-pos' : 'tahlil-badge-weekly-neg')
+    el.style.transition = 'opacity 180ms ease'
+    el.style.opacity = '0.55'
     if (p === 0) {
       el.textContent = "— O'zgarish yo'q"
-      return
+    } else {
+      el.textContent = pos ? ('↑ +' + p + '%') : ('↓ ' + Math.abs(p) + '%')
     }
-    el.textContent = pos ? ('↑ +' + p + '%') : ('↓ ' + Math.abs(p) + '%')
+    requestAnimationFrame(() => {
+      el.style.opacity = '1'
+    })
   }
 
-  function setText(id, value) {
-    const el = document.getElementById(id)
-    if (el) el.textContent = value
+  /** Smooth count-up/down for summary card numbers (~200ms). */
+  function animateNumber(key, toValue, elId, formatter, duration) {
+    const el = document.getElementById(elId)
+    if (!el) return
+    const to = Number(toValue) || 0
+    const from = Number(animatedValues[key]) || 0
+    animatedValues[key] = to
+    const ms = duration != null ? duration : 200
+
+    if (animFrames[key]) {
+      cancelAnimationFrame(animFrames[key])
+      animFrames[key] = null
+    }
+
+    if (!hasLoadedOnce || Math.abs(to - from) < 0.5) {
+      el.textContent = formatter(to)
+      return
+    }
+
+    const start = performance.now()
+    function tick(now) {
+      const t = Math.min(1, (now - start) / ms)
+      const eased = 1 - Math.pow(1 - t, 3)
+      const cur = from + (to - from) * eased
+      el.textContent = formatter(cur)
+      if (t < 1) {
+        animFrames[key] = requestAnimationFrame(tick)
+      } else {
+        el.textContent = formatter(to)
+        animFrames[key] = null
+      }
+    }
+    animFrames[key] = requestAnimationFrame(tick)
   }
 
   function showLoading() {
@@ -72,6 +118,11 @@
     if (content) content.classList.remove('hidden')
   }
 
+  function setRefreshing(on) {
+    const content = document.getElementById('tahlilHubContent')
+    if (content) content.classList.toggle('is-refreshing', !!on)
+  }
+
   function syncPeriodUi() {
     document.querySelectorAll('#tahlilPeriodTabs .tahlil-period-tab').forEach(btn => {
       btn.classList.toggle('is-active', btn.getAttribute('data-period') === activePeriod)
@@ -92,12 +143,15 @@
     if (!canvas || typeof Chart === 'undefined') return
     const labels = (points || []).map(p => p.label)
     const data = (points || []).map(p => p.revenue)
+
     if (trendChart) {
       trendChart.data.labels = labels
       trendChart.data.datasets[0].data = data
-      trendChart.update('none')
+      // Built-in Chart.js tween between old and new points
+      trendChart.update()
       return
     }
+
     trendChart = new Chart(canvas.getContext('2d'), {
       type: 'line',
       data: {
@@ -116,6 +170,10 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: {
+          duration: 250,
+          easing: 'easeOutQuart'
+        },
         plugins: {
           legend: { display: false },
           tooltip: {
@@ -143,26 +201,31 @@
 
   function renderRankList(el, rows, mode) {
     if (!el) return
+    el.style.transition = 'opacity 160ms ease'
+    el.style.opacity = '0.55'
     if (!rows || !rows.length) {
       el.innerHTML = '<div class="tahlil-rank-empty">Ma\'lumot yo\'q</div>'
-      return
+    } else {
+      el.innerHTML = rows.map((r, i) => {
+        const right = mode === 'profit'
+          ? money(r.profit)
+          : (mode === 'slow'
+            ? (r.quantity_sold + ' ta · zaxira ' + r.stock)
+            : (r.quantity_sold + ' ta · ' + money(r.revenue)))
+        return (
+          '<div class="tahlil-rank-row">' +
+            '<div class="tahlil-rank-left">' +
+              '<span class="tahlil-rank-num">' + (i + 1) + '</span>' +
+              '<span class="tahlil-rank-name">' + String(r.product_name || 'Mahsulot').replace(/</g, '&lt;') + '</span>' +
+            '</div>' +
+            '<div class="tahlil-rank-right">' + right + '</div>' +
+          '</div>'
+        )
+      }).join('')
     }
-    el.innerHTML = rows.map((r, i) => {
-      const right = mode === 'profit'
-        ? money(r.profit)
-        : (mode === 'slow'
-          ? (r.quantity_sold + ' ta · zaxira ' + r.stock)
-          : (r.quantity_sold + ' ta · ' + money(r.revenue)))
-      return (
-        '<div class="tahlil-rank-row">' +
-          '<div class="tahlil-rank-left">' +
-            '<span class="tahlil-rank-num">' + (i + 1) + '</span>' +
-            '<span class="tahlil-rank-name">' + String(r.product_name || 'Mahsulot').replace(/</g, '&lt;') + '</span>' +
-          '</div>' +
-          '<div class="tahlil-rank-right">' + right + '</div>' +
-        '</div>'
-      )
-    }).join('')
+    requestAnimationFrame(() => {
+      el.style.opacity = '1'
+    })
   }
 
   function renderDayLists(dayData) {
@@ -217,32 +280,38 @@
       showError()
       return
     }
+
     const token = ++loadToken
     const dateStr = selectedDate || todayInputValue()
     const period = activePeriod
+    const soft = hasLoadedOnce
+
+    if (soft) setRefreshing(true)
 
     try {
       const [summary, trend, topQty, topProfit, slow, returnsSummary] = await Promise.all([
         AnalyticsAPI.getAnalyticsSummary(period, dateStr),
-        activePeriod === 'date' ? Promise.resolve([]) : AnalyticsAPI.getAnalyticsTrend(period, dateStr),
+        period === 'date' ? Promise.resolve([]) : AnalyticsAPI.getAnalyticsTrend(period, dateStr),
         AnalyticsAPI.getTopProducts(period, dateStr, 'quantity', 10),
         AnalyticsAPI.getTopProducts(period, dateStr, 'profit', 10),
         AnalyticsAPI.getSlowMovingProducts(period, dateStr, 10),
         AnalyticsAPI.getReturnsSummary(period, dateStr)
       ])
 
+      // Stale response from a previous tab — discard
       if (token !== loadToken) return
 
-      setText('tahlilCardRevenue', moneyShort(summary.revenue))
-      setText('tahlilCardProfit', moneyShort(summary.profit))
-      setText('tahlilCardSalesCount', String(summary.sales_count))
-      setText('tahlilCardReturnsCount', String(summary.returns_count))
+      animateNumber('revenue', summary.revenue, 'tahlilCardRevenue', moneyShort, 200)
+      animateNumber('profit', summary.profit, 'tahlilCardProfit', moneyShort, 200)
+      animateNumber('sales_count', summary.sales_count, 'tahlilCardSalesCount', v => String(Math.round(v)), 200)
+      animateNumber('returns_count', summary.returns_count, 'tahlilCardReturnsCount', v => String(Math.round(v)), 200)
+
       pctBadge(document.getElementById('tahlilCardRevenuePct'), summary.revenue_change_pct)
       pctBadge(document.getElementById('tahlilCardProfitPct'), summary.profit_change_pct)
       pctBadge(document.getElementById('tahlilCardSalesPct'), summary.sales_count_change_pct)
       pctBadge(document.getElementById('tahlilCardReturnsPct'), summary.returns_change_pct)
 
-      if (activePeriod !== 'date') renderTrend(trend)
+      if (period !== 'date') renderTrend(trend)
 
       window.__tahlilTopQty = topQty
       window.__tahlilTopProfit = topProfit
@@ -253,11 +322,16 @@
       )
       renderRankList(document.getElementById('tahlilSlowList'), slow, 'slow')
 
-      setText('tahlilReturnsTotalCount', (returnsSummary.returns_count || 0) + ' ta')
-      setText('tahlilReturnsTotalAmount', money(returnsSummary.returns_amount || 0))
+      const retCountEl = document.getElementById('tahlilReturnsTotalCount')
+      const retAmountEl = document.getElementById('tahlilReturnsTotalAmount')
+      if (retCountEl) retCountEl.textContent = (returnsSummary.returns_count || 0) + ' ta'
+      if (retAmountEl) retAmountEl.textContent = money(returnsSummary.returns_amount || 0)
+
       const topRet = returnsSummary.top_products || []
       const retList = document.getElementById('tahlilReturnsTopList')
       if (retList) {
+        retList.style.transition = 'opacity 160ms ease'
+        retList.style.opacity = '0.55'
         if (!topRet.length) {
           retList.innerHTML = '<div class="tahlil-rank-empty">Qaytarilgan mahsulot yo\'q</div>'
         } else {
@@ -268,19 +342,35 @@
             '</div>'
           )).join('')
         }
+        requestAnimationFrame(() => { retList.style.opacity = '1' })
       }
 
-      if (activePeriod === 'date') {
+      if (period === 'date') {
         const dayData = await AnalyticsAPI.getAnalyticsDay(dateStr)
         if (token !== loadToken) return
         renderDayLists(dayData)
       }
 
+      hasLoadedOnce = true
       showContent()
+      setRefreshing(false)
     } catch (err) {
       console.error('Tahlil refresh failed:', err)
-      if (token === loadToken) showError()
+      if (token === loadToken) {
+        setRefreshing(false)
+        if (!hasLoadedOnce) showError()
+      }
     }
+  }
+
+  /** Debounce rapid tab taps; bump loadToken so in-flight work is ignored. */
+  function scheduleRefresh() {
+    clearTimeout(refreshTimer)
+    // Invalidate any in-flight request immediately so it cannot overwrite newer tab data
+    loadToken += 1
+    refreshTimer = setTimeout(() => {
+      refreshTahlil()
+    }, 120)
   }
 
   function bindUiOnce() {
@@ -292,15 +382,19 @@
       tabs.addEventListener('click', e => {
         const btn = e.target.closest('[data-period]')
         if (!btn) return
-        activePeriod = btn.getAttribute('data-period') || 'day'
+        const next = btn.getAttribute('data-period') || 'day'
+        if (next === activePeriod && next !== 'date') return
+
+        activePeriod = next
         if (activePeriod === 'date' && !selectedDate) {
           selectedDate = todayInputValue()
           const input = document.getElementById('tahlilDateInput')
           if (input) input.value = selectedDate
         }
         syncPeriodUi()
-        showLoading()
-        refreshTahlil()
+        // Soft update only — keep previous numbers/chart visible
+        if (hasLoadedOnce) setRefreshing(true)
+        scheduleRefresh()
       })
     }
 
@@ -310,8 +404,8 @@
       selectedDate = dateInput.value
       dateInput.addEventListener('change', () => {
         selectedDate = dateInput.value || todayInputValue()
-        showLoading()
-        refreshTahlil()
+        if (hasLoadedOnce) setRefreshing(true)
+        scheduleRefresh()
       })
     }
 
@@ -345,23 +439,40 @@
   }
 
   function cleanupTahlilHubListeners() {
+    clearTimeout(refreshTimer)
     loadToken += 1
+    Object.keys(animFrames).forEach(k => {
+      if (animFrames[k]) cancelAnimationFrame(animFrames[k])
+      animFrames[k] = null
+    })
     if (trendChart) {
       try { trendChart.destroy() } catch (e) { /* ignore */ }
       trendChart = null
     }
+    hasLoadedOnce = false
+    setRefreshing(false)
   }
 
   function loadTahlilHub() {
     bindUiOnce()
     if (!selectedDate) selectedDate = todayInputValue()
     syncPeriodUi()
-    showLoading()
-    refreshTahlil()
+
+    const content = document.getElementById('tahlilHubContent')
+    const alreadyVisible = content && !content.classList.contains('hidden') && hasLoadedOnce
+    if (alreadyVisible) {
+      setRefreshing(true)
+      scheduleRefresh()
+    } else {
+      showLoading()
+      refreshTahlil()
+    }
   }
 
   function retryTahlilHub() {
-    loadTahlilHub()
+    hasLoadedOnce = false
+    showLoading()
+    refreshTahlil()
   }
 
   window.loadTahlilHub = loadTahlilHub
