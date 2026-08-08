@@ -120,16 +120,6 @@ function navigate(pageId){
     centerHandle.style.display = pageId === 'dashboardPage' ? 'flex' : 'none'
   }
 
-  const fab = document.getElementById('floatingAddBtn')
-  if(fab){
-    if(!loggedIn){
-      fab.style.display = 'none'
-    }else{
-      fab.style.display = (pageId === 'dashboardPage' || pageId === 'todaySalesHistoryPage') ? 'flex' : 'none'
-      if(pageId === 'saleDetailPage') fab.style.display = 'none'
-    }
-  }
-
   const navMap = {
     dashboardPage: 0,
     salePage: 1,

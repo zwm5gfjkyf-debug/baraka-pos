@@ -5,7 +5,6 @@
 function updateNavVisibility(isLoggedIn){
   const body = document.body
   const bottomNav = document.querySelector('.bottom-nav')
-  const fab = document.getElementById('floatingAddBtn')
   const appHeader = document.querySelector('.app-header')
   const sidebar = document.getElementById('sidebar')
   const sidebarOverlay = document.getElementById('sidebarOverlay')
@@ -17,14 +16,12 @@ function updateNavVisibility(isLoggedIn){
       bottomNav.style.visibility = 'visible'
       bottomNav.style.removeProperty('opacity')
     }
-    if(fab) fab.style.display = ''
     if(appHeader) appHeader.style.display = ''
     if(sidebar) sidebar.style.display = ''
     if(sidebarOverlay) sidebarOverlay.style.display = ''
   } else {
     body.classList.add('auth-active')
     if(bottomNav) bottomNav.style.display = 'none'
-    if(fab) fab.style.display = 'none'
     if(appHeader) appHeader.style.display = 'none'
     if(sidebar) sidebar.style.display = 'none'
     if(sidebarOverlay) sidebarOverlay.style.display = 'none'

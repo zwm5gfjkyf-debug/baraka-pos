@@ -260,22 +260,6 @@ font-weight:700;
   color:#2563eb;
 }
 
-/* 🔥 FLOAT BUTTON */
-#floatingAddBtn {
-  position:fixed;
-  bottom:calc(var(--bottom-nav-total) + 14px);
-  right:20px;
-  width:60px;
-  height:60px;
-  border-radius:20px;
-  border:none;
-  background:#22c55e;
-  color:white;
-  font-size:28px;
-  box-shadow:0 10px 20px rgba(0,0,0,0.2);
-  cursor:pointer;
-}
-
 #centerNavHandle {
   position:fixed;
   bottom:calc(var(--bottom-nav-total) + 34px);
@@ -597,10 +581,6 @@ button{
   gap:6px;
 
   user-select:none;
-}
-#floatingAddBtn{
-  backdrop-filter: blur(10px);
-  background: linear-gradient(135deg,#22c55e,#16a34a);
 }
 /* PRESS EFFECT (iPhone feel) */
 button{
@@ -1246,7 +1226,6 @@ APP SCREEN WRAPPER
 }
 
 body.auth-active .bottom-nav,
-body.auth-active #floatingAddBtn,
 body.auth-active .app-header,
 body.auth-active #sidebar,
 body.auth-active #sidebarOverlay {
@@ -6779,39 +6758,6 @@ SALE HEADER ACTIONS (NEW)
   }
   50% {
     opacity: 0.92;
-  }
-}
-
-.fab-new-sale {
-  position: fixed;
-  bottom: calc(var(--bottom-nav-total) + 18px);
-  right: 20px;
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  border: none;
-  background: #166534;
-  color: #fff;
-  font-size: 32px;
-  font-weight: 200;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(22, 101, 52, 0.35);
-  cursor: pointer;
-  z-index: 1005;
-  padding: 0;
-}
-
-@media (max-width: 480px) {
-  .fab-new-sale {
-    bottom: calc(var(--bottom-nav-total) + 20px);
-    right: 12px;
-    width: 52px;
-    height: 52px;
-    font-size: 28px;
-    border-radius: 14px;
   }
 }
 
