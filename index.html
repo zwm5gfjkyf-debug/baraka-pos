@@ -1766,141 +1766,74 @@ Metr
 
 </div>
 
-<div id="editModal" class="modal hidden">
+<!-- PRODUCT DETAILS (read-only) -->
+<div id="productDetailsModal" class="modal hidden">
+  <div class="modal-card product-details-card">
+    <h3>Mahsulot ma'lumotlari</h3>
+    <div id="productDetailsName" class="product-details-name"></div>
 
-<div class="modal-card">
+    <div class="product-details-grid">
+      <div class="product-details-row">
+        <span class="product-details-label">Artikul</span>
+        <span id="productDetailsArtikul" class="product-details-value">—</span>
+      </div>
+      <div class="product-details-row">
+        <span class="product-details-label">Shtrix-kod</span>
+        <span id="productDetailsBarcode" class="product-details-value">—</span>
+      </div>
+      <div class="product-details-row">
+        <span class="product-details-label">Kelish narxi</span>
+        <span id="productDetailsBuyPrice" class="product-details-value">0 UZS</span>
+      </div>
+      <div class="product-details-row">
+        <span class="product-details-label">Sotuv narxi</span>
+        <span id="productDetailsSellPrice" class="product-details-value">0 UZS</span>
+      </div>
+      <div class="product-details-row">
+        <span class="product-details-label">Joriy zaxira</span>
+        <span id="productDetailsStock" class="product-details-value">0</span>
+      </div>
+    </div>
 
-<h3>Mahsulotni tahrirlash</h3>
-
-<label>Hozirgi miqdor</label>
-<input id="currentStock" disabled>
-
-<label>Qo'shiladigan miqdor</label>
-<input id="addStockInput" type="number" placeholder="Nechta qo'shiladi">
-<input id="editCost" type="number" placeholder="Kelgan narxi">
-<input id="editPrice" type="number" placeholder="Sotish narxi">
- <div class="profit-buttons">
-<button type="button" onclick="setEditProfit(10)">10%</button>
-<button type="button" onclick="setEditProfit(15)">15%</button>
-<button type="button" onclick="setEditProfit(20)">20%</button>
-<button type="button" onclick="setEditProfit(25)">25%</button>
-<button type="button" onclick="setEditProfit(30)">30%</button>
+    <div class="modal-buttons product-details-actions">
+      <button type="button" onclick="openProductLabelPreview()" class="btn-primary">
+        Narx yorlig'ini chop etish
+      </button>
+      <button type="button" onclick="closeProductDetailsModal()" class="btn-secondary">
+        Yopish
+      </button>
+    </div>
+  </div>
 </div>
-
-<div class="modal-buttons">
-
-<button onclick="saveProductEdit()" class="btn-primary">
-Saqlash
-</button>
-
-<button onclick="closeEditModal()" class="btn-secondary">
-Bekor qilish
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-
 
 <!-- LABEL PREVIEW MODAL -->
-
 <div id="labelPreviewModal" class="modal hidden">
+  <div class="modal-card label-preview-card">
+    <h3 id="labelPreviewTitle" class="no-print">Label Preview</h3>
 
-<div class="modal-card">
+    <!-- Printable sticker (existing 200px label layout + JsBarcode) -->
+    <div id="labelPrintArea" class="label-print-area">
+      <div id="previewName" class="label-preview-name"></div>
+      <div id="previewPrice" class="label-preview-price"></div>
+      <div id="previewCode" class="label-preview-code"></div>
+      <svg id="previewBarcode" class="label-preview-barcode"></svg>
+      <div id="previewBarcodeNumber" class="label-preview-barcode-number"></div>
+    </div>
 
-<h3>Label Preview</h3>
+    <div id="labelQtyWrap" class="label-qty-wrap no-print">
+      <label for="labelQty">Nechta yorliq?</label>
+      <input id="labelQty" type="number" value="1" min="1">
+    </div>
 
-<!-- 🔥 REAL LABEL STICKER -->
-<div style="
-width:200px;
-margin:15px auto;
-background:white;
-border-radius:12px;
-padding:12px;
-text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-font-family:Arial, sans-serif;
-">
-
-  <!-- NAME -->
-  <div id="previewName" style="
-    font-size:12px;
-    font-weight:600;
-    margin-bottom:4px;
-  "></div>
-
-  <!-- PRICE -->
-  <div id="previewPrice" style="
-    font-size:20px;
-    font-weight:700;
-    margin-bottom:6px;
-  "></div>
-
-  <!-- SMALL CODE -->
-  <div id="previewCode" style="
-    font-size:10px;
-    margin-bottom:4px;
-    color:#444;
-  "></div>
-
-  <!-- BARCODE -->
-  <svg id="previewBarcode" style="
-    width:100%;
-    height:50px;
-  "></svg>
-
-  <!-- BARCODE NUMBER -->
-  <div id="previewBarcodeNumber" style="
-    font-size:12px;
-    margin-top:4px;
-    letter-spacing:1px;
-  "></div>
-
-</div>
-
-<!-- 🔽 QTY OUTSIDE (CLEAN UI) -->
-<div style="text-align:center; margin-top:10px;">
-
-  <label style="font-size:13px; opacity:.7;">
-    Nechta yorliq?
-  </label>
-
-  <br>
-
-  <input
-    id="labelQty"
-    type="number"
-    value="1"
-    min="1"
-    style="
-      width:80px;
-      text-align:center;
-      margin-top:6px;
-      padding:6px;
-      border-radius:8px;
-      border:1px solid #ddd;
-    "
-  >
-
-</div>
-<div class="modal-buttons">
-
-<button onclick="confirmSaveWithLabel()" class="btn-primary">
-Tasdiqlash
-</button>
-
-<button onclick="closeLabelPreview()" class="btn-secondary">
-Bekor qilish
-</button>
-
-</div>
-
-</div>
-
+    <div class="modal-buttons no-print">
+      <button type="button" onclick="confirmLabelPreviewAction()" class="btn-primary">
+        Tasdiqlash
+      </button>
+      <button type="button" onclick="closeLabelPreview()" class="btn-secondary">
+        Bekor qilish
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- FLOATING ACTION BUTTON -->
