@@ -1,134 +1,51 @@
 /**
- * Tahlil hub — entry screen for analytics (real-time Firestore).
+ * Tahlil v2 — period analytics hub (Firestore via AnalyticsAPI).
  */
 ;(function () {
-  const UZ_MONTHS = [
-    'Yanvar',
-    'Fevral',
-    'Mart',
-    'Aprel',
-    'May',
-    'Iyun',
-    'Iyul',
-    'Avgust',
-    'Sentabr',
-    'Oktabr',
-    'Noyabr',
-    'Dekabr'
-  ]
+  let activePeriod = 'day'
+  let selectedDate = ''
+  let productTab = 'quantity'
+  let trendChart = null
+  let loadToken = 0
 
-  let hubUnsubs = []
-  let hubBoot = {}
-  let hubHadError = false
-
-  let todaySales = []
-  let weekCurrentSales = []
-  let weekPrevSales = []
-  let monthSales = []
-  let nasiyaRows = []
-  let productRows = []
-
-  const BOOT_KEYS = ['today', 'weekCur', 'weekPrev', 'month', 'nasiya', 'products']
-
-  function shopId() {
-    return window.currentShopId || (typeof currentShopId !== 'undefined' ? currentShopId : null) || null
+  function todayInputValue() {
+    const d = new Date()
+    const pad = n => String(n).padStart(2, '0')
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
   }
 
-  function safeInt(v) {
-    const n = Math.round(Number(v))
-    return Number.isFinite(n) ? n : 0
+  function money(n) {
+    if (typeof formatMoney === 'function') return formatMoney(n)
+    return Math.round(Number(n) || 0).toLocaleString('uz-UZ').replace(/,/g, ' ') + ' UZS'
   }
 
-  function saleTotal(raw) {
-    return safeInt(raw.total ?? raw.amount)
-  }
-
-  function saleProfit(raw) {
-    return safeInt(raw.profit ?? raw.totalProfit)
-  }
-
-  function shortMoney(n) {
-    const x = safeInt(n)
+  function moneyShort(n) {
+    const x = Math.round(Number(n) || 0)
     if (x >= 1000000) {
       const m = x / 1000000
-      const s = (Math.round(m * 10) / 10).toFixed(1)
-      return s.replace(/\.0$/, '') + ' mln'
+      return (Math.round(m * 10) / 10).toFixed(1).replace(/\.0$/, '') + ' mln'
     }
-    if (x >= 1000) return Math.round(x / 1000) + 'k'
-    return String(x)
+    return x.toLocaleString('uz-UZ').replace(/,/g, ' ')
   }
 
-  function formatFullSom(n) {
-    if (typeof formatMoney === 'function') return formatMoney(n)
-    const v = safeInt(n)
-    return v.toLocaleString('uz-UZ').replace(/,/g, ' ') + ' UZS'
+  function pctBadge(el, pct) {
+    if (!el) return
+    const p = Math.round(Number(pct) || 0)
+    const pos = p >= 0
+    el.className = 'tahlil-hub-menu-badge ' + (pos ? 'tahlil-badge-weekly-pos' : 'tahlil-badge-weekly-neg')
+    if (p === 0) {
+      el.textContent = "— O'zgarish yo'q"
+      return
+    }
+    el.textContent = pos ? ('↑ +' + p + '%') : ('↓ ' + Math.abs(p) + '%')
   }
 
-  function monthYearLabel() {
-    const d = new Date()
-    return `${UZ_MONTHS[d.getMonth()]} ${d.getFullYear()}`
+  function setText(id, value) {
+    const el = document.getElementById(id)
+    if (el) el.textContent = value
   }
 
-  function monthStatsSubtitle() {
-    return `${monthYearLabel()} statistikasi`
-  }
-
-  /** Monday 00:00 local, offsetWeeks from current week (0 = this week, -1 = previous). End is exclusive next Monday. */
-  function weekRangeMonday(offsetWeeks) {
-    const now = new Date()
-    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    const day = d.getDay()
-    const toMon = day === 0 ? -6 : 1 - day
-    d.setDate(d.getDate() + toMon + offsetWeeks * 7)
-    d.setHours(0, 0, 0, 0)
-    const start = d
-    const end = new Date(start)
-    end.setDate(end.getDate() + 7)
-    return { start, end }
-  }
-
-  function monthRange() {
-    const now = new Date()
-    const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0)
-    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0)
-    return { start, end: tomorrow }
-  }
-
-  function todayRange() {
-    const now = new Date()
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
-    const end = new Date(start)
-    end.setDate(end.getDate() + 1)
-    return { start, end }
-  }
-
-  function weeklyChangePercent(curRev, prevRev) {
-    const c = safeInt(curRev)
-    const p = safeInt(prevRev)
-    if (c === 0 && p === 0) return 0
-    if (p === 0 && c > 0) return 100
-    if (p === 0) return 0
-    return Math.round(((c - p) / p) * 100)
-  }
-
-  function nasiyaRemaining(raw) {
-    const amount = safeInt(raw.amount)
-    const paid = safeInt(raw.paidAmount)
-    let r = amount - paid
-    if (!Number.isFinite(r) || r < 0) r = 0
-    return r
-  }
-
-  function storeHealth(products) {
-    if (!products.length) return { ok: true, label: "Sog'lom ✓", warn: false }
-    const anyZero = products.some(p => safeInt(p.quantity) === 0)
-    if (anyZero) return { ok: false, label: 'Diqqat ⚠', warn: true }
-    return { ok: true, label: "Sog'lom ✓", warn: false }
-  }
-
-  function showHubLoading() {
-    hubHadError = false
-    hubBoot = {}
+  function showLoading() {
     const load = document.getElementById('tahlilHubLoading')
     const err = document.getElementById('tahlilHubError')
     const content = document.getElementById('tahlilHubContent')
@@ -137,8 +54,7 @@
     if (content) content.classList.add('hidden')
   }
 
-  function showHubError() {
-    hubHadError = true
+  function showError() {
     const load = document.getElementById('tahlilHubLoading')
     const err = document.getElementById('tahlilHubError')
     const content = document.getElementById('tahlilHubContent')
@@ -147,8 +63,7 @@
     if (content) content.classList.add('hidden')
   }
 
-  function showHubContent() {
-    if (hubHadError) return
+  function showContent() {
     const load = document.getElementById('tahlilHubLoading')
     const err = document.getElementById('tahlilHubError')
     const content = document.getElementById('tahlilHubContent')
@@ -157,202 +72,292 @@
     if (content) content.classList.remove('hidden')
   }
 
-  function tryFinishBoot() {
-    const done = BOOT_KEYS.every(k => hubBoot[k])
-    if (done) showHubContent()
-  }
-
-  function markBoot(key) {
-    if (hubHadError) return
-    hubBoot[key] = true
-    tryFinishBoot()
-    renderHub()
-  }
-
-  function onHubError(e) {
-    console.error('Tahlil hub listener error:', e)
-    hubHadError = true
-    BOOT_KEYS.forEach(k => {
-      hubBoot[k] = true
+  function syncPeriodUi() {
+    document.querySelectorAll('#tahlilPeriodTabs .tahlil-period-tab').forEach(btn => {
+      btn.classList.toggle('is-active', btn.getAttribute('data-period') === activePeriod)
     })
-    showHubError()
+    const dateWrap = document.getElementById('tahlilDatePickerWrap')
+    const dayLists = document.getElementById('tahlilDayLists')
+    const trendCard = document.getElementById('tahlilTrendCard')
+    const dayHeader = document.getElementById('tahlilDayHeader')
+    const isDate = activePeriod === 'date'
+    if (dateWrap) dateWrap.classList.toggle('hidden', !isDate)
+    if (dayLists) dayLists.classList.toggle('hidden', !isDate)
+    if (trendCard) trendCard.classList.toggle('hidden', isDate)
+    if (dayHeader) dayHeader.classList.toggle('hidden', !isDate)
   }
 
-  function renderHub() {
-    if (hubHadError) return
-
-    const pill = document.getElementById('tahlilHubMonthPill')
-    if (pill) pill.textContent = monthYearLabel()
-
-    const todayRev = todaySales.reduce((s, r) => s + saleTotal(r), 0)
-    const todayPr = todaySales.reduce((s, r) => s + saleProfit(r), 0)
-    const nasiyaTotal = nasiyaRows.reduce((s, r) => s + nasiyaRemaining(r), 0)
-
-    const qr = document.getElementById('tahlilQuickRevenue')
-    const qp = document.getElementById('tahlilQuickProfit')
-    const qn = document.getElementById('tahlilQuickNasiya')
-    if (qr) qr.textContent = shortMoney(todayRev)
-    if (qp) qp.textContent = shortMoney(todayPr)
-    if (qn) qn.textContent = shortMoney(nasiyaTotal)
-
-    const curR = weekCurrentSales.reduce((s, r) => s + saleTotal(r), 0)
-    const prevR = weekPrevSales.reduce((s, r) => s + saleTotal(r), 0)
-    const wPct = weeklyChangePercent(curR, prevR)
-
-    const weeklyBadge = document.getElementById('tahlilBadgeWeekly')
-    if (weeklyBadge) {
-      const pos = wPct >= 0
-      weeklyBadge.className =
-        'tahlil-hub-menu-badge ' + (pos ? 'tahlil-badge-weekly-pos' : 'tahlil-badge-weekly-neg')
-      weeklyBadge.textContent = pos
-        ? `↑ +${wPct}% o'tgan haftadan`
-        : `↓ ${Math.abs(wPct)}% o'tgan haftadan`
+  function renderTrend(points) {
+    const canvas = document.getElementById('tahlilTrendChart')
+    if (!canvas || typeof Chart === 'undefined') return
+    const labels = (points || []).map(p => p.label)
+    const data = (points || []).map(p => p.revenue)
+    if (trendChart) {
+      trendChart.data.labels = labels
+      trendChart.data.datasets[0].data = data
+      trendChart.update('none')
+      return
     }
+    trendChart = new Chart(canvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Tushum',
+          data,
+          borderColor: '#2563EB',
+          backgroundColor: 'rgba(37, 99, 235, 0.12)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 2,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => money(ctx.parsed.y)
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8, font: { size: 10 } }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: v => moneyShort(v),
+              font: { size: 10 }
+            }
+          }
+        }
+      }
+    })
+  }
 
-    const monthCount = monthSales.length
-    const monthlyBadge = document.getElementById('tahlilBadgeMonthly')
-    if (monthlyBadge) {
-      monthlyBadge.textContent = `${monthCount} ta sotuv bu oy`
+  function renderRankList(el, rows, mode) {
+    if (!el) return
+    if (!rows || !rows.length) {
+      el.innerHTML = '<div class="tahlil-rank-empty">Ma\'lumot yo\'q</div>'
+      return
     }
+    el.innerHTML = rows.map((r, i) => {
+      const right = mode === 'profit'
+        ? money(r.profit)
+        : (mode === 'slow'
+          ? (r.quantity_sold + ' ta · zaxira ' + r.stock)
+          : (r.quantity_sold + ' ta · ' + money(r.revenue)))
+      return (
+        '<div class="tahlil-rank-row">' +
+          '<div class="tahlil-rank-left">' +
+            '<span class="tahlil-rank-num">' + (i + 1) + '</span>' +
+            '<span class="tahlil-rank-name">' + String(r.product_name || 'Mahsulot').replace(/</g, '&lt;') + '</span>' +
+          '</div>' +
+          '<div class="tahlil-rank-right">' + right + '</div>' +
+        '</div>'
+      )
+    }).join('')
+  }
 
-    const subMonthly = document.getElementById('tahlilMonthlySubtitle')
-    if (subMonthly) subMonthly.textContent = monthStatsSubtitle()
-
-    const nasCount = nasiyaRows.length
-    const nasBadge = document.getElementById('tahlilBadgeNasiya')
-    if (nasBadge) {
-      if (nasCount === 0) {
-        nasBadge.className = 'tahlil-hub-menu-badge tahlil-badge-nasiya-zero'
-        nasBadge.textContent = "Qarzdor yo'q"
+  function renderDayLists(dayData) {
+    const salesEl = document.getElementById('tahlilDaySalesList')
+    const returnsEl = document.getElementById('tahlilDayReturnsList')
+    const header = document.getElementById('tahlilDayHeader')
+    if (header) {
+      header.textContent = selectedDate || todayInputValue()
+    }
+    if (salesEl) {
+      const sales = (dayData && dayData.sales) || []
+      if (!sales.length) {
+        salesEl.innerHTML = '<div class="tahlil-rank-empty">Bu kunda sotuv yo\'q</div>'
       } else {
-        nasBadge.className = 'tahlil-hub-menu-badge tahlil-badge-nasiya-pos'
-        nasBadge.textContent = `${nasCount} ta faol qarzdor`
+        salesEl.innerHTML = sales.map(s => (
+          '<button type="button" class="tahlil-day-sale-row" data-sale-id="' + String(s.id || '') + '">' +
+            '<div>' +
+              '<div class="tahlil-day-sale-title">' + String(s.transaction_number || 'Sotuv').replace(/</g, '&lt;') + '</div>' +
+              '<div class="tahlil-day-sale-meta">' + String(s.time || '—') + '</div>' +
+            '</div>' +
+            '<div class="tahlil-day-sale-total">' + money(s.total) + '</div>' +
+          '</button>'
+        )).join('')
+        salesEl.querySelectorAll('[data-sale-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-sale-id')
+            if (id && typeof openSaleDetail === 'function') {
+              openSaleDetail(id, { returnPage: 'tahlilHubPage' })
+            }
+          })
+        })
       }
     }
-
-    const health = storeHealth(productRows)
-    const dokBadge = document.getElementById('tahlilBadgeDokon')
-    if (dokBadge) {
-      if (health.warn) {
-        dokBadge.className = 'tahlil-hub-menu-badge tahlil-badge-dokon-warn'
-        dokBadge.textContent = 'Diqqat ⚠'
+    if (returnsEl) {
+      const returns = (dayData && dayData.returns) || []
+      if (!returns.length) {
+        returnsEl.innerHTML = '<div class="tahlil-rank-empty">Bu kunda qaytarish yo\'q</div>'
       } else {
-        dokBadge.className = 'tahlil-hub-menu-badge tahlil-badge-dokon-ok'
-        dokBadge.textContent = "Sog'lom ✓"
+        returnsEl.innerHTML = returns.map(r => (
+          '<div class="tahlil-rank-row">' +
+            '<div class="tahlil-rank-name">' + String(r.product_name || 'Mahsulot').replace(/</g, '&lt;') +
+              ' · ' + r.quantity + ' ta</div>' +
+            '<div class="tahlil-rank-right">' + money(r.refund_amount) + '</div>' +
+          '</div>'
+        )).join('')
       }
     }
+  }
 
-    const sumRevEl = document.getElementById('tahlilSummaryRevenue')
-    const sumPrEl = document.getElementById('tahlilSummaryProfit')
-    const sumCntEl = document.getElementById('tahlilSummaryCount')
-    if (sumRevEl) sumRevEl.textContent = formatFullSom(todayRev)
-    if (sumPrEl) sumPrEl.textContent = formatFullSom(todayPr)
-    if (sumCntEl) sumCntEl.textContent = `${todaySales.length} ta`
+  async function refreshTahlil() {
+    if (typeof AnalyticsAPI === 'undefined') {
+      showError()
+      return
+    }
+    const token = ++loadToken
+    const dateStr = selectedDate || todayInputValue()
+    const period = activePeriod
+
+    try {
+      const [summary, trend, topQty, topProfit, slow, returnsSummary] = await Promise.all([
+        AnalyticsAPI.getAnalyticsSummary(period, dateStr),
+        activePeriod === 'date' ? Promise.resolve([]) : AnalyticsAPI.getAnalyticsTrend(period, dateStr),
+        AnalyticsAPI.getTopProducts(period, dateStr, 'quantity', 10),
+        AnalyticsAPI.getTopProducts(period, dateStr, 'profit', 10),
+        AnalyticsAPI.getSlowMovingProducts(period, dateStr, 10),
+        AnalyticsAPI.getReturnsSummary(period, dateStr)
+      ])
+
+      if (token !== loadToken) return
+
+      setText('tahlilCardRevenue', moneyShort(summary.revenue))
+      setText('tahlilCardProfit', moneyShort(summary.profit))
+      setText('tahlilCardSalesCount', String(summary.sales_count))
+      setText('tahlilCardReturnsCount', String(summary.returns_count))
+      pctBadge(document.getElementById('tahlilCardRevenuePct'), summary.revenue_change_pct)
+      pctBadge(document.getElementById('tahlilCardProfitPct'), summary.profit_change_pct)
+      pctBadge(document.getElementById('tahlilCardSalesPct'), summary.sales_count_change_pct)
+      pctBadge(document.getElementById('tahlilCardReturnsPct'), summary.returns_change_pct)
+
+      if (activePeriod !== 'date') renderTrend(trend)
+
+      window.__tahlilTopQty = topQty
+      window.__tahlilTopProfit = topProfit
+      renderRankList(
+        document.getElementById('tahlilTopProductsList'),
+        productTab === 'profit' ? topProfit : topQty,
+        productTab === 'profit' ? 'profit' : 'quantity'
+      )
+      renderRankList(document.getElementById('tahlilSlowList'), slow, 'slow')
+
+      setText('tahlilReturnsTotalCount', (returnsSummary.returns_count || 0) + ' ta')
+      setText('tahlilReturnsTotalAmount', money(returnsSummary.returns_amount || 0))
+      const topRet = returnsSummary.top_products || []
+      const retList = document.getElementById('tahlilReturnsTopList')
+      if (retList) {
+        if (!topRet.length) {
+          retList.innerHTML = '<div class="tahlil-rank-empty">Qaytarilgan mahsulot yo\'q</div>'
+        } else {
+          retList.innerHTML = topRet.map(r => (
+            '<div class="tahlil-rank-row">' +
+              '<span class="tahlil-rank-name">' + String(r.product_name).replace(/</g, '&lt;') + '</span>' +
+              '<span class="tahlil-rank-right">' + r.quantity + ' ta · ' + money(r.refund_amount) + '</span>' +
+            '</div>'
+          )).join('')
+        }
+      }
+
+      if (activePeriod === 'date') {
+        const dayData = await AnalyticsAPI.getAnalyticsDay(dateStr)
+        if (token !== loadToken) return
+        renderDayLists(dayData)
+      }
+
+      showContent()
+    } catch (err) {
+      console.error('Tahlil refresh failed:', err)
+      if (token === loadToken) showError()
+    }
+  }
+
+  function bindUiOnce() {
+    if (bindUiOnce.done) return
+    bindUiOnce.done = true
+
+    const tabs = document.getElementById('tahlilPeriodTabs')
+    if (tabs) {
+      tabs.addEventListener('click', e => {
+        const btn = e.target.closest('[data-period]')
+        if (!btn) return
+        activePeriod = btn.getAttribute('data-period') || 'day'
+        if (activePeriod === 'date' && !selectedDate) {
+          selectedDate = todayInputValue()
+          const input = document.getElementById('tahlilDateInput')
+          if (input) input.value = selectedDate
+        }
+        syncPeriodUi()
+        showLoading()
+        refreshTahlil()
+      })
+    }
+
+    const dateInput = document.getElementById('tahlilDateInput')
+    if (dateInput) {
+      dateInput.value = todayInputValue()
+      selectedDate = dateInput.value
+      dateInput.addEventListener('change', () => {
+        selectedDate = dateInput.value || todayInputValue()
+        showLoading()
+        refreshTahlil()
+      })
+    }
+
+    const productTabs = document.getElementById('tahlilProductTabs')
+    if (productTabs) {
+      productTabs.addEventListener('click', e => {
+        const btn = e.target.closest('[data-product-tab]')
+        if (!btn) return
+        productTab = btn.getAttribute('data-product-tab') || 'quantity'
+        productTabs.querySelectorAll('.tahlil-product-tab').forEach(b => {
+          b.classList.toggle('is-active', b === btn)
+        })
+        renderRankList(
+          document.getElementById('tahlilTopProductsList'),
+          productTab === 'profit' ? (window.__tahlilTopProfit || []) : (window.__tahlilTopQty || []),
+          productTab === 'profit' ? 'profit' : 'quantity'
+        )
+      })
+    }
+
+    const slowToggle = document.getElementById('tahlilSlowToggle')
+    const slowPanel = document.getElementById('tahlilSlowPanel')
+    if (slowToggle && slowPanel) {
+      slowToggle.addEventListener('click', () => {
+        const open = slowPanel.classList.contains('hidden')
+        slowPanel.classList.toggle('hidden', !open)
+        slowToggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+        slowToggle.classList.toggle('is-open', open)
+      })
+    }
   }
 
   function cleanupTahlilHubListeners() {
-    hubUnsubs.forEach(fn => {
-      if (typeof fn === 'function') fn()
-    })
-    hubUnsubs = []
+    loadToken += 1
+    if (trendChart) {
+      try { trendChart.destroy() } catch (e) { /* ignore */ }
+      trendChart = null
+    }
   }
 
   function loadTahlilHub() {
-    const sid = shopId()
-    if (!sid) return
-
-    cleanupTahlilHubListeners()
-    showHubLoading()
-    hubBoot = {}
-    hubHadError = false
-
-    const sales = db.collection('shops').doc(sid).collection('sales')
-    const nasiya = db.collection('shops').doc(sid).collection('nasiya')
-    const products = db.collection('shops').doc(sid).collection('products')
-
-    const tr = todayRange()
-    const w0 = weekRangeMonday(0)
-    const w1 = weekRangeMonday(-1)
-    const mr = monthRange()
-
-    const u1 = sales
-      .where('createdAt', '>=', tr.start)
-      .where('createdAt', '<', tr.end)
-      .onSnapshot(
-        snap => {
-          todaySales = []
-          snap.forEach(doc => todaySales.push(doc.data() || {}))
-          markBoot('today')
-        },
-        onHubError
-      )
-    hubUnsubs.push(u1)
-
-    const u2 = sales
-      .where('createdAt', '>=', w0.start)
-      .where('createdAt', '<', w0.end)
-      .onSnapshot(
-        snap => {
-          weekCurrentSales = []
-          snap.forEach(doc => weekCurrentSales.push(doc.data() || {}))
-          markBoot('weekCur')
-        },
-        onHubError
-      )
-    hubUnsubs.push(u2)
-
-    const u3 = sales
-      .where('createdAt', '>=', w1.start)
-      .where('createdAt', '<', w1.end)
-      .onSnapshot(
-        snap => {
-          weekPrevSales = []
-          snap.forEach(doc => weekPrevSales.push(doc.data() || {}))
-          markBoot('weekPrev')
-        },
-        onHubError
-      )
-    hubUnsubs.push(u3)
-
-    const u4 = sales
-      .where('createdAt', '>=', mr.start)
-      .where('createdAt', '<', mr.end)
-      .onSnapshot(
-        snap => {
-          monthSales = []
-          snap.forEach(doc => monthSales.push(doc.data() || {}))
-          markBoot('month')
-        },
-        onHubError
-      )
-    hubUnsubs.push(u4)
-
-    const u5 = nasiya
-      .where('status', '==', 'active')
-      .onSnapshot(
-        snap => {
-          nasiyaRows = []
-          snap.forEach(doc => nasiyaRows.push(doc.data() || {}))
-          markBoot('nasiya')
-        },
-        onHubError
-      )
-    hubUnsubs.push(u5)
-
-    const u6 = products.onSnapshot(
-      snap => {
-        productRows = []
-        snap.forEach(doc => {
-          const r = doc.data() || {}
-          if (r.deleted === true) return
-          if (r.status === 'inactive') return
-          productRows.push({ quantity: safeInt(r.quantity) })
-        })
-        markBoot('products')
-      },
-      onHubError
-    )
-    hubUnsubs.push(u6)
+    bindUiOnce()
+    if (!selectedDate) selectedDate = todayInputValue()
+    syncPeriodUi()
+    showLoading()
+    refreshTahlil()
   }
 
   function retryTahlilHub() {

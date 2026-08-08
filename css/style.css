@@ -9241,3 +9241,365 @@ Mobile-first responsive design
   text-align: right !important;
   white-space: nowrap;
 }
+
+/* ===============================
+   TAHLIL V2 (analytics rebuild)
+================================= */
+.tahlil-v2-inner {
+  padding: 14px 12px 28px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.tahlil-v2-header {
+  margin-bottom: 12px;
+}
+
+.tahlil-v2-title {
+  margin: 2px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.tahlil-period-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tahlil-period-tab {
+  flex: 0 0 auto;
+  border: 1px solid #E2E8F0;
+  background: #fff;
+  color: #475569;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tahlil-period-tab.is-active {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #fff;
+}
+
+.tahlil-date-picker-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.tahlil-date-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748B;
+}
+
+.tahlil-date-input {
+  flex: 1;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  height: 40px;
+  padding: 0 10px;
+  font-size: 14px;
+}
+
+.tahlil-day-header {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 10px;
+}
+
+.tahlil-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.tahlil-summary-card {
+  border-radius: 16px;
+  padding: 12px;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid transparent;
+}
+
+.tahlil-card-revenue {
+  background: linear-gradient(160deg, #1D4ED8, #2563EB);
+  color: #fff;
+}
+
+.tahlil-card-profit {
+  background: linear-gradient(160deg, #15803D, #22C55E);
+  color: #fff;
+}
+
+.tahlil-card-sales {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
+  color: #0F172A;
+}
+
+.tahlil-card-returns {
+  background: #FFF7ED;
+  border-color: #FED7AA;
+  color: #9A3412;
+}
+
+.tahlil-summary-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+}
+
+.tahlil-summary-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.tahlil-summary-value {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.tahlil-summary-currency {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.tahlil-summary-card .tahlil-hub-menu-badge {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.tahlil-card-revenue .tahlil-hub-menu-badge,
+.tahlil-card-profit .tahlil-hub-menu-badge {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.tahlil-trend-card,
+.tahlil-section-block,
+.tahlil-returns-card {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.tahlil-section-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 10px;
+}
+
+.tahlil-chart-wrap {
+  position: relative;
+  height: 200px;
+}
+
+.tahlil-product-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.tahlil-product-tab {
+  flex: 1;
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  border-radius: 10px;
+  padding: 8px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+}
+
+.tahlil-product-tab.is-active {
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #1D4ED8;
+}
+
+.tahlil-rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tahlil-rank-row,
+.tahlil-day-sale-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.tahlil-rank-row:last-child,
+.tahlil-day-sale-row:last-child {
+  border-bottom: none;
+}
+
+.tahlil-rank-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.tahlil-rank-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #F1F5F9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.tahlil-rank-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0F172A;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tahlil-rank-right {
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.tahlil-rank-empty {
+  font-size: 13px;
+  color: #94A3B8;
+  font-weight: 600;
+  padding: 8px 0;
+}
+
+.tahlil-collapse-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #0F172A;
+  cursor: pointer;
+}
+
+.tahlil-collapse-chevron {
+  transition: transform 0.15s ease;
+  color: #64748B;
+}
+
+.tahlil-collapse-btn.is-open .tahlil-collapse-chevron {
+  transform: rotate(90deg);
+}
+
+.tahlil-collapse-panel {
+  margin-top: 10px;
+}
+
+.tahlil-returns-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tahlil-returns-stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9A3412;
+  opacity: 0.8;
+}
+
+.tahlil-returns-stat-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: #9A3412;
+}
+
+.tahlil-day-sale-row {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  padding: 12px 0;
+}
+
+.tahlil-day-sale-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+.tahlil-day-sale-meta {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.tahlil-day-sale-total {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1D4ED8;
+  white-space: nowrap;
+}
+
+.tahlil-legacy-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.tahlil-legacy-link {
+  border: none;
+  background: transparent;
+  color: #2563EB;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+}
