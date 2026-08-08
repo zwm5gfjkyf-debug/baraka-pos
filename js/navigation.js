@@ -66,7 +66,7 @@ function navigate(pageId){
     mainContent.style.removeProperty('padding-bottom')
   }
 
-  if(previousPage === 'todaySalesHistoryPage' && pageId !== 'todaySalesHistoryPage' && typeof cleanupTodaySalesHistoryListeners === 'function'){
+  if(previousPage === 'todaySalesHistoryPage' && pageId !== 'todaySalesHistoryPage' && pageId !== 'saleDetailPage' && typeof cleanupTodaySalesHistoryListeners === 'function'){
     cleanupTodaySalesHistoryListeners()
   }
 
@@ -90,7 +90,7 @@ function navigate(pageId){
     cleanupStoreAnalyticsListener()
   }
 
-  if(previousPage === 'dashboardPage' && pageId !== 'dashboardPage' && pageId !== 'todaySalesHistoryPage' && typeof cleanupDashboardListeners === 'function'){
+  if(previousPage === 'dashboardPage' && pageId !== 'dashboardPage' && pageId !== 'todaySalesHistoryPage' && pageId !== 'saleDetailPage' && typeof cleanupDashboardListeners === 'function'){
     cleanupDashboardListeners()
   }
 
@@ -106,7 +106,7 @@ function navigate(pageId){
   if(bottomNav){
     if(!loggedIn){
       bottomNav.style.display = 'none'
-    }else if(pageId === 'addProductPage' || pageId === 'unitPage' || pageId === 'buyurtmaPage' || pageId === 'buyurtmalarPage' || isSaleFlowPage){
+    }else if(pageId === 'addProductPage' || pageId === 'unitPage' || pageId === 'buyurtmaPage' || pageId === 'buyurtmalarPage' || pageId === 'saleDetailPage' || isSaleFlowPage){
       bottomNav.style.display = 'none'
     }else{
       bottomNav.style.display = 'flex'
@@ -126,6 +126,7 @@ function navigate(pageId){
       fab.style.display = 'none'
     }else{
       fab.style.display = (pageId === 'dashboardPage' || pageId === 'todaySalesHistoryPage') ? 'flex' : 'none'
+      if(pageId === 'saleDetailPage') fab.style.display = 'none'
     }
   }
 
@@ -149,12 +150,17 @@ function navigate(pageId){
     navButtons[navMap[pageId]]?.classList.add('active')
   }
 
-  if(pageId === 'todaySalesHistoryPage' && navButtons.length > 0){
+  if((pageId === 'todaySalesHistoryPage' || pageId === 'saleDetailPage') && navButtons.length > 0){
     navButtons[0].classList.add('active')
   }
 
+  if(pageId === 'saleDetailPage'){
+    const main = document.querySelector('.main-content')
+    if(main) main.style.paddingTop = '80px'
+  }
+
   let sidebarRoute = pageId
-  if(pageId === 'todaySalesHistoryPage'){
+  if(pageId === 'todaySalesHistoryPage' || pageId === 'saleDetailPage'){
     sidebarRoute = 'dashboardPage'
   }else if(['tahlilHubPage', 'dokonTahliliPage', 'weeklyTahliliPage', 'monthlyTahliliPage', 'nasiyaTahliliPage'].includes(pageId)){
     sidebarRoute = 'tahlilHubPage'

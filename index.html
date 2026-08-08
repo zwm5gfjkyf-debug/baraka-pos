@@ -465,6 +465,81 @@ Hammasini o'chirish
     </div>
   </div>
 
+  <!-- SOTUV TAFSILOTI (SPA /sotuv/[id]) -->
+  <div id="saleDetailPage" class="page hidden page-sale-detail">
+    <div class="sale-detail-inner">
+      <div class="sale-detail-header no-print">
+        <button type="button" class="today-sales-back" onclick="leaveSaleDetailPage()" aria-label="Orqaga">←</button>
+        <h1 class="sale-detail-heading">Sotuv tafsiloti</h1>
+      </div>
+
+      <div id="saleDetailLoading" class="sale-detail-status">Yuklanmoqda…</div>
+      <div id="saleDetailError" class="sale-detail-status sale-detail-error hidden"></div>
+
+      <div id="saleDetailContent" class="sale-detail-content hidden">
+        <div class="sale-detail-card">
+          <div id="saleDetailTitle" class="sale-detail-title">Sotuv</div>
+          <div id="saleDetailMeta" class="sale-detail-meta">—</div>
+          <div class="sale-detail-row">
+            <span class="sale-detail-label">Kassir</span>
+            <span id="saleDetailCashier" class="sale-detail-value">—</span>
+          </div>
+          <div class="sale-detail-row">
+            <span class="sale-detail-label">To'lov</span>
+            <span id="saleDetailPayment" class="sale-detail-value">—</span>
+          </div>
+        </div>
+
+        <div class="sale-detail-card">
+          <div class="sale-detail-section-title">Mahsulotlar</div>
+          <div id="saleDetailItems" class="sale-detail-items"></div>
+        </div>
+
+        <div class="sale-detail-card">
+          <div class="sale-detail-row">
+            <span class="sale-detail-label">Oraliq summa</span>
+            <span id="saleDetailSubtotal" class="sale-detail-value">0 UZS</span>
+          </div>
+          <div class="sale-detail-row">
+            <span class="sale-detail-label">Chegirma</span>
+            <span id="saleDetailDiscount" class="sale-detail-value">—</span>
+          </div>
+          <div class="sale-detail-row sale-detail-row-total">
+            <span class="sale-detail-label">Jami</span>
+            <span id="saleDetailTotal" class="sale-detail-value">0 UZS</span>
+          </div>
+        </div>
+
+        <button type="button" class="sale-detail-print-btn no-print" onclick="printSaleReceipt()">
+          Chekni chop etish
+        </button>
+      </div>
+    </div>
+
+    <!-- Print-only receipt -->
+    <div id="saleReceiptPrintArea" class="sale-receipt-print-area" aria-hidden="true">
+      <div class="sale-receipt-shop">Baraka</div>
+      <div id="saleReceiptTitle" class="sale-receipt-title">Sotuv</div>
+      <div id="saleReceiptMeta" class="sale-receipt-meta">—</div>
+      <div class="sale-receipt-line"><span>Kassir</span><span id="saleReceiptCashier">—</span></div>
+      <div class="sale-receipt-line"><span>To'lov</span><span id="saleReceiptPayment">—</span></div>
+      <table class="sale-receipt-table">
+        <thead>
+          <tr>
+            <th>Mahsulot</th>
+            <th>Miqdor</th>
+            <th>Narx</th>
+            <th>Summa</th>
+          </tr>
+        </thead>
+        <tbody id="saleReceiptItems"></tbody>
+      </table>
+      <div class="sale-receipt-line"><span>Oraliq summa</span><span id="saleReceiptSubtotal">0 UZS</span></div>
+      <div class="sale-receipt-line"><span>Chegirma</span><span id="saleReceiptDiscount">—</span></div>
+      <div class="sale-receipt-line sale-receipt-total"><span>Jami</span><span id="saleReceiptTotal">0 UZS</span></div>
+    </div>
+  </div>
+
 <!-- SALE -->
 <div id="salePage" class="page hidden">
 
@@ -1952,6 +2027,7 @@ Metr
 <script src="js/auth.js"></script>
 <script src="js/navigation.js"></script>
 <script src="js/sales.js"></script>
+<script src="js/sale-detail.js"></script>
 <script src="js/stock.js"></script>
 <script src="js/orders.js"></script>
 <script src="js/analytics.js"></script>
