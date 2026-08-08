@@ -70,7 +70,7 @@ function navigate(pageId){
     cleanupTodaySalesHistoryListeners()
   }
 
-  if(previousPage === 'tahlilHubPage' && pageId !== 'tahlilHubPage' && typeof cleanupTahlilHubListeners === 'function'){
+  if(previousPage === 'tahlilHubPage' && pageId !== 'tahlilHubPage' && pageId !== 'saleDetailPage' && typeof cleanupTahlilHubListeners === 'function'){
     cleanupTahlilHubListeners()
   }
 

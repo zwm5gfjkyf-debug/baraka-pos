@@ -1070,10 +1070,8 @@ Hammasini o'chirish
       <div class="tahlil-skel-box asosiy-skeleton-pulse"></div>
       <div class="tahlil-skel-box asosiy-skeleton-pulse"></div>
       <div class="tahlil-skel-box asosiy-skeleton-pulse"></div>
+      <div class="tahlil-skel-box asosiy-skeleton-pulse"></div>
     </div>
-    <div class="tahlil-skel-menu-row asosiy-skeleton-pulse"></div>
-    <div class="tahlil-skel-menu-row asosiy-skeleton-pulse"></div>
-    <div class="tahlil-skel-menu-row asosiy-skeleton-pulse"></div>
     <div class="tahlil-skel-menu-row asosiy-skeleton-pulse"></div>
     <div class="tahlil-skel-bottom asosiy-skeleton-pulse"></div>
   </div>
@@ -1085,118 +1083,125 @@ Hammasini o'chirish
     </div>
   </div>
 
-  <div id="tahlilHubContent" class="tahlil-hub-inner hidden">
-    <div class="tahlil-hub-header">
-      <div class="tahlil-hub-header-left">
-        <div class="tahlil-hub-icon-blue" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 19V5" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <path d="M4 19H20" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <path d="M8 16V10" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <path d="M12 16V7" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <path d="M16 16V13" stroke="white" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+  <div id="tahlilHubContent" class="tahlil-v2-inner hidden">
+    <div class="tahlil-v2-header">
+      <div class="tahlil-hub-eyebrow">Tahlil</div>
+      <h1 class="tahlil-v2-title">Hisobotlar</h1>
+    </div>
+
+    <!-- 1. Period tabs -->
+    <div class="tahlil-period-tabs" id="tahlilPeriodTabs" role="tablist">
+      <button type="button" class="tahlil-period-tab is-active" data-period="day">Kunlik</button>
+      <button type="button" class="tahlil-period-tab" data-period="week">Haftalik</button>
+      <button type="button" class="tahlil-period-tab" data-period="month">Oylik</button>
+      <button type="button" class="tahlil-period-tab" data-period="year">Yillik</button>
+      <button type="button" class="tahlil-period-tab" data-period="date">Sana tanlash</button>
+    </div>
+
+    <div id="tahlilDatePickerWrap" class="tahlil-date-picker-wrap hidden">
+      <label for="tahlilDateInput" class="tahlil-date-label">Sana</label>
+      <input id="tahlilDateInput" class="tahlil-date-input" type="date">
+    </div>
+
+    <!-- Period overview (hidden in single-day drill when using date mode content below) -->
+    <div id="tahlilPeriodView">
+      <div id="tahlilDayHeader" class="tahlil-day-header hidden"></div>
+
+      <!-- 2. Summary cards 2x2 -->
+      <div class="tahlil-summary-grid">
+        <div class="tahlil-summary-card tahlil-card-revenue">
+          <div class="tahlil-summary-label">TUSHUM</div>
+          <div class="tahlil-summary-value-row">
+            <span id="tahlilCardRevenue" class="tahlil-summary-value">0</span>
+            <span class="tahlil-summary-currency">UZS</span>
+          </div>
+          <span id="tahlilCardRevenuePct" class="tahlil-hub-menu-badge tahlil-badge-weekly-pos">↑ +0%</span>
         </div>
-        <div>
-          <div class="tahlil-hub-eyebrow">Tahlil</div>
-          <div class="tahlil-hub-heading">Hisobotlar</div>
+        <div class="tahlil-summary-card tahlil-card-profit">
+          <div class="tahlil-summary-label">FOYDA</div>
+          <div class="tahlil-summary-value-row">
+            <span id="tahlilCardProfit" class="tahlil-summary-value">0</span>
+            <span class="tahlil-summary-currency">UZS</span>
+          </div>
+          <span id="tahlilCardProfitPct" class="tahlil-hub-menu-badge tahlil-badge-weekly-pos">↑ +0%</span>
         </div>
+        <div class="tahlil-summary-card tahlil-card-sales">
+          <div class="tahlil-summary-label">SOTUVLAR SONI</div>
+          <div class="tahlil-summary-value-row">
+            <span id="tahlilCardSalesCount" class="tahlil-summary-value">0</span>
+            <span class="tahlil-summary-currency">ta</span>
+          </div>
+          <span id="tahlilCardSalesPct" class="tahlil-hub-menu-badge tahlil-badge-weekly-pos">↑ +0%</span>
+        </div>
+        <div class="tahlil-summary-card tahlil-card-returns">
+          <div class="tahlil-summary-label">QAYTARISHLAR</div>
+          <div class="tahlil-summary-value-row">
+            <span id="tahlilCardReturnsCount" class="tahlil-summary-value">0</span>
+            <span class="tahlil-summary-currency">ta</span>
+          </div>
+          <span id="tahlilCardReturnsPct" class="tahlil-hub-menu-badge tahlil-badge-weekly-pos">↑ +0%</span>
+        </div>
+      </div>
+
+      <!-- 3. Trend chart -->
+      <div id="tahlilTrendCard" class="tahlil-trend-card">
+        <div class="tahlil-section-title">Savdo grafigi</div>
+        <div class="tahlil-chart-wrap">
+          <canvas id="tahlilTrendChart" height="180"></canvas>
+        </div>
+      </div>
+
+      <!-- 4. Single-day lists (Sana tanlash) -->
+      <div id="tahlilDayLists" class="tahlil-day-lists hidden">
+        <div class="tahlil-section-title">Sotuvlar</div>
+        <div id="tahlilDaySalesList" class="tahlil-day-list"></div>
+        <div class="tahlil-section-title">Qaytarishlar</div>
+        <div id="tahlilDayReturnsList" class="tahlil-day-list"></div>
       </div>
     </div>
 
-    <div class="tahlil-hub-quick-stats">
-      <div class="tahlil-hub-mini-card">
-        <div id="tahlilQuickRevenue" class="tahlil-mini-value tahlil-mini-blue">0</div>
-        <div class="tahlil-mini-label">BUGUNGI</div>
+    <!-- 5. Mahsulot tahlili -->
+    <div class="tahlil-section-block">
+      <div class="tahlil-section-title">Mahsulot tahlili</div>
+      <div class="tahlil-product-tabs" id="tahlilProductTabs">
+        <button type="button" class="tahlil-product-tab is-active" data-product-tab="quantity">Eng ko'p sotilgan</button>
+        <button type="button" class="tahlil-product-tab" data-product-tab="profit">Eng ko'p foyda keltirgan</button>
       </div>
-      <div class="tahlil-hub-mini-card">
-        <div id="tahlilQuickProfit" class="tahlil-mini-value tahlil-mini-green">0</div>
-        <div class="tahlil-mini-label">FOYDA</div>
-      </div>
-      <div class="tahlil-hub-mini-card">
-        <div id="tahlilQuickNasiya" class="tahlil-mini-value tahlil-mini-orange">0</div>
-        <div class="tahlil-mini-label">NASIYA</div>
+      <div id="tahlilTopProductsList" class="tahlil-rank-list"></div>
+    </div>
+
+    <!-- 6. Slow-moving -->
+    <div class="tahlil-section-block">
+      <button type="button" class="tahlil-collapse-btn" id="tahlilSlowToggle" aria-expanded="false">
+        <span>Sekin sotiladigan mahsulotlar</span>
+        <span class="tahlil-collapse-chevron">›</span>
+      </button>
+      <div id="tahlilSlowPanel" class="tahlil-collapse-panel hidden">
+        <div id="tahlilSlowList" class="tahlil-rank-list"></div>
       </div>
     </div>
 
-    <div class="tahlil-hub-section-title">TAHLIL BO'LIMLARI</div>
-
-    <button type="button" class="tahlil-hub-menu" onclick="navigate('weeklyTahliliPage')">
-      <div class="tahlil-hub-menu-left">
-        <div class="tahlil-menu-icon tahlil-menu-icon-blue">
-          <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M4 19V5M4 19H20M8 16V10M12 16V7M16 16V13" stroke="#1976D2" stroke-width="2" stroke-linecap="round"/></svg>
+    <!-- 7. Returns summary -->
+    <div class="tahlil-section-block">
+      <div class="tahlil-returns-card">
+        <div class="tahlil-section-title">Qaytarishlar</div>
+        <div class="tahlil-returns-stats">
+          <div>
+            <div class="tahlil-returns-stat-label">Soni</div>
+            <div id="tahlilReturnsTotalCount" class="tahlil-returns-stat-value">0 ta</div>
+          </div>
+          <div>
+            <div class="tahlil-returns-stat-label">Summa</div>
+            <div id="tahlilReturnsTotalAmount" class="tahlil-returns-stat-value">0 UZS</div>
+          </div>
         </div>
-        <div class="tahlil-hub-menu-text">
-          <div class="tahlil-hub-menu-title">Haftalik tahlil</div>
-          <div class="tahlil-hub-menu-sub">Bu hafta vs o'tgan hafta</div>
-          <div id="tahlilBadgeWeekly" class="tahlil-hub-menu-badge tahlil-badge-weekly-pos">↑ +0% o'tgan haftadan</div>
-        </div>
+        <div id="tahlilReturnsTopList" class="tahlil-rank-list tahlil-returns-top"></div>
       </div>
-      <span class="tahlil-hub-chevron">›</span>
-    </button>
-
-    <button type="button" class="tahlil-hub-menu" onclick="navigate('monthlyTahliliPage')">
-      <div class="tahlil-hub-menu-left">
-        <div class="tahlil-menu-icon tahlil-menu-icon-green">
-          <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><rect x="3" y="5" width="18" height="16" rx="2" stroke="#2E7D32" stroke-width="2"/><path d="M3 9H21M8 3V7M16 3V7" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"/></svg>
-        </div>
-        <div class="tahlil-hub-menu-text">
-          <div class="tahlil-hub-menu-title">Oylik tahlil</div>
-          <div id="tahlilMonthlySubtitle" class="tahlil-hub-menu-sub">—</div>
-          <div id="tahlilBadgeMonthly" class="tahlil-hub-menu-badge tahlil-badge-monthly">0 ta sotuv bu oy</div>
-        </div>
-      </div>
-      <span class="tahlil-hub-chevron">›</span>
-    </button>
-
-    <button type="button" class="tahlil-hub-menu" onclick="navigate('nasiyaTahliliPage')">
-      <div class="tahlil-hub-menu-left">
-        <div class="tahlil-menu-icon tahlil-menu-icon-red">
-          <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="#C62828" stroke-width="2"/><path d="M4 21a8 8 0 0 1 16 0" stroke="#C62828" stroke-width="2" stroke-linecap="round"/></svg>
-        </div>
-        <div class="tahlil-hub-menu-text">
-          <div class="tahlil-hub-menu-title">Nasiya tahlili</div>
-          <div class="tahlil-hub-menu-sub">Qarzdorlar va to'lovlar</div>
-          <div id="tahlilBadgeNasiya" class="tahlil-hub-menu-badge tahlil-badge-nasiya-zero">Qarzdor yo'q</div>
-        </div>
-      </div>
-      <span class="tahlil-hub-chevron">›</span>
-    </button>
-
-    <button type="button" class="tahlil-hub-menu" onclick="navigate('dokonTahliliPage')">
-      <div class="tahlil-hub-menu-left">
-        <div class="tahlil-menu-icon tahlil-menu-icon-purple">
-          <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M3 10.5L12 4l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V10.5Z" stroke="#7B1FA2" stroke-width="2" stroke-linejoin="round"/><path d="M9 21V12h6v9" stroke="#7B1FA2" stroke-width="2" stroke-linecap="round"/></svg>
-        </div>
-        <div class="tahlil-hub-menu-text">
-          <div class="tahlil-hub-menu-title">Do'kon tahlili</div>
-          <div class="tahlil-hub-menu-sub">Zaxira qiymati va marja</div>
-          <div id="tahlilBadgeDokon" class="tahlil-hub-menu-badge tahlil-badge-dokon-ok">Sog'lom ✓</div>
-        </div>
-      </div>
-      <span class="tahlil-hub-chevron">›</span>
-    </button>
-
-    <div class="tahlil-hub-summary-head">
-      <span class="tahlil-hub-summary-title">Bugungi ko'rsatkichlar</span>
-      <button type="button" class="tahlil-hub-summary-link" onclick="navigate('weeklyTahliliPage')">Batafsil →</button>
     </div>
-    <div class="tahlil-hub-summary-row">
-      <span class="tahlil-dot tahlil-dot-blue"></span>
-      <span class="tahlil-hub-summary-label">Jami tushum</span>
-      <span id="tahlilSummaryRevenue" class="tahlil-hub-summary-val">0 UZS</span>
-    </div>
-    <div class="tahlil-hub-divider"></div>
-    <div class="tahlil-hub-summary-row">
-      <span class="tahlil-dot tahlil-dot-green"></span>
-      <span class="tahlil-hub-summary-label">Jami foyda</span>
-      <span id="tahlilSummaryProfit" class="tahlil-hub-summary-val tahlil-summary-profit">0 UZS</span>
-    </div>
-    <div class="tahlil-hub-divider"></div>
-    <div class="tahlil-hub-summary-row">
-      <span class="tahlil-dot tahlil-dot-orange"></span>
-      <span class="tahlil-hub-summary-label">Sotuvlar soni</span>
-      <span id="tahlilSummaryCount" class="tahlil-hub-summary-val">0 ta</span>
+
+    <div class="tahlil-legacy-links">
+      <button type="button" class="tahlil-legacy-link" onclick="navigate('nasiyaTahliliPage')">Nasiya tahlili →</button>
+      <button type="button" class="tahlil-legacy-link" onclick="navigate('dokonTahliliPage')">Do'kon tahlili →</button>
     </div>
   </div>
 </div>
@@ -2028,6 +2033,7 @@ Metr
 <script src="js/stock.js"></script>
 <script src="js/orders.js"></script>
 <script src="js/analytics.js"></script>
+<script src="js/analytics-api.js"></script>
 <script src="js/tahlil-hub.js"></script>
 <script src="js/tahlil-children.js"></script>
 <script src="js/home-asosiy.js"></script>

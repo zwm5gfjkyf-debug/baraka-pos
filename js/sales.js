@@ -653,6 +653,7 @@ if(discountValue > 0){
 const saleItems = cart.map(i => {
   const qty = Number(i.qty) || 0
   const unitPrice = Number(i.price) || 0
+  const unitCost = Number(i.cost) || 0
   return {
     productId: i.id || null,
     product_name: i.name || '',
@@ -662,7 +663,8 @@ const saleItems = cart.map(i => {
     unit_price: unitPrice,
     price: unitPrice,
     line_total: unitPrice * qty,
-    cost: Number(i.cost) || 0
+    cost: unitCost,
+    cost_price: unitCost
   }
 })
 
