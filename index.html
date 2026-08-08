@@ -783,7 +783,7 @@ Hammasini o'chirish
   </h2>
 
   <!-- ➕ ADD BUTTON (KEEP) -->
-  <button onclick="navigate('addProductPage')" style="
+  <button onclick="startNewBuyurtma()" style="
     width:44px;
     height:44px;
     border:none;
@@ -881,6 +881,85 @@ Hammasini o'chirish
   <div id="currentStockList"></div>
 
 </div>
+
+<!-- BUYURTMA (stock order) PAGE -->
+<div id="buyurtmaPage" class="page hidden">
+  <div class="buyurtma-page-inner">
+    <div class="buyurtma-header">
+      <button type="button" class="buyurtma-back-btn" onclick="leaveBuyurtmaPage()" aria-label="Orqaga">←</button>
+      <div class="buyurtma-header-main">
+        <div class="buyurtma-title-row">
+          <h2 id="buyurtmaTitle" class="buyurtma-title">Buyurtma</h2>
+          <button type="button" class="buyurtma-rename-btn" onclick="renameBuyurtma()" aria-label="Nomini o'zgartirish" title="Nomini o'zgartirish">✎</button>
+        </div>
+        <div id="buyurtmaStatus" class="buyurtma-status">Qoralama</div>
+        <input id="buyurtmaSupplier" class="buyurtma-supplier-input" type="text" placeholder="Yetkazib beruvchi nomi" autocomplete="off">
+      </div>
+      <div class="buyurtma-header-actions">
+        <button type="button" class="buyurtma-btn buyurtma-btn-cancel" onclick="cancelBuyurtma()">Bekor qilish</button>
+        <button type="button" class="buyurtma-btn buyurtma-btn-create" onclick="finalizeBuyurtma()">Yaratish</button>
+      </div>
+    </div>
+
+    <div class="buyurtma-stats-grid">
+      <div class="buyurtma-stat-card">
+        <div id="buyurtmaStatNames" class="buyurtma-stat-value">0</div>
+        <div class="buyurtma-stat-label">Nomlar</div>
+      </div>
+      <div class="buyurtma-stat-card">
+        <div id="buyurtmaStatUnits" class="buyurtma-stat-value">0</div>
+        <div class="buyurtma-stat-label">Tovar birliklari</div>
+      </div>
+      <div class="buyurtma-stat-card">
+        <div id="buyurtmaStatDelivery" class="buyurtma-stat-value">0 UZS</div>
+        <div class="buyurtma-stat-label">Yetkazib berish narxi bo'yicha</div>
+      </div>
+      <div class="buyurtma-stat-card">
+        <div id="buyurtmaStatSale" class="buyurtma-stat-value">0 UZS</div>
+        <div class="buyurtma-stat-label">Sotuv narxi bo'yicha</div>
+      </div>
+    </div>
+
+    <div class="buyurtma-filter-tabs" id="buyurtmaFilterTabs" role="tablist">
+      <button type="button" class="buyurtma-filter-tab is-active" data-order-filter="order" onclick="setBuyurtmaFilter('order')">Buyurtmaga (<span id="buyurtmaCountOrder">0</span>)</button>
+      <button type="button" class="buyurtma-filter-tab" data-order-filter="all" onclick="setBuyurtmaFilter('all')">Barchasi (<span id="buyurtmaCountAll">0</span>)</button>
+      <button type="button" class="buyurtma-filter-tab" data-order-filter="low" onclick="setBuyurtmaFilter('low')">Kam qoldiq (<span id="buyurtmaCountLow">0</span>)</button>
+      <button type="button" class="buyurtma-filter-tab" data-order-filter="zero" onclick="setBuyurtmaFilter('zero')">Nol qoldiq (<span id="buyurtmaCountZero">0</span>)</button>
+      <button type="button" class="buyurtma-filter-tab" data-order-filter="prev" onclick="setBuyurtmaFilter('prev')">Oldin buyurtma qilingan (<span id="buyurtmaCountPrev">0</span>)</button>
+    </div>
+
+    <div class="buyurtma-actions-row">
+      <input id="buyurtmaSearch" class="buyurtma-search-input" type="search" placeholder="Artikul, shtrix-kod, nom" oninput="onBuyurtmaSearch(this.value)" autocomplete="off">
+      <button type="button" class="buyurtma-btn buyurtma-btn-secondary" id="buyurtmaScanBtn" onclick="toggleBuyurtmaScanner()">Skanerlashni yoqish</button>
+      <button type="button" class="buyurtma-btn buyurtma-btn-primary" onclick="openAddProductForBuyurtma()">Yangi mahsulot qo'shish</button>
+    </div>
+
+    <div id="buyurtmaScanner" class="buyurtma-scanner hidden">
+      <div id="buyurtmaScannerViewport" class="buyurtma-scanner-viewport"></div>
+    </div>
+
+    <div class="buyurtma-table-wrap">
+      <table class="buyurtma-table">
+        <thead>
+          <tr>
+            <th>Nomi</th>
+            <th>Artikul</th>
+            <th>Shtrix-kod</th>
+            <th>Miqdori</th>
+            <th>Buyurtmaga</th>
+            <th>Kelish narxi</th>
+            <th>Наценка</th>
+            <th>Sotuv narxi</th>
+          </tr>
+        </thead>
+        <tbody id="buyurtmaTableBody">
+          <tr><td colspan="8" class="buyurtma-empty-cell">Mahsulotlar yuklanmoqda…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- TAHLIL HUB -->
 <div id="tahlilHubPage" class="page hidden tahlil-page-bg">
 
@@ -1914,6 +1993,7 @@ Bekor qilish
 <script src="js/navigation.js"></script>
 <script src="js/sales.js"></script>
 <script src="js/stock.js"></script>
+<script src="js/orders.js"></script>
 <script src="js/analytics.js"></script>
 <script src="js/tahlil-hub.js"></script>
 <script src="js/tahlil-children.js"></script>
