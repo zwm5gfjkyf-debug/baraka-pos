@@ -627,28 +627,71 @@ cart.forEach(i=>{
   itemsCount += Number(i.qty) || 0
 })
 
+const subtotal = total
+let appliedDiscountAmount = 0
+let appliedDiscountPercent = 0
+
 // 🔥 APPLY DISCOUNT BEFORE SAVING
 if(discountValue > 0){
 
   if(discountType === "percent"){
-    total = total - (total * discountValue / 100)
+    appliedDiscountPercent = Number(discountValue) || 0
+    appliedDiscountAmount = total * appliedDiscountPercent / 100
+    total = total - appliedDiscountAmount
   }else{
-    total = total - discountValue
+    appliedDiscountAmount = Number(discountValue) || 0
+    total = total - appliedDiscountAmount
+    appliedDiscountPercent = subtotal > 0
+      ? Math.round((appliedDiscountAmount / subtotal) * 1000) / 10
+      : 0
   }
 
   if(total < 0) total = 0
+  if(appliedDiscountAmount < 0) appliedDiscountAmount = 0
 }
+
+const saleItems = cart.map(i => {
+  const qty = Number(i.qty) || 0
+  const unitPrice = Number(i.price) || 0
+  return {
+    productId: i.id || null,
+    product_name: i.name || '',
+    name: i.name || '',
+    quantity: qty,
+    qty,
+    unit_price: unitPrice,
+    price: unitPrice,
+    line_total: unitPrice * qty,
+    cost: Number(i.cost) || 0
+  }
+})
+
+const cashierId = (typeof auth !== 'undefined' && auth.currentUser && auth.currentUser.uid)
+  ? auth.currentUser.uid
+  : (currentShopId || null)
+const cashierName = (typeof auth !== 'undefined' && auth.currentUser && typeof formatAuthDisplayEmail === 'function')
+  ? formatAuthDisplayEmail(auth.currentUser)
+  : ((typeof sidebarData !== 'undefined' && sidebarData && sidebarData.shopName) ? sidebarData.shopName : '')
 
 const sale = {
 shopId: currentShopId,
-items: [...cart],
+items: saleItems,
+subtotal,
+discountAmount: appliedDiscountAmount,
+discountPercent: appliedDiscountPercent,
+discountType: discountType || 'percent',
+discountValue: Number(discountValue) || 0,
 total: total,
 totalCost: totalCost,
 totalProfit: totalProfit,
 profit: totalProfit,
 itemsCount: itemsCount,
 paymentType: selectedPaymentType || "cash",
+payment_method: selectedPaymentType || "cash",
 type: selectedPaymentType,
+cashierId,
+cashier_id: cashierId,
+cashierName,
 customer: selectedPaymentType === "debt"
   ? window.debtCustomerName || "Noma'lum"
   : null,
@@ -680,10 +723,19 @@ const salesRef = db
     .collection("counters")
     .doc("dailySaleCounter")
 
+  const yearlyCounterRef = db
+    .collection("shops")
+    .doc(currentShopId)
+    .collection("counters")
+    .doc("yearlySaleCounter")
+
   const saveSalePromise = db.runTransaction(async t => {
     const counterDoc = await t.get(counterRef)
+    const yearlyDoc = await t.get(yearlyCounterRef)
     const todayKey = getTodayKey()
+    const year = new Date().getFullYear()
     let nextNumber = 1
+    let yearSeq = 1
 
     if (counterDoc.exists) {
       const counterData = counterDoc.data() || {}
@@ -702,12 +754,29 @@ const salesRef = db
       t.set(counterRef, { date: todayKey, sequence: nextNumber }, { merge: true })
     }
 
+    if (yearlyDoc.exists) {
+      const yd = yearlyDoc.data() || {}
+      if (Number(yd.year) === year && Number(yd.sequence) > 0) {
+        yearSeq = Number(yd.sequence) + 1
+        t.update(yearlyCounterRef, { sequence: yearSeq, year })
+      } else {
+        yearSeq = 1
+        t.set(yearlyCounterRef, { year, sequence: yearSeq }, { merge: true })
+      }
+    } else {
+      yearSeq = 1
+      t.set(yearlyCounterRef, { year, sequence: yearSeq }, { merge: true })
+    }
+
+    const transactionNumber = year + '-' + String(yearSeq).padStart(6, '0')
     const saleRef = salesRef.doc()
     t.set(saleRef, {
       ...sale,
       saleNumber: nextNumber,
       saleNumberLabel: String(nextNumber),
-      dailySequence: nextNumber
+      dailySequence: nextNumber,
+      transactionNumber,
+      transaction_number: transactionNumber
     })
   })
 

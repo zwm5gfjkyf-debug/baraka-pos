@@ -468,8 +468,11 @@
           timeStr = '—'
         }
       }
-      const card = document.createElement('div')
-      card.className = 'dashboard-recent-card'
+      const card = document.createElement('button')
+      card.type = 'button'
+      card.className = 'dashboard-recent-card dashboard-recent-card-btn'
+      card.setAttribute('data-sale-id', sale.id || '')
+      card.setAttribute('aria-label', 'Sotuv #' + sale.saleNumberLabel + ' tafsiloti')
       card.innerHTML = `
         <div class="dashboard-recent-icon" style="background:${pal.bg};color:${pal.fg};">🛒</div>
         <div class="dashboard-recent-details">
@@ -478,6 +481,10 @@
         </div>
         <div class="dashboard-recent-amount">${formatSom(sale.total)}</div>
       `
+      card.addEventListener('click', () => {
+        if (!sale.id || typeof openSaleDetail !== 'function') return
+        openSaleDetail(sale.id, { returnPage: 'dashboardPage' })
+      })
       container.appendChild(card)
     })
   }
@@ -884,8 +891,11 @@
           timeStr = '—'
         }
       }
-      const row = document.createElement('div')
-      row.className = 'dashboard-recent-card today-sales-history-row'
+      const row = document.createElement('button')
+      row.type = 'button'
+      row.className = 'dashboard-recent-card today-sales-history-row dashboard-recent-card-btn'
+      row.setAttribute('data-sale-id', sale.id || '')
+      row.setAttribute('aria-label', 'Sotuv #' + sale.saleNumberLabel + ' tafsiloti')
       row.innerHTML = `
         <div class="dashboard-recent-icon" style="background:${pal.bg};color:${pal.fg};">🛒</div>
         <div class="dashboard-recent-details">
@@ -894,6 +904,10 @@
         </div>
         <div class="dashboard-recent-amount">${formatSom(sale.total)}</div>
       `
+      row.addEventListener('click', () => {
+        if (!sale.id || typeof openSaleDetail !== 'function') return
+        openSaleDetail(sale.id, { returnPage: 'todaySalesHistoryPage' })
+      })
       list.appendChild(row)
     })
   }
