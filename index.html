@@ -1769,67 +1769,67 @@ Metr
 </div>
 
 
-<!-- 🔥 DISCOUNT MODAL -->
+<!-- DISCOUNT PANEL (Billz-style sheet; opened from Keyingisi before payment) -->
 <div id="discountModal" class="discount-modal hidden">
-
-  <!-- overlay -->
   <div class="discount-overlay" onclick="closeDiscountModal()"></div>
 
-  <!-- sheet -->
-  <div class="discount-sheet">
+  <div class="discount-sheet discount-sheet-billz" role="dialog" aria-labelledby="discountTitle">
+    <!-- 1. Header -->
+    <div class="discount-header-row">
+      <div class="discount-header-left">
+        <h3 id="discountTitle" class="discount-title">Chegirma</h3>
+      </div>
+      <!-- TODO: show when discount_codes / promo codes are supported in Firestore -->
+      <button type="button" id="discountCodeLink" class="discount-code-link hidden" onclick="toggleDiscountCodeMode()">
+        Kodni kiritish
+      </button>
+    </div>
 
-    <div class="discount-title">Qo'lda chegirma</div>
-    <div class="discount-sub">Chegirma qiymatini kiriting</div>
-
-    <!-- 🔥 INPUT + TOGGLE ROW -->
-    <div class="discount-input-row" style="display:flex; gap:8px; align-items:center;">
-
-      <!-- INPUT SIDE -->
-      <div style="flex:1;">
-
+    <!-- Manual / amount mode -->
+    <div id="discountManualPanel">
+      <!-- 2. Input + % | UZS toggle -->
+      <div class="discount-input-row">
         <input
           id="discountInput"
+          class="discount-main-input"
           type="number"
           inputmode="decimal"
-          oninput="updateDiscountPreview()"
-          placeholder="Chegirma foizini kiriting..."
-          style="width:100%;"
+          min="0"
+          oninput="onDiscountInputChange()"
+          placeholder="Chegirmani kiriting"
+          autocomplete="off"
         >
-
-        <!-- 🔥 JAMI PREVIEW (CORRECT POSITION) -->
-        <div id="discountPreview" style="
-          font-size:12px;
-          color:#64748b;
-          margin-top:4px;
-          padding-left:2px;
-        "></div>
-
+        <div class="discount-seg-toggle" role="group" aria-label="Chegirma turi">
+          <button type="button" id="btnPercent" class="discount-seg-btn active" onclick="setDiscountType('percent')">%</button>
+          <button type="button" id="btnUZS" class="discount-seg-btn" onclick="setDiscountType('uzs')">UZS</button>
+        </div>
       </div>
 
-      <!-- TOGGLE -->
-      <div class="discount-toggle">
-        <button id="btnPercent" class="active" onclick="setDiscountType('percent')">%</button>
-        <button id="btnUZSDiscount" onclick="setDiscountType('uzs')">UZS</button>
-      </div>
+      <div id="discountError" class="discount-inline-error hidden"></div>
+      <div id="discountPreview" class="discount-preview-line"></div>
 
+      <!-- 3. Percent presets -->
+      <div id="discountQuick" class="discount-presets" aria-label="Tezkor chegirma"></div>
     </div>
 
-    <!-- QUICK BUTTONS -->
-    <div id="discountQuick" class="discount-quick"></div>
+    <!-- Code entry mode (stub until backend exists) -->
+    <div id="discountCodePanel" class="discount-code-panel hidden">
+      <input
+        id="discountCodeInput"
+        class="discount-main-input"
+        type="text"
+        placeholder="Chegirma kodini kiriting"
+        autocomplete="off"
+      >
+      <p class="discount-code-hint">Chegirma kodlari tez orada qo‘shiladi.</p>
+      <button type="button" class="discount-code-back" onclick="toggleDiscountCodeMode()">← Orqaga</button>
+    </div>
 
-    <!-- ACTIONS -->
     <div class="discount-actions">
-      <button onclick="closeDiscountModal()" class="btn-secondary">
-        Bekor qilish
-      </button>
-
-      <button onclick="applyDiscount()" class="btn-primary">
-        Saqlash
-      </button>
+      <button type="button" onclick="closeDiscountModal()" class="btn-secondary">Bekor qilish</button>
+      <button type="button" onclick="applyDiscount()" class="btn-primary">Saqlash</button>
     </div>
-
   </div>
-
 </div>
 
 

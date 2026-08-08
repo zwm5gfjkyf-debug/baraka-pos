@@ -1124,6 +1124,8 @@ function clearCart(){
 }
 let discountType = "percent"
 let discountValue = 0
+let discountCodeMode = false
+const DISCOUNT_PERCENT_PRESETS = [10, 20, 25, 30]
 
 function updatePaymentEmptyState(){
   const panel = document.getElementById("paymentMethodsPanel")
@@ -1131,6 +1133,78 @@ function updatePaymentEmptyState(){
   const empty = !cart || cart.length === 0
   if(panel) panel.classList.toggle("is-disabled", empty)
   if(saveBtn) saveBtn.disabled = empty
+}
+
+function cartSubtotal(){
+  let total = 0
+  ;(cart || []).forEach(i => {
+    total += (Number(i.price) || 0) * (Number(i.qty) || 0)
+  })
+  return total
+}
+
+function setDiscountError(msg){
+  const el = document.getElementById("discountError")
+  if(!el) return
+  if(!msg){
+    el.textContent = ""
+    el.classList.add("hidden")
+    return
+  }
+  el.textContent = msg
+  el.classList.remove("hidden")
+}
+
+function syncDiscountPresetActive(){
+  const quick = document.getElementById("discountQuick")
+  const input = document.getElementById("discountInput")
+  if(!quick || !input) return
+  const val = Number(input.value)
+  quick.querySelectorAll(".discount-preset-btn").forEach(btn => {
+    const preset = Number(btn.getAttribute("data-preset"))
+    const active = discountType === "percent" && Number.isFinite(val) && val === preset
+    btn.classList.toggle("is-active", active)
+  })
+}
+
+function renderDiscountPresets(){
+  const quick = document.getElementById("discountQuick")
+  if(!quick) return
+  quick.innerHTML = ""
+
+  if(discountType !== "percent"){
+    quick.classList.add("hidden")
+    return
+  }
+
+  quick.classList.remove("hidden")
+  DISCOUNT_PERCENT_PRESETS.forEach(v => {
+    const b = document.createElement("button")
+    b.type = "button"
+    b.className = "discount-preset-btn"
+    b.setAttribute("data-preset", String(v))
+    b.textContent = v + "%"
+    b.onclick = () => {
+      const input = document.getElementById("discountInput")
+      if(input) input.value = String(v)
+      discountType = "percent"
+      setDiscountType("percent", { keepValue: true })
+      onDiscountInputChange()
+    }
+    quick.appendChild(b)
+  })
+  syncDiscountPresetActive()
+}
+
+function toggleDiscountCodeMode(){
+  // Stub: hide until discount_codes exist in Firestore
+  discountCodeMode = !discountCodeMode
+  const manual = document.getElementById("discountManualPanel")
+  const codePanel = document.getElementById("discountCodePanel")
+  const link = document.getElementById("discountCodeLink")
+  if(manual) manual.classList.toggle("hidden", discountCodeMode)
+  if(codePanel) codePanel.classList.toggle("hidden", !discountCodeMode)
+  if(link) link.classList.toggle("hidden", true) // keep hidden until backend ready
 }
 
 function openDiscountModal(){
@@ -1149,17 +1223,25 @@ function openDiscountModal(){
     return
   }
 
+  discountCodeMode = false
+  const manual = document.getElementById("discountManualPanel")
+  const codePanel = document.getElementById("discountCodePanel")
+  if(manual) manual.classList.remove("hidden")
+  if(codePanel) codePanel.classList.add("hidden")
+
   modal.classList.remove("hidden")
 
-  // 🔥 HIDE UI BEHIND
   if(actions) actions.style.display = "none"
   if(nav) nav.style.display = "none"
 
-  // 🔥 LOCK BACKGROUND
   document.body.style.overflow = "hidden"
 
-  setDiscountType("percent")
-window.isFromDiscountFlow = true
+  setDiscountError("")
+  if(input){
+    input.value = discountValue > 0 ? String(discountValue) : ""
+  }
+  setDiscountType(discountType || "percent", { keepValue: true })
+  window.isFromDiscountFlow = true
   setTimeout(()=>{
     if(input) input.focus()
   }, 100)
@@ -1175,76 +1257,51 @@ function closeDiscountModal(){
     modal.classList.add("hidden")
   }
 
-  // 🔥 RESTORE UI
   if(actions) actions.style.display = ""
   if(nav) nav.style.display = (typeof auth !== "undefined" && auth.currentUser) ? "flex" : "none"
 
-  // 🔥 UNLOCK SCROLL
   document.body.style.overflow = ""
+  setDiscountError("")
 }
 
-function setDiscountType(type){
+function setDiscountType(type, opts){
 
-  discountType = type
+  discountType = type === "uzs" ? "uzs" : "percent"
 
   const input = document.getElementById("discountInput")
-  const quick = document.getElementById("discountQuick")
-
   const btnP = document.getElementById("btnPercent")
   const btnU = document.getElementById("btnUZS")
 
-  if(!input || !quick || !btnP || !btnU){
+  if(!input || !btnP || !btnU){
     return
   }
 
-  // clear active
-  btnP.classList.remove("active")
-  btnU.classList.remove("active")
+  btnP.classList.toggle("active", discountType === "percent")
+  btnU.classList.toggle("active", discountType === "uzs")
 
-  quick.innerHTML = ""
-
-  if(type === "percent"){
-    btnP.classList.add("active")
-    input.placeholder = "Chegirma foizini kiriting..."
-
-    ;[15,30,50,75].forEach(v=>{
-      const b = document.createElement("button")
-      b.innerText = v + "%"
-      b.onclick = () => {
-        input.value = v
-        updateDiscountPreview()
-      }
-      quick.appendChild(b)
-    })
-
-  }else{
-    btnU.classList.add("active")
-    input.placeholder = "Summani kiriting..."
-
-    ;[10000,20000,30000].forEach(v=>{
-      const b = document.createElement("button")
-      b.innerText = v.toLocaleString()
-      b.onclick = () => {
-        input.value = v
-        updateDiscountPreview()
-      }
-      quick.appendChild(b)
-    })
+  input.placeholder = "Chegirmani kiriting"
+  if(!(opts && opts.keepValue)){
+    // switching type clears mismatched presets highlight; keep typed value
   }
 
-  updateDiscountPreview()
+  renderDiscountPresets()
+  onDiscountInputChange()
 
-  // 🔥 KEYBOARD FIX (THIS IS THE MAIN THING)
   setTimeout(() => {
     if(input){
       input.focus()
-
       const val = input.value
       input.value = ""
       input.value = val
     }
   }, 50)
 }
+
+function onDiscountInputChange(){
+  updateDiscountPreview()
+  syncDiscountPresetActive()
+}
+
 function updateDiscountPreview(){
 
   const input = document.getElementById("discountInput")
@@ -1253,47 +1310,72 @@ function updateDiscountPreview(){
   if(!input || !preview) return
 
   let val = Number(input.value || 0)
-
-  // 🔥 calculate original total
-  let total = 0
-  cart.forEach(i=>{
-    total += i.price * i.qty
-  })
-
+  const total = cartSubtotal()
   let final = total
+  let error = ""
 
-  if(val > 0){
+  if(input.value !== "" && (isNaN(val) || val < 0)){
+    error = "Noto'g'ri qiymat"
+    val = 0
+  } else if(discountType === "percent" && val > 100){
+    error = "Chegirma 100% dan oshmasligi kerak"
+  } else if(discountType === "uzs" && val > total){
+    error = "Chegirma savatcha summasidan oshmasligi kerak"
+  }
+
+  setDiscountError(error)
+
+  if(val > 0 && !error){
     if(discountType === "percent"){
       final = total - (total * val / 100)
     }else{
       final = total - val
     }
+  } else if(error && discountType === "percent" && val > 100){
+    final = 0
+  } else if(error && discountType === "uzs" && val > total){
+    final = 0
   }
 
   if(final < 0) final = 0
 
-preview.innerText = "Jami: " + formatMoney(final)
+  preview.innerText = "Jami: " + formatMoney(final)
 }
+
 function applyDiscount(){
 
   const input = document.getElementById("discountInput")
-  const val = Number(input.value)
+  if(!input) return
 
-  if(isNaN(val) || val < 0){
+  const raw = String(input.value || "").trim()
+  if(raw === ""){
+    discountValue = 0
+    closeDiscountModal()
+    openPaymentPage()
     return
   }
 
-  // limit %
+  const val = Number(raw)
+  const total = cartSubtotal()
+
+  if(isNaN(val) || val < 0){
+    setDiscountError("Noto'g'ri qiymat")
+    return
+  }
+
   if(discountType === "percent" && val > 100){
-    showTopBanner("100% dan katta bo'lishi mumkin emas", "error")
+    setDiscountError("Chegirma 100% dan oshmasligi kerak")
+    return
+  }
+
+  if(discountType === "uzs" && val > total){
+    setDiscountError("Chegirma savatcha summasidan oshmasligi kerak")
     return
   }
 
   discountValue = val
-
+  setDiscountError("")
   closeDiscountModal()
-
-  // 🔥 OPEN PAYMENT PAGE INSTEAD OF JUST RENDER
   openPaymentPage()
 }
 function openPaymentPage(){
