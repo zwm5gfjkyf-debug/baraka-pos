@@ -325,20 +325,26 @@ function loadCurrent(){
       let countActive = 0
       let countInactive = 0
       let countLow = 0
-      let countOut = 0 // product count (QOLMADI)
+      let countOut = 0 // product count (for low-stock warning banner)
       let totalUnits = 0 // sum of stock quantity for Jami
+      let totalBuyValue = 0 // sum(buyPrice × quantity)
+      let totalSellValue = 0 // sum(sellPrice × quantity)
       snapshot.forEach(doc => {
 
         const p = doc.data()
         if(p.deleted === true) return
 
         const quantity = Number(p.quantity || 0)
+        const buyPrice = Number(p.buyPrice || 0)
+        const sellPrice = Number(p.sellPrice || 0)
         const initial = p.initialStock || quantity || 1
         const percent = Math.max(2, Math.min(100, (quantity / initial) * 100))
 
         // ✅ COUNTING
         countAll++
         totalUnits += quantity
+        totalBuyValue += buyPrice * quantity
+        totalSellValue += sellPrice * quantity
         if(quantity > 0) countActive++
         if(quantity <= 0){
           countInactive++
@@ -430,14 +436,14 @@ function loadCurrent(){
       if(elActive) elActive.innerText = countActive
       if(elInactive) elInactive.innerText = countInactive
       if(elLow) elLow.innerText = countLow
-      // 🔥 NEW STATS UI
-const statTotal = document.getElementById("stat-total")
-const statLow = document.getElementById("stat-low")
-const statOut = document.getElementById("stat-out")
+      // Stats UI
+      const statTotal = document.getElementById("stat-total")
+      const statBuyTotal = document.getElementById("stat-buy-total")
+      const statSellTotal = document.getElementById("stat-sell-total")
 
-if(statTotal) statTotal.innerText = totalUnits
-if(statLow) statLow.innerText = countLow
-if(statOut) statOut.innerText = countOut
+      if(statTotal) statTotal.innerText = totalUnits
+      if(statBuyTotal) statBuyTotal.innerText = formatMoney(totalBuyValue)
+      if(statSellTotal) statSellTotal.innerText = formatMoney(totalSellValue)
       // ⚠️ LOW STOCK WARNING
 const warningBox = document.getElementById("lowStockWarning")
 const warningText = document.getElementById("lowStockText")

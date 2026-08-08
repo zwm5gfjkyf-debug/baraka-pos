@@ -7,7 +7,7 @@
   let nasiyaChildUnsub = null
 
   function shopId() {
-    return typeof currentShopId !== 'undefined' ? currentShopId : window.currentShopId
+    return window.currentShopId || (typeof currentShopId !== 'undefined' ? currentShopId : null) || null
   }
 
   function safeInt(v) {

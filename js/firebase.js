@@ -28,6 +28,10 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
+/* Shop id must exist before auth.js (auth can fire before app.js loads) */
+var currentShopId = null;
+window.currentShopId = null;
+
 /* =========================================
    FIRESTORE SETTINGS
 ========================================= */

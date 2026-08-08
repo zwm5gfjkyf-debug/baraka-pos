@@ -20,7 +20,7 @@
   const ORDER_NUMBER_START = 1000001
 
   function shopId() {
-    return typeof currentShopId !== 'undefined' ? currentShopId : window.currentShopId
+    return window.currentShopId || (typeof currentShopId !== 'undefined' ? currentShopId : null) || null
   }
 
   function ordersCol() {

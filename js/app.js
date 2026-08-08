@@ -3,8 +3,7 @@
 // =============================
 let salesCache = null
 let analyticsLoaded = false
-let currentShopId = null
-window.currentShopId = null
+// currentShopId is declared in firebase.js (before auth) — do not re-null it here
 
 let sidebarListeners = {
   shop: null,
@@ -58,6 +57,11 @@ function bootstrapShopAfterAuth(user){
       /* ignore */
     }
   }
+}
+
+// If auth restored the session before app.js finished loading, catch up now
+if(typeof auth !== 'undefined' && auth.currentUser){
+  bootstrapShopAfterAuth(auth.currentUser)
 }
 
 // Wait for Firebase to be fully initialized
