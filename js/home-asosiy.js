@@ -949,21 +949,6 @@
       )
   }
 
-  function goToNewSaleFromFab() {
-    if (typeof finishSaleFlow === 'function') finishSaleFlow()
-    else {
-      ;['successPage', 'paymentPage', 'debtCustomerPage'].forEach(id => {
-        const el = document.getElementById(id)
-        if (el) el.classList.add('hidden')
-      })
-      const nav = document.querySelector('.bottom-nav')
-      if (nav) nav.style.display = ''
-      const actions = document.getElementById('saleActions')
-      if (actions) actions.style.display = ''
-    }
-    if (typeof navigate === 'function') navigate('salePage')
-  }
-
   // Intelligent responsive typography for dashboard cards
   function applyResponsiveTypography() {
     try {
@@ -1100,7 +1085,6 @@
   window.retryLoad = retryLoad
   window.loadTodaySalesHistory = loadTodaySalesHistory
   window.cleanupTodaySalesHistoryListeners = cleanupTodaySalesHistoryListeners
-  window.goToNewSaleFromFab = goToNewSaleFromFab
   window.applyResponsiveTypography = applyResponsiveTypography
   window.setupResizeObserver = setupResizeObserver
   window.cleanupResizeObserver = cleanupResizeObserver
