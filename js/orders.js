@@ -87,8 +87,13 @@
     return Math.round(safeNum(n)).toLocaleString('uz-UZ').replace(/,/g, ' ') + ' UZS'
   }
 
+  function isFinalizedStatus(status) {
+    // 'yaratildi' kept for backward compatibility with older drafts
+    return status === 'tasdiqlangan' || status === 'yaratildi'
+  }
+
   function statusLabel(status) {
-    if (status === 'yaratildi') return 'Yaratildi'
+    if (isFinalizedStatus(status)) return 'Tasdiqlangan'
     if (status === 'bekor qilindi') return 'Bekor qilindi'
     return 'Qoralama'
   }
@@ -310,11 +315,16 @@
     previouslyOrderedIds = new Set()
     if (!shopId()) return
     try {
-      const snap = await ordersCol().where('status', '==', 'yaratildi').get()
-      snap.forEach(doc => {
-        const items = (doc.data() || {}).items || []
-        items.forEach(it => {
-          if (it && it.productId) previouslyOrderedIds.add(it.productId)
+      const [snapNew, snapLegacy] = await Promise.all([
+        ordersCol().where('status', '==', 'tasdiqlangan').get(),
+        ordersCol().where('status', '==', 'yaratildi').get()
+      ])
+      ;[snapNew, snapLegacy].forEach(snap => {
+        snap.forEach(doc => {
+          const items = (doc.data() || {}).items || []
+          items.forEach(it => {
+            if (it && it.productId) previouslyOrderedIds.add(it.productId)
+          })
         })
       })
     } catch (err) {
@@ -460,7 +470,7 @@
       await openOrder(ref.id)
     } catch (err) {
       console.error('Create buyurtma failed:', err)
-      showTopBanner('Buyurtma yaratilmadi', 'error')
+      showTopBanner('Buyurtmani ochib bo\'lmadi', 'error')
     }
   }
 
@@ -609,7 +619,7 @@
   async function finalizeBuyurtma() {
     if (finalizing || !currentOrderId || !currentOrder) return
     if (currentOrder.status !== 'qoralama') {
-      showTopBanner('Bu buyurtma allaqachon yakunlangan', 'error')
+      showTopBanner('Bu buyurtma allaqachon tasdiqlangan', 'error')
       return
     }
 
@@ -628,6 +638,11 @@
     }
 
     finalizing = true
+    const confirmBtn = document.getElementById('buyurtmaConfirmBtn')
+    if (confirmBtn) {
+      confirmBtn.disabled = true
+      confirmBtn.textContent = 'Tasdiqlanmoqda...'
+    }
     try {
       // Transaction: fresh product reads before stock writes (safe vs double-tap / concurrent finalize)
       await db.runTransaction(async t => {
@@ -662,7 +677,7 @@
         }
 
         t.update(orderRef, {
-          status: 'yaratildi',
+          status: 'tasdiqlangan',
           finalizedAt: firebase.firestore.FieldValue.serverTimestamp(),
           items: currentOrder.items || [],
           title: currentOrder.title || '',
@@ -671,8 +686,8 @@
         })
       })
 
-      currentOrder.status = 'yaratildi'
-      showTopBanner('Buyurtma yaratildi', 'success')
+      currentOrder.status = 'tasdiqlangan'
+      showTopBanner('Buyurtma tasdiqlandi', 'success')
       stopBuyurtmaScanner()
       cleanupBuyurtmaPage()
       currentOrderId = null
@@ -685,12 +700,16 @@
       if (msg.indexOf('PRODUCT_MISSING') === 0) {
         showTopBanner('Mahsulot topilmadi', 'error')
       } else if (msg === 'ORDER_NOT_DRAFT') {
-        showTopBanner('Buyurtma allaqachon yakunlangan', 'error')
+        showTopBanner('Bu buyurtma allaqachon tasdiqlangan', 'error')
       } else {
-        showTopBanner('Yaratishda xato', 'error')
+        showTopBanner('Tasdiqlashda xato', 'error')
       }
     } finally {
       finalizing = false
+      if (confirmBtn) {
+        confirmBtn.disabled = false
+        confirmBtn.textContent = 'Tasdiqlash'
+      }
     }
   }
 
