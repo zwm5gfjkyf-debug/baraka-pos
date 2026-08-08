@@ -6,7 +6,6 @@
   let currentOrder = null
   let productsCache = []
   let productsUnsub = null
-  let previouslyOrderedIds = new Set()
   let activeFilter = 'order'
   let searchQuery = ''
   let saveTimer = null
@@ -84,14 +83,6 @@
     return Math.round(cost + (cost * safeNum(markupPercent) / 100))
   }
 
-  function isLowStock(p) {
-    const quantity = safeNum(p.quantity)
-    if (quantity <= 0) return false
-    const initial = safeNum(p.initialStock) || quantity || 1
-    const percent = Math.max(2, Math.min(100, (quantity / initial) * 100))
-    return percent <= 20
-  }
-
   function money(n) {
     if (typeof formatMoney === 'function') return formatMoney(n)
     return Math.round(safeNum(n)).toLocaleString('uz-UZ').replace(/,/g, ' ') + ' UZS'
@@ -167,9 +158,6 @@
 
     const renameBtn = document.querySelector('#buyurtmaPage .buyurtma-rename-btn')
     if (renameBtn) renameBtn.style.display = readonly ? 'none' : ''
-
-    const supplier = document.getElementById('buyurtmaSupplier')
-    if (supplier) supplier.disabled = readonly
 
     const cancelBtn = document.querySelector('#buyurtmaPage .buyurtma-btn-cancel')
     const confirmBtn = document.getElementById('buyurtmaConfirmBtn')
@@ -264,26 +252,12 @@
 
   function updateFilterCounts() {
     const orderCount = (currentOrder && currentOrder.items) ? currentOrder.items.length : 0
-    let all = 0
-    let low = 0
-    let zero = 0
-    let prev = 0
-    productsCache.forEach(p => {
-      all += 1
-      const q = safeNum(p.quantity)
-      if (q === 0) zero += 1
-      if (isLowStock(p)) low += 1
-      if (previouslyOrderedIds.has(p.id)) prev += 1
-    })
     const set = (id, v) => {
       const el = document.getElementById(id)
       if (el) el.textContent = String(v)
     }
     set('buyurtmaCountOrder', orderCount)
-    set('buyurtmaCountAll', all)
-    set('buyurtmaCountLow', low)
-    set('buyurtmaCountZero', zero)
-    set('buyurtmaCountPrev', prev)
+    set('buyurtmaCountAll', productsCache.length)
   }
 
   function matchesSearch(p, item) {
@@ -314,10 +288,6 @@
 
     return productsCache
       .filter(p => {
-        const q = safeNum(p.quantity)
-        if (activeFilter === 'low' && !isLowStock(p)) return false
-        if (activeFilter === 'zero' && q !== 0) return false
-        if (activeFilter === 'prev' && !previouslyOrderedIds.has(p.id)) return false
         const item = itemById[p.id]
         return matchesSearch(p, item)
       })
@@ -333,12 +303,77 @@
     if (!currentOrder) return
     const titleEl = document.getElementById('buyurtmaTitle')
     const statusEl = document.getElementById('buyurtmaStatus')
-    const supplierEl = document.getElementById('buyurtmaSupplier')
     if (titleEl) titleEl.textContent = currentOrder.title || 'Buyurtma'
     if (statusEl) statusEl.textContent = statusLabel(currentOrder.status)
-    if (supplierEl && document.activeElement !== supplierEl) {
-      supplierEl.value = currentOrder.supplierName || ''
+  }
+
+  function rowValuesFromProduct(p) {
+    const deliveryPrice = safeNum(p && p.buyPrice)
+    const salePrice = safeNum(p && p.sellPrice)
+    return {
+      orderQty: 0,
+      deliveryPrice,
+      markupPercent: calcMarkup(deliveryPrice, salePrice),
+      salePrice
     }
+  }
+
+  function editableRowHtml(pid, name, artikul, barcode, currentQty, values) {
+    return (
+      '<tr class="buyurtma-row" data-product-id="' + escapeHtml(pid) + '">' +
+      '<td class="buyurtma-name-cell">' + escapeHtml(name || '—') + '</td>' +
+      '<td>' + escapeHtml(artikul || '—') + '</td>' +
+      '<td>' + escapeHtml(barcode || '—') + '</td>' +
+      '<td>' + escapeHtml(String(currentQty)) + '</td>' +
+      '<td><input type="number" min="0" step="1" class="buyurtma-input" data-field="orderQty" value="' + escapeHtml(String(safeNum(values.orderQty))) + '"></td>' +
+      '<td><input type="number" min="0" step="1" class="buyurtma-input" data-field="deliveryPrice" value="' + escapeHtml(String(safeNum(values.deliveryPrice))) + '"></td>' +
+      '<td><input type="number" step="0.1" class="buyurtma-input" data-field="markupPercent" value="' + escapeHtml(String(safeNum(values.markupPercent))) + '"></td>' +
+      '<td><input type="number" min="0" step="1" class="buyurtma-input" data-field="salePrice" value="' + escapeHtml(String(safeNum(values.salePrice))) + '"></td>' +
+      '</tr>'
+    )
+  }
+
+  function readRowFieldValues(tr) {
+    const get = field => {
+      const input = tr.querySelector('input[data-field="' + field + '"]')
+      return input ? safeNum(input.value) : 0
+    }
+    return {
+      orderQty: Math.max(0, Math.round(get('orderQty'))),
+      deliveryPrice: Math.max(0, Math.round(get('deliveryPrice'))),
+      markupPercent: get('markupPercent'),
+      salePrice: Math.max(0, Math.round(get('salePrice')))
+    }
+  }
+
+  function removeItemByProductId(productId) {
+    if (!currentOrder || !Array.isArray(currentOrder.items)) return false
+    const idx = findItemIndex(productId)
+    if (idx < 0) return false
+    currentOrder.items.splice(idx, 1)
+    return true
+  }
+
+  function upsertItemFromRow(productId, values) {
+    if (!currentOrder) return null
+    let idx = findItemIndex(productId)
+    if (idx < 0) {
+      const p = productsCache.find(x => x.id === productId)
+      if (!p) return null
+      const item = itemFromProduct(p, values.orderQty)
+      item.orderQty = values.orderQty
+      item.deliveryPrice = values.deliveryPrice
+      item.markupPercent = values.markupPercent
+      item.salePrice = values.salePrice
+      currentOrder.items.push(item)
+      return item
+    }
+    const item = currentOrder.items[idx]
+    item.orderQty = values.orderQty
+    item.deliveryPrice = values.deliveryPrice
+    item.markupPercent = values.markupPercent
+    item.salePrice = values.salePrice
+    return item
   }
 
   function renderTable() {
@@ -362,32 +397,16 @@
         ? safeNum(row.item.currentQty)
         : safeNum(p && p.quantity)
       const pid = row.productId || ''
+      const values = inOrder
+        ? {
+          orderQty: safeNum(row.item.orderQty),
+          deliveryPrice: safeNum(row.item.deliveryPrice),
+          markupPercent: safeNum(row.item.markupPercent),
+          salePrice: safeNum(row.item.salePrice)
+        }
+        : rowValuesFromProduct(p)
 
-      if (!inOrder) {
-        return (
-          '<tr class="buyurtma-row buyurtma-row-catalog" data-product-id="' + escapeHtml(pid) + '">' +
-          '<td class="buyurtma-name-cell">' + escapeHtml(name || '—') + '</td>' +
-          '<td>' + escapeHtml(artikul || '—') + '</td>' +
-          '<td>' + escapeHtml(barcode || '—') + '</td>' +
-          '<td>' + escapeHtml(String(currentQty)) + '</td>' +
-          '<td colspan="4" class="buyurtma-add-hint">Qo\'shish uchun bosing</td>' +
-          '</tr>'
-        )
-      }
-
-      const it = row.item
-      return (
-        '<tr class="buyurtma-row buyurtma-row-order" data-product-id="' + escapeHtml(pid) + '">' +
-        '<td class="buyurtma-name-cell">' + escapeHtml(name || '—') + '</td>' +
-        '<td>' + escapeHtml(artikul || '—') + '</td>' +
-        '<td>' + escapeHtml(barcode || '—') + '</td>' +
-        '<td>' + escapeHtml(String(currentQty)) + '</td>' +
-        '<td><input type="number" min="0" step="1" class="buyurtma-input" data-field="orderQty" value="' + escapeHtml(String(safeNum(it.orderQty))) + '"></td>' +
-        '<td><input type="number" min="0" step="1" class="buyurtma-input" data-field="deliveryPrice" value="' + escapeHtml(String(safeNum(it.deliveryPrice))) + '"></td>' +
-        '<td><input type="number" step="0.1" class="buyurtma-input" data-field="markupPercent" value="' + escapeHtml(String(safeNum(it.markupPercent))) + '"></td>' +
-        '<td><input type="number" min="0" step="1" class="buyurtma-input" data-field="salePrice" value="' + escapeHtml(String(safeNum(it.salePrice))) + '"></td>' +
-        '</tr>'
-      )
+      return editableRowHtml(pid, name, artikul, barcode, currentQty, values)
     }).join('')
 
     updateStats()
@@ -398,27 +417,6 @@
     renderHeader()
     renderTable()
     applyOrderReadonlyUi()
-  }
-
-  async function loadPreviouslyOrderedIds() {
-    previouslyOrderedIds = new Set()
-    if (!shopId()) return
-    try {
-      const [snapNew, snapLegacy] = await Promise.all([
-        ordersCol().where('status', '==', 'tasdiqlangan').get(),
-        ordersCol().where('status', '==', 'yaratildi').get()
-      ])
-      ;[snapNew, snapLegacy].forEach(snap => {
-        snap.forEach(doc => {
-          const items = (doc.data() || {}).items || []
-          items.forEach(it => {
-            if (it && it.productId) previouslyOrderedIds.add(it.productId)
-          })
-        })
-      })
-    } catch (err) {
-      console.error('Previous orders load failed:', err)
-    }
   }
 
   function bindProductsListener() {
@@ -453,33 +451,8 @@
     if (bindUiOnce.done) return
     bindUiOnce.done = true
 
-    const supplier = document.getElementById('buyurtmaSupplier')
-    if (supplier) {
-      supplier.addEventListener('input', () => {
-        if (!currentOrder) return
-        currentOrder.supplierName = supplier.value
-        scheduleSave()
-      })
-    }
-
     const tbody = document.getElementById('buyurtmaTableBody')
     if (tbody) {
-      tbody.addEventListener('click', e => {
-        if (orderReadonly) return
-        const tr = e.target.closest('tr[data-product-id]')
-        if (!tr) return
-        if (e.target.closest('input')) return
-        if (!tr.classList.contains('buyurtma-row-catalog')) return
-        const pid = tr.getAttribute('data-product-id')
-        if (!pid) return
-        ensureItemForProduct(pid, 1)
-        activeFilter = 'order'
-        document.querySelectorAll('#buyurtmaFilterTabs .buyurtma-filter-tab').forEach(btn => {
-          btn.classList.toggle('is-active', btn.getAttribute('data-order-filter') === 'order')
-        })
-        refreshUi()
-      })
-
       tbody.addEventListener('change', e => {
         if (orderReadonly) return
         const input = e.target.closest('input[data-field]')
@@ -487,24 +460,41 @@
         const tr = input.closest('tr[data-product-id]')
         if (!tr || !currentOrder) return
         const pid = tr.getAttribute('data-product-id')
-        const idx = findItemIndex(pid)
-        if (idx < 0) return
-        const item = currentOrder.items[idx]
+        if (!pid) return
+
         const field = input.getAttribute('data-field')
-        const val = safeNum(input.value)
+        const values = readRowFieldValues(tr)
 
         if (field === 'orderQty') {
-          item.orderQty = Math.max(0, Math.round(val))
+          values.orderQty = Math.max(0, Math.round(safeNum(input.value)))
         } else if (field === 'deliveryPrice') {
-          item.deliveryPrice = Math.max(0, Math.round(val))
-          item.markupPercent = calcMarkup(item.deliveryPrice, item.salePrice)
+          values.deliveryPrice = Math.max(0, Math.round(safeNum(input.value)))
+          values.markupPercent = calcMarkup(values.deliveryPrice, values.salePrice)
         } else if (field === 'markupPercent') {
-          item.markupPercent = val
-          item.salePrice = saleFromMarkup(item.deliveryPrice, item.markupPercent)
+          values.markupPercent = safeNum(input.value)
+          values.salePrice = saleFromMarkup(values.deliveryPrice, values.markupPercent)
         } else if (field === 'salePrice') {
-          item.salePrice = Math.max(0, Math.round(val))
-          item.markupPercent = calcMarkup(item.deliveryPrice, item.salePrice)
+          values.salePrice = Math.max(0, Math.round(safeNum(input.value)))
+          values.markupPercent = calcMarkup(values.deliveryPrice, values.salePrice)
         }
+
+        // Auto-add when Buyurtmaga > 0; remove when it returns to 0
+        if (values.orderQty <= 0) {
+          const removed = removeItemByProductId(pid)
+          if (removed) {
+            scheduleSave()
+            refreshUi()
+            return
+          }
+          // Still catalog-only: keep price/markup math live in the row without saving
+          const markupInput = tr.querySelector('input[data-field="markupPercent"]')
+          const saleInput = tr.querySelector('input[data-field="salePrice"]')
+          if (markupInput) markupInput.value = String(values.markupPercent)
+          if (saleInput) saleInput.value = String(values.salePrice)
+          return
+        }
+
+        upsertItemFromRow(pid, values)
         scheduleSave()
         refreshUi()
       })
@@ -533,9 +523,12 @@
     }
     currentOrder = Object.assign({ id: snap.id }, snap.data())
     if (!Array.isArray(currentOrder.items)) currentOrder.items = []
+    // Keep only lines with Buyurtmaga > 0 (auto-add/remove contract)
+    if (!isFinalizedStatus(currentOrder.status)) {
+      currentOrder.items = currentOrder.items.filter(it => safeNum(it.orderQty) > 0)
+    }
     orderReadonly = !!(opts && opts.readonly) || isFinalizedStatus(currentOrder.status)
 
-    await loadPreviouslyOrderedIds()
     bindProductsListener()
     refreshUi()
     applyOrderReadonlyUi()
