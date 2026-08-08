@@ -325,7 +325,8 @@ function loadCurrent(){
       let countActive = 0
       let countInactive = 0
       let countLow = 0
-      let countOut = 0 // 🔥 NEW (QOLMADI)
+      let countOut = 0 // product count (QOLMADI)
+      let totalUnits = 0 // sum of stock quantity for Jami
       snapshot.forEach(doc => {
 
         const p = doc.data()
@@ -337,6 +338,7 @@ function loadCurrent(){
 
         // ✅ COUNTING
         countAll++
+        totalUnits += quantity
         if(quantity > 0) countActive++
         if(quantity <= 0){
           countInactive++
@@ -394,7 +396,7 @@ function loadCurrent(){
 
           <div class="stock-right">
             <div class="stock-badge ${badgeClass}">${badgeText}</div>
-            <button onclick="openEditModal('${doc.id}')" class="stock-menu-btn">
+            <button type="button" onclick="openProductDetails('${doc.id}')" class="stock-menu-btn" aria-label="Mahsulot ma'lumotlari">
               ⋮
             </button>
           </div>
@@ -433,7 +435,7 @@ const statTotal = document.getElementById("stat-total")
 const statLow = document.getElementById("stat-low")
 const statOut = document.getElementById("stat-out")
 
-if(statTotal) statTotal.innerText = countAll
+if(statTotal) statTotal.innerText = totalUnits
 if(statLow) statLow.innerText = countLow
 if(statOut) statOut.innerText = countOut
       // ⚠️ LOW STOCK WARNING
@@ -475,69 +477,119 @@ if(countOut > 0){
 function loadCurrentStock(){
   loadCurrent()
 }
-let editingProductId = null
+let productDetailsCache = null
+let labelPreviewMode = "save" // 'save' (add product) | 'print' (stock details)
 
-async function openEditModal(id){
+async function openProductDetails(id){
+  if(!id || !currentShopId) return
 
-editingProductId = id
+  const doc = await db
+    .collection("shops")
+    .doc(currentShopId)
+    .collection("products")
+    .doc(id)
+    .get()
 
-const doc = await db
-.collection("shops")
-.doc(currentShopId)
-.collection("products")
-.doc(id)
-.get()
+  if(!doc.exists){
+    showTopBanner("Mahsulot topilmadi", "error")
+    return
+  }
 
-if(!doc.exists) return
+  const p = doc.data() || {}
+  productDetailsCache = Object.assign({ id: doc.id }, p)
 
-const p = doc.data()
+  const setText = (elId, value) => {
+    const el = document.getElementById(elId)
+    if(el) el.textContent = value
+  }
 
-document.getElementById("currentStock").value = p.quantity || 0
-document.getElementById("editCost").value = p.buyPrice || 0
-document.getElementById("editPrice").value = p.sellPrice || 0
+  setText("productDetailsName", p.name || "Noma'lum")
+  setText("productDetailsArtikul", p.artikul || "—")
+  setText("productDetailsBarcode", p.barcode || "—")
+  setText("productDetailsBuyPrice", formatMoney(p.buyPrice || 0))
+  setText("productDetailsSellPrice", formatMoney(p.sellPrice || 0))
+  setText(
+    "productDetailsStock",
+    String(Number(p.quantity || 0)) + (p.unit ? (" " + p.unit) : " dona")
+  )
 
-document.getElementById("addStockInput").value = ""
-
-const modal = document.getElementById("editModal")
-if(modal) modal.classList.remove("hidden")
-
+  const modal = document.getElementById("productDetailsModal")
+  if(modal) modal.classList.remove("hidden")
 }
+
+// Alias kept for stock-page barcode scan in sales.js
+function openEditModal(id){
+  return openProductDetails(id)
+}
+
+function closeProductDetailsModal(){
+  const modal = document.getElementById("productDetailsModal")
+  if(modal) modal.classList.add("hidden")
+}
+
 function closeEditModal(){
-
-const modal = document.getElementById("editModal")
-if(modal) modal.classList.add("hidden")
-
+  closeProductDetailsModal()
 }
 
-async function saveProductEdit(){
+function fillLabelPreview(name, price, barcode, qty){
+  document.getElementById("previewName").innerText = name || ""
+  document.getElementById("previewPrice").innerText =
+    (typeof formatMoney === "function" ? formatMoney(price) : (Number(price || 0).toLocaleString("ru-RU") + " UZS"))
 
-const current = Number(document.getElementById("currentStock").value)
-const add = Number(document.getElementById("addStockInput").value) || 0
+  const code = String(barcode || "")
+  const codeEl = document.getElementById("previewCode")
+  if(codeEl) codeEl.innerText = code ? code.slice(-4) : ""
 
-const newStock = Math.max(0, current + add)
-const cost = Number(document.getElementById("editCost").value)
-const price = Number(document.getElementById("editPrice").value)
+  const numEl = document.getElementById("previewBarcodeNumber")
+  if(numEl) numEl.innerText = code
 
-const updateData = {
-quantity: newStock,
-buyPrice: cost,
-sellPrice: price
+  const qtyInput = document.getElementById("labelQty")
+  if(qtyInput) qtyInput.value = qty > 0 ? qty : 1
+
+  if(code && typeof JsBarcode === "function"){
+    JsBarcode("#previewBarcode", code, {
+      format: "CODE128",
+      width: 1.5,
+      height: 50,
+      margin: 0,
+      displayValue: false
+    })
+  }
+
+  const qtyWrap = document.getElementById("labelQtyWrap")
+  const titleEl = document.getElementById("labelPreviewTitle")
+  if(labelPreviewMode === "print"){
+    if(qtyWrap) qtyWrap.classList.add("hidden")
+    if(titleEl) titleEl.textContent = "Narx yorlig'i"
+  }else{
+    if(qtyWrap) qtyWrap.classList.remove("hidden")
+    if(titleEl) titleEl.textContent = "Label Preview"
+  }
+
+  document.getElementById("labelPreviewModal").classList.remove("hidden")
 }
 
-if(add > 0){
-updateData.initialStock = newStock
+function openProductLabelPreview(){
+  const p = productDetailsCache
+  if(!p){
+    showTopBanner("Mahsulot topilmadi", "error")
+    return
+  }
+  const barcode = String(p.barcode || "").trim()
+  if(!barcode){
+    showTopBanner("Shtrix-kod yo'q", "error")
+    return
+  }
+  labelPreviewMode = "print"
+  fillLabelPreview(p.name || "", Number(p.sellPrice || 0), barcode, 1)
 }
 
-await db
-.collection("shops")
-.doc(currentShopId)
-.collection("products")
-.doc(editingProductId)
-.update(updateData)
-
-closeEditModal()
-
-showTopBanner("Mahsulot yangilandi", "success")
+function confirmLabelPreviewAction(){
+  if(labelPreviewMode === "print"){
+    window.print()
+    return
+  }
+  confirmSaveWithLabel()
 }
 // ===============================
 // EDIT PRODUCT
@@ -645,17 +697,6 @@ const price = Math.round(cost + (cost * percent / 100))
 document.getElementById("stockSellingPrice").value = price
 updateProfitPreview()
 }
-function setEditProfit(percent){
-
-const cost = Number(document.getElementById("editCost").value)
-
-if(!cost) return
-
-const price = Math.round(cost + (cost * percent / 100))
-
-document.getElementById("editPrice").value = price
-
-}
 let localBarcodeCounter = Number(localStorage.getItem("barcodeCounter") || 100000000)
 
 function generateBarcode(){
@@ -722,7 +763,7 @@ function openLabelPreview(){
   const name = nameInput ? nameInput.value.trim() : ""
 
   const priceRaw = document.getElementById("stockSellingPrice").value
-  const price = Number(priceRaw.replace(/\s/g,""))
+  const price = Number(String(priceRaw || "").replace(/\s/g,""))
 
   const barcode = document.getElementById("stockBarcode").value
 
@@ -731,40 +772,11 @@ function openLabelPreview(){
     return
   }
 
-  // ✅ NAME
-  document.getElementById("previewName").innerText = name
-
-  // ✅ PRICE (FIXED — no &nbsp bug)
-  document.getElementById("previewPrice").innerText =
-    (typeof formatMoney === 'function' ? formatMoney(price) : (price.toLocaleString("ru-RU") + " UZS"))
-
-  // ✅ SMALL CODE (NEW 🔥)
-  const shortCode = barcode.slice(-4)   // last 4 digits
-  const codeEl = document.getElementById("previewCode")
-  if(codeEl){
-    codeEl.innerText = shortCode
-  }
-
-  // ✅ BARCODE NUMBER
-  document.getElementById("previewBarcodeNumber").innerText = barcode
-
-  // ✅ QTY RESET
   const qtyInput = document.getElementById("stockQty")
-const qty = qtyInput ? Number(qtyInput.value) : 1
+  const qty = qtyInput ? Number(qtyInput.value) : 1
 
-document.getElementById("labelQty").value = qty > 0 ? qty : 1
-
-  // ✅ BARCODE (BETTER SIZE)
-  JsBarcode("#previewBarcode", barcode, {
-    format: "CODE128",
-    width: 1.5,
-    height: 50,
-    margin: 0,
-    displayValue: false
-  })
-
-  // ✅ OPEN MODAL
-  document.getElementById("labelPreviewModal").classList.remove("hidden")
+  labelPreviewMode = "save"
+  fillLabelPreview(name, price, barcode, qty)
 }
 
 
