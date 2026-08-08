@@ -8429,18 +8429,6 @@ Mobile-first responsive design
   color: #B45309;
 }
 
-.buyurtma-supplier-input {
-  margin-top: 8px;
-  width: 100%;
-  box-sizing: border-box;
-  height: 40px;
-  border: 1px solid #E2E8F0;
-  border-radius: 10px;
-  padding: 0 12px;
-  font-size: 14px;
-  background: #fff;
-}
-
 .buyurtma-header-actions {
   display: flex;
   flex-direction: column;
@@ -8612,20 +8600,6 @@ Mobile-first responsive design
   max-width: 180px;
 }
 
-.buyurtma-row-catalog {
-  cursor: pointer;
-}
-
-.buyurtma-row-catalog:hover {
-  background: #F8FAFC;
-}
-
-.buyurtma-add-hint {
-  color: #94A3B8;
-  font-size: 12px;
-  font-style: italic;
-}
-
 .buyurtma-input {
   width: 88px;
   height: 34px;
@@ -8663,14 +8637,6 @@ Mobile-first responsive design
   .buyurtma-title {
     font-size: 16px;
   }
-}
-
-#buyurtmaPage.is-readonly .buyurtma-row-catalog {
-  cursor: default;
-}
-
-#buyurtmaPage.is-readonly .buyurtma-row-catalog:hover {
-  background: transparent;
 }
 
 /* ===============================
