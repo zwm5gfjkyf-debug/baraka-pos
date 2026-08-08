@@ -8711,49 +8711,68 @@ Mobile-first responsive design
 .buyurtmalar-table-wrap {
   overflow-x: auto;
   background: #fff;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #E8EAF0;
   border-radius: 14px;
   -webkit-overflow-scrolling: touch;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
 }
 
 .buyurtmalar-table {
   width: 100%;
-  min-width: 780px;
+  min-width: 920px;
   border-collapse: collapse;
   font-size: 13px;
 }
 
 .buyurtmalar-table th {
   text-align: left;
-  padding: 12px 10px;
+  padding: 13px 12px;
   background: #F8FAFC;
-  color: #64748B;
+  color: #475569;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: 0.02em;
   white-space: nowrap;
-  border-bottom: 1px solid #E2E8F0;
+  border-bottom: 1px solid #E8EAF0;
+}
+
+.buyurtmalar-table th.buyurtmalar-th-money {
+  text-align: right;
 }
 
 .buyurtmalar-table td {
-  padding: 12px 10px;
+  padding: 14px 12px;
   border-bottom: 1px solid #F1F5F9;
   color: #0F172A;
   vertical-align: middle;
 }
 
+.buyurtmalar-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .buyurtmalar-row {
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 
 .buyurtmalar-row:hover {
   background: #F8FAFC;
 }
 
+.buyurtmalar-id-cell {
+  font-weight: 600;
+  color: #334155;
+  white-space: nowrap;
+}
+
 .buyurtmalar-name-cell {
-  max-width: 260px;
+  max-width: 240px;
 }
 
 .buyurtmalar-name-link {
+  display: block;
+  max-width: 240px;
   border: none;
   background: transparent;
   color: #2563EB;
@@ -8762,15 +8781,53 @@ Mobile-first responsive design
   padding: 0;
   cursor: pointer;
   text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.buyurtmalar-qty-cell {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.buyurtmalar-money-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.buyurtmalar-money {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.buyurtmalar-money-amount {
+  font-weight: 700;
+  color: #0F172A;
+  font-variant-numeric: tabular-nums;
+}
+
+.buyurtmalar-money-currency {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94A3B8;
+}
+
+.buyurtmalar-time-cell {
+  white-space: nowrap;
+  color: #64748B;
+  font-size: 12px;
 }
 
 .buyurtmalar-status-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 10px;
+  padding: 6px 12px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -8781,7 +8838,7 @@ Mobile-first responsive design
 }
 
 .buyurtmalar-status-badge.is-confirmed {
-  background: #DCFCE7;
+  background: #ecfdf5;
   color: #166534;
 }
 
@@ -8792,5 +8849,14 @@ Mobile-first responsive design
 
   .buyurtmalar-header .buyurtma-btn-create {
     width: 100%;
+  }
+
+  .buyurtmalar-table {
+    min-width: 900px;
+  }
+
+  .buyurtmalar-name-cell,
+  .buyurtmalar-name-link {
+    max-width: 180px;
   }
 }
