@@ -112,8 +112,26 @@
     return (items || []).reduce((s, it) => s + safeNum(it.orderQty), 0)
   }
 
+  function orderDeliverySum(items) {
+    return (items || []).reduce((s, it) => s + safeNum(it.deliveryPrice) * safeNum(it.orderQty), 0)
+  }
+
   function orderSaleSum(items) {
     return (items || []).reduce((s, it) => s + safeNum(it.salePrice) * safeNum(it.orderQty), 0)
+  }
+
+  function moneyCellHtml(amount) {
+    const n = safeNum(amount)
+    const amountText = typeof formatMoneyAmount === 'function'
+      ? formatMoneyAmount(n)
+      : Math.round(n).toLocaleString('uz-UZ').replace(/,/g, ' ')
+    const label = typeof CURRENCY_LABEL !== 'undefined' ? CURRENCY_LABEL : 'UZS'
+    return (
+      '<span class="buyurtmalar-money">' +
+      '<span class="buyurtmalar-money-amount">' + escapeHtml(amountText) + '</span>' +
+      '<span class="buyurtmalar-money-currency">' + escapeHtml(label) + '</span>' +
+      '</span>'
+    )
   }
 
   function timestampToDate(ts) {
@@ -230,9 +248,9 @@
   function updateStats() {
     const items = (currentOrder && currentOrder.items) || []
     const names = items.length
-    const units = items.reduce((s, it) => s + safeNum(it.orderQty), 0)
-    const deliverySum = items.reduce((s, it) => s + safeNum(it.deliveryPrice) * safeNum(it.orderQty), 0)
-    const saleSum = items.reduce((s, it) => s + safeNum(it.salePrice) * safeNum(it.orderQty), 0)
+    const units = orderUnits(items)
+    const deliverySum = orderDeliverySum(items)
+    const saleSum = orderSaleSum(items)
 
     const nEl = document.getElementById('buyurtmaStatNames')
     const uEl = document.getElementById('buyurtmaStatUnits')
@@ -921,7 +939,7 @@
     })
 
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td colspan="6" class="buyurtma-empty-cell">Buyurtmalar topilmadi</td></tr>'
+      tbody.innerHTML = '<tr><td colspan="7" class="buyurtma-empty-cell">Buyurtmalar topilmadi</td></tr>'
       return
     }
 
@@ -930,16 +948,18 @@
       const badgeClass = finalized ? 'is-confirmed' : 'is-draft'
       const idLabel = order.orderNumber != null ? String(order.orderNumber) : '—'
       const units = orderUnits(order.items)
-      const sum = orderSaleSum(order.items)
+      const deliverySum = orderDeliverySum(order.items)
+      const saleSum = orderSaleSum(order.items)
       const when = finalized ? formatDateTime(order.finalizedAt) : '—'
       return (
         '<tr class="buyurtmalar-row" data-order-id="' + escapeHtml(order.id) + '">' +
-        '<td>' + escapeHtml(idLabel) + '</td>' +
-        '<td class="buyurtmalar-name-cell"><button type="button" class="buyurtmalar-name-link">' + escapeHtml(order.title || 'Buyurtma') + '</button></td>' +
+        '<td class="buyurtmalar-id-cell">' + escapeHtml(idLabel) + '</td>' +
+        '<td class="buyurtmalar-name-cell"><button type="button" class="buyurtmalar-name-link" title="' + escapeHtml(order.title || 'Buyurtma') + '">' + escapeHtml(order.title || 'Buyurtma') + '</button></td>' +
         '<td><span class="buyurtmalar-status-badge ' + badgeClass + '">' + escapeHtml(statusLabel(order.status)) + '</span></td>' +
-        '<td>' + escapeHtml(String(units)) + '</td>' +
-        '<td>' + escapeHtml(money(sum)) + '</td>' +
-        '<td>' + escapeHtml(when) + '</td>' +
+        '<td class="buyurtmalar-qty-cell">' + escapeHtml(String(units)) + '</td>' +
+        '<td class="buyurtmalar-money-cell">' + moneyCellHtml(deliverySum) + '</td>' +
+        '<td class="buyurtmalar-money-cell">' + moneyCellHtml(saleSum) + '</td>' +
+        '<td class="buyurtmalar-time-cell">' + escapeHtml(when) + '</td>' +
         '</tr>'
       )
     }).join('')
@@ -968,7 +988,7 @@
     const sid = shopId()
     if (!sid || typeof db === 'undefined') {
       const tbody = document.getElementById('buyurtmalarTableBody')
-      if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="buyurtma-empty-cell">Do\'kon topilmadi</td></tr>'
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="buyurtma-empty-cell">Do\'kon topilmadi</td></tr>'
       return
     }
 
@@ -998,7 +1018,7 @@
         }).catch(e2 => {
           console.error('Buyurtmalar fallback load failed:', e2)
           const tbody = document.getElementById('buyurtmalarTableBody')
-          if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="buyurtma-empty-cell">Yuklashda xato</td></tr>'
+          if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="buyurtma-empty-cell">Yuklashda xato</td></tr>'
         })
       })
   }
