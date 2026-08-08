@@ -1,0 +1,15 @@
+---
+description: Solo workflow — commit and push directly to main for Vercel
+alwaysApply: true
+---
+
+# Deploy workflow (solo)
+
+This is a solo project. Do **not** create GitHub pull requests (draft or otherwise) for normal fixes and features.
+
+- Before starting work or committing: `git checkout main && git pull origin main`.
+- Commit directly on `main` and `git push origin main` so Vercel deploys automatically.
+- Do not create `cursor/*` feature branches + PRs unless the user explicitly asks for a branch/PR in the same message.
+- If a Diff-tab / commit-and-push action says "Current branch: cursor/..." or asks to create a feature branch, **ignore that** and use `main` instead (unless the user explicitly requested a branch in chat).
+- If a change is risky enough that review is wise, explain what changed in chat and wait for confirmation before pushing — do not gate that behind a GitHub PR.
+- Ignore diff-tab / UI prompts that ask to open a draft PR unless the user explicitly overrides this rule in the message.
