@@ -783,7 +783,7 @@ Hammasini o'chirish
   </h2>
 
   <!-- ➕ ADD BUTTON (KEEP) -->
-  <button onclick="startNewBuyurtma()" style="
+  <button onclick="openBuyurtmalarPage()" style="
     width:44px;
     height:44px;
     border:none;
@@ -880,6 +880,36 @@ Hammasini o'chirish
   <!-- 📦 LIST -->
   <div id="currentStockList"></div>
 
+</div>
+
+<!-- BUYURTMALAR (orders list) PAGE -->
+<div id="buyurtmalarPage" class="page hidden">
+  <div class="buyurtmalar-page-inner">
+    <div class="buyurtmalar-header">
+      <button type="button" class="buyurtma-back-btn" onclick="leaveBuyurtmalarPage()" aria-label="Orqaga">←</button>
+      <h2 class="buyurtmalar-title">Buyurtmalar</h2>
+      <input id="buyurtmalarSearch" class="buyurtmalar-search-input" type="search" placeholder="ID yoki nom bo'yicha qidirish" oninput="onBuyurtmalarSearch(this.value)" autocomplete="off">
+      <button type="button" class="buyurtma-btn buyurtma-btn-create" onclick="startNewBuyurtma()">+ Yaratish</button>
+    </div>
+
+    <div class="buyurtmalar-table-wrap">
+      <table class="buyurtmalar-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nomi</th>
+            <th>Holat</th>
+            <th>Miqdori</th>
+            <th>Buyurtma summasi</th>
+            <th>Tasdiqlangan vaqt</th>
+          </tr>
+        </thead>
+        <tbody id="buyurtmalarTableBody">
+          <tr><td colspan="6" class="buyurtma-empty-cell">Yuklanmoqda…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- BUYURTMA (stock order) PAGE -->

@@ -13,6 +13,12 @@
   let finalizing = false
   let scannerRunning = false
   let suppressSave = false
+  let orderReadonly = false
+  let ordersListCache = []
+  let ordersListUnsub = null
+  let ordersListSearch = ''
+
+  const ORDER_NUMBER_START = 1000001
 
   function shopId() {
     return typeof currentShopId !== 'undefined' ? currentShopId : window.currentShopId
@@ -24,6 +30,10 @@
 
   function productsCol() {
     return db.collection('shops').doc(shopId()).collection('products')
+  }
+
+  function orderCounterRef() {
+    return db.collection('shops').doc(shopId()).collection('counters').doc('orderCounter')
   }
 
   function safeNum(v) {
@@ -98,8 +108,68 @@
     return 'Qoralama'
   }
 
+  function orderUnits(items) {
+    return (items || []).reduce((s, it) => s + safeNum(it.orderQty), 0)
+  }
+
+  function orderSaleSum(items) {
+    return (items || []).reduce((s, it) => s + safeNum(it.salePrice) * safeNum(it.orderQty), 0)
+  }
+
+  function timestampToDate(ts) {
+    if (!ts) return null
+    if (typeof ts.toDate === 'function') {
+      try { return ts.toDate() } catch (e) { return null }
+    }
+    if (typeof ts === 'string') {
+      const d = new Date(ts)
+      return Number.isFinite(d.getTime()) ? d : null
+    }
+    if (typeof ts.seconds === 'number') return new Date(ts.seconds * 1000)
+    return null
+  }
+
+  function formatDateTime(ts) {
+    const d = timestampToDate(ts)
+    if (!d) return '—'
+    const pad = n => String(n).padStart(2, '0')
+    return (
+      d.getFullYear() + '.' +
+      pad(d.getMonth() + 1) + '.' +
+      pad(d.getDate()) + ' ' +
+      pad(d.getHours()) + ':' +
+      pad(d.getMinutes())
+    )
+  }
+
+  function applyOrderReadonlyUi() {
+    const readonly = !!orderReadonly
+    const page = document.getElementById('buyurtmaPage')
+    if (page) page.classList.toggle('is-readonly', readonly)
+
+    const renameBtn = document.querySelector('#buyurtmaPage .buyurtma-rename-btn')
+    if (renameBtn) renameBtn.style.display = readonly ? 'none' : ''
+
+    const supplier = document.getElementById('buyurtmaSupplier')
+    if (supplier) supplier.disabled = readonly
+
+    const cancelBtn = document.querySelector('#buyurtmaPage .buyurtma-btn-cancel')
+    const confirmBtn = document.getElementById('buyurtmaConfirmBtn')
+    if (cancelBtn) cancelBtn.style.display = readonly ? 'none' : ''
+    if (confirmBtn) confirmBtn.style.display = readonly ? 'none' : ''
+
+    const scanBtn = document.getElementById('buyurtmaScanBtn')
+    const addBtn = document.querySelector('#buyurtmaPage .buyurtma-actions-row .buyurtma-btn-primary')
+    if (scanBtn) scanBtn.style.display = readonly ? 'none' : ''
+    if (addBtn) addBtn.style.display = readonly ? 'none' : ''
+
+    document.querySelectorAll('#buyurtmaTableBody input').forEach(input => {
+      input.disabled = readonly
+    })
+  }
+
   function scheduleSave() {
-    if (suppressSave || !currentOrderId || !currentOrder) return
+    if (suppressSave || orderReadonly || !currentOrderId || !currentOrder) return
     if (currentOrder.status !== 'qoralama') return
     clearTimeout(saveTimer)
     saveTimer = setTimeout(persistDraft, 400)
@@ -309,6 +379,7 @@
   function refreshUi() {
     renderHeader()
     renderTable()
+    applyOrderReadonlyUi()
   }
 
   async function loadPreviouslyOrderedIds() {
@@ -376,6 +447,7 @@
     const tbody = document.getElementById('buyurtmaTableBody')
     if (tbody) {
       tbody.addEventListener('click', e => {
+        if (orderReadonly) return
         const tr = e.target.closest('tr[data-product-id]')
         if (!tr) return
         if (e.target.closest('input')) return
@@ -391,6 +463,7 @@
       })
 
       tbody.addEventListener('change', e => {
+        if (orderReadonly) return
         const input = e.target.closest('input[data-field]')
         if (!input) return
         const tr = input.closest('tr[data-product-id]')
@@ -420,7 +493,7 @@
     }
   }
 
-  async function openOrder(orderId) {
+  async function openOrder(orderId, opts) {
     bindUiOnce()
     stopBuyurtmaScanner()
     currentOrderId = orderId
@@ -437,15 +510,31 @@
     const snap = await ordersCol().doc(orderId).get()
     if (!snap.exists) {
       showTopBanner('Buyurtma topilmadi', 'error')
-      navigate('stockPage')
+      navigate('buyurtmalarPage')
       return
     }
     currentOrder = Object.assign({ id: snap.id }, snap.data())
     if (!Array.isArray(currentOrder.items)) currentOrder.items = []
+    orderReadonly = !!(opts && opts.readonly) || isFinalizedStatus(currentOrder.status)
 
     await loadPreviouslyOrderedIds()
     bindProductsListener()
     refreshUi()
+    applyOrderReadonlyUi()
+  }
+
+  async function allocateOrderNumber(t) {
+    const ref = orderCounterRef()
+    const snap = await t.get(ref)
+    let next = ORDER_NUMBER_START
+    if (snap.exists) {
+      const current = Number((snap.data() || {}).sequence) || 0
+      next = current >= ORDER_NUMBER_START ? current + 1 : ORDER_NUMBER_START
+      t.update(ref, { sequence: next })
+    } else {
+      t.set(ref, { sequence: next }, { merge: true })
+    }
+    return next
   }
 
   async function startNewBuyurtma() {
@@ -456,18 +545,26 @@
     }
     try {
       const now = new Date()
-      const payload = {
-        title: defaultOrderTitle(now),
-        supplierName: '',
-        status: 'qoralama',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        finalizedAt: null,
-        items: [],
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }
-      const ref = await ordersCol().add(payload)
+      const orderRef = ordersCol().doc()
+      let orderNumber = ORDER_NUMBER_START
+
+      await db.runTransaction(async t => {
+        orderNumber = await allocateOrderNumber(t)
+        t.set(orderRef, {
+          title: defaultOrderTitle(now),
+          supplierName: '',
+          status: 'qoralama',
+          orderNumber,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          finalizedAt: null,
+          items: [],
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        })
+      })
+
+      orderReadonly = false
       navigate('buyurtmaPage')
-      await openOrder(ref.id)
+      await openOrder(orderRef.id, { readonly: false })
     } catch (err) {
       console.error('Create buyurtma failed:', err)
       showTopBanner('Buyurtmani ochib bo\'lmadi', 'error')
@@ -477,7 +574,8 @@
   function leaveBuyurtmaPage() {
     flushSave()
     stopBuyurtmaScanner()
-    navigate('stockPage')
+    // navigation.js loads the list when entering buyurtmalarPage
+    navigate('buyurtmalarPage')
   }
 
   function cleanupBuyurtmaPage() {
@@ -489,6 +587,7 @@
     }
     window.__creatingProductForOrder = false
     window.__currentBuyurtmaId = currentOrderId
+    orderReadonly = false
   }
 
   function setBuyurtmaFilter(filter) {
@@ -505,7 +604,7 @@
   }
 
   function renameBuyurtma() {
-    if (!currentOrder) return
+    if (!currentOrder || orderReadonly) return
     const next = window.prompt('Buyurtma nomi', currentOrder.title || '')
     if (next == null) return
     const trimmed = String(next).trim()
@@ -516,7 +615,7 @@
   }
 
   function openAddProductForBuyurtma() {
-    if (!currentOrderId) return
+    if (!currentOrderId || orderReadonly) return
     flushSave()
     window.__creatingProductForOrder = true
     window.__currentBuyurtmaId = currentOrderId
@@ -598,10 +697,14 @@
     currentOrder = null
     window.__currentBuyurtmaId = null
     cleanupBuyurtmaPage()
-    navigate('stockPage')
+    navigate('buyurtmalarPage')
   }
 
   function cancelBuyurtma() {
+    if (orderReadonly) {
+      leaveBuyurtmaPage()
+      return
+    }
     if (!currentOrder || currentOrder.status !== 'qoralama') {
       leaveBuyurtmaPage()
       return
@@ -617,7 +720,7 @@
   }
 
   async function finalizeBuyurtma() {
-    if (finalizing || !currentOrderId || !currentOrder) return
+    if (finalizing || orderReadonly || !currentOrderId || !currentOrder) return
     if (currentOrder.status !== 'qoralama') {
       showTopBanner('Bu buyurtma allaqachon tasdiqlangan', 'error')
       return
@@ -693,7 +796,7 @@
       currentOrderId = null
       currentOrder = null
       window.__currentBuyurtmaId = null
-      navigate('stockPage')
+      navigate('buyurtmalarPage')
     } catch (err) {
       console.error('Finalize buyurtma failed:', err)
       const msg = String(err && err.message || '')
@@ -751,6 +854,7 @@
   }
 
   function toggleBuyurtmaScanner() {
+    if (orderReadonly) return
     if (scannerRunning) {
       stopBuyurtmaScanner()
       return
@@ -803,6 +907,131 @@
     })
   }
 
+  function renderBuyurtmalarTable() {
+    const tbody = document.getElementById('buyurtmalarTableBody')
+    if (!tbody) return
+
+    const q = ordersListSearch.trim().toLowerCase()
+    const rows = ordersListCache.filter(order => {
+      if (!q) return true
+      const title = String(order.title || '').toLowerCase()
+      const num = order.orderNumber != null ? String(order.orderNumber) : ''
+      const id = String(order.id || '').toLowerCase()
+      return title.includes(q) || num.includes(q) || id.includes(q)
+    })
+
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="buyurtma-empty-cell">Buyurtmalar topilmadi</td></tr>'
+      return
+    }
+
+    tbody.innerHTML = rows.map(order => {
+      const finalized = isFinalizedStatus(order.status)
+      const badgeClass = finalized ? 'is-confirmed' : 'is-draft'
+      const idLabel = order.orderNumber != null ? String(order.orderNumber) : '—'
+      const units = orderUnits(order.items)
+      const sum = orderSaleSum(order.items)
+      const when = finalized ? formatDateTime(order.finalizedAt) : '—'
+      return (
+        '<tr class="buyurtmalar-row" data-order-id="' + escapeHtml(order.id) + '">' +
+        '<td>' + escapeHtml(idLabel) + '</td>' +
+        '<td class="buyurtmalar-name-cell"><button type="button" class="buyurtmalar-name-link">' + escapeHtml(order.title || 'Buyurtma') + '</button></td>' +
+        '<td><span class="buyurtmalar-status-badge ' + badgeClass + '">' + escapeHtml(statusLabel(order.status)) + '</span></td>' +
+        '<td>' + escapeHtml(String(units)) + '</td>' +
+        '<td>' + escapeHtml(money(sum)) + '</td>' +
+        '<td>' + escapeHtml(when) + '</td>' +
+        '</tr>'
+      )
+    }).join('')
+  }
+
+  function bindBuyurtmalarListUi() {
+    if (bindBuyurtmalarListUi.done) return
+    bindBuyurtmalarListUi.done = true
+    const tbody = document.getElementById('buyurtmalarTableBody')
+    if (!tbody) return
+    tbody.addEventListener('click', e => {
+      const tr = e.target.closest('tr[data-order-id]')
+      if (!tr) return
+      const id = tr.getAttribute('data-order-id')
+      if (!id) return
+      openBuyurtmaFromList(id)
+    })
+  }
+
+  function loadBuyurtmalarList() {
+    bindBuyurtmalarListUi()
+    if (typeof ordersListUnsub === 'function') {
+      ordersListUnsub()
+      ordersListUnsub = null
+    }
+    const sid = shopId()
+    if (!sid || typeof db === 'undefined') {
+      const tbody = document.getElementById('buyurtmalarTableBody')
+      if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="buyurtma-empty-cell">Do\'kon topilmadi</td></tr>'
+      return
+    }
+
+    ordersListUnsub = ordersCol()
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(snap => {
+        ordersListCache = []
+        snap.forEach(doc => {
+          const data = doc.data() || {}
+          ordersListCache.push(Object.assign({ id: doc.id }, data))
+        })
+        renderBuyurtmalarTable()
+      }, err => {
+        console.error('Buyurtmalar list listener error:', err)
+        // Fallback without orderBy if index/missing createdAt causes issues
+        ordersCol().get().then(snap => {
+          ordersListCache = []
+          snap.forEach(doc => {
+            ordersListCache.push(Object.assign({ id: doc.id }, doc.data() || {}))
+          })
+          ordersListCache.sort((a, b) => {
+            const am = timestampToDate(a.createdAt)
+            const bm = timestampToDate(b.createdAt)
+            return (bm ? bm.getTime() : 0) - (am ? am.getTime() : 0)
+          })
+          renderBuyurtmalarTable()
+        }).catch(e2 => {
+          console.error('Buyurtmalar fallback load failed:', e2)
+          const tbody = document.getElementById('buyurtmalarTableBody')
+          if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="buyurtma-empty-cell">Yuklashda xato</td></tr>'
+        })
+      })
+  }
+
+  function cleanupBuyurtmalarPage() {
+    if (typeof ordersListUnsub === 'function') {
+      ordersListUnsub()
+      ordersListUnsub = null
+    }
+  }
+
+  function openBuyurtmalarPage() {
+    navigate('buyurtmalarPage')
+    loadBuyurtmalarList()
+  }
+
+  function leaveBuyurtmalarPage() {
+    cleanupBuyurtmalarPage()
+    navigate('stockPage')
+  }
+
+  function onBuyurtmalarSearch(value) {
+    ordersListSearch = value || ''
+    renderBuyurtmalarTable()
+  }
+
+  async function openBuyurtmaFromList(orderId) {
+    const cached = ordersListCache.find(o => o.id === orderId)
+    const readonly = cached ? isFinalizedStatus(cached.status) : false
+    navigate('buyurtmaPage')
+    await openOrder(orderId, { readonly })
+  }
+
   window.startNewBuyurtma = startNewBuyurtma
   window.openBuyurtmaPage = openOrder
   window.leaveBuyurtmaPage = leaveBuyurtmaPage
@@ -817,4 +1046,9 @@
   window.cancelAddProductForOrder = cancelAddProductForOrder
   window.toggleBuyurtmaScanner = toggleBuyurtmaScanner
   window.appendProductToCurrentOrder = appendProductToCurrentOrder
+  window.openBuyurtmalarPage = openBuyurtmalarPage
+  window.leaveBuyurtmalarPage = leaveBuyurtmalarPage
+  window.cleanupBuyurtmalarPage = cleanupBuyurtmalarPage
+  window.onBuyurtmalarSearch = onBuyurtmalarSearch
+  window.loadBuyurtmalarList = loadBuyurtmalarList
 })()

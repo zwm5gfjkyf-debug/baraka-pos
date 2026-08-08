@@ -8664,3 +8664,133 @@ Mobile-first responsive design
     font-size: 16px;
   }
 }
+
+#buyurtmaPage.is-readonly .buyurtma-row-catalog {
+  cursor: default;
+}
+
+#buyurtmaPage.is-readonly .buyurtma-row-catalog:hover {
+  background: transparent;
+}
+
+/* ===============================
+   BUYURTMALAR (orders list) PAGE
+================================= */
+.buyurtmalar-page-inner {
+  padding: 12px 12px 28px;
+}
+
+.buyurtmalar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.buyurtmalar-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0F172A;
+  flex: 0 0 auto;
+}
+
+.buyurtmalar-search-input {
+  flex: 1 1 180px;
+  min-width: 140px;
+  height: 42px;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.buyurtmalar-table-wrap {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.buyurtmalar-table {
+  width: 100%;
+  min-width: 780px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.buyurtmalar-table th {
+  text-align: left;
+  padding: 12px 10px;
+  background: #F8FAFC;
+  color: #64748B;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.buyurtmalar-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #F1F5F9;
+  color: #0F172A;
+  vertical-align: middle;
+}
+
+.buyurtmalar-row {
+  cursor: pointer;
+}
+
+.buyurtmalar-row:hover {
+  background: #F8FAFC;
+}
+
+.buyurtmalar-name-cell {
+  max-width: 260px;
+}
+
+.buyurtmalar-name-link {
+  border: none;
+  background: transparent;
+  color: #2563EB;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.buyurtmalar-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.buyurtmalar-status-badge.is-draft {
+  background: #F1F5F9;
+  color: #64748B;
+}
+
+.buyurtmalar-status-badge.is-confirmed {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+@media (max-width: 768px) {
+  .buyurtmalar-title {
+    font-size: 18px;
+  }
+
+  .buyurtmalar-header .buyurtma-btn-create {
+    width: 100%;
+  }
+}

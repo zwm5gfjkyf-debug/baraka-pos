@@ -98,11 +98,15 @@ function navigate(pageId){
     cleanupBuyurtmaPage()
   }
 
+  if(previousPage === 'buyurtmalarPage' && pageId !== 'buyurtmalarPage' && typeof cleanupBuyurtmalarPage === 'function'){
+    cleanupBuyurtmalarPage()
+  }
+
   const bottomNav = document.querySelector('.bottom-nav')
   if(bottomNav){
     if(!loggedIn){
       bottomNav.style.display = 'none'
-    }else if(pageId === 'addProductPage' || pageId === 'unitPage' || pageId === 'buyurtmaPage' || isSaleFlowPage){
+    }else if(pageId === 'addProductPage' || pageId === 'unitPage' || pageId === 'buyurtmaPage' || pageId === 'buyurtmalarPage' || isSaleFlowPage){
       bottomNav.style.display = 'none'
     }else{
       bottomNav.style.display = 'flex'
@@ -130,6 +134,7 @@ function navigate(pageId){
     salePage: 1,
     stockPage: 2,
     buyurtmaPage: 2,
+    buyurtmalarPage: 2,
     tahlilHubPage: 3,
     dokonTahliliPage: 3,
     weeklyTahliliPage: 3,
@@ -195,6 +200,16 @@ function navigate(pageId){
     const mainContent = document.querySelector('.main-content')
     if(mainContent){
       mainContent.style.paddingTop = '80px'
+    }
+  }
+
+  if(pageId === 'buyurtmalarPage'){
+    const mainContent = document.querySelector('.main-content')
+    if(mainContent){
+      mainContent.style.paddingTop = '80px'
+    }
+    if(typeof loadBuyurtmalarList === 'function'){
+      loadBuyurtmalarList()
     }
   }
 
