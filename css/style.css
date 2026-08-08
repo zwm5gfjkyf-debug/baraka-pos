@@ -9251,6 +9251,16 @@ Mobile-first responsive design
   margin: 0 auto;
 }
 
+.tahlil-v2-inner.is-refreshing {
+  cursor: progress;
+}
+
+.tahlil-v2-inner.is-refreshing .tahlil-trend-card,
+.tahlil-v2-inner.is-refreshing .tahlil-section-block {
+  opacity: 0.92;
+  transition: opacity 160ms ease;
+}
+
 .tahlil-v2-header {
   margin-bottom: 12px;
 }
